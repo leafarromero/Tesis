@@ -1,0 +1,4 @@
+# Add the soft-link required to make our dpq library work
+# (dpq does not support relative import paths yet).
+prepare-dpq:
+	sudo ln -s $PWD/lib /dpq

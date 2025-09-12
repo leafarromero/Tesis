@@ -1,0 +1,6 @@
+Dedicarle una parte a hablar del quantum switch para explicar lo que es control cuántico
+
+Leer el paper de múltiple bases (APLAS) con Nico y ver los ejemplos
+
+Marcar que el aporte es la técnica. Usar realizabilidad ayuda a definir el sistema de bases 
+

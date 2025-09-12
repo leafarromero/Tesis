@@ -1,0 +1,180 @@
+\newtheorem{convention}{Convention}
+
+\newcommand{\lambdaSh}{\ensuremath{\text{Lambda-}{\sharp}}}
+\newcommand{\lambdaSI}{\ensuremath{\text{Lambda-}\mathcal S_1}}
+
+
+\newcommand\So{\ensuremath{{\mathcal S}_1}}
+
+\newcommand\parts[1]{\ensuremath{{\mathcal P}_{\!\!*}({#1})}}
+\newcommand\Span[1]{\ensuremath{{\mathsf{Span}}{#1}}}
+\newcommand\Forg[1]{\ensuremath{{U}{#1}}}
+\newcommand\Definible{\mathsf{Def}}
+\renewcommand\comp[2][]{#2^{\bot^{#1}}}
+\newcommand\Rpart[1]{\mathsf{Re(#1)}}
+\newcommand\Ipart[1]{\mathsf{Im(#1)}}
+
+\newcommand\s[1]{\ensuremath{\mathsf{#1}}}
+\newcommand\Op[1]{\ensuremath{#1^{\mathsf{op}}}}
+\newcommand\SSet{\s{Set}}
+\newcommand\Var{\ensuremath{\mathsf{Var}}}
+\newcommand\Val{{\s V}}
+\newcommand\ValD{\vec{\s V}}
+\newcommand\VecV{\s{SVec}_{\ValD}}
+\newcommand\SetV{\Set_{\ValD}}
+
+\newcommand\interp[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand\Hom{\s{Hom}}
+\newcommand\HomS[1]{\Hom_{\SetV}(#1)}
+\newcommand\HomV[1]{\Hom_{\VecV}(#1)}
+\newcommand\Ob[1]{\s{Ob}(#1)}
+\newcommand\lra{\longrightarrow}
+\newcommand\xlra[1]{\xrightarrow{#1}}
+\newcommand\Hil{\mathcal H_{\ValD}}
+\newcommand\SpFun[1]{\ensuremath{{S}{#1}}}
+\newcommand\Id{\mathsf{Id}}
+
+\newcommand\lambdaQ{\ensuremath{\lambda^Q}}
+\newcommand\lambdaS{\ensuremath{\lambda_{\mathcal{S1}}}}
+\newcommand\lambdaH{\ensuremath{\lambda_{\sharp}}}
+\newcommand\inl[1]{\ensuremath{\mathsf{inl}(#1)}}
+\newcommand\inr[1]{\ensuremath{\mathsf{inr}(#1)}}
+\newcommand\qlet[3]{\ensuremath{\mathsf{let }#1 = #2\ \mathsf{ in }\ #3}}
+\newcommand\qmatch[5]{\ensuremath{\mathsf{match}\ #1\ \{\inl{#2}\mapsto #3\ |\ \inr{#4} \mapsto #5 \}}}
+\newcommand\sspan[1]{\ensuremath{\mathsf{span}(#1)}}
+\newcommand\ansubst[2]{\ensuremath{\langle #1 \rangle_{#2}}}
+\newcommand\sqsubst[1]{\ensuremath{\left[ #1 \right]}}
+\newcommand\AbsBasis{\ensuremath{\mathcal{P}}}
+\newcommand\dom[1]{\mathrm{dom}(#1)}
+\newcommand\sdom[1]{\mathrm{dom}^{\sharp}(#1)}
+\newcommand\FV[1]{\mathrm{FV}(#1)}
+%%% Logic
+\def\limp{\Rightarrow}
+\def\liff{\Leftrightarrow}
+%%% Sets
+\def\N{\mathbb{N}}            % set of natural numbers
+\def\R{\mathbb{R}}            % set of real numbers
+\def\C{\mathbb{C}}            % set of complex numbers
+\def\Pow{\mathfrak{P}}        % powerset
+\def\Powfin{\Pow_{\text{fin}}}  % set of finite subsets
+\def\X{\mathcal{X}}           % set of variables
+\def\Val{\mathrm{V}}          % set of pure values
+\def\pto{\rightharpoonup}     % set of partial functions
+\def\Cone{\mathrm{cone}}      % cone of a set of vectors
+\def\Sph{\mathcal{S}_1}       % unit sphere
+%%% Scalar product
+\def\scal#1#2{\langle{#1}~|~{#2}\rangle}
+\def\bigscal#1#2{\bigl\langle{#1}~\bigm|~{#2}\bigr\rangle}
+\def\Bigscal#1#2{\Bigl\langle{#1}~\Bigm|~{#2}\Bigr\rangle}
+\def\valscal#1#2{\left\langle{#1}~\middle|~{#2}\right\rangle}
+%%% Syntax
+\def\<{\langle}
+\def\>{\rangle}
+\def\Void{*} % void object
+\def\Pair#1#2{(#1,#2)} % pairing construct
+\def\Lam#1#2#3{\lambda#1_{#2}\,{.}\,#3} % lambda abstraction
+%%% Let construct
+\def\letkeyword{\texttt{let}}
+\def\inkeyword{\texttt{in}}
+\def\LetV#1#2{\letkeyword~\Void=#1~\inkeyword~#2}
+\def\LetP#1#2#3#4#5#6{\letkeyword_{\Pair{#2}{#4}}~\Pair{#1}{#3}=#5~\inkeyword~#6}
+%%% Left injection
+\def\inleftkeyword{\texttt{inl}}
+\def\Inl#1{\inleftkeyword(#1)}
+\def\bigInl#1{\inleftkeyword\bigl(#1\bigr)}
+\def\BigInl#1{\inleftkeyword\Bigl(#1\Bigr)}
+%%% Right injection
+\def\inrightkeyword{\texttt{inr}}
+\def\Inr#1{\inrightkeyword(#1)}
+\def\bigInr#1{\inrightkeyword\bigl(#1\bigr)}
+\def\BigInr#1{\inrightkeyword\Bigl(#1\Bigr)}
+%%% Match construct
+\def\matchkeyword{\texttt{match}}
+\def\Match#1#2#3#4#5{\matchkeyword~#1~%
+  \{\Inl{#2}\mapsto#3~|~\Inr{#4}\mapsto#5\}}
+\def\bigMatch#1#2#3#4#5{\matchkeyword~#1~%
+  \bigl\{\Inl{#2}\mapsto#3~\bigm|~\Inr{#4}\mapsto#5\bigr\}}
+\def\BigMatch#1#2#3#4#5{\matchkeyword~#1~%
+  \Bigl\{\Inl{#2}\mapsto#3~\Bigm|~\Inr{#4}\mapsto#5\Bigr\}}
+%%% Match construct for lists
+\def\Nil{\ensuremath{\mathtt{nil}}}
+\def\MatchL#1#2#3#4#5{\matchkeyword~#1~%
+  \{\Nil\mapsto#2~|~#3::#4\mapsto#5\}}
+\def\bigMatchL#1#2#3#4#5{\matchkeyword~#1~%
+  \bigl\{\Nil\mapsto#2~\bigm|~#3::#4\mapsto#5\bigr\}}
+\def\BigMatchL#1#2#3#4#5{\matchkeyword~#1~%
+  \Bigl\{\Nil\mapsto#2~\Bigm|~#3::#4\mapsto#5\Bigr\}}
+%%% If construct
+\def\tt{\ensuremath{\mathtt{t\!t}}}
+\def\ff{\ensuremath{\mathtt{f\!f}}}
+\def\ifkeyword{\ensuremath{\mathtt{i{\mskip-1mu}f}}}
+\def\If#1#2#3{\ifkeyword~#1~\{#2\mid#3\}}
+\def\bigIf#1#2#3{\ifkeyword~#1~\bigl\{#2\bigm|#3\bigr\}}
+\def\BigIf#1#2#3{\ifkeyword~#1~\Bigl\{#2\Bigm|#3\Bigr\}}
+%%% Case construct
+\def\case#1#2#3#4#5{\ensuremath{\mathsf{case}~#1~\mathsf{of} \{#2\mapsto #4 \mid #3\mapsto #5\}}}
+\def\gencase#1#2#3#4#5{\ensuremath{\mathsf{case}~#1~\mathsf{of} \{#2\mapsto #4 \mid \dotsb \mid #3\mapsto #5\}}}
+%%% Syntax (misc.)
+\def\supp{\mathrm{supp}}
+\def\weight{\varpi}
+\def\Kron#1#2{\ensuremath{\delta_{#1,#2}}}
+%%% Evaluation
+\def\evalat{\mathrel{\triangleright}}
+\def\nevalat{\mathrel{\not\triangleright}}
+\def\evalone{\rightarrow}
+\def\eval{\twoheadrightarrow}
+%%% Types
+\def\Unit{\mathbb{U}}
+\def\Bool{\mathbb{B}}
+\def\arr{\rightarrow}
+\def\Arr{\Rightarrow}
+\def\Type{\mathbb{T}}
+\def\BasisType{\Type_{\basis{}}}
+%%% Semantics
+\def\sem#1{\llbracket#1\rrbracket}
+\def\semr#1{\{{\real}~#1\}}
+\def\SUB#1#2{#1\le#2}
+\def\NSUB#1#2{#1\not\le#2}
+\def\EQV#1#2{#1\simeq#2}
+\def\TYP#1#2#3{#1~{\vdash}~#2~{:}~#3}
+\def\SORTH#1#2#3#4{#1~{\vdash}~#2\perp#3~{:}~#4}
+\def\ORTH#1#2#3#4#5#6{#1~{\vdash}~(#2~{\vdash}~#3)\perp(#4~{\vdash}~#5)~{:}~#6}
+\def\rnam#1{\textsc{\small\upshape(#1)}}
+\def\snam#1{\textsc{\scriptsize\upshape(#1)}}
+\def\real{\Vdash}
+\def\ureal{\Vvdash}
+%%% Misc.
+\def\ds{\displaystyle}
+\outer\long\def\COUIC#1{}
+\def\sqrthalf{{\textstyle\frac{1}{\sqrt{2}}}}
+\def\minsqrthalf{{\textstyle\bigl(-\frac{1}{\sqrt{2}}\bigr)}}
+\def\isqrthalf{{\textstyle\frac{i}{\sqrt{2}}}}
+\def\minisqrthalf{{\textstyle\bigl(-\frac{i}{\sqrt{2}}\bigr)}}
+
+%%% Even more macros -- to be merged
+
+\newcommand\pair[1]{\langle #1 \rangle}
+\newcommand\Let[3]{\mathsf{let}\ {#1}={#2}\ \mathsf{in}\ {#3}}
+\newcommand{\ttrue}{\ensuremath{\mathtt{t\!t}}}
+\newcommand{\ffalse}{\ensuremath{\mathtt{f\!f}}}
+\newcommand{\tif}[3]{\mathsf{if}\left(#1\right)\left(#2\right)\left(#3\right)}
+\newcommand{\pif}[2]{\ensuremath{\mathtt{if}\left(#1\right)\left(#2\right)}}
+\newcommand\trad[1]{\llparenthesis{#1}\rrparenthesis}
+\newcommand\B{\mathbb B}
+\newcommand\XB{\mathbb X}
+\newcommand\Hd{\mathbb{H}}
+\newcommand\Q{\sharp\B}
+\newcommand{\True}{\mathbb{T}}
+\newcommand{\False}{\mathbb{F}}
+\newcommand{\Cx}{\mathbb{C}}
+\newcommand{\cnot}[2]{\mathsf{CNOT}\ #1\ #2}
+\newcommand{\pauliX}[1]{\mathsf{NOT}\ #1}
+\newcommand{\pauliZXB}{\mathsf{Z}_{\XB}}
+\newcommand{\cnotXB}[2]{\mathsf{CNOT}_{\XB}\ #1\ #2}
+\newcommand{\pauliXXB}[1]{\mathsf{NOT}_{\XB}\ #1}
+\newcommand{\Bell}{\mathsf{Bell}}
+\newcommand{\lambdaB}{\lambda_B}
+%%% If construct
+\newcommand\qif[5]{\ensuremath{#1\ ?_{#2,#3}\ #4\ \cdot\ #5}}
+\newcommand\basis[1]{\ensuremath{B_{ #1 }}}
+\newcommand\genbasis[3]{\ensuremath{B_{\{#1\}_{#2}^{#3}}}}

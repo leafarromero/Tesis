@@ -1,0 +1,7 @@
+module ZXPrelude where
+import "lib/Prelude.dpq"
+import "/dpq/Theorems.dpq"
+import "/dpq/Vec.dpq"
+
+flip : ! forall a b -> (a * b) -> (b * a)
+flip p = let (x,y) = p in (y,x)

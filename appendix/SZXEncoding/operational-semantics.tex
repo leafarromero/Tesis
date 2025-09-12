@@ -1,0 +1,111 @@
+\section{Operational Semantics of the \texorpdfstring{$\lambdaD$}{lambda sub D} calculus}%
+\label{sec:op-semantics}
+
+We define a weak call-by-value small step operational semantics on Table~\ref{fig:rewrite-system}. 
+\begin{table}[htbp]
+\begin{mdframed}
+    \begin{align*}
+        V :=\; & x \;|\; C \;|\; 0 \;|\; 1 \;|\; \meas \;|\; \new \;|\; \U \;|\; \\
+        & \lambda x^S. M \;|\; \lambda' x^P. M \;| \star \;|\; M \otimes N \;|\; \\
+        & \vnil \;|\; M :: N \;\\
+    \end{align*}
+    \begin{align*}
+        (\lambda x.M)V &\to M[V/x]\\
+        (\lambda' x.M)@V &\to M[V/x]\\
+        \Qlet{x\otimes y}{M_1\otimes M_2}{N}&\to N[x/M_1][y/M_2]\\
+        \Qlet{x::y}{M_1 :: M_2}{N}&\to N[x/M_1][y/M_2]\\
+        \ifz{V}{M}{N}&\to 
+        \begin{cases}
+            M\qquad\text{If } V=0 \\ 
+            N\qquad\text{Otherwise}
+        \end{cases}\\
+        \star\ ;\ M &\to M\\
+        \vnil\ ;_v\ M &\to M\\
+        V_1 \square V_2 &\to V\qquad\text{Where }V_i = n_i\text{ and }V=n_1\square n_2\\
+        \Qfor{k}{M_1\ :: M_2}{N} &\to N[k/M_1]\ :: \Qfor{k}{M_2}{N}\\
+        \Qfor{k}{\vnil}{N} &\to \vnil\\
+    \end{align*}
+    \smallskip
+    \[
+      \infer{MV\to NV}{M\to N}
+      \qquad 
+      \infer{LM\to LN}{M\to N}
+      \qquad
+      \infer{M@V\to N@V}{M\to N}
+      \qquad 
+      \infer{L@M\to L@N}{M\to N}
+    \]
+
+    \[
+      \infer{\Qlet{x\otimes y}{M}{L}\to \Qlet{x\otimes y}{N}{L}}{M\to N}
+      \qquad
+      \infer{\Qlet{x:: y}{M}{L}\to \Qlet{x:: y}{N}{L}}{M\to N}
+    \]
+    \[
+      \infer{L\square M\to L\square N}{M\to N}
+      \qquad
+      \infer{M\square V\to M\square V}{M\to N}
+    \]
+    \[
+      \infer{M\ ;\  L\to N\ ;\ L}{M\to N}
+      \qquad
+      \infer{\Qlet{x: y}{M}{L}\to \Qlet{x: y}{N}{L}}{M\to N}
+    \]
+    \[
+      \infer{\ifz{M}{L_1}{L_2}\to\ifz{N}{L_1}{L_2}}{M\to N}
+      \qquad
+      \infer{\Qfor{k}{M}{L}\to\Qfor{k}{N}{L}}{M\to N}
+    \]
+    \caption{Rewrite system for $\lambdaD$.}
+    \label{fig:rewrite-system}
+    \end{mdframed}
+\end{table}
+
+A key point to note here is that every rewriting rule preserves the state. There are no measurements or unitary operations applied, the rewriting is merely syntactical. Since our goal is translation into an SZX-diagram, this system is powerful enough. We include the rewrite rules for the primitives on Table~\ref{fig:primitives-operation}.
+
+\begin{table}[htbp]
+    \begin{mdframed}
+        \begin{align*}
+        \Qaccumap\ @n\ xs\ fs\ z \to
+          & \ifz{n}{xs\ ;_v\ fs\ ;_v\ \vnil\otimes z}{}\\
+          & \Qlet{x :: xs'}{xs}{\Qlet{f :: fs'}{fs}{}}\\
+          & \Qlet{y\otimes z'}{f\ x\ z}{\Qlet{ys \otimes z''}{\Qaccumap\ @(n-1)\ xs'\ fs'\ z'}{}}\\
+          & (y :: ys) \otimes z''\\
+        \Qsplit\ @n\ @m\ xs \to
+          & \ifz{n}{\vnil\otimes xs}{} \Qlet{y :: xs'}{xs}{}\\
+          & \Qlet{ys_1\otimes ys_2}{\Qsplit @(n-1)\ @m\ xs'}{(y :: ys_1)\otimes ys_2}\\
+        \Qappend\ @n\ @m\ xs\ ys \to
+          & \ifz{n}{xs\ ;_v\ ys}{} \\
+          & \Qlet{x :: xs'}{xs}{x :: (\Qappend\ @(n-1)\ @m\ xs'\ ys)}\\
+        \Qdrop\ @n\ xs \to
+          & \ifz{n}{xs\ ;_v\ \star}{\Qlet{x :: xs'}{xs}{x\ ;\ \Qdrop\ @(n-1)\ xs'}}\\
+        \Qrange\ @n\ @m \to
+          & \ifz{m-n}{\vnil}{n\ :: \Qrange\ @(n+1)\ @m}\\
+        \end{align*}
+        \caption{Reductions pertaining to the primitives.}
+        \label{fig:primitives-operation}
+        \end{mdframed}
+    \end{table}
+
+Additionally, we define useful macros based on these functions on Table~\ref{fig:function-macros}. They provide syntactic sugar to deal with state vectors.
+
+\begin{table}[htbp]
+  \begin{mdframed}
+      \begin{align*}
+      \Qmap\ @n\ xs\ fs :=\ 
+        & \mathtt{let}\ {fs'\otimes u_1} = \Qaccumap\ @n\ fs\\
+        & \qquad (\Qfor{k}{(0..n)}{\lambda f. \lambda u. (\lambda x.\lambda  u. f x \otimes u) \otimes u})\ \star\\
+        & \mathtt{in\ let}\ {xs'\otimes u_2} = \Qaccumap\ @n\ xs\ fs'\ \star\\
+        & \mathtt{in}\ {u_1\ ;\ u_2\ ;\ xs'}\\
+      \Qfold\ @n\ xs\ fs\ z :=\ 
+        & \mathtt{let}\ {fs'\otimes u} = \Qaccumap\ @n\ fs\\
+        & \qquad (\Qfor{k}{(0..n)}{\lambda f. \lambda u. (\lambda x.\lambda  y. \star \otimes f\  x\  y) \otimes u})\ \star\\
+        & \mathtt{in\ let}\ {us\otimes r} = \Qaccumap\ @n\ xs\ fs'\ z\\
+        & \mathtt{in}\ {u\ ;\ \Qdrop\ @n\ us\ ;\ r}\\
+      \Qcompose\ @n\ xs=\ 
+        &\Qfold\ @n\ xs\ (\Qfor{k}{0..n}{(\lambda f.\lambda g.\lambda x. f\ (g\ x))})\ (\lambda x. x)\\
+      \end{align*}
+      \caption{Function macros.}
+      \label{fig:function-macros}
+      \end{mdframed}
+  \end{table}

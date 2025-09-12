@@ -1,0 +1,12 @@
+\section{QFT algorithm in Quipper code}%
+\label{sec:qft-code}%
+
+The following Proto-Quipper-D code corresponds to the algorithm
+presented in Section~\ref{sec:qft-example}.
+This implementation has been checked with the \texttt{dpq} tool
+implemented by Frank Fu (see \url{https://gitlab.com/frank-peng-fu/dpq-remake}).
+Notice that, in contrast to the presented lambda terms,
+the type checker implementation
+requires explicit encodings of the Leibniz equalities between parameter types.
+
+\inputminted[lastline=39]{haskell}{appendix/SZXEncoding/qft.dpq}

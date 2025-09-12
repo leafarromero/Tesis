@@ -1,0 +1,117 @@
+\section{Categorical Interpretation}
+
+
+\iffalse
+\subsection{Set-Vec adjunction}
+
+Where:
+\begin{itemize}
+  \item $\ValD$ represents the set of value distributions.
+  \item $\parts{}$ is the powerset without the empty set.
+  \item $\Definible$ is the set of the definible functions in the language. 
+\end{itemize}
+  
+\begin{definition}[Category $\SetV$]
+  The monoidal category $\SetV$ has the following elements:
+  \begin{itemize}
+  \item $\Ob\SetV=\parts{\ValD}$.
+  \item For all $A,B\in\Ob\SetV$,
+    \[ \HomS{A,B}=\{f\in\Definible\mid f:A\to B\in\Arr{\SSet}\}
+    \]
+  \item For all $A,B\in\Ob\SetV$,
+    \begin{align*} A\boxtimes B
+      =&\{\textstyle\sum_i\sum_j\alpha_i\beta_j\cdot(v_i,w_j)\mid
+         \begin{array}{l} \sum_i\alpha_i\cdot v_i\in A\\ \sum_j\beta_j\cdot
+           w_j\in B
+         \end{array}\}\\ \stackrel{\rm def}{=}&\{(\vec v,\vec w)\mid\vec v\in A\
+                                                \text{and}\ \vec w\in B\}
+    \end{align*}
+  \item $1=\{\Void\}\in\Ob\SetV$ 
+  \item The obvious structural maps: $A\xlra{\lambda_\boxtimes}1\boxtimes A$,
+    $A\xlra{\rho_\boxtimes}A\boxtimes 1$, and $(A_1\boxtimes A_2)\boxtimes
+    A_3\xlra{\alpha_\boxtimes}A_1\boxtimes (A_2\boxtimes A_3)$.
+  \end{itemize}
+\end{definition}
+
+\begin{definition}
+  A function $f\in\Definible$, ($f$ is definible) iff exists a functor $V:\SetV \to \SSet$, such that the following diagram commutes:
+  
+  \begin{center}
+  \begin{tikzcd}
+  \Op\SetV\times\SetV \arrow[rr, "\Hom"]\arrow[rd, "\text{[-,-]}"] & & \SSet \\
+  & \SetV \arrow[ur, "V"]
+  \end{tikzcd}
+  \end{center}
+\end{definition}
+
+{\color{red} La idea sería pensar esto de manera functorial así tengo una forma de caracterizar Def.}
+
+In order to define the category $\VecV$, we define the set $\Hil$ and the map $\SpFun{}$.
+\begin{definition}\label{def:functors}\leavevmode
+  \begin{enumerate}
+  \item $\Hil$ is the set of all the sub-distributive action spaces\footnote{$V$ is a
+      sub-distributive action space of $W$ if $V\subseteq W$ and $V$ forms a distributive-action space
+      with the operations from $W$ restricted to $V$.} of $\ValD$, with inner
+    product induced by $\ValD$.
+  \item $\SpFun{}:\parts{\ValD}\lra\Hil$ is a map defined by
+    $A\mapsto\{\sum_i\alpha_i\cdot\vec v_i\mid\vec v_i\in A\}$.
+  \item Let $A,B\in\parts{\ValD}$ and $f:A\lra B$ be a map. Then, $\SpFun f:\SpFun
+    A\lra\SpFun B$ is the map defined by $\sum_i\alpha_i\cdot\vec v_i\mapsto\sum_i\alpha_i\cdot f\vec v_i$.
+  \end{enumerate}
+\end{definition}
+
+\begin{definition}[Category $\VecV$]\label{def:VecV}
+  The monoidal category $\VecV$ has the following elements:
+  \begin{itemize}
+  \item $\Ob\VecV = \Hil$.
+  \item For all $V, W\in\Ob\VecV$,
+    \[
+      \HomV{V,W}=\{f\in\Definible\mid V\xlra{f} W\textrm{ is a linear map}\}
+    \]
+  \item For all $V,W\in\Ob\VecV$,
+    \[
+      V\otimes W=\SpFun(V\boxtimes W)
+    \]
+  \item $I= \{\alpha\cdot\Void\mid\alpha\in\C\}\in\Ob\VecV$.
+  \item The obvious structural maps:
+    $V\xlra{\lambda_\otimes}I\otimes V$,
+    $V\xlra{\rho_\otimes}V\otimes I$, and
+    $(V_1\otimes V_2)\otimes V_3\xlra{\alpha_\otimes}V_1\otimes (V_2\otimes V_3)$.
+  \end{itemize}
+\end{definition}
+
+\newpage
+\subsection{Extracted typing system}
+Each rule is followed by its categorical interpretation into the Set-Vec adjunction
+
+\begin{align*}
+  &\sem{\vcenter{\infer[^{\mathsf{Ax}}]{x:A\vdash x:A}{}}} = A\xlra{\Id} A\\
+  %%%
+  &\sem{\vcenter{\infer[^{\mathsf{Lam}}]{\TYP{\Gamma}{\Lam x A {\vec t}}{A\to B}}{\TYP{\Gamma, x:A}{\vec t}{B} & \flat A}}}=
+  \Gamma\xlra{\eta^A}[A, \Gamma\times A]\xlra{[A, \vec t]} [A, B]\\
+  %%%
+  &\sem{\vcenter{\infer[^{\mathsf{App}}]{\TYP{\Gamma,\Delta}{\vec t \vec s}{B}}{\TYP{\Gamma}{\vec t}{A\to B}&\TYP{\Delta}{\vec s}{A}}}}= \Gamma\times\Delta\xlra{\vec t \times \vec s} [A\times B]\times A \xlra{\mathsf{eval}\ \circ\ \mathsf{swap}} B\\
+  %%%
+  &\sem{\vcenter{\infer[^{\mathsf{Pair}}]{\TYP{\Gamma,\Delta}{(\vec t, \vec s)}{A\times B}}{\TYP{\Gamma}{\vec t}{A} & \TYP{\Delta}{\vec s}{B}}}} = \Gamma\times\Delta\xlra{\vec t \times \vec s} A\times B\\
+  %%%
+  &\sem{\vcenter{\infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
+  {\LetP{x}{}{y}{}{\vec{t}}{\vec{s}}}{C}}{
+  \TYP{\Gamma}{\vec{t}}{A\times B}&
+  \TYP{\Delta,x:A,y:B}{\vec{s}}{C}}}}=\\
+  &\Gamma\times\Delta \xlra{\vec t \times \eta^{A\times B}} (A\times B) \times [(A\times B), \Delta\times (A\times B)]\xlra{\Id\times[A\times B, \vec s]} (A\times B) \times [(A\times B, C)]\xlra{\mathsf{eval}} C\\
+  %%%
+  &\sem{\vcenter{\infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
+  {\LetP{x}{}{y}{}{\vec{t}}{\vec{s}}}{\sharp{C}}}{
+  \TYP{\Gamma}{\vec{t}}{A\otimes B}&
+  \TYP{\Delta,x: A,y:B}{\vec{s}}{C}}}} = \\
+  &\Gamma\times\Delta\xlra{\vec t\times \eta^{A\times B}} US(A\times B)\times[(A\times B), \Delta\times(A\times B)] \xlra{\Id\times [(A\times B), \vec s]} US(A\times B) \times [A\times B, C]\\
+  &\xlra{\Id \times \sem{(A\times B)\to C \leq (A\otimes B)\to \sharp C}} US(A\times B) \times [US(A\times B), USC] \xlra{eval} USC\\
+  %%%
+  &\sem{\vcenter{\infer[\snam{Contr}]{\TYP{\Gamma,x:A}{\vec{t}\,[y:=x]}{B}}{\TYP{\Gamma,x:A,y:A}{\vec{t}}{B}&\flat{A}}}}=
+  \Gamma\times A\xlra{\Id\times\Delta_A} \Gamma\times(A\times A)\xlra{\vec t} B\\
+  %%%
+  &\sem{\vcenter{\infer[\snam{Weak}]{\TYP{\Gamma,x:A}{\vec{t}}{B}}{
+    \TYP{\Gamma}{\vec{t}}{B}& \flat{A}}}}= \\
+\end{align*}
+
+\fi

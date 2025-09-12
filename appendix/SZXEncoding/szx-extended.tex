@@ -1,0 +1,134 @@
+\section{Semantics of the SZX calculus}%
+\label{sec:szx-extended}
+
+We reproduce below the standard interpretation of \szxGND\ diagrams as
+density matrices and completely positive
+maps~\cite{CJPV19completenessMix,carette_quantum_2021}, modulo scalars.
+
+Let $D_n \subseteq \C^{2^n \times 2^n}$ be the set of n-qubit density
+matrices. We define the functor $\interpret{\cdot} : \zxGND \to
+\mathbf{CPM(Qubit)}$ which associates to any diagram $\diag : n \to m$ a completely
+positive map $\interpret{\diag} : D_n \to D_m$, inductively as
+follows.
+
+\[
+  \interpret{\diag_1 \otimes \diag_2}
+  \;:=\;
+  \interpret{\diag_1} \otimes \interpret{D_2}
+  %
+  \qquad
+  %
+  \interpret{\diag_2 \circ \diag_1}
+  \;:=\;
+  \interpret{\diag_2} \circ \interpret{\diag_1}
+\]
+\[
+    \interpret{\tikzfig{szx/elem/hadamard-szx}} :=
+      \rho \mapsto V~\rho~V^\dagger
+      \text{ where\ }
+      V = \sum_{x,y \in \Ftwo^k}
+      (-1)^{x \bullet y} \ketbra{y}{x}
+\]
+\[
+    \interpret{\tikzfig{szx/elem/spiderZ-szx}} :=  
+      \rho \mapsto V~\rho~V^\dagger
+      \text{ where\ }
+      V = \sum_{x \in \Ftwo^k}
+      e^{i x\bullet\overrightarrow\alpha} \ket{x}^{\otimes m}\bra{x}^{\otimes n}
+\]
+\[
+    \interpret{\tikzfig{szx/elem/spiderX-szx}} :=
+    \interpret{\tikzfig{szx/elem/hadamard-szx}}^{\otimes m} \circ
+    \interpret{\tikzfig{szx/elem/spiderZ-szx}} \circ
+    \interpret{\tikzfig{szx/elem/hadamard-szx}}^{\otimes n}
+\]
+\[
+    \interpret{\tikzfig{szx/elem/ground-szx}} :=
+      \rho \mapsto
+      \sum_{x \in \Ftwo^k}
+      \bra{x} \rho \ket{x}
+    %
+    \qquad
+    %
+    \interpret{\tikzfig{szx/elem/ground-szx-rotated}} :=
+      \sum_{x \in \Ftwo^k}
+      \ketbra{x}{x}
+    %
+    \qquad
+    %
+    \interpret{\tikzfig{szx/elem/wire-szx}} :=
+    \rho \mapsto \rho
+\]
+\[
+    \interpret{\tikzfig{szx/elem/gather}} :=
+      \rho \mapsto \rho
+    %
+    \qquad
+    %
+    \interpret{\tikzfig{szx/elem/arrow}} :=  
+      \rho \mapsto V~\rho~V^\dagger
+      \text{ where\ }
+      V = \sum_{x \in \Ftwo^k}
+      \ketbra{\sigma(x)}{x}
+\]
+\[
+    \interpret{\tikzfig{szx/elem/cap-szx}} :=
+      \rho \mapsto
+      \sum_{x \in \Ftwo^k}
+      \bra{xx} \rho \ket{xx}
+    \qquad
+    \interpret{\tikzfig{szx/elem/cup-szx}} :=
+      \sum_{x \in \Ftwo^k}
+      \ketbra{xx}{xx}
+    \qquad
+    \interpret{\tikzfig{szx/elem/empty}} := Id_0
+\]
+\[
+    \interpret{\tikzfig{szx/elem/swap-szx}} :=
+      \rho \mapsto V~\rho~V^\dagger
+      \text{ where\ }
+      V = \sum_{x \in \Ftwo^k, y \in \Ftwo^l}
+      \ketbra{yx}{xy}
+\]
+where $\forall u,v\in \mathbb{R}^n, u \bullet v = \sum_{i=1}^m u_i v_i$.
+
+The \szxGND\ calculus defines a set of rewrite rules, shown below.
+\[\scalebox{0.9}{\tikzfig{szx/rules/zxRules}}\]
+\[
+  \tikzfig{szx/rules/numberRule-a}
+  \;\overset{\mbox{\scriptsize\GndRemoveRule}}{=}\;
+  \tikzfig{szx/elem/empty}
+  %
+  \qquad
+  %
+  \tikzfig{szx/rules/HRule-a}
+  \;\overset{\mbox{\scriptsize\GndHadamardRule}}{=}\;
+  \tikzfig{szx/rules/HRule-b}
+  %
+  \qquad
+  %
+  \tikzfig{szx/rules/MergeRule-a}
+  \;\overset{\mbox{\scriptsize\GndDiscardRule}}{=}\;
+  \tikzfig{szx/rules/MergeRule-b}
+  %
+  \qquad
+  %
+  \tikzfig{szx/rules/CNOTRule-a}
+  \;\overset{\mbox{\scriptsize\GndCNOTRule}}{=}\;
+  \tikzfig{szx/rules/CNOTRule-b}
+\]
+\[
+    \tikzfig{szx/rules/split-gather}
+    \ \stackrel{\mathbf{(sg)}}{=}\ %
+    \tikzfig{szx/rules/split-gather-2}
+    \qquad\qquad
+    \tikzfig{szx/rules/gather-split}
+    \ \stackrel{\mathbf{(gs)}}{=}\ %
+    \tikzfig{szx/rules/gather-split-2}
+\]
+\[\scalebox{0.9}{\tikzfig{szx/rules/gatherRules}}\]
+Additionally, for the arrows restricted to permutations of wires
+we have the following rules~\cite{carette_quantum_2021}:
+\[\scalebox{0.9}{\tikzfig{szx/rules/permRules}}\]
+Finally, since wires with cardinality zero correspond to empty mappings they can be discarded from the diagrams.
+\[\scalebox{0.9}{\tikzfig{szx/rules/zeroRules}}\]

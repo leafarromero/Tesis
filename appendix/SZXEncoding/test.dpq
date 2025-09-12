@@ -1,0 +1,26 @@
+module Test where
+import "/dpq/Prelude.dpq"
+
+-- for n in 1000..1050 do n + 1
+--main = foreach (10..15) (\i -> i + 1)
+
+fix : ! forall a -> !(a -> a) -> a
+fix f = f (fix f)
+
+fix' : ! (a : Type) -> !(a -> a) -> a
+fix' a f = f (fix f)
+
+bug : ! (x : Unit) -> !(Unit -> Bool)
+bug x = fix' (Unit -> Bool) (\f u -> not (f ()))
+
+
+--data (Parameter a) => Eq a (x : a) (y : a) =
+--      E (! (p : a -> Type) -> p x -> p y)
+
+--lemma : ! forall x -> ! Eq Bool x (not x) -> False
+--lemma : forall a : Type -> False -> a
+
+
+lemma : ! Eq (!(Unit -> Bool)) (bug ()) ((\f u -> not $ f ()) (bug ()))
+lemma = E (\p x -> x)
+

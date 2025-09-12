@@ -1,0 +1,18 @@
+module Qft where
+import "lib/Prelude.dpq"
+
+
+-- NOTE: Maybe ask of a parameter `Eq Bool (k < n) True` ?
+
+example : ! (n k : Nat) -> Bool
+example n k =
+  case minus n k of
+    Z -> True
+    S n' ->
+      let
+        -- Here we want to use n' knowing that `(minus n k) = S n'`
+        -- Do we have access to an 'Eq Nat (minus n k) (S n')' ?
+        temp : ! (n n' k : Nat) -> Eq Bool ((minus n k) == (S n')) True -> Bool
+        temp = (\n n' k p -> True)
+        _ = temp n n' k refl
+      in False

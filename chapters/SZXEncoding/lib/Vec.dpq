@@ -1,0 +1,77 @@
+module Vec where
+
+-- NOTE: The import statement does not work with relative paths.
+import "lib/Nat.dpq"
+import "lib/Class.dpq"
+import "lib/State.dpq"
+import "lib/Vec.dpq"
+import "/dpq/Theorems.dpq"
+
+-- New fns
+replicate : ! forall a -> (n: Nat) -> !a -> Vec a n
+replicate n x =
+  case n of
+    Z -> VNil
+    S n' -> VCons x (replicate n' x)
+  
+-- Replaced ! with a vec of functions
+compose' : ! forall a (n: Nat) -> Vec (a -> a) n -> a -> a
+compose' fs b =
+  case fs of
+    VNil -> b
+    VCons f fs' -> f (compose' fs' b)
+
+accumap : ! forall a b c (n : Nat) -> Vec (a -> c -> b * c) n -> c -> Vec a n -> Vec b n * c
+accumap fs c xs =
+  case (zip fs xs) of
+    VNil -> (VNil, c)
+    VCons p ps ->
+      let
+        (fs', xs') = unzip ps
+        (f, x) = p
+        (x, c') = f x c
+        (l', c'') = accumap fs' c' xs'
+      in (VCons x l', c'')
+
+split : ! forall a -> (n: Nat) -> (m : Nat) -> Vec a (add n m) -> Vec a n * Vec a m
+split n m v =
+  case n of 
+    Z -> (VNil, v)
+    S n' ->
+      let (x, xs) = chop v
+          (l, r) = split n' m xs
+      in (VCons x l, r)
+
+-- Ranges of nats
+infix 12 ..
+
+-- TODO: Bogo range
+range_aux : ! (n : Nat) -> (m : Nat) -> Nat -> Vec Nat (minus m n)
+range_aux n m x =
+  case m of 
+    Z -> VNil
+    S m' -> case n of
+              Z -> let r' = range_aux Z m' (S x)
+                   in subst (\x -> Vec Nat x) (minusSZ' m') (VCons x r')
+              S n' -> range_aux n' m' (S x)
+
+range : ! (n : Nat) -> (m : Nat) -> Vec Nat (minus m n)
+range n m = range_aux n m Z
+
+(..) : ! (n : Nat) -> (m : Nat) -> Vec Nat (minus m n)
+(..) n m = range_aux n m Z
+
+foreach : ! forall a b (n : Nat) -> (Parameter a) => !(a -> b) -> Vec a n -> Vec b n
+foreach f l = map f l
+
+--dropVec : ! forall a -> Vec a Z -> Unit
+--dropVec v =
+--  case v of
+--    VNil -> ()
+--    VCons _ v' -> -- TODO
+
+drop : ! (n : Nat) -> Vec Unit n -> Unit
+drop n v = case n of
+            Z -> ()
+            S n' -> case v of
+                      VCons _ v' -> drop n' v'

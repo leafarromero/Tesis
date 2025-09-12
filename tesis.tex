@@ -1,0 +1,57 @@
+\documentclass[10pt]{book}
+
+\usepackage[paperwidth=145mm, paperheight=225mm, top=2cm, bottom=2cm, left=3cm, right=2.5cm]{geometry}
+
+\input{preambulo}
+
+\subimport{macros}{macros}
+
+%%% Clear Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Clear Header Style on the Last Empty Odd pages
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside\ifodd\c@page\else%
+    \hbox{}%
+    \thispagestyle{empty}%              % Empty header styles
+    \newpage%
+    \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\thesisTitleSpanish}{Titulo de la tesis en español}
+\newcommand{\thesisTitleEnglish}{Título de la tesis en inglés}
+  
+
+\begin{document}
+\thispagestyle{empty}
+
+\vspace*{1mm}
+
+\input{caratula}
+
+\frontmatter
+
+\input{abstract}
+\thispagestyle{empty}
+
+\input{agradecimientos}
+
+\tableofcontents
+
+\mainmatter
+
+\subimport{chapters/}{chapterStructure.tex}
+
+%\begin{appendices}
+%    \subimport{appendix/}{structure}
+%\end{appendices}
+
+\backmatter
+
+
+\listoffigures
+\listoftables
+
+\bibliographystyle{plain}
+\bibliography{basisSensitive,SZXEncoding}
+
+\end{document}

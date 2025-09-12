@@ -1,0 +1,115 @@
+module Theorems where
+import "lib/Theorems.dpq"
+
+-- Theorems for booleans
+
+bottom : ! forall a -> (Parameter a) => (n m : a) -> Eq Bool False True -> Eq a n m
+bottom n m pf =
+  let E pf = pf in 
+    E (\ p hy -> pf (\ b -> 
+         case b of
+           False -> p n
+           True -> p m ) hy)
+
+natBottom : ! forall a (k : Nat) -> (Parameter a) => (n m : a) -> Eq Nat Z (S k) -> Eq a n m
+natBottom n m pf =
+  let E pf = pf in 
+    E (\ p hy -> pf (\ k' -> 
+         case k' of
+           Z -> p n
+           S k'' -> p m ) hy)
+
+-- Theorems for inequalities
+
+lessSS : ! (n m : Nat) -> Eq Bool (S n < S m) True -> Eq Bool (n < m) True
+lessSS n m e =
+  let E f = e
+  in E (\ p le -> f p le)
+
+lessInv : ! (n m : Nat) -> Eq Bool (n < m) True -> Eq Bool (m > n) True
+lessInv n m e =
+  case n of
+    Z ->
+      case m of
+        Z -> bottom (m > n) True e
+        S m' -> refl
+    S n' ->
+      case m of
+        Z -> bottom (m > n) True e
+        S m' -> lessInv n' m' $ lessSS n' m' e
+
+lessZ : ! (n : Nat) -> Eq Bool (n < Z) False
+lessZ n =
+  case n of
+    Z -> refl
+    S n' -> refl 
+
+lessS : ! (n m : Nat) -> Eq Bool (n < m) True -> Eq Bool (n < S m) True
+lessS n m e =
+  case n of
+    Z -> 
+      case m of 
+        Z -> bottom (n < S m) True e 
+        S m' -> refl
+    S n' ->
+      case m of
+        Z -> bottom (n < S m) True e 
+        S m' -> lessS n' m' $ lessSS n' m' e
+
+leSS : ! (n m : Nat) -> Eq Bool (S n <= S m) True -> Eq Bool (n <= m) True
+leSS n m e =
+  let E f = e
+  in E (\ p le -> f p le)
+
+gtZ : ! (n : Nat) -> Eq Bool (S n > Z) True
+gtZ n = refl
+
+-- Theorems for minus
+
+minusZN : ! (n : Nat) -> Eq Nat Z (minus Z n)
+minusZN n = refl
+
+minusSZ : ! (n : Nat) -> Eq Nat (minus (S n) Z) (S (minus n Z))
+minusSZ n = trans (sym (S n) (minusZ (S n))) (cong S (minusZ n))
+
+minusSZ' : ! (n : Nat) -> Eq Nat (S (minus n Z)) (minus (S n) Z)
+minusSZ' n = sym (minus (S n) Z) (minusSZ n)
+
+minusSS : ! (n m : Nat) -> Eq Nat (minus (S n) (S m)) (minus n m)
+minusSS n m = refl
+
+minusTrunc : ! (n m : Nat) -> Eq Bool (m <= n) True -> Eq Nat (minus m n) Z
+minusTrunc n m e =
+  case m of
+    Z -> minusZN n
+    S m' ->
+      case n of
+        Z -> bottom (minus m n) Z e
+        S n' -> (minusTrunc n' m' (leSS m' n' e))
+
+minusPlus : ! (n m k : Nat) -> Eq Nat (S m) (minus n k) -> Eq Nat (add (S m) k ) n
+minusPlus n m k e =
+  case k of
+    Z ->
+      let
+        -- e' : Eq Nat (S m) n
+        e' = trans e $ sym n $ minusZ n
+      in trans (addZ (S m)) e'
+    S k' ->
+      case n of
+        Z -> 
+          let 
+            -- e' : Eq Nat Z (S m)
+            e' = sym (S m) $ trans e (sym Z (minusZN (S k')))
+          in natBottom (add (S m) k) n e'
+        S n' ->
+          let
+            -- e  : Eq Nat (S m) (minus (S n') (S k'))
+            -- e' : Eq Nat (S m) (minus n' k')
+            e' = trans e $ minusSS n' k'
+            -- e'' : Eq Nat (add (S m) k') n'
+            e'' = minusPlus n' m k' e'
+            -- e''' : Eq Nat (S (add (S m) k')) (S n')
+            e''' = cong S e''
+            -- : Eq Nat (add (S m) (S k')) (S n')
+          in trans (sym (S (add (S m) k')) $ addS' (S m) k') e'''

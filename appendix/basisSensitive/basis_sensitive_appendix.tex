@@ -1,0 +1,272 @@
+
+\appendix
+\section{Simple linear algebra results}
+
+\begin{definition}
+    A \textit{Null vector} is a term distribution $\vec{t}$ of the form:
+    \[
+    \vec{t} \equiv \sum_{i=1}^{n} 0 \cdot t_i
+    \]
+    Note that the $t_i$ is a basic term, not a distribution.
+\end{definition}
+
+\begin{definition}
+    A set of value distribution is said to be \textit{linearly independent} if there not exists a non-trivial linear combination of its members such that it yields a null vector.
+\end{definition}
+
+\begin{definition}
+    Bases are linearly independent sets of value distributions.
+\end{definition}
+
+\begin{proposition}\label{prop:UniqueDecomposition}
+    If $B$ is a basis, then each vector has a unique decomposition in $B$.
+\end{proposition}
+
+\begin{proof}
+    Assuming there are two different decompositions, we have:
+    \[\vec{v} - \vec{v} = 0 \cdot \vec{v} = \sum_{i=1}^{n} (\alpha_i - \beta_i) {b_i}\]
+    Since the basis is linearly independent, $\alpha_i = \beta_i$.
+\end{proof}
+
+\begin{corollary}\label{cor:EquivalentDecomposition}
+    If $\vec{v}\equiv\vec{w}$, then they both have the same decomposition over a basis $B$.
+\end{corollary}
+\begin{proof}
+    Since $\vec{v} - \vec{w} \equiv \vec{v} - \vec{v} \equiv \vec{w} - \vec{w}$, we can use the same reasoning as proposition \ref{prop:UniqueDecomposition} to conclude that both have the same decomposition.
+\end{proof}
+
+\section{Proofs for validity of LetTens rule}
+\begin{proposition}\label{prop:InnerProdPairs} For all value distributions $\vec{v_1}, \vec{v_2}, \vec{w_1}, \vec{w_2}$ we have:
+\[
+\scal{\Pair{\vec{v_1}}{\vec{w_1}}}{\Pair{\vec{v_2}}{\vec{w_2}}} = \scal{\vec{v_1}}{\vec{v_2}}\scal{\vec{w_1}}{\vec{w_2}}
+\]
+\begin{proof}
+    Let us write $\vec{v_1}=\sum_{i_1=1}^{n_1}\alpha_{i_1} v_{i_1}$, $\vec{v_2}=\sum_{i_2=1}^{n_2}\alpha'_{i_2} v_{i_2}$, $\vec{w_1}=\sum_{j_1=1}^{m_1}\beta_{j_1} w_{j_1}$ and $\vec{w_2}=\sum_{j_2=1}^{m_2}\beta'_{j_2} w_{j_2}$. Then we have:
+    \begin{align*}
+        \scal{\Pair{\vec{v_1}}{\vec{w_1}}}{\Pair{\vec{v_2}}{\vec{w_2}}} &=
+        \scal{\sum_{i_1=1}^{n_1}\sum_{j_1=1}^{m_1} \alpha_{i_1}\beta'_{j_1}\Pair{v_{i_1}}{w_{j_1}}}{\sum_{i_2=1}^{n_2}\sum_{j_2=1}^{m_2} \alpha_{i_2}\beta'_{j_2}\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \scal{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{v_{i_1}}{v_{i_2}}\Kron{w_{j_1}}{w_{j_2}}\\
+        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Kron{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Kron{w_{j_1}}{w_{j_2}})\\
+        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Pair{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Pair{w_{j_1}}{w_{j_2}})\\
+        &=\scal{\vec{v_1}}{\vec{v_2}}\scal{\vec{w_1}}{\vec{w_2}}\\
+    \end{align*}
+\end{proof}  
+
+\end{proposition}
+
+\begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
+Given a type $A$, two vectors $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vec{u_0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
+\[
+\vec{u_1} + \alpha\vec{u_2} = \lambda \vec{u_0} 
+\]
+\end{lemma}
+\begin{proof}
+    Let $\lambda:=\|\vec{u_1}+\alpha\vec{u_2}\|$. When $\lambda\neq 0$, we take $\vec{u_0}=\frac{1}{\lambda}(\vec{u_1}+\alpha\vec{u_2})\in\sem{\sharp A}$, and we are done.
+
+    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vec{u_1}\|=0$ which is absurd since $\|\vec{u_1}\|=1$. Moreover since $\lambda=\|\vec{u_1}+\alpha\vec{u_2}\|=0$, we observe that all the coefficients of the distribution $\vec{u_1}+\alpha\vec{u_2}$ are zeroes when written in canonical form wich implies that:
+    \[
+    \vec{u_1}+\alpha\vec{u_2} = 0(\vec{u_1}+\alpha\vec{u_2}) = 0\vec{u_1}+0\vec{u_2}
+    \]
+    Using the triangular inequality we observe that:
+    \[
+    0<2|\alpha| = \|2\alpha\vec{u_2}\|\leq\|\vec{u_1}+\alpha\vec{u_2}\| + \|\vec{u_1 }+ (-\alpha)\vec{u_2}\|= \|\vec{u_1}+(-\alpha)\vec{u_2}\|
+    \]
+    Hence $\lambda' := \|\vec{u_1}+(-\alpha)\vec{u_2}\|>0$. Taking $\vec{u_0}:= \frac{1}{\lambda'}(\vec{u_1}+ (-\alpha)\vec{u_2})\in\sem{\sharp A}$, we easily see that:
+    \[
+    \vec{u_1}+\alpha\vec{u_2} = 0\vec{u_1} + 0\vec{u_2} = 0(\frac{1}{\lambda'} (\vec{u_1} + (-\alpha) \vec{u_2})) = \lambda \vec{u_0}
+    \]
+\end{proof}
+
+\begin{proposition}[Polarization identity]\label{prop:Polarization} %A6
+For all values $\vec{v}$ and $\vec{w}$ we have:
+\[
+\scal{\vec{v}}{\vec{w}}=
+\frac{1}{4} (\|\vec{v}+\vec{w}\|^2 - \|\vec{v} + (-1) \vec{w}\|^2 - i\|\vec{v} + i\vec{w}\|^2 + i\|\vec{v}+ (-i)\vec{w}\|^2)
+\]
+\end{proposition}
+
+\begin{lemma}\label{lem:InnerProdSingleVar} %A7
+Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$, there are value distributions $\vec{w_1}, \vec{w_2}\in\sem{C}$ such that:
+\[
+\begin{array}{c c}
+    \begin{array}{c}
+        \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_1}/x}{B_1}{\ansubst{\vec{v_1}/y}{B_2}}\eval\vec{w_1}\\
+        \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_2}/x}{B_1}{\ansubst{\vec{v_2}/y}{B_2}}\eval\vec{w_2}\\
+    \end{array}&
+    \text{ and } \scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}}
+\end{array}
+\]
+\end{lemma}
+
+\begin{proof}
+    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vec{w_1},\vec{w_2}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_1}/x}{A}\eval\vec{w_1}$ and $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_2}/x}{A}\eval\vec{w_2}$. In particular, we have that $\|\vec{w_1}\| = \|\vec{w_2}\|=1$. Applying lemma~\ref{lem:VecRewrite}~ four times, we know there are vectors $\vec{u_{01}},\vec{u_{02}},\vec{u_{03}},\vec{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    
+    \begin{align*}
+        \vec{u_1} + \vec{u_2} = \lambda_1 \vec{u_{01}} & \vec{u_1} + i \vec{u_2} = \lambda_3 \vec{u_{03}} \\
+        \vec{u_1} + (-1) \vec{u_2} = \lambda_2 \vec{u_{02}} & \vec{u_1} + (-i) \vec{u_2} = \lambda_4 \vec{u_{04}} \\
+    \end{align*}
+
+    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vec{s}}{C}$, we also know that there are value distributions $\vec{w_{01}},\vec{w_{02}},\vec{w_{03}},\vec{w_{04}}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_{0j}}}{}\eval\vec{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
+
+    \begin{align*}
+        \vec{w_1} + \vec{w_2} = \lambda_1 \vec{w_{01}} & \vec{w_1} + i \vec{w_2} = \lambda_3 \vec{w_{03}} \\
+        \vec{w_1} + (-1) \vec{w_2} = \lambda_2 \vec{w_{02}} & \vec{w_1} + (-i) \vec{w_2} = \lambda_4 \vec{w_{04}} \\
+    \end{align*}
+
+    Using the polarization identity (Prop~\ref{prop:Polarization}), we conclude that:
+
+    \begin{align*}
+        \scal{\vec{w_1}}{\vec{w_2}} &= \frac{1}{4}(\|\vec{w_1}+\vec{w_2}\| - \|\vec{w_1} + (-1)\vec{w_2}\| - i \|\vec{v_1} + i \vec{v_2}\| + i \|\vec{v_1} + (-i) \vec{v_2}\|)\\
+        &= \frac{1}{4}((\lambda_1)^2\|\vec{w_{01}}\| - (\lambda_2)^2\|\vec{w_{02}}\| - i (\lambda_)^2 \|\vec{w_{03}}\| + i (\lambda_)^2\|\vec{w_{04}}\|)\\
+        &= \frac{1}{4}((\lambda_1)^2\|\vec{u_{01}}\| - (\lambda_2)^2\|\vec{u_{02}}\| - i (\lambda_)^2 \|\vec{u_{03}}\| + i (\lambda_)^2\|\vec{u_{04}}\|)\\
+        &= \frac{1}{4}(\|\vec{u_1}+\vec{u_2}\| - \|\vec{u_1} + (-1)\vec{u_2}\| - i \|\vec{u_1} + i \vec{u_2}\| + i \|\vec{u_1} + (-i) \vec{u_2}\|)\\
+        &=\scal{u_1}{u_2}
+    \end{align*}
+
+\end{proof}
+
+\begin{lemma}\label{lem:OrthogonalSubstitution} %A8
+Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$, there are value distributions $\vec{w_1},\vec{w_2}\in\sem{C}$ such that:
+\[
+\begin{array}{c c}
+    \begin{array}{c}
+        \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_1}/x}{B_1}{\ansubst{\vec{v_1}/y}{B_2}}\eval\vec{w_1}\\
+        \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_2}/x}{B_1}{\ansubst{\vec{v_2}/y}{B_2}}\eval\vec{w_2}\\
+    \end{array}&
+    \text{ and } \scal{\vec{w_1}}{\vec{w_2}} = 0
+\end{array}
+\]
+\end{lemma}
+
+\begin{proof}
+    From lemma~$\ref{lem:VecRewrite}$~ we know that there are $\vec{u_0}\in\sem{\sharp A}, \vec{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    \[
+    \vec{u_2} + (-1) \vec{u_1} = \lambda\vec{u_0}\quad\text{and}\quad\vec{v_2} + (-1) \vec{v_1} = \mu \vec{v_0}
+    \]
+    For all $j,k\in\{0,1,2\}$, we have $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_j}/x}{B_1}\ansubst{\vec{v_k}/y}{B_2}\eval\vec{w_{jk}}$. In particular, we can take $\vec{w_1}=\vec{w_{11}}$ and $\vec{w_2}=\vec{w_{22}}$. Now we observe that:
+    \begin{enumerate}
+        \item\label{A8:it1} $\vec{u_1}+\lambda\vec{u_0}= \vec{u_1} + \vec{u_2} + (-1) \vec{u_1}= \vec{u_2} + 0\vec{u_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \begin{array}{c c}
+            \begin{array}{c}
+                \vec{w_{1k}} + \lambda\vec{w_{0k}} = \vec{w_{2k}} + 0 \vec{w_{1k}}\\
+                \vec{w_{2k}} + (-\lambda)\vec{w_{0k}} = \vec{w_{1k}} + 0 \vec{w_{2k}}
+            \end{array}&
+            (\text{for all }k\in\{0,1,2\})
+        \end{array}
+        \]
+        
+        \item\label{A8:it2} $\vec{v_1}+\mu\vec{v_0}= \vec{v_1} + \vec{v_2} + (-1) \vec{v_1}= \vec{v_2} + 0\vec{v_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \begin{array}{c c}
+            \begin{array}{c}
+                \vec{w_{j1}} + \mu\vec{w_{j0}} = \vec{w_{j2}} + 0 \vec{w_{j1}}\\
+                \vec{w_{j2}} + (-\mu)\vec{w_{j0}} = \vec{w_{j1}} + 0 \vec{w_{j2}}
+            \end{array}&
+            (\text{for all }j\in\{0,1,2\})
+        \end{array}
+        \]
+        
+        \item\label{A8:it3} $\scal{\vec{u_1}}{\vec{u_2}}=0$, so that from lemma~\ref{lem:InnerProdSingleVar}~ we get $\scal{\vec{w_{1k}}}{\vec{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
+        
+        \item\label{A8:it4} $\scal{\vec{v_1}}{\vec{v_2}}=0$, so that from lemma~\ref{lem:InnerProdSingleVar}~ we get $\scal{\vec{w_{j1}}}{\vec{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
+    \end{enumerate}
+
+    From the above, we get:
+    \begin{align*}
+        \scal{\vec{w_1}}{\vec{w_2}} &= \scal{\vec{w_{11}}}{\vec{w_{22}}} = \scal{\vec{w_{11}}}{\vec{w_{22}}+0\vec{w_{12}}} & \\
+        &=\scal{\vec{w_{11}}}{\vec{w_{12}}+ \lambda\vec{w_{02}}} & (\text{from (\ref{A8:it1}), } k=2)\\
+        &=\scal{\vec{w_{11}}}{\vec{w_{12}}} + \lambda \scal{\vec{w_{11}}}{\vec{w_{02}}} &\\
+        &= 0 + \lambda \scal{\vec{w_{11}}}{\vec{w_{02}}} & (\text{from (\ref{A8:it4}), } j=1)\\
+        &= \lambda \scal{\vec{w_{11}} + 0\vec{w_{21}}}{\vec{w_{02}}} & \\
+        &= \lambda \scal{\vec{w_{21}} + (-\lambda)\vec{w_{01}}}{\vec{w_{02}}} & (\text{from (\ref{A8:it1}), } k=1)\\
+        &= \lambda \scal{\vec{w_{21}}}{\vec{w_{02}}} - |\lambda|^2 \scal{\vec{w_{01}}}{\vec{w_{02}}} & \\
+        &= \lambda \scal{\vec{w_{21}}}{\vec{w_{02}}} - 0 & (\text{from (\ref{A8:it4}), } j=0)\\
+        &=\scal{\vec{w_{21}}}{\vec{w_{22}}- \vec{w_{12}}} & \\
+        &=\scal{\vec{w_{21}}}{\vec{22}} - \scal{\vec{w_{21}}}{\vec{w_12}} & \\
+        &= 0 - \scal{\vec{w_{21}}}{\vec{w_{12}}} & (\text{from (\ref{A8:it4}), } j=2)\\
+    \end{align*}
+    Hence $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{w_{11}}}{\vec{w_{22}}} = - \scal{\vec{w_{21}}}{\vec{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
+    \[
+    \scal{\vec{w_1}}{\vec{w_2}}=-\scal{\vec{w_{21}}}{\vec{w_{12}}}=-\scal{\vec{w_{12}}}{\vec{w_{21}}}
+    \]
+    So that we have:
+    \[
+        \scal{\vec{w_1}}{\vec{w_2}}=-\scal{\vec{w_{21}}}{\vec{w_{12}}}=-\overline{\scal{\vec{w_{21}}}{\vec{w_{12}}}}\in\R
+    \]
+    If we now replace $\vec{u_2}\in\sem{\sharp A}$ with $i\vec{u_2}\in\sem{\sharp A}$, the very same technique allows us to prove that $i\scal{\vec{w_1}}{\vec{w_2}}=\scal{\vec{w_1}}{i \vec{w_2}}\in\R$. Therefore $\scal{\vec{w_1}}{\vec{w_2}}=0$.
+\end{proof}
+
+\begin{lemma}\label{lem:UnitPreserTens} %A9
+Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$ and $\vec{v_1},\vec{v_2}\in\sem{\sharp B}$, there are value distributions $\vec{w_1},\vec{w_2}\in\sem{C}$ such that:
+\[
+\begin{array}{c c}
+    \begin{array}{c}
+        \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_1}/x}{B_1}{\ansubst{\vec{v_1}/y}{B_2}}\eval\vec{w_1}\\
+        \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_2}/x}{B_1}{\ansubst{\vec{v_2}/y}{B_2}}\eval\vec{w_2}\\
+    \end{array}&
+    \text{ and } \scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}} \scal{\vec{v_1}}{\vec{v_2}}
+\end{array}
+\]
+\begin{proof}
+    Let $\alpha=\scal{\vec{u_1}}{\vec{u_2}}$ and $\beta=\scal{\vec{v_1}}{\vec{v_2}}$. We observe that:
+    \[
+    \scal{\vec{u_1}}{\vec{u_2}+(-\alpha)\vec{u_1}} = \scal{\vec{u_1}}{\vec{u_2}} - \alpha \scal{\vec{u_1}}{\vec{u_1}} = \alpha - \alpha = 0
+    \]
+    And similarly that, $\scal{\vec{v_1}}{\vec{v_2}+ (-\beta) \vec{v_1}} = 0$. From Lemma \ref{lem:VecRewrite}, we know that there are $\vec{u_0}\in\sem{\sharp A}$, $\vec{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    \begin{align*}
+        \vec{u_2} +(-\alpha)\vec{u_1} = \lambda\vec{u_0}& \text{ and } & \vec{v_2} + (-\beta)\vec{v_1} = \mu\vec{v_0} 
+    \end{align*}
+    For all $j,k\in\{0,1,2\}$, we have$\ansubst{\sigma}{}\ansubst{\vec{u_j}/x}{B_1}\ansubst{\vec{v_k}/y}{B_2}\in\sem{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}$, hence there is $\vec{w_{jk}}\in\sem{C}$ such that:
+    \[
+    \vec{s}\ansubst{\sigma}{}\ansubst{u_j/x}{B_1}\ansubst{\vec{v_k}/y}{B_2}\eval\vec{w_{jk}}
+    \]
+    In particular, we can take $\vec{w_1}=\vec{w_{11}}$ and $\vec{w_2}=\vec{w_{22}}$. Now we observe that:
+    \begin{enumerate}
+        \item\label{A9:it1} $\lambda \vec{u_0} + \alpha\vec{u_1}=\vec{u_2} + (-\alpha) \vec{u_1} + \alpha \vec{u_1} = \vec{u_2} + 0 \vec{u_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \lambda\vec{w_{0k}} + \alpha \vec{w_{1k}} = \vec{w_{2k}} + 0 \vec{w_{1k}} \qquad(\text{for all }k\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it2} $\mu\vec{v_0} + \beta\vec{v_1}=\vec{v_2} + (-\beta) \vec{v_1} + \beta \vec{v_1} = \vec{v_2} + 0 \vec{v_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \mu\vec{w_{j0}} + \beta \vec{w_{j1}} = \vec{w_{j2}} + 0 \vec{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it3} $\scal{\vec{u_1}}{\lambda\vec{u_0}}=\scal{\vec{u_1}}{\vec{u_2}+(- \alpha)\vec{u_1}}=0$, so that from Lemma \ref{lem:InnerProdSingleVar} we get:
+        \[
+        \scal{\vec{w_{1k}}}{\lambda\vec{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it4} $\scal{\vec{v_1}}{\mu\vec{v_0}}=\scal{\vec{v_1}}{\vec{v_2} + (-\beta)}\vec{v_1}=0$, so that from Lemma \ref{lem:InnerProdSingleVar} we get:
+        \[
+        \scal{\vec{w_{j1}}}{\mu\vec{w_{j0}}}=0
+        \]
+                
+        \item\label{A9:it5} $\scal{\vec{u_1}}{\lambda\vec{u_0}}=\scal{\vec{v_1}}{\mu\vec{v_0}}=0$ so that from Lemma \ref{lem:OrthogonalSubstitution} we get:
+        \[
+        \scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}}=0
+        \]
+        (Again the equality $\scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vec{u_1}}{\vec{u_0}}=\scal{\vec{v_1}}{\vec{v_0}}=0$, from which we get $\scal{\vec{w_{11}}}{\vec{w_{00}}}=0$ by Lemma \ref{lem:OrthogonalSubstitution})
+    \end{enumerate}
+
+    From the above we get:
+    \begin{align*}
+        \vec{w_{22}} + 0\vec{w_{12}} + 0\vec{w_{01}} + 0\vec{w_{11}} &= \lambda\vec{w_{02}} + \alpha\vec{w_{12}} + 0\vec{w_{01}} + 0\vec{w_{11}} & (\text{from \ref{A9:it1}}, k =1)\\
+        &= \lambda(\vec{w_{02}}+0\vec{w_{01}}) + \alpha(\vec{w_{12}}+0\vec{w_{11}})&\\
+        &= \lambda(\mu\vec{w_{00}} + \beta\vec{w_{01}}) + \alpha(\mu\vec{w_{01}}+\beta\vec{w_{11}}) & (\text{from \ref{A9:it2}}, j=0,1)\\
+        &= \lambda\mu\vec{w_{00}} + \lambda\beta\vec{w_{01}} + \alpha\mu\vec{w_{10} + \alpha\beta\vec{w_{11}}}
+    \end{align*}
+    Therefore:
+    \begin{align*}
+        \scal{\vec{w_1}}{\vec{w_2}} &= \scal{\vec{w_{11}}}{\vec{w_{22}} + 0\cdot\vec{w_{12}} + 0\cdot\vec{w_{01}} + 0\cdot\vec{w_{11}}}\\
+        &= \scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}} + \lambda\beta\vec{w_{01}} + \alpha\mu\vec{w_{10} + \alpha\beta\vec{w_{11}}}}\\
+        &=\scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}} + \scal{\vec{w_{11}}}{\lambda\beta\vec{w_{01}}} + \scal{\vec{w_{11}}}{\alpha\mu\vec{w_{10}}} + \scal{\vec{w_{11}}}{\alpha\beta\vec{w_{11}}}\\
+        &=\lambda\mu\scal{\vec{w_{11}}}{\vec{w_{00}}} + \lambda\beta\scal{\vec{w_{11}}}{\vec{w_{01}}} + \alpha\mu\scal{\vec{w_{11}}}{\vec{w_{10}}} + \alpha\beta\scal{\vec{w_{11}}}{\vec{w_{11}}}\\
+        &= 0 + 0 + 0 + \alpha\beta = \scal{\vec{u_1}}{\vec{u_2}}\scal{\vec{v_1}}{\vec{v_2}}
+    \end{align*}
+    From \ref{A9:it5}, \ref{A9:it3} and \ref{A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
+\end{proof}
+\end{lemma}

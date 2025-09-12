@@ -1,0 +1,236 @@
+\section{Encoding programs as diagram families}%
+\label{sec:translation}
+
+In this section we introduce an encoding of the lambda calculus presented in Section~\ref{sec:fragment}
+into families of SZX diagrams with context variables as inputs and term values as outputs.
+We split the lambda-terms into those that represent linear mappings between quantum states
+and can be encoded as families of SZX diagrams, and parameter terms that can be completely evaluated
+at compile-time.
+
+\subsection{Parameter evaluation}
+
+We say a type is \textit{evaluable} if it has the form
+$A = (n_1:\nat) \to \dots \to (n_k:\nat) \to P[n_1,\dots,n_k]$ with $P$ a parameter type.
+Since $A$ does not encode a quantum operation,
+we interpret it directly into functions over vectors of natural numbers.
+The translation of an evaluable type, $\natEval{A}$, is defined recursively as follows:
+\[
+    \natEval{(n : \nat) \to B[n]} = \N \to \bigcup_{n \in \N} \natEval{B[n]}
+    \qquad
+    \natEval{\nat} = \N
+\]
+\[
+    \natEval{\typeVec{\nat}{(n : \nat)}} = \N^n
+\]
+
+Given a type judgement $\Phi \vdash L : P$ where $P$ is an evaluable type,
+we define $\natEval{L}_\Phi$ as the evaluation of the term into a function from parameters into products of natural numbers.
+Since the typing is syntax directed, the evaluation is defined directly over the terms as follows:
+\[
+    \natEval{x}_{x:\nat, \Phi} = x,|\Phi| \mapsto x
+    \qquad
+    \natEval{n}_\Phi = |\Phi| \mapsto n
+\]
+\[
+    \natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)
+\]
+\[
+    \natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)
+    \qquad 
+    \natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto []
+\]
+\[
+    \natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)
+    \qquad
+    \natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)
+\]
+\[
+    \natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto \begin{cases}
+        \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{L}_\Phi(|\Phi|) = 0 \\
+        \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
+    \end{cases}
+\]
+\[
+    \natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes_{i=n}^{m-1} i
+\]
+\[
+    \natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)
+\]
+\[
+    \natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi = |\Phi|\mapsto 
+        \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)
+    {\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)}}
+\]
+
+\begin{lemma}%
+    \label{lem:eval-type}
+    Given an evaluable type $A$ and a type judgement $\Phi \vdash L : A$,
+    $\natEval{L}_\Phi \in \bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
+\end{lemma}
+
+\begin{lemma}%
+    \label{lem:eval-reduction}
+    Given an evaluable type $A$,
+    a type judgement $\Phi \vdash L : A$, and $M \to N$, then $\natEval{M}_\Phi = \natEval{N}_\Phi$.
+\end{lemma}
+
+\subsection{Diagram encoding}
+
+A non-evaluable type has necessarily the form $A = (n_1:\nat) \to \dots \to (n_k:\nat) \to S$,
+with $S$ any state type.
+We call such types \textit{translatable} since they correspond to terms that
+encode quantum operations that can be described as families of diagrams.
+
+We first define a translation $\trans{\cdot}$ from state types
+into wire multiplicities as follows.
+Notice that due to the symmetries of the SZX diagrams
+the linear functions have the same representation as the products.
+\[
+    \trans\bit = 1
+    \qquad
+    \trans\qubit = 1
+    \qquad
+    \trans{\typeVec{A}{(n: \nat)}} = \trans{A}^{\otimes n}
+    \qquad
+    \trans{A \otimes B} = \trans A \otimes \trans B
+    \qquad
+    \trans{A \multimap B} = \trans A \otimes \trans B
+\]
+
+Given a translatable type judgement
+$\Phi, \Gamma \vdash M : (n_1:\nat) \to \dots \to (n_k:\nat) \to S$
+we can encode it as a family of SZX diagrams
+\(
+  n_1, \dots, n_k, |\Phi| \mapsto \tikzfig{judgement-trans}
+\).
+We will omit the brackets in our diagrams for clarity.
+In a similar manner to the evaluation, we define
+the translation $\trans{M}_{\Phi,\Gamma}$
+recursively on the terms as follows: 
+
+\[
+    \trans{x}_{\Phi,x:A} = |\Phi|\mapsto \tikzfig{judgements/linear/ax}
+    \quad
+    \trans{0}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/zero}
+    \quad
+    \trans{1}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/one}
+    \quad
+    \trans{\meas}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/meas}
+\]
+\[
+    \trans{\new}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/new}
+    \quad
+    \trans{U}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/unitary}
+    \quad
+    \trans{R}_{\Phi} = n,|\Phi|\mapsto\tikzfig{judgements/linear/rotation}
+\]
+\[
+    \trans{\lambda' x^A . M}_{\Phi,\Gamma} = x,|\Phi| \mapsto \tikzfig{judgements/linear/lambdaP}
+    \quad
+    \trans{M\ @N}_{\Phi,\Gamma} = |\Phi|\mapsto \tikzfig{judgements/linear/applyP}
+\]
+\[
+    \trans{\lambda x^A . M}_{\Phi,\Gamma} = |\Phi| \mapsto \tikzfig{judgements/linear/lambda}
+    \quad
+    \trans{M\ N}_{\Phi,\Gamma,\Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/apply}
+\]
+\[
+    \trans{M; N}_{\Phi, \Gamma, \Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/then}
+    \quad
+    \trans{\star}_\Phi = |\Phi|\mapsto\tikzfig{judgements/linear/skip}
+    \quad
+    \trans{M \otimes N}_{\Phi, \Gamma, \Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/product}
+\]
+\[
+    \trans{M;_v N}_{\Phi, \Gamma, \Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/then}
+    \quad
+    \trans{\vnil}_\Phi = |\Phi|\mapsto\tikzfig{judgements/linear/skip}
+\]
+\[
+    \trans{let\ x^A \otimes y^B = M\ in\ N}_{\Phi, \Gamma, \Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/let}
+\]
+\[
+    \trans{let\ x^A : y^{\typeVec{A}{n}} = M\ in\ N}_{\Phi, \Gamma, \Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/letVec}
+\]
+\[
+    \trans{M\!::\!N}_{\Phi, \Gamma, \Delta} = |\Phi|\mapsto \tikzfig{judgements/linear/vector}
+    \quad
+    \trans{\Qfor{k}{V}{M}}_{\Phi, \Gamma^n} = |\Phi| \mapsto \tikzfig{judgements/primitives/for}
+\]
+\[
+    \trans{\ifz{L}{M}{N}}_{\Phi, \Gamma} = |\Phi| \mapsto \tikzfig{judgements/linear/ifz}
+\]
+where $\delta$ is the Kronecker delta and $l = \natEval{L}(|\Phi|)$. Notice that
+the $\new$ and $\meas$ operations share the same translation. Although $\new$
+can be encoded as a simple wire, we keep the additional node to maintain the
+symmetry with the measurement.
+
+The unitary operators $U$ and rotations $R$ correspond to a predefined set of primitives,
+and their translation is defined on a by case basis.
+The following table shows the encoding of the operators used in this paper.
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    Name & Rz(n) & Rz$^{-1}$(n) & Rx(n) & Rx$^{-1}$(n) & H & CNOT \\
+    \hline
+    Encoding & $\tikzfig{judgements/unitaries/rz}$
+             & $\tikzfig{judgements/unitaries/rz-inv}$
+             & $\tikzfig{judgements/unitaries/rx}$
+             & $\tikzfig{judgements/unitaries/rx-inv}$
+             & $\tikzfig{judgements/unitaries/hadamard}$
+             & $\tikzfig{judgements/unitaries/cnot}$ \\
+    \hline
+\end{tabular}
+\end{center}
+
+The primitives $\Qsplit$, $\Qappend$, $\Qdrop$ and $\Qaccumap$ are translated below. 
+Since vectors are isomorphic to products in the wire encoding,
+the first three primitives do not perform any operation.
+For the accumulating map we utilize the construction presented in Lemma~\ref{lem:accumap},
+replacing the function box with a function vector input.
+In the latter we omit the wires and gathers connecting the inputs and outputs of the function
+to a single wire on the right of the diagram for clarity.
+\[
+    \trans{\Qsplit_A}_\Phi = n, m, |\Phi| \mapsto \tikzfig{judgements/primitives/split}
+    \quad
+    \trans{\Qappend_A}_\Phi = n, m, |\Phi| \mapsto \tikzfig{judgements/primitives/cons}
+\]
+\[
+    \trans{\Qdrop}_\Phi = n,|\Phi| \mapsto \tikzfig{judgements/primitives/drop}
+\]
+\[
+    \trans{\Qaccumap_{A,B,C}}_\Phi = n, |\Phi| \mapsto \tikzfig{judgements/primitives/accumap-new}
+\]
+where $\tau_{n,A,B,C}$ is a permutation that rearranges the vectors of functions into tensors of
+vectors for each parameter and return value.
+That is, $\tau_{n,A,B,C}$ reorders a sequence of registers $(A,C,B,C)\dots(A,C,B,C)$
+into the sequence $(A\dots A)(C\dots C)(B\dots B)(C\dots C)$.
+It is defined as follows,
+\[
+    \tau_{n,A,B,C}(i) = \begin{cases}
+        \imod{i}{k} + a * (\idiv{i}{k}) & \text{if } \imod{i}{k} < a \\
+        \imod{i}{k} + c * (\idiv{i}{k}) + a*(n-1) & \text{if } a \leq \imod{i}{k} < (a+c) \\
+        \imod{i}{k} + b * (\idiv{i}{k}) + (a+c)*(n-1) & \text{if } (a+c) \leq \imod{i}{k} < (a+c+b) \\
+        \imod{i}{k} + c * (\idiv{i}{k}) + (a+c+b)*(n-1) & \text{if } (a+c+b) \leq \imod{i}{k} \\
+    \end{cases}
+\]
+for $i \in [0,(a+c+b+c)*n)$,
+where mod and div are the integer modulo and division operators,
+$a = \trans{A}$, $b = \trans{B}$, $c = \trans{C}$,
+and $k = a+c+b+c$.
+
+As a consequence of Lemma~\ref{lem:list-instantiation-linear},
+the number of nodes in the produced diagrams grows linearly
+with the size of the input.
+Notice that the ZX spiders, the ground, and the Hadamard operator
+are only produced in the translations of the quantum primitives.
+We may instead have used other variations of the calculus
+supporting the scalable extension, such as the ZH calculus~\cite{Backens_2019},
+better suited for other sets of quantum operators.
+
+\begin{lemma}%
+    \label{lem:trans-reduction}
+    The translation procedure is correct in respect to the operational semantics of \lambdaD.
+    If $A$ is a translatable type, $\Phi, \Gamma \vdash M : A$, and $M \to N$,
+    then $\trans{M}_{\Phi,\Gamma} = \trans{N}_{\Phi,\Gamma}$.
+\end{lemma}

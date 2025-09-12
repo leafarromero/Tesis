@@ -1,0 +1,8 @@
+module Bug where
+import "lib/Prelude.dpq"
+
+compose' : ! forall a (n: Nat) -> Vec (a -> a) n -> a -> a
+compose' fs b =
+  case fs of
+    VNil -> b
+    VCons f fs' -> f (compose' fs' b)

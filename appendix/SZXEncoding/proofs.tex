@@ -1,0 +1,558 @@
+\section{Proofs}%
+\label{sec:proofs}
+
+\begin{lemma}{\!\textbf{(\ref{lem:accumap})}}
+    Let $g : 1_n \otimes 1_s \to 1_{m} \otimes 1_s$ and $k\geq 1$, then
+    \[
+        \tikzfig{szx/accumap}
+        \quad=\quad%
+        \tikzfig{szx/accumap-2}
+    \]
+\end{lemma}
+
+\begin{proof}
+    By induction on $k$.
+    If $k=1$,
+    \[
+        \tikzfig{proof/accumap-a-10}
+        \;\overset{\scriptstyle{\bf{(i1, \emptyset 1)}}}{=}\;
+        \tikzfig{proof/accumap-a-20}
+        \;\overset{\scriptstyle{\bf{(\emptyset 4)}}}{=}\;
+        \tikzfig{proof/accumap-a-30}
+    \]
+    If $k>1$,
+    \[
+        \tikzfig{proof/accumap-b-10}
+        \;\overset{\scriptstyle{def}}{=}\;
+        \tikzfig{proof/accumap-b-20}
+        \;\overset{\scriptstyle{\bf{(gs)}}}{=}\;
+        \tikzfig{proof/accumap-b-30}
+    \]
+    \[
+        \;=\;
+        \tikzfig{proof/accumap-b-40}
+        \;\overset{\scriptstyle{HI}}{=}\;
+        \tikzfig{proof/accumap-b-50}
+    \]
+\end{proof}
+
+\begin{lemma}{\!\textbf{(\ref{lem:list-instantiation})}}
+    For any diagram family $D$, $n_0 : \N$, $N : \N^k$,
+    \[
+        \tikzfig{szx/list-instantiation-append}
+        \;=\;
+        \tikzfig{szx/list-instantiation-append-split}
+    \]
+\end{lemma}
+
+\begin{proof}
+    By induction on the term construction
+    \begin{itemize}
+        \item If $\diag$ is a gather, 
+        \[
+            \tikzfig{proof/list-i-gather-10}
+            \;\overset{\scriptstyle{\bf{(p)}}}{=}\;
+            \tikzfig{proof/list-i-gather-20}
+        \]
+        \[
+            \;\overset{\scriptstyle{\bf{(sg,gs,p)}}}{=}\;
+            \tikzfig{proof/list-i-gather-30}
+        \]
+        \item The other cases can be directly derived from the commutation properties
+        of the gather generator via rules $(z1), (z2), (z3), (w)$, and $(p4)$.
+    \end{itemize}
+\end{proof}
+
+\begin{lemma}{\!\textbf{(\ref{lem:list-init-zero})}}
+    A diagram family initialized with the empty list corresponds to the empty map.
+    For any diagram family $D$,
+    \[
+        \tikzfig{szx/list-instantiation-empty}
+        \;=\;
+        \tikzfig{szx/list-instantiation-empty-flat}
+    \]
+\end{lemma}
+
+\begin{proof}
+    Notice that any wire in the initialized diagrams has cardinality zero.
+    By rules ${(\bf\emptyset 1)}$, ${(\bf\emptyset 2)}$, ${(\bf\emptyset 3)}$,
+    ${(\bf\emptyset 4)}$, and ${(\bf \emptyset w)}$
+    every internal node can be eliminated from the diagram.
+\end{proof}
+
+\begin{lemma}{\!\textbf{(\ref{lem:list-instantiation-linear})}}
+    The list instantiation procedure on an $n$-node diagram family adds
+    $\bigo(n)$ nodes to the original diagram.
+\end{lemma}
+
+\begin{proof}
+    By induction on the term construction.
+    Notice that the instantiation of any term except the gather
+    does not introduce any new nodes, and the gather introduction
+    creates exactly one extra node.
+    Therefore, the list instantiation adds a number of nodes equal to
+    the number of gather generators in the diagram.
+\end{proof}
+
+\begin{lemma}%
+    \label{lem:eval-substitution}
+    Given type judgements $\Phi, x:A \vdash M : B$, and $\Phi\vdash N : A$. $\natEval{M}_{x:A,\Phi} (\natEval{N}_{\Phi},|\Phi|)= \natEval{M[N/x]}_\Phi($ $|\Phi|$ $)$.
+\end{lemma}
+
+\begin{proof}
+Proof by straightforward induction on $M$.
+\end{proof}
+
+\begin{lemma}{\!\textbf{(\ref{lem:eval-type})}}
+    Given an evaluable type $A$ and a type judgement $\Phi \vdash M : A$,
+    $\natEval{M}_\Phi \in \bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
+\end{lemma}
+
+\begin{proof}
+    By induction on the typing judgement $\Phi \vdash M : A$:
+    \begin{itemize}
+        \item If $\Phi\vdash n:\nat$, then $\natEval{n}_\Phi = |\Phi| \mapsto n \in  \bigtimes_{x:P \in \Phi} \natEval{P} \to \N$.
+
+        \item If $\Phi, x:A\vdash x:A$, then $\natEval{x}_{x:A, \Phi} = x,|\Phi| \mapsto x \in \bigtimes_{y:P \in x:A,\Phi} \natEval{P} \to \natEval{A}$.
+
+        \item If $\Phi\vdash M\square N:\nat\Phi,\Gamma,\Delta\vdash M\!::\!N\ :\typeVec{A}{(n+1)}$, then $\natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square$
+        $\natEval{N}_\Phi($ $|\Phi|$ $)$. By inductive hypothesis, $\natEval{M}_\Phi(|\Phi|), \natEval{M}_\Phi(|\Phi|)\in \N$. Then,
+        $|\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\in \bigtimes_{x:P \in \Phi} \natEval{P} \to \N$.
+        
+        \item If $\Phi\vdash\lambda' x.M:(x:P)\to B$ then $\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)$. By inductive hypothesis, $\natEval{M}_\Phi(x,|\Phi|)\in \natEval{B}$. Then, $|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\in \bigtimes_{y:P \in x:P\Phi} \natEval{P} \to \natEval{B}$.
+
+        \item If $\Phi,\Gamma\vdash M @ N:B[x/r]$, then $\natEval{M @ N}_\Phi = |\Phi| \mapsto\natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)$. By inductive hypothesis, $\natEval{N}_\Phi(|\Phi|)\in \N$ and $x\mapsto\natEval{M}_\Phi(x, \Phi)\in \natEval{x:\nat\to B[x]}$. Then, $|\Phi|\mapsto\natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi) \in \bigtimes_{y:P \in \Phi} \natEval{P} \to \natEval{B[A/x]}$.
+
+        \item If $\Phi\vdash \vnil^A:\typeVec A 0$, then $\natEval{\vnil^P}_{\Phi} = |\Phi| \mapsto []\in \bigtimes_{x:P \in \Phi} \natEval{P} \to \N^0$.
+
+        \item If $\Phi,\Gamma,\Delta\vdash M\!::\!N\ :\typeVec{A}{(n+1)}$, then $\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)$. By inductive hypothesis ${M}_\Phi(|\Phi|)\in\natEval{A}$ and $\natEval{N}_\Phi(|\Phi|)\in\natEval{A}^n$. Then, $|\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)\in\bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}^{n+1}$.
+
+        \item If $\Phi, \Gamma \vdash \ifz{L}{M}{N} : A$, then \\
+        $\natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto \begin{cases}
+            \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{L}_\Phi(|\Phi|) = 0 \\
+            \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
+        \end{cases}.$
+
+        By inductive hypothesis $\natEval{m}_\Phi(|\Phi|),\natEval{N}_\Phi(|\Phi|)\in\natEval{A}$ and $\natEval{L}_\Phi(|\Phi|)\in\N$. \\
+        Then $\natEval{\ifz{L}{M}{N}}_\Phi\in\bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
+
+        \item If $\Phi\vdash \Qfor{k}{N}{M} : \typeVec A n$, then
+        $\natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes_{k\in
+        \natEval{N}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k,$ $|\Phi|)$.
+        By induction hypothesis, $\natEval{N}_\Phi(|\Phi|)\in \nat^n$ and
+        $x\mapsto\natEval{M}_\Phi(x, \Phi)\in \natEval{k:\nat\to A[k]}$. Then $|\Phi|
+        \mapsto \bigtimes_{k\in \natEval{N}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k,
+        |\Phi|)\in\bigtimes_{x:P \in \Phi} \natEval{P} \to\natEval{A[k/N]}^n$.
+
+        \item If $\Phi\vdash \Qlet{x^B : y^{\typeVec B n}}{M}{N}:A$, then
+        $\natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi =$\allowbreak
+        $|\Phi|\mapsto$ \\
+        $ \natEval{N}_{x:P, y:\typeVec{P}{n}\Phi}(y_1,[y_2,\dots,y_n],|\Phi|)$
+        where $[y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)$.
+        
+        By inductive hypothesis
+        $\natEval{M}_\Phi(|\Phi|)\in \natEval{B}^n$ and $\natEval{N}_{x:P, y:\typeVec{P}{n}
+        \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\in\natEval{A}$. Then $|\Phi|\mapsto
+        \natEval{N}_{x:P, y:\typeVec{P}{n}
+        \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\in\bigtimes_{x:P \in \Phi} \natEval{P}
+        \to \natEval{A}$.
+
+        \item If $\Phi\vdash \Qrange : (n:\nat)\to (m:\nat)\to \typeVec{\nat}{(m-n)}$, then $\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes_{i=n}^{m-1} i\in \bigtimes_{z:P \in x:\nat,y:\nat,\Phi} \natEval{P} \to \N^{m-n}$
+    \end{itemize}
+\end{proof}
+
+\begin{lemma}{\!\textbf{(\ref{lem:eval-reduction})}}
+    Given an evaluable type $A$,
+    a type judgement $\Phi \vdash M : A$, and $M \to N$, then $\natEval{M}_\Phi = \natEval{N}_\Phi$.
+\end{lemma}
+
+\begin{proof}
+    By induction on the evaluation function $\natEval{M}_\Phi$:
+    \begin{itemize}
+        \item If $M=x$, $M=n$, $M=\vnil^\nat$, $M=\lambda'x. M'$, $M= M_1\ ::\ M_2$ or $M=\Qrange$ then $M$ is in normal form and it does not reduce.
+        
+        \item If $M = M_1\square M_2$ we have three cases:
+        \begin{itemize}
+            \item If $M\to M_1\square N$ with $M_2\to N$, then: 
+            \begin{align*}
+            \natEval{M_1 \square M_2}_\Phi &= |\Phi| \mapsto \natEval{M_1}_\Phi(|\Phi|) \square \natEval{M_2}_\Phi(|\Phi|)\\ 
+            &= |\Phi| \mapsto \natEval{M_1}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\\
+            &= \natEval{M_1 \square N}_\Phi\\
+            \end{align*}
+
+            \item If $M\to N\square V$ with $M_1\to N$, then: 
+            \begin{align*}
+            \natEval{M_1 \square V}_\Phi &= |\Phi| \mapsto \natEval{M_1}_\Phi(|\Phi|) \square \natEval{V}_\Phi(|\Phi|)\\ 
+            &= |\Phi| \mapsto \natEval{N}_\Phi(|\Phi|) \square \natEval{V}_\Phi(|\Phi|)\\
+            &= \natEval{N \square V}_\Phi\\
+            \end{align*}
+
+            \item If $M\to n$ with $M_i = n_i\in\mathbb{N}$ and $n= n_1\square n_2$, then: 
+            \begin{align*}
+            \natEval{n_1 \square n_2}_\Phi &= |\Phi| \mapsto \natEval{n_1}_\Phi(|\Phi|) \square \natEval{n_2}_\Phi(|\Phi|)\\ 
+            &= |\Phi| \mapsto n_1\square n_2\\
+            &= |\Phi| \mapsto n\\
+            &= \natEval{n}_\Phi 
+            \end{align*}
+        \end{itemize}
+
+        \item If $M= M_1\ @\ M_2$ we have three cases:
+        \begin{itemize}
+            \item If $M\to M_1\ @\ N$ with $M_2\to N$, then: 
+            \begin{align*}
+            \natEval{M_1\ @\ M_2}_\Phi &= |\Phi| \mapsto \natEval{M_1}_\Phi(\natEval{M_2}_\Phi(|\Phi|), \Phi)\\
+            &= |\Phi| \mapsto \natEval{M_1}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)\\
+            &= \natEval{M_1\ @\ N}_\Phi
+            \end{align*}
+
+            \item If $M\to N\ @\ V$ with $M_1\to N$, then: 
+            \begin{align*}
+            \natEval{M_1\ @\ V}_\Phi &= |\Phi| \mapsto \natEval{M_1}_\Phi(\natEval{V}_\Phi(|\Phi|), \Phi)\\
+            &= |\Phi| \mapsto \natEval{M_1}_\Phi(\natEval{V}_\Phi(|\Phi|), \Phi)\\
+            &= \natEval{N\ @ V}_\Phi
+            \end{align*}
+
+            \item If $M\to M'[V/x]$ with $M_1 = \lambda' x.M'$ and $M_2 = V$, then: 
+            \begin{align*}
+            \natEval{(\lambda' x.M)@ V}_\Phi &= |\Phi| \mapsto \natEval{\lambda' x.M}_\Phi(\natEval{V}_\Phi(|\Phi|), \Phi)\\
+            &= |\Phi| \mapsto (x,|\Phi| \mapsto \natEval{M}_{x,\Phi}(x,|\Phi|)) (\natEval{V}_\Phi(|\Phi|), \Phi)\\ 
+            &= |\Phi| \mapsto \natEval{M[V/X]}_\Phi(|\Phi|)\\
+            &= \natEval{M[V/X]}_\Phi
+            \end{align*}
+        \end{itemize}
+
+        \item If $M = \ifz{M'}{L}{R}$ we have three cases:
+        \begin{itemize}
+            \item If $M\to \ifz{N}{L}{R}$ with $M'\to N$, then: 
+            \begin{align*}
+                \natEval{\ifz{M'}{L}{R}}_\Phi &= |\Phi| \mapsto 
+                    \begin{cases}
+                    \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{M'}_\Phi(|\Phi|) = 0 \\
+                    \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
+                    \end{cases}\\
+                &= |\Phi| \mapsto 
+                \begin{cases}
+                \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{M'}_\Phi(|\Phi|) = 0 \\
+                \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
+                \end{cases}\\
+                &= \natEval{\ifz{N}{L}{R}}_\Phi
+            \end{align*}
+
+            \item If $M\to L$ with $M'= 0$, then: 
+            \begin{align*}
+                \natEval{\ifz{M'}{L}{R}}_\Phi &= |\Phi| \mapsto 
+                \begin{cases}
+                \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{M'}_\Phi(|\Phi|) = 0 \\
+                \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
+                \end{cases}\\
+            &= |\Phi| \mapsto \natEval{L}_\Phi(|\Phi|)\\
+            &= \natEval{L}_\Phi
+            \end{align*}
+
+            \item The symmetric case for the else branch is similar to the previous one.
+        \end{itemize}
+
+        \item If $M = \Qfor{k}{M'}{R}$ we have three cases:
+        \begin{itemize}
+            \item If $M\to \Qfor{k}{N}{R}$ with $M'\to N$, then: 
+            \begin{align*}
+                \natEval{\Qfor{k}{M'}{R}}_\Phi &= |\Phi| \mapsto \bigtimes_{k\in \natEval{M'}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \bigtimes_{k\in \natEval{N}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= \natEval{\Qfor{k}{N}{R}}_\Phi
+            \end{align*}
+
+            \item If $M\to R[k/M_1]\ : \Qfor{k}{M_2}{R}$ with $M' = V::L$, then: 
+            \begin{align*}
+                \natEval{\Qfor{k}{M_1\ ::\ M_2}{R}}_\Phi &= |\Phi| \mapsto \bigtimes_{k\in \natEval{M_1\ ::\ M_2}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \bigtimes_{k\in \natEval{M_1}_\Phi(|\Phi|) \times \natEval{M_2}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \natEval{R}_{k,\Phi}(\natEval{M_1}_\Phi(|\Phi|), |\Phi|) \times \bigtimes_{k\in \natEval{M_2}_\Phi(|\Phi|} \natEval{R}_{k,\Phi}(k, |\Phi|)\\
+                &= \natEval{R[M_1/k]}_{\Phi} \times \natEval{\Qfor{k}{M_2}{R}}_\Phi\\
+                &= \natEval{R[M_1/k]\ ::\ \Qfor{k}{M_2}{R}}_\Phi\\
+            \end{align*}
+
+            \item If $M\to \vnil$ with $M' = \vnil^\nat$, then: 
+            \begin{align*}
+                \natEval{\Qfor{k}{\vnil^\nat}{R}}_\Phi &= |\Phi| \mapsto \bigtimes_{k\in \natEval{\vnil^\nat}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \bigtimes_{k\in []} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto []\\
+                &= \natEval{\vnil^\nat}_\Phi
+            \end{align*}
+        \end{itemize}
+
+        \item If $M = \Qlet{x::y}{M_1}{M_2}$ we have two cases:
+        \begin{itemize}
+            \item If $M\to \Qlet{x::y}{N}{M_2}$ with $M_1\to N$, then: 
+            \begin{align*}
+            \natEval{\Qlet{x::y}{M_1}{M_2}}_\Phi &= |\Phi|\mapsto \natEval{M_2}_\Phi(y_1,[y_2,\dots,y_n],|\Phi|){\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{M_1}_\Phi(|\Phi|)}}\\
+            &= |\Phi|\mapsto 
+            \natEval{M_2}_\Phi(y_1,[y_2,\dots,y_n],|\Phi|)
+        {\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{N}_\Phi(|\Phi|)}}\\
+            &= \natEval{\Qlet{x::y}{N}{M_2}}_\Phi
+            \end{align*}
+
+            \item If $M\to N[x/M_1][y/M_2]$ with $M' = M_1::M_2$, then: 
+            \begin{align*}
+                \natEval{\Qfor{k}{M_1\ ::\ M_2}{N}}_\Phi &= |\Phi|\mapsto \natEval{N}_{x,y,\Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\\
+                &= |\Phi|\mapsto \natEval{N}_{x,y,\Phi}(M_1, M_2,|\Phi|)\\
+                &= |\Phi|\mapsto \natEval{N[M_1/x][M_2/y]}_\Phi(|\Phi|)\\
+                &= \natEval{N[M_1/x][M_2/y]}_\Phi
+            \end{align*}
+            where $[y_1,\dots,y_n] = \natEval{M_1::M_2}_\Phi(|\Phi|)$.
+        \end{itemize}
+
+        \item If $M= \Qrange\ @n\ @M_2$ then:
+        \begin{align*}
+            \natEval{\Qrange @n @m}_\Phi &= |\Phi| \mapsto \bigtimes_{i=n}^{m-1} i\\
+            &=|\Phi| \mapsto \begin{cases}
+                [] \text{ if } n-m = 0 \\
+                n\times \bigtimes_{i=n+1}^{m-1} i \text{ otherwise}
+            \end{cases}\\
+            &=|\Phi| \mapsto \begin{cases}
+                [] \text{ if } \natEval{n-m}_\Phi = 0 \\
+                \natEval{n}_\Phi\times \natEval{\Qrange @(n+1) @ m)} \text{ otherwise}
+            \end{cases}\\
+            &= \natEval{\ifz{m-n}{\vnil}{n\ :: \Qrange\ @(n+1)\ @m}}_\Phi
+        \end{align*}
+    \end{itemize}
+\end{proof}
+
+\begin{lemma}{\!\textbf{(\ref{lem:trans-reduction})}}
+    The translation procedure is correct in respect to the operational semantics.
+    If $A$ is a translatable type, $\Phi, \Gamma \vdash M : A$, and $M \to N$,
+    then $\trans{M}_{\Phi,\Gamma} = \trans{N}_{\Phi,\Gamma}$.
+\end{lemma}
+
+\begin{proof}
+    By case analysis on the reductions of translatable terms.
+    \begin{itemize}
+        \item If $M = (\lambda x^A.M')V$ and $N=M'[V/x]$,
+            \[
+                \trans{(\lambda x^A.M')V}_{\Phi,\Delta,\Gamma}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-apply-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{\bf{(gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-apply-20}
+                =
+                \trans{M'[V/x]}_{\Phi,\Delta,\Gamma}
+            \]
+        \item If $M = (\lambda' x^A.M')@V$ and $N=M'[V/x]$,
+            \[
+                \trans{(\lambda' x^A.M')@V}_{\Phi,\Gamma}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-applyP-10}
+            \]
+            \[
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-applyP-20}
+                =
+                \trans{M'[V/x]}_{\Phi,\Gamma}
+            \]
+        \item If $M = \Qlet{x^A\otimes y^B}{V_1 \otimes V_2}{M'}$ and $N=M'[V_1/x][V_2/y]$,
+            \[
+                \trans{\Qlet{x^A\otimes y^B}{V_1 \otimes V_2}{M'}}_{\Phi,\Gamma,\Delta,\Lambda}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-let-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{\bf{(gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-let-20}
+                =
+                \trans{M'[V_1/x][V_2/y]}_{\Phi,\Delta,\Gamma,\Lambda}
+            \]
+        \item If $M = \Qlet{x^A :: y^{\typeVec{A}{n}}}{V_1 :: V_2}{M'}$ and $N=M'[V_1/x][V_2/y]$,
+            \[
+                \trans{\Qlet{x^A :: y^{\typeVec{A}{n}}}{V_1 :: V_2}{M'}}_{\Phi,\Gamma,\Delta,\Lambda}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-letVec-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{\bf{(gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-letVec-20}
+                =
+                \trans{M'[V_1/x][V_2/y]}_{\Phi,\Delta,\Gamma,\Lambda}
+            \]
+        \item If $M = \ifz{L}{M'}{N'}$,
+            \begin{itemize}
+                \item if $L=0$ and $N = M'$, $\natEval{L}_\Phi = 0$ and
+                    \[
+                        \trans{\ifz{L}{M'}{N'}}_{\Phi,\Gamma}
+                        =
+                        |\Phi|\mapsto\tikzfig{proof/trans-reduct-ifz-10}
+                    \]
+                    \[
+                        \;\overset{\scriptstyle{Lemma~\ref{lem:list-init-zero}}}{=}\;
+                        |\Phi|\mapsto\tikzfig{proof/trans-reduct-ifz-20}
+                        \;\overset{\scriptstyle{\bf{(\emptyset 4)}}}{=}\;
+                        |\Phi|\mapsto\tikzfig{proof/trans-reduct-ifz-30}
+                        =
+                        \trans{M'}_{\Phi,\Gamma}
+                    \]
+                \item The case where $L>0$ and $N = N'$ is symmetric to the case above.
+            \end{itemize}
+        \item If $M = \vnil;M'$ and $N=M'$,
+            \[
+                \trans{\vnil;_v M'}_{\Phi,\Gamma}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-then-10}
+                =
+                \trans{M'}_{\Phi,\Gamma}
+            \]
+        \item If $M = \star;M'$ and $N=M'$,
+            \[
+                \trans{\star;M'}_{\Phi,\Gamma}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-then-10}
+                =
+                \trans{M'}_{\Phi,\Gamma}
+            \]
+        \item If $M = \Qfor{k}{V :: M'}{N'}$ and $N=N'[k/V]::\Qfor{k}{M'}{N'}$,
+            \[
+                \trans{\Qfor{k}{V :: M'}{N'}}_{\Phi,\Gamma^{\otimes n}}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-for-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{\text{Lemma~\ref{lem:list-instantiation}}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-for-20}
+                =
+                \trans{N'[k/V]::\Qfor{k}{M'}{N'}}_{\Phi,\Gamma^{\otimes n}}
+            \]
+        \item If $M = \Qfor{k}{\vnil}{N'}$ and $N=\vnil$,
+            \[
+                \trans{\Qfor{k}{\vnil}{N'}}_{\Phi}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-forNil-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-forNil-20}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-forNil-30}
+                =
+                \trans{\vnil}_{\Phi}
+            \]
+        \item If $M = \Qaccumap_{A,B,C}\ N'\ M_{xs}\ M_{fs}\ M_{z}$ and \(N=
+                \ifz{N'}{xs\ ;_v\ fs\ ;_v\ \vnil\otimes M_z}{}$\\
+                $\Qlet{x :: xs'}{M_{xs}}{} \Qlet{f :: fs'}{M_{fs}}{}
+                \Qlet{y\otimes z'}{f\ x\ z}{}
+                \mathtt{let\ } ys \otimes z'' = \Qaccumap\ @(N'-1)\ xs'\ fs'\ z'
+                \mathtt{\ in\ } (y :: ys) \otimes z''
+            \). Let $n = \natEval{N_1}_\Phi(|\Phi|)$.
+
+            Notice that, by definition of $\tau_{n,A,B,C}$,
+            \[
+                \tikzfig{proof/tau-n}
+                \;\overset{\scriptstyle{{\bf(p)}}}{=}\;
+                \tikzfig{proof/tau-n1}
+            \]
+
+            Therefore,
+
+            \(
+                \trans{\Qaccumap_{A,B,C}\ N'\ M_{xs}\ M_{fs}\ M_{z}}_{\Phi,\Gamma,\Delta,\Pi}
+            \)
+            \[
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-accumap-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(p,gs,sg)}}}{=}\;
+                |\Phi|\mapsto\scalebox{0.95}{\tikzfig{proof/trans-reduct-accumap-20}}
+            \]
+            \(
+                =
+                \llbracket
+                    \ifz{N'}{xs\ ;_v\ fs\ ;_v\ \vnil\otimes M_z}{}
+                    \Qlet{x :: xs'}{M_{xs}}{} \Qlet{f :: fs'}{M_{fs}}{}
+                    \mathtt{let\ } y\otimes z' = f\ x\ z \mathtt{\ in\ }
+                    \Qlet{ys \otimes z''}{\Qaccumap\ @(N'-1)\ xs'\ fs'\ z'}{}
+                    (y :: ys) \otimes z''
+                \rrbracket_{\Phi,\Gamma,\Delta,\Pi}
+            \)
+
+        \item If $M = \Qsplit_A\ @n\ @m\ xs$ and \(N=
+            \ifz{n}{\vnil\otimes xs}{}
+            \Qlet{y :: xs'}{xs}{}
+            \mathtt{let\ } ys_1\otimes ys_2 = \Qsplit @(n-1)\ @m\ xs' \mathtt{\ in\ }
+            (y :: ys_1)\otimes ys_2
+            \). Let $n = \natEval{N_1}_\Phi(|\Phi|)$ and $m = \natEval{N_2}_\Phi(|\Phi|)$.
+            \[
+                \trans{\Qsplit_A\ @n\ @m\ xs}_{\Phi,\Gamma}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-10}
+                \;\overset{\scriptstyle{{\bf(sg,gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-20}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-30}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(sg,gs,\emptyset 4)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-40}
+            \]
+            \(
+                =
+                \llbracket
+                    \ifz{n}{\vnil\otimes xs}{}
+                    \Qlet{y :: xs'}{xs}{}
+                    \Qlet{ys_1\otimes ys_2}{\Qsplit @(n-1)\ @m\ xs'}{}
+                    (y :: ys_1)\otimes ys_2
+                \rrbracket_{\Phi,\Gamma}
+            \)
+        \item If $M = \Qappend_A\ @N_1\ @N_2\ M_1\ M_2$ and \(N=
+            \ifz{N_1}{M_1\ ;_v\ M_2}{}
+            \Qlet{x :: xs'}{M_1}{}
+            x :: (\Qappend\ @(N_1-1)\ @N_2\ M_1\ M_2)
+            \). Let $n = \natEval{N_1}_\Phi(|\Phi|)$ and $m = \natEval{N_2}_\Phi(|\Phi|)$.
+            \[
+                \trans{\Qappend_A\ @N_1\ @N_2\ M_1\ M_2}_{\Phi,\Gamma,\Delta}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-10}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-20}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(sg,gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-30}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(i1, \emptyset 1, \emptyset 4, sg, gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-40}
+            \]
+            \(
+                =
+                \left\llbracket\ifz{N_1}{M_1\ ;_v\ M_2}{}
+                    \Qlet{x :: xs'}{M_1}{}
+                    x :: (\Qappend\ @(N_1-1)\ @N_2\ M_1\ M_2\right
+                \rrbracket_{\Phi,\Gamma,\Delta}
+            \)
+        \item If $M = \Qdrop\ @N'\ M'$ and \(N=
+            \ifz{N'}{M'\ ;\ \star}{} \Qlet{x :: xs'}{M'}{} x\ ;\ \Qdrop\ @(N'-1)\ xs'
+            \). Let $l = \natEval{N'}_\Phi(|\Phi|)$,
+            \[
+                \trans{\Qdrop\ @N'\ M'}_{\Phi,\Gamma}
+                =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-10}
+                \;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-20}
+            \]
+            \[
+                \;\overset{\scriptstyle{{\bf(z3,\emptyset 4)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-30}
+            \]
+            \[
+                =
+                \trans{\ifz{N'}{M'\ ;\ \star}{\Qlet{x :: xs'}{M'}{x\ ;\ \Qdrop\ @(N'-1)\ xs'}}}_{\Phi,\Gamma}
+            \]
+        \item If $M \to N$ is an internal reduction of a translatable term,
+            then the diagrams result equivalent via the inductive hypothesis.
+        \item If $M \to N$ is an internal reduction of an evaluable term,
+            then the diagrams result equivalent via the inductive hypothesis
+            and Lemma~\ref{lem:eval-reduction}.
+    \end{itemize}
+\end{proof}

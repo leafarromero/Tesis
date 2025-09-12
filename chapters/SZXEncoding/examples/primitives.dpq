@@ -1,0 +1,65 @@
+module Primitives where
+import "/dpq/Prelude.dpq"
+
+foreach : ! forall a b (n : Nat)
+  -> (Parameter a) => !(a -> b) -> Vec a n -> Vec b n
+foreach f l = map f l
+
+split : ! forall a (n : Nat) (m: Nat) -> Vec a (n+m) -> Vec a n * Vec a m
+split n m v =
+  case v of 
+    VNil -> (VNil, VNil)
+    VCons x v' ->
+      case n of
+        Z -> (VNil, v)
+        S n' ->
+          let (v1, v2) = split n' m v'
+          in (VCons x v1, v2)
+
+cons : ! forall a (n : Nat) (m: Nat) -> Vec a n -> Vec a m -> Vec a (n+m)
+cons n m vn vm =
+  case vn of
+    VNil -> VNil
+    VCons x vn' -> x : cons n m vn' vm
+
+accuMap : ! forall a b c (n : Nat)
+  -> Vec a n -> Vec (a -> c -> (b,c)) n -> c -> (Vec b n, c)
+accuMap n v fs z =
+  case v of 
+    VNil -> (VNil, z)
+    VCons x v' ->
+      case n of
+        S n' ->
+          let (y, z') = f x z
+          in (VCons y accuMap n' v' f z', z')
+
+mapp : ! forall a b (n : Nat) -> Vec a n -> Vec (a -> b) n -> Vec b n
+mapp n v f =
+  let (v', _) = accuMap n v (\x z -> (f x, z)) VNil
+  in v'
+
+fold : ! forall a b (n : Nat) -> Vec a n -> Vec (a -> b -> b) n -> b -> b
+fold n v f z =
+  let (_, z') = accuMap n v (\x z -> (VNil, f x z)) z
+  in z'
+
+compose : ! (n : Nat) -> Vec (a -> a) n -> a -> a
+compose n fs x = fold fs (replicate n (\f x -> f x)) x
+
+range_aux : ! (n : Nat) -> (m : Nat) -> Nat -> Vec Nat (minus m n)
+range_aux n m x =
+  case m of 
+    Z -> VNil
+    S m' -> case n of
+              Z -> let r' = range_aux Z m' (S x)
+                   in subst (\x -> Vec Nat x) (minusSZ' m') (VCons x r')
+              S n' -> range_aux n' m' (S x)
+
+range : ! (n : Nat) -> (m : Nat) -> Vec Nat (minus m n)
+range n m = range_aux n m Z
+
+drop : ! (n : Nat) -> Vec Unit n -> Unit
+drop n v = case n of
+            Z -> ()
+            S n' -> case v of
+                      VCons _ v' -> drop n' v'

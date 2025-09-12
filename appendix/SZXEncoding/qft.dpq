@@ -1,0 +1,44 @@
+module Qft where
+import "/dpq/Prelude.dpq"
+
+crot : ! (n : Nat) -> Qubit * Qubit -> Qubit * Qubit
+crot n q = let (q',c) = q in flip $ R n q' c
+
+-- Specify types to help the typechecker
+applyCrot_aux : ! (n : Nat) -> Qubit -> Qubit -> Qubit * Qubit
+applyCrot_aux n ctrl q = crot n (q, ctrl)
+
+-- Apply a CROT sequence to a qubit register, ignoring the first k qubits.
+applyCrot : ! (n k : Nat) -> Vec Qubit n -> Vec Qubit n
+applyCrot n k qs =
+  let WithEq r e = inspect (minus n k)
+  in case r of
+      Z -> qs
+      S n' ->
+        let
+          -- e : Eq Nat (S n') (minus n k)
+          -- e' : Eq Nat (add k (S n')) n
+          e' = trans (symAdd k (S n')) $ minusPlus n n' k $ sym (minus n k) e
+          -- qs' : Vec Qubit (minus n k)
+          qs' = subst (\m -> Vec Qubit m) (sym (add k (S n')) e') qs
+          (head, qs') = split k (S n') $ qs'
+          (q,ctrls) = chop qs'
+          -- fs : Vec (Qubit -> Qubit -> Qubit * Qubit) (minus n' Z)
+          fs = foreach (\k -> applyCrot_aux (S(S k))) $ 0..n'
+          -- fs : Vec (Qubit -> Qubit -> Qubit * Qubit) Z
+          eq = sym n' $ minusZ n'
+          fs = subst (\m -> Vec (Qubit -> Qubit -> Qubit * Qubit) m) eq fs
+          (ctrls', q') = accumap fs (H q) ctrls
+        in subst (\m -> Vec Qubit m) e' $ append head (VCons q' ctrls')
+
+-- Required for the type checker to derive the second !
+qft_aux : ! (n : Nat) -> ! (k : Nat) -> Vec Qubit n -> Vec Qubit n
+qft_aux n head_size qs = applyCrot n head_size qs
+
+qft : ! (n : Nat) -> Vec Qubit n -> Vec Qubit n
+qft n qs = let f = qft_aux n in compose' (foreach f $ reverse_vec (0..n)) qs
+
+qft_box : ! (n : Nat) -> Circ(Vec Qubit n, Vec Qubit n)
+qft_box n = boxCirc $ \ x -> qft n x
+
+main = qft_box nine

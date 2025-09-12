@@ -1,0 +1,79 @@
+\section{Application example: QFT}%
+\label{sec:qft-example}%
+
+The Quantum Fourier Transform is an algorithm used extensively in quantum computation,
+notably as part of Shor's algorithm for integer factorization~\cite{nielsen_chuang_quantum_programming}.
+The QFT function operates generically over $n$-qubit states and in general a circuit encoding of it
+requires $\bigo(n^2)$ gates.
+In this section we present an encoding of the algorithm as a \lambdaD\ term,
+followed by the translation into a family of constant-sized diagrams.
+The corresponding Proto-Quipper-D program is listed in Appendix~\ref{sec:qft-code}.
+
+The following presentation divides the algorithm into three parts.
+The \textit{crot} term applies a controlled rotation over a qubit with a parametrized angle.
+\textit{apply\_crot} operates over the last $n-k$ qubits of an $n$-qubit state
+by applying a Hadamard gate to the first one and then using it as target
+of successive \textit{crot} applications using the rest of the qubits as controls.
+Finally, \textit{qft} repeats \textit{apply\_crot} for all values of $k$.
+In the terms, we use $n\dots m$ as a shorthand for $\Qrange\ @n\ @m$.
+\\
+
+{
+   \setlength{\parindent}{0pt}
+
+   \(
+      \text{crot}: (n:\nat)\to (\qubit\otimes\qubit)\multimap (\qubit\otimes\qubit)
+   \)\\
+   \(
+     \text{crot}:= \lambda' n^{\nat}.\lambda qs^{\qubit \otimes \qubit}.
+       \Qlet{c^\qubit \otimes q^\qubit}{qs}{}
+       \Qlet{c^\qubit \otimes q^\qubit}{\mathtt{CNOT}\ c\ (\mathtt{Rz}\ @2^n\ q)}{}
+       \mathtt{CNOT}\ c\ (\mathtt{Rz^{-1}}\ @2^n\ q)
+   \)\\
+
+   \(
+      \text{apply\_crot}: (n:\nat) \to (k:\nat) \to \typeVec{\qubit}{n} \multimap \typeVec{\qubit}{n}
+   \)%
+   %\vspace*{-1em}
+   \begin{flalign*}
+      \text{apply\_crot}:=\ & \lambda' n^\nat.\ \lambda' k^\nat.\ \lambda qs^{\typeVec{\qubit}{n}}. & \\
+      & \ifz{(n-k)}{qs}{}\\
+      & \Qlet{h^{\typeVec{\qubit}{k}}\otimes qs'^{\ \typeVec{\qubit}{n-k}}}
+         {\Qsplit\ @k\ @(n-k)\ qs}{}\\
+      & \Qlet{q^\qubit \otimes cs^{\typeVec{\qubit}{n-k-1}}}
+         {qs'}{}\\
+      & \Qlet{fs^{\typeVec{(\qubit\otimes\qubit\multimap\qubit\otimes\qubit)}{(n-k-1)}}}
+         {\Qfor{m^\nat}{2..(n-k+1)}{\text{crot }@m}}{\!\!}\\
+      & \Qlet{cs'^{\ (\typeVec{\qubit}{n-k-1})}\otimes q'^{\ \qubit}}
+         {\Qaccumap\ fs\ (H\ q)\ cs}{}\\
+      & \text{concat } h\ (q': cs')
+   \end{flalign*}
+
+   \(
+      \text{qft}: (n:\nat) \to \typeVec{\qubit}{n}\multimap\typeVec{\qubit}{n}
+   \) %
+   %\vspace*{-1em}
+   \begin{flalign*}
+      \text{qft} :=\ & \lambda' n^\nat.\lambda qs^{\typeVec{\qubit}{n}}.
+         \Qcompose & \\
+         & (\Qfor{k^\nat}{\text{reverse\_vec } @(0..n)}
+         {\lambda qs'^{\ \typeVec{\qubit}{n}}.\text{apply\_crot } @n\ @k\ qs'})\ qs
+   \end{flalign*}
+}
+
+The translation of each term into a family of diagrams is shown below.
+We omit the wire connecting the function inputs to the right side
+of the graphs for clarity and eliminate superfluous gathers and splitters
+using rules $\mathbf{(sg)}$ and $\mathbf{(gs)}$.
+Notice that, in contrast to a quantum circuit encoding,
+the resulting diagram's size does not depend on the number of qubits $n$.
+
+\[
+   \trans{\text{crot}}=\ n \mapsto \tikzfig{examples/qft-crot}
+\]
+\[
+   \trans{\text{apply\_crot}}=\ n,k \mapsto \tikzfig{examples/qft-applycrot}
+\]
+\[
+   \trans{\text{qft}}=\ n \mapsto \tikzfig{examples/qft-main}
+\]
