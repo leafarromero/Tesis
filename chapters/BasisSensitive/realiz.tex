@@ -127,6 +127,10 @@ The only thing left would be to check that our type algebra captures sets of val
   
 \end{proof}
 
+Defining types as sets of values induces, at the same time, an intuitive way to define a subtyping relationship. We say a type $A$ is subtype of a type $B$ (Noted $A\leq B$) if the set of realizers of $A$ is included in the set of realizers of $B$ ($\{\real A\}\subseteq\{\real B\}$). If the sets coincide, we say that $A$ is isomorphic to $B$ (Noted $A\cong B$). 
+
+{\color{red} AGREGAR EJEMPLOS DE SUBTIPADO E ISOMORFISMO}
+
 Although, every type is defined by norm 1 value distributions, not every norm 1 distribution belongs to a type. Take for example the distribution $\frac{1}{\sqrt{2}} (\ket{0} + \Pair{\ket{0}}{\ket 0})$. Another case is a linear combination of abstractions with different bases. For example, the term:
 
 \[
@@ -134,8 +138,6 @@ Although, every type is defined by norm 1 value distributions, not every norm 1 
 \]
 
 Is not a member of an arrow type, since the bases decorating each abstraction do not match. However, it is computationally equivalent to the abstraction $(\Lam{x}{\B}{\ket{+}})$ which belongs to the set $\sem{\basis{\B}\Arr\basis{\XB}}$.
-
-{\color{red} PONER ACÁ LA RELACIÓN DE SUBTIPADO}
 
 \subsection{Characterization of unitary operators}
 

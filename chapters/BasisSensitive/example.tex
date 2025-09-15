@@ -84,4 +84,20 @@ A notable example of an algorithm which makes use of classical controlled gates 
 
 {\color{red} QUANTUM TELEPORTATION DIAGRAM}
 
-The algorithm first 
+The algorithm first encodes the Bell state $\Phi^+$ onto the second and third qubit and then performs a Bell basis measurement on the first and second qubit. In order to do this, it first decomposes applying a CNOT gate followed by a Hadamard gate on the first qubit (The adjoint of the Bell state generation). Then the first and second qubit are measured, which informs the correction needed for the third qubit to recover the state $\phi$.
+
+We can simulate the operation of the algorithm, via a $\lambda$-term which instead of outright measuring, describes the steps to take in each of the possible outcomes. A possible implementation is:
+
+\begin{align*}
+    (\Lam{x}{\B}{\LetP{y_1}{\B}{y_2}{\B}{\Phi^+}{ ~\mathsf{case } \Pair{x}{y_1}  ~\mathsf{ of }~\{ &\Phi^+\mapsto \Pair{\Phi^+}{y_2}\\
+    &\Phi^-\mapsto \Pair{\Phi^-}{Z y_2}\\
+    &\Psi^+\mapsto \Pair{\Psi^+}{X y_2}\\
+    &\Psi^-\mapsto \Pair{\Psi^-}{ZX y_2}\\
+    &\}}})
+\end{align*}
+
+{\color{red} ACÁ HABLAR UN POCO MÁS EN PROFUNDIDAD DEL TÉRMINO. MENCIONAR EL TIPADO.}
+
+The term directly correlates the result of the bell basis measurement with the corresponding correction without the need for a decomposition. The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases.
+
+{\color{red} BUSCAR OTROS EJEMPLOS DE ALGORITMOS QUE HAGAN MEDICIONES EN BASES NO COMPUTACIONALES.}

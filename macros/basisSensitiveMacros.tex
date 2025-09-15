@@ -178,3 +178,11 @@
 \newcommand\qif[5]{\ensuremath{#1\ ?_{#2,#3}\ #4\ \cdot\ #5}}
 \newcommand\basis[1]{\ensuremath{B_{ #1 }}}
 \newcommand\genbasis[3]{\ensuremath{B_{\{#1\}_{#2}^{#3}}}}
+
+%%% Teleportation algorithm
+
+\newcommand{\bellcase}[5]{\ensuremath{\mathsf{case}~#1~\mathsf{of}~ 
+\{\Phi^+ \mapsto \Pair{\Phi^+}{#2} \mid
+\Phi^- \mapsto \Pair{\Phi^-}{#3} \mid
+\Psi^+ \mapsto \Pair{\Psi^+}{#4} \mid
+\Psi^- \mapsto \Pair{\Psi^-}{#5} \}}}

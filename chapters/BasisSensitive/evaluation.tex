@@ -28,7 +28,13 @@ The reduction system implements a mechanism where every vector in the space is r
 
   \[
   \begin{array}{c}
-      \infer{\gencase{\vec t}{\vec v}{\vec w}{\vec s_1}{\vec s_2}\lra \gencase{\vec r}{\vec v}{\vec w}{\vec s_1}{\vec s_2}}{t\lra \vec r}
+      \infer
+      {\begin{array}{c c}
+        \gencase{\vec t}{\vec v}{\vec w}{\vec s_1}{\vec s_2}\lra&\\
+        \multicolumn{2}{r}{\gencase{\vec r}{\vec v}{\vec w}{\vec s_1}{\vec s_2}}
+      \end{array}
+      }
+      {t\lra \vec r}
   \end{array}
   \]
   \caption{Reduction system}

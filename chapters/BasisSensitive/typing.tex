@@ -275,7 +275,8 @@ The main result of this section, is the proof of validity of each of the rules p
 
     Since $\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{v_k}/x}{B_1}\ansubst{\vec{u_k}/y}{B_2}\in\sem{\Delta, x_{B_1}:\sharp A_1, y_{B2}:\sharp A_2}$, for every $k$, then $\vec{w_k}\in\sem{C}$. It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w_k}\|=1$. For that, we observe:
     \begin{align*}
-        \|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w_k}\| &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vec{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vec{w_{k'}}}\\
+        \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w_k}\| \\
+        &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vec{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vec{w_{k'}}}\\
         &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vec{w_k}}{\vec{w_{k'}}}\\
         &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v_k}}{\vec{v_{k'}}}\scal{\vec{u_k}}{\vec{u_{k'}}}\quad(\text{from Lemma \ref{lem:UnitPreserTens}})\\
         &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u_k}}{\vec{v_k}}}{\Pair{\vec{u_{k'}}}{\vec{v_{k'}}}}\quad(\text{from Prop \ref{prop:InnerProdPairs}})\\
