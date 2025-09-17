@@ -19,7 +19,7 @@ And the substitution:
 (\Lam{x}{\B}{(x, y)})\ansubst{\ket{0}/y}{\basis{\XB}} = \frac{1}{\sqrt{2}} ((\Lam{x}{\B}{\Pair{x}{\ket{+}}}) + (\Lam{x}{\B}{\Pair{x}{\ket{-}}}))
 \]
 
-Are not syntactically equivalent, but at the same time, they are equivalent under elimination contexts ({\color{red}EL PRIMER CAPÍTULO HABLA DE ESTO ASÍ QUE LO TOMO POR PRESENTADO}). Therefore, since typing via realizability captures computational behaviour, the types will match. We will however keep basis information on the contexts to later simplify our proofs. With this, we can define which substitutions validate a context.
+Are not syntactically equivalent, but at the same time, they are equivalent under elimination contexts. Therefore, since typing via realizability captures computational behaviour, the types will match. We will however keep basis information on the contexts to later simplify our proofs. With this, we can define which substitutions validate a context.
 
 \begin{definition}
     Given a context $\Gamma$ we call the unitary semantics of $\Gamma$, noted $\sem{\Gamma}$, to the set of substitutions such that:
@@ -46,7 +46,7 @@ In order for a typing judgement $\Gamma\vdash \vec{t}: A$ to be valid, it needs 
 Second, every substitution in the unitary semantics of $\Gamma$, when applied to the term $\vec{t}$, must yield a term which reduces to a realizer of type $A$. This condition matches the computational behaviour of the term and context to the type. To put it more precisely: 
 
 \begin{definition}
-    We say that a typing judgement $\Gamma\vdash \vec t : A$ is valid when:
+    We say that a typing judgement $\TYP{\Gamma}{\vec t}{A}$ is valid when:
     \begin{itemize}
         \item $\sdom{\Gamma}\subseteq\FV{\vec t}\subseteq \dom{\Gamma}$
         \item For all $\sigma\in\sem\Gamma$, $\vec{t}\ansubst{\sigma}{}\real A$
@@ -55,7 +55,18 @@ Second, every substitution in the unitary semantics of $\Gamma$, when applied to
 
 With this definition in mind, we consider a typing rule to be valid, when starting from judgements we assume to be valid we reach a valid conclusion. In table \ref{tab:TypingRules} we enumerate several of these rules. One important thing to note is that there are infinite valid rules, we limit ourselves to listing a subset which could constitute a reasonable typing system for a typed calculus.
 
-{\color{red} ACÁ AGREGAR LA DEFINICIÓN DE JUICIO DE ORTOGONALIDAD}
+We are also interested on \emph{orthogonal terms}, that is, terms which reduce to orthogonal values. Naturally, unless these terms are closed, we need to take the context into consideration. We define orthogonality judgements in the following manner:
+
+\begin{definition}
+    We say that an orthogonality judgement $\ORTH{\Gamma}{\Delta_1}{\vec{t}}{\Delta_2}{\vec{s}}{A}$ is valid when:
+    \begin{itemize}
+        \item The judgement $\TYP{\Gamma,\Delta_1}{\vec{t}}{A}$ is valid.
+        \item The judgement $\TYP{\Gamma,\Delta_2}{\vec{s}}{A}$ is valid.
+        \item For every $\sigma\in\sem{\Gamma,\Delta_1}, \tau\in\sem{\Gamma,\Delta_2}$ there are value distributions $\vec{v},\vec{w}$ such that $\vec{t}\ansubst{\sigma}{}\eval\vec{v}, \vec{s}\ansubst{\tau}{}\eval\vec{w}$ and $\vec{v}\perp\vec{w}$.
+    \end{itemize}
+\end{definition}
+
+If both $\Delta_1$ and $\Delta_2$ are empty, we will note the judgement as $\SORTH{\Gamma}{\vec{t}}{\vec{s}}{A}$. We will be mostly interested in these cases.
 
 \begin{table*}
     \small

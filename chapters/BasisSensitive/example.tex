@@ -1,10 +1,21 @@
 \section{Examples}
 
-\subsection{Deutsch-Josza algorithm}
+In this chapter we examine two use cases for the $\lambdaB$ calculus. First, taking advantage of the basis types defined in the type algebra, we are able to give a more expressive type to the term encoding Deutsch's algorithm. Second, we make use of the deferred measurement principle and pattern matching from the $\mathsf{case}$ constructor to write a descriptive term encoding the quantum teleportation protocol. 
 
-{\color{red} SMALL INTRODUCTION TO THE ALGORITHM}
+\subsection{Deutsch algorithm}
 
-We will do a comparison between the Deutsch-Josza algorithm written in different bases and see what information we can glean from the typing of the terms.
+The Deutsch-Josza algorithm is a small example designed to showcase a problem which is solved exponentially faster by a quantum computer over a classical one. In it, we take as input a black box oracle which encodes a function $f:\{0,1\}^n\to\{0,1\}$. This function can be either \emph{constant} or \emph{balanced} (It outputs $0$ for exactly half the inputs and $1$ for the other half). The task to solve is to determine under which of the two classes the oracle falls.
+
+In this section we will focus on the case where $n=1$, the original formulation of Deutsch's algorithm. However, this results can be generalized to any arbitrary $n$. The quantum circuit implementing the algorithm is the following:
+
+\begin{align*}
+    \Qcircuit @C=1em @R=.7em {
+     \lstick{\ket{0}} & \qw & \gate{H} & \multigate{1}{U_f} & \qw & \gate{H} & \meter \\
+     \lstick{\ket{1}} & \qw & \gate{H} & \ghost{U_f} & \qw & \qw & \qw
+    }
+\end{align*}
+
+For a detailed discussion on the logic and operation of the algorithm, see {\color{red}(CITAR)}. We will do a comparison between Deutsch's algorithm written in different bases and see what information we can glean from the typing of the terms.
 
 We first define the terms for the algorithm. The top level $\mathsf{Deutsch}$ abstraction, takes an oracle $U_f$  which inputs two qubits $\ket{x y}$ and outputs $\ket{x (y\oplus f(x))}$ where $\oplus$ denotes addition modulo 2. The circuit will output $\ket{0}$ on the first qubit if the function $f$ is balanced 
 % TODO: Incluir en el apéndice los juicios de tipado para los términos
@@ -22,7 +33,7 @@ We first define the terms for the algorithm. The top level $\mathsf{Deutsch}$ ab
     \caption{Deutsch algorithm term}
 \end{table*}
 
-On table \ref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
+On table \ref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the oracles encoding the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
 
 \begin{table*}
     \scriptsize
@@ -82,7 +93,13 @@ The \emph{principle of deferred measurement} states that any quantum circuit inv
 
 A notable example of an algorithm which makes use of classical controlled gates is the \emph{quantum teleportation}. In it, two agents (usually called Alice and Bob) share two parts of a Bell state and make use of the entanglement to move a quantum state from a qubit owned by Alice to a qubit owned by Bob. The quantum circuit representation of the algorithm is the following:
 
-{\color{red} QUANTUM TELEPORTATION DIAGRAM}
+\begin{align*}
+    \Qcircuit @C=1em @R=.7em {
+     \lstick{\ket{\phi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
+     \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
+     \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \control \cwx[-2] \qw & \rstick{\ket{\phi}} \qw
+    }
+\end{align*}
 
 The algorithm first encodes the Bell state $\Phi^+$ onto the second and third qubit and then performs a Bell basis measurement on the first and second qubit. In order to do this, it first decomposes applying a CNOT gate followed by a Hadamard gate on the first qubit (The adjoint of the Bell state generation). Then the first and second qubit are measured, which informs the correction needed for the third qubit to recover the state $\phi$.
 
@@ -96,8 +113,8 @@ We can simulate the operation of the algorithm, via a $\lambda$-term which inste
     &\}}})
 \end{align*}
 
-{\color{red} ACÁ HABLAR UN POCO MÁS EN PROFUNDIDAD DEL TÉRMINO. MENCIONAR EL TIPADO.}
+The $\lambda$-term takes the state $\ket{\phi}$ as an argument, then matches the first qubit of the Bell pair and the $\ket{\phi}$ qubit, with the vectors of the Bell basis. In each branch, corrects the third qubit to recover the original $\ket{\phi}$ state. This is akin to controlling the correction with each of the Bell basis vectors.
 
-The term directly correlates the result of the bell basis measurement with the corresponding correction without the need for a decomposition. The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases.
+The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases. The final type of the term is $\sharp\basis{\B}\Arr \sharp\basis{\Bell}\times \sharp\basis{\B}$.
 
 {\color{red} BUSCAR OTROS EJEMPLOS DE ALGORITMOS QUE HAGAN MEDICIONES EN BASES NO COMPUTACIONALES.}

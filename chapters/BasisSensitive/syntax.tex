@@ -42,7 +42,7 @@ The calculus is divided into four distinct syntactic categories: \textit{pure va
   We do not include a single specific term representing the null vector $\vec{0}$ since we do not make use of it. Instead, any distribution $0\cdot\vec{t}$ will act as one. 
 \end{remark}
 
-In order to handle the different bases in each abstraction, we need to define a congruence relationship between values. When we define the reduction system, this congruence will allow us to take an argument an interpret it in the corresponding basis of the function. Here, the vector space of value distributions starts to take shape.
+In order to handle the different bases in each abstraction, we need to define a congruence relationship between values. When we define the reduction system, this congruence will allow us to take an argument and interpret it in the corresponding basis of the function. Here, the vector space of value distributions starts to take shape.
 
 \begin{table*}[tb]
   \small
@@ -91,7 +91,7 @@ We expand on the rationale for the first rule, $\vec{v_1} + 0\cdot \vec{v_2}~\eq
   &=\frac{1}{\sqrt{2}}\cdot\left(\frac{(1,1)}{\sqrt{2}} + \frac{(1,-1)}{\sqrt{2}}\right)  
 \end{align*}
 
-If we match the vector $(1,0)$ to $\ket{0}$ and $(0,1)$ to $\ket{1}$, we would need a way to introduce the second coordinate into the equation. That is were the first rule comes into play. We restrict ourselves to vectors, since introducing variables or abstractions could break safety properties of the system.
+If we match the vector $(1,0)$ to $\ket{0}$ and $(0,1)$ to $\ket{1}$, we would need a way to introduce the second coordinate into the equation. That is where the first rule comes into play. We restrict ourselves to vectors, since introducing variables or abstractions could break safety properties of the system.
 %ACÁ PUEDO PONER UN EJEMPLO. ID APLICADO A ID Y EN CADA UNO DE LOS TÉRMINOS AGREGO UN DUPLICADOR. EVENTUALMENTE REDUCE A ID+0.OMEGA QUE NO TIENE FORMA NORMAL. 
 
 We consider the congruence $\equiv$ as shallow. This means it does not act under lambda abstractions nor case alternatives. For example, if $\vec{t}\neq\vec{s}$: $(\Lam{x}{B}{\vec{t}}) \not\equiv (\Lam{x}{B}{\vec{s}})$ (Even in the case that $\vec{t}\equiv\vec{s}$).
@@ -100,7 +100,7 @@ We consider the congruence $\equiv$ as shallow. This means it does not act under
 
 % En la parte de conclusiones/trabajo futuro, me gustaría meter otra noción de producto interno que juegue bien con las funciones. Con esta definición una función es ortogonal a su eta expansión. O (\x. t_1 + t_2) _|_ (\x. t_2 + t_1)
 
-The core mechanism of the calculus lies in decorating variable bindings with sets of value distributions. Keeping with linear algebra terminology, we will refer to this sets as \textit{(orthonormal) bases}, for reasons which will shortly become clear. These bases will inform the reduction system on how to operate its arguments. 
+The core mechanism of the calculus lies in decorating variable bindings with sets of value distributions. Keeping with linear algebra terminology, we will refer to these sets as \textit{(orthonormal) bases}, for reasons which will shortly become clear. These bases will inform the reduction system on how to operate its arguments. 
 
 In order to properly characterize the sets that decorate the lambda abstractions, we first have to define which are the values that they must contain.
 % Definición de qubit
@@ -129,13 +129,13 @@ We will say a set of value distributions $B$ is an $n$-th dimensional orthonorma
 \end{enumerate}
 \end{definition}
 
-Unlike the usual definition of orthonormal basis, we also need to ensure that the members are qubits. In other words, they are neither variables nor abstractions. Morally, these sets will keep track of the basis the term is working on. A qubit which is a member of this set will be treated on a call-by-value strategy and its data can be treated clasically. Any other qubit will first be interpreted as a $\C$-linear combination of elements of the basis and then the function will apply linearly to each component. If the argument cannot be written in the decorating basis, the evaluation gets stuck. 
+Unlike the usual definition of orthonormal basis, we also need to ensure that the members are qubits. In other words, they are neither variables nor abstractions. Morally, these sets will keep track of the basis the term is working on. A qubit which is a member of this set will be treated on a call-by-value strategy and its data can be treated classically. Any other qubit will first be interpreted as a $\C$-linear combination of elements of the basis and then the function will apply linearly to each component. If the argument cannot be written in the decorating basis, the evaluation gets stuck. 
 
 \subsection{Substitutions}
 
-The beta reduction will depend on the basis chosen for the abstraction, so we have to define a new subsitution which will take this mechanism into account. This operation will substitute the variables for vectors in the chosen basis. The accompanying coefficents correspond to the value distribution which is the object of the substitution.
+The beta reduction will depend on the basis chosen for the abstraction, so we have to define a new substitution which will take this mechanism into account. This operation will substitute the variables for vectors in the chosen basis. The accompanying coefficients correspond to the value distribution which is the object of the substitution.
   
-With this substitution we also define a special kind of basis wich we call $\AbsBasis$ which will act as the canonical basis for lambda abstractions. In this way, we restrict distributions of functions to a single possible basis.
+With this substitution we also define a special kind of basis which we call $\AbsBasis$ which will act as the canonical basis for lambda abstractions. In this way, we restrict distributions of functions to a single possible basis.
 
 \begin{definition}
   For a term distribution $\vec{t}$, value distribution $\vec{v}$, variable $x$ and orthogonal basis $A$, we define the substitution $\vec{t}\ansubst{\vec{v}/x}{A}$ as:
@@ -150,13 +150,13 @@ With this substitution we also define a special kind of basis wich we call $\Abs
     \end{cases}
   \]
 
-  We extend the substitution for more than one pair of variables. This definition is extended to pair of values in the following way. Let $\vec v = \sum_{i\in I} \alpha_i \Pair{\vec{v_i}}{\vec{w_i}}$:
+  We extend the substitution for more than one pair of variables. This definition is extended to a pair of values in the following way. Let $\vec v = \sum_{i\in I} \alpha_i \Pair{\vec{v_i}}{\vec{w_i}}$:
   \[
     \vec t\ansubst{\vec{v}/x\otimes y}{A \otimes B} = \sum_{i\in I} \alpha_i \vec t\ansubst{\vec{v_i}/x}{A}\ansubst{\vec{w_i}/y}{B}
   \]
 \end{definition}
 
-With this new substitution defined, we set out to prove some lemmas which will be useful later for proving the validity of some typing judgements. First of all, we want to show that the basis dependent substitution commutes with the linear combination of terms.
+With this new substitution defined, we set out to prove some lemmas which will be useful later for proving the validity of some typing judgements. First, we want to show that the basis dependent substitution commutes with the linear combination of terms.
 
 \begin{lemma}\label{lem:distributiveSubstitution}
   $(\sum_i \alpha_i\vec t_i)\ansubst{\vec v/x}{A} \equiv \sum_i \alpha_i\vec t_i \ansubst{\vec v/x}{A}$ 
@@ -171,7 +171,7 @@ With this new substitution defined, we set out to prove some lemmas which will b
   \end{align*}
 \end{proof}
 
-The next thing we need to show is that the substitution behaves well with respect to the term congruence previously defined. In essence, the following results states that for each member of the same equivalence class defined by $\equiv$, the result of substitution for those vectors is always sintactically the same.
+The next thing we need to show is that the substitution behaves well with respect to the term congruence previously defined. In essence, the following results states that for each member of the same equivalence class defined by $\equiv$, the result of substitution for those vectors is always syntactically the same.
 
 \begin{lemma}\label{lem:EquivSubstitutions}
   If $\vec{v}\equiv\vec{w}$, then $\vec{t}\ansubst{\vec{v}/x}{A}=\vec{t}\ansubst{\vec{w}/x}{A}$.
@@ -189,7 +189,7 @@ The next thing we need to show is that the substitution behaves well with respec
 \end{proof}
 
 \begin{remark}
-  The result from lemma \ref{lem:EquivSubstitutions}, does not translate across bases, so $\vec{t}\ansubst{\vec{v}/x}{A} \not\equiv \vec{t}\ansubst{\vec{v}/x}{B}$. From here onwards we will define $\ket{+}:=\frac{\ket{0}+\ket{1}}{\sqrt{2}}$ and $\ket{-}:=\frac{\ket{0}-\ket{1}}{\sqrt{2}}$. As well we will define, $\B = \{\ket{0}, \ket{1}\}$ and $\XB = \{\ket{+}, \ket{-}\}$. With this we have:
+  The result from lemma \ref{lem:EquivSubstitutions}, does not translate across bases, so $\vec{t}\ansubst{\vec{v}/x}{A} \not\equiv \vec{t}\ansubst{\vec{v}/x}{B}$. From here onwards we will define $\ket{+}:=\frac{\ket{0}+\ket{1}}{\sqrt{2}}$ and $\ket{-}:=\frac{\ket{0}-\ket{1}}{\sqrt{2}}$. As well, we will define $\B = \{\ket{0}, \ket{1}\}$ and $\XB = \{\ket{+}, \ket{-}\}$. With this we have:
   
   \begin{align*}
     (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB} &= (\Lam{x}{C}{\ket{+}}) 
@@ -198,17 +198,29 @@ The next thing we need to show is that the substitution behaves well with respec
     = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}
   \end{align*}
   
-  This boils down to the fact that the $\equiv$-relationship does not commute neither with the lambda abstraction nor the case construct. This is due to te fact that, despite being computationally equivalent, the terms $\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vec{t_i}}$ and $\sum_{i=1}^{n}\alpha_i \Lam{x}{X}{\vec{t_i}}$ are not congruent (Similarly for the case construct)
+  This boils down to the fact that the $\equiv$-relationship does not commute, neither with the lambda abstraction nor the case construct. This is due to the fact that, despite being computationally equivalent, the terms $\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vec{t_i}}$ and $\sum_{i=1}^{n}\alpha_i \Lam{x}{X}{\vec{t_i}}$ are not congruent (Similarly for the case construct)
 \end{remark}
 
-{\color{red} PONER ACÁ LAS DEFINICIONES DEL ÁLGEBRA DE SUSTITUCIONES}
+We now introduce notation for generalized substitutions over a term. A substitution $\sigma$ can be thought as a set of singular substitutions applied consecutively over a term. More precisely, for a term $\vec{t}$, value distributions $\vec{v_1}\dotsb\vec{v_n}$, variables $x_1,\dotsb ,x_n$ and, bases $B_1,\dotsb B_n$:
+
+\[
+  \vec{t}\ansubst{\sigma}{} := \vec{t}\ansubst{\vec{v_1/x_1}}{B_1}\dotsb\ansubst{\vec{v_n}/x_n}{B_n}
+\]
+
+Since every $\vec{v_1},\dotsb ,\vec{v_n}$ is closed, the order of the substitutions is irrelevant. We can think of the substitution $\sigma$ as a partial function from variables to pairs of value distributions and bases. We denote $x_1,\dotsb, x_n$ as the domain of $\sigma$ ($\dom{\sigma}$). In the same way, we can extend the substitution, for a term $\vec{t}$, substitution $\sigma$, value distribution $\vec{v}$, variable $x$ and, basis $B$:
+
+\[
+  \vec{t}\ansubst{\sigma}{}\ansubst{\vec{v}/x}{B} = \vec{t}\ansubst{\sigma'}{}
+\]
+
+Such that $\sigma'$ behaves the same as $\sigma$ and, it maps $x$ to $\vec{v}$ in the basis $B$. This operation can also extend different generalized substitutions, such that $\vec{v}\ansubst{\sigma}{} = \vec{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}$.
 
 \iffalse
 %Este lema no estoy seguro de donde ponerlo. Es posible que lo corte
 A question that might arise from the previous remark could be if taking an $\eta$-expansion on a different basis would yield different a result. In this particular instance, it is fairly simple to see that it is not the case.
 
 \begin{lemma}[$\eta$-expansion]
-  For every $\lambda$-abstraction $(\Lam{x}{\basis{X}}{\vec t})$ where $y\not\in\FV{\vec{t}}$, value distribution $\vec{v}\in\sem{\sharp{\basis{X}}}$ and .
+  For every $\lambda$-abstraction $(\Lam{x}{\basis{X}}{\vec t})$ where $y\not\in\FV{\vec{t}}$, value distribution $\vec{v}\in\sem{\sharp{\basis{X}}}$ a .nd 
   
   \[
     (\Lam{y}{\basis{Y}}{(\Lam{x}{\basis{X}}{\vec t})\ y})\ \vec{v}\evalone (\Lam{x}{\basis{X}}{\vec{t}})\ \vec v
