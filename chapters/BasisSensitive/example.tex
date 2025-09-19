@@ -2,7 +2,7 @@
 
 In this chapter we examine two use cases for the $\lambdaB$ calculus. First, taking advantage of the basis types defined in the type algebra, we are able to give a more expressive type to the term encoding Deutsch's algorithm. Second, we make use of the deferred measurement principle and pattern matching from the $\mathsf{case}$ constructor to write a descriptive term encoding the quantum teleportation protocol. 
 
-\subsection{Deutsch algorithm}
+\subsection{Deutsch's algorithm}
 
 The Deutsch-Josza algorithm is a small example designed to showcase a problem which is solved exponentially faster by a quantum computer over a classical one. In it, we take as input a black box oracle which encodes a function $f:\{0,1\}^n\to\{0,1\}$. This function can be either \emph{constant} or \emph{balanced} (It outputs $0$ for exactly half the inputs and $1$ for the other half). The task to solve is to determine under which of the two classes the oracle falls.
 
@@ -85,7 +85,7 @@ However, this approach underutilizes the amount of information we have available
 
 In this case, for each of the oracles we can assign the type $\XB\to\XB\to\XB\times\XB$ and type the term $\mathsf{Deutsch}$ as $(\XB\to\XB\to\XB\times\XB)\to\B$. There is a key difference here, the type of the oracles assure us that the result will be in the basis state $\XB\times\XB$. In other words, the result can either be a pair of $\ket{+}$ or $\ket{-}$ (up to a global phase). Since we know this fact, we can manipulate the result of $f$ as we would with classical bits, and discard the second component. 
 
-Both functions are equivalent on an operational point of view. But reframing the into a different basis, allow us to give a more tight typing to the terms and more insight on how the algorithm works. If we analize the typing judgements, we observe that none of the variables has a $\sharp$ type. This has two consequences, first we can safely discard the second qubit and second, the Hadamard transform guarantees that the first qubit will yield a boolean. Stated differently, we can say that the Deutsch algorithm performs a classical computation on the Hadamard basis.
+Both functions are equivalent on an operational point of view. But reframing the into a different basis, allow us to give a more tight typing to the terms and more insight on how the algorithm works. If we analize the typing judgements, we observe that none of the variables has a $\sharp$ type. This has two consequences, first we can safely discard the second qubit and second, the Hadamard transform guarantees that the first qubit will yield a boolean. This correlates with the fact that Deutsch's algorithm is deterministic and, we can statically ensure the result will be a basis vector.
 
 \subsection{Quantum teleportation}
 
