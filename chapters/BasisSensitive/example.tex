@@ -15,7 +15,7 @@ In this section we will focus on the case where $n=1$, the original formulation 
     }
 \end{align*}
 
-For a detailed discussion on the logic and operation of the algorithm, see {\color{red}(CITAR)}. We will do a comparison between Deutsch's algorithm written in different bases and see what information we can glean from the typing of the terms.
+For a detailed discussion on the logic and operation of the algorithm, see~\cite{Deutsch1992RapidSO}. We will do a comparison between Deutsch's algorithm written in different bases and see what information we can glean from the typing of the terms.
 
 We first define the terms for the algorithm. The top level $\mathsf{Deutsch}$ abstraction, takes an oracle $U_f$  which inputs two qubits $\ket{x y}$ and outputs $\ket{x (y\oplus f(x))}$ where $\oplus$ denotes addition modulo 2. The circuit will output $\ket{0}$ on the first qubit if the function $f$ is balanced 
 % TODO: Incluir en el apéndice los juicios de tipado para los términos
