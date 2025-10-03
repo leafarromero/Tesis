@@ -73,8 +73,17 @@ Defining the system in this way determines a strategy in the \textit{call-by-val
 
 The congruence relation on terms gives rise to different redexes. However, we can show that the relation $\equiv$ commutes with the reflexive-transitive closure of the reduction $\evalone$ (We shall note $\eval$ as this reflexive-transitive closure). In other words, equivalence is preserved by the reduction $\eval$.
 
-\begin{theorem}[{\color{red} Commutation of $\equiv$ and $\eval$?}]
-  Let $\vec{t}$ and $\vec{s}$ be closed term distributions such that $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{t'}$, and $\vec{s}\evalone\vec{s'}$. Then there exists term distributions $\vec{r_1},\vec{r_2}$ such that $\vec{t'}\eval\vec{w}$ and $\vec{v}\equiv\vec{w}$.
+\begin{theorem}[Congruence modulo-$\equiv$]
+  Let $\vec{t}$ and $\vec{s}$ be closed term distributions such that $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{t'}$, and $\vec{s}\evalone\vec{s'}$. Then there exists term distributions $\vec{r_1},\vec{r_2}$ such that $\vec{t'}\eval\vec{r_1}$, $\vec{s'}\eval\vec{r_2}$ and $\vec{r_1}\equiv\vec{r_2}$. Diagrammatically:
+
+\[
+  \begin{tikzcd}
+   & \vec{t} \arrow[ld]&[-2.5em] \equiv &[-2.5em] \vec{s}\arrow[rd] &\\
+   \vec{t'}\arrow[dr, twoheadrightarrow] & & & & \vec{s'}\arrow[ld, twoheadrightarrow] \\
+   & \vec{r_1} & \equiv & \vec{r_2} &
+  \end{tikzcd}
+\]
+
 \end{theorem}
 \begin{proof}
   Induction over the relation $\equiv$. 

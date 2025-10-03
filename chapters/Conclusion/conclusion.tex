@@ -1,0 +1,66 @@
+\section{Conclusion}
+\subsection{Discussion: Towards a specification system}
+
+We found a somewhat interesting extreme when we drop the condition of bases to have size $n$, and we consider singletons. The resulting system replicates the term reduction inside the strict typing rules and forms a sort of specification system. In short, sequents take the following form: $x_1: \vec{v}_1, \dotsb, x_n: \vec{v}_n \vdash \vec t : \vec{w}$ (We omit the brackets in singleton sets). And so, we can read the previous sequent as: ``Every substitution $\sigma$ such that $\sigma(x_i)=\vec{v_i}$ validates that $\sigma(\vec{t})$, reduces to $\vec{w}$''. With this in mind, we can design inference rules that only use singleton sets as types. Let us take for example any non-abstraction value distribution $\vec{v}$, we describe a specification with tight typing in table \ref{tab:duplicationSpec}.
+
+\begin{table*}
+\scriptsize
+\[  
+\infer[\snam{App}]
+{\TYP{}{(\lambda x^{\vec{v}}. (x, x))\ \vec{v}}{\basis{\vec{v}}\times\basis{\vec{v}}}}
+{\infer[\snam{Lam}]
+  {\TYP{}{\lambda x^{\vec{v}}. (x, x)}{\basis{\vec{v}} \Arr (\basis{\vec{v}}\times\basis{\vec{v}})}}
+  {
+    \infer[\snam{Contr}]
+    {\TYP{x:\basis{\vec{v}}}{(x, x)}{\basis{\vec{v}}\times\basis{\vec{v}}}}
+    {
+      \infer[\snam{Pair}]
+      {\TYP{x:\basis{\vec{v}}, y:\basis{\vec{v}}}{(x, y)}{\basis{\vec{v}}\times\basis{\vec{v}}}}
+      {
+        \infer[\snam{Ax}]{\TYP{x:\basis{\vec{v}}}{x}{\basis{\vec{v}}}}{}&
+        \infer[\snam{Ax}]{\TYP{y:\basis{\vec{v}}}{y}{\basis{\vec{v}}}}{}
+      }
+    }
+  } &
+  \infer[\snam{Ax}]
+  {\TYP{}{\vec{v}}{\basis{\vec{v}}}}
+  {\vec{v}\in\{\vec{v}\}}
+}
+\]
+\caption{Duplication of a vector $\vec{v}$}
+\label{tab:duplicationSpec}
+\end{table*}
+
+This result is not surprising. When dealing with classic computation, regardless of the basis, if we restrict the possible inputs to only one option, we can statically determine the output without having to reduce the term.
+
+However, this changes when entangled qubits are involved. Entangled quantum states are states where a qubit cannot be described precisely and independently of another qubit. So for example the state $\Bell=\frac{1}{\sqrt{2}}(\Pair{\ket{0}}{\ket{0}} + \Pair{\ket{1}}{\ket{1}})$ cannot be described as a pair of two separate values $\vec{v}$ and $\vec{w}$. We can however use the $\mathsf{let}$ construct to destroy the pair, and in that case, we will have to type two separate variables. The typing judgement is thus:
+
+\begin{adjustbox}{width=\textwidth}
+$$
+\infer[\snam{LetTens}]{\TYP{}
+{\LetP{x}{\B}{y}{\B}{\Bell}{\Pair{x}{y}}}{\sharp(\B\times\B)}}
+{
+    \infer[\snam{Sub}]
+    {\TYP{}{\Bell}{\sharp(\B\times\B)}}
+    {
+        \infer[\snam{Basis}]{\TYP{}{\Bell}{\basis{\Bell}}}{\Bell\in\{\Bell\}} &
+        \basis{\Bell}\leq \sharp(\B\times\B)
+    }&
+    \infer[\snam{Sub}]
+    {\TYP{x:\sharp\B,y:\sharp\B}{\Pair{x}{y}}{\B\otimes\B}}
+    {
+        \infer[\snam{Pair}]
+        {\TYP{x:\sharp\B,y:\sharp\B}{\Pair{x}{y}}{\sharp\B\times\sharp\B}}
+        {
+            \infer[\snam{Ax}]{\TYP{x:\sharp\B}{x}{\sharp\B}}{} &
+            \infer[\snam{Ax}]{\TYP{y:\sharp\B}{y}{\sharp\B}}{}
+        }&
+        \sharp\B\times\sharp\B\leq\sharp(\B\times\B)
+    }
+}
+$$
+\end{adjustbox}
+
+Despite knowing exactly which state we are referring to, there is an inherent loss of precision, and this itself is reflected in the type we are able to give. While this might seem as a limitation of the language, it is the desired outcome. This is due to the physical nature of the state, which cannot be described with two independent variables.
+
+This mechanism outlines a possible implementation of a specification system similar to Hoare logic via realizability. It could be useful to reason about correctness in quantum programs. At the same time, we identify some limitations when analyzing terms which deal with entangled states. We let this development for future research.

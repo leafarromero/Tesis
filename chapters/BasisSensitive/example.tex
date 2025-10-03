@@ -97,7 +97,7 @@ A notable example of an algorithm which makes use of classical controlled gates 
     \Qcircuit @C=1em @R=.7em {
      \lstick{\ket{\phi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
      \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
-     \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \control \cwx[-2] \qw & \rstick{\ket{\phi}} \qw
+     \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \gate{Z} \cwx[-2] \qw & \rstick{\ket{\phi}} \qw
     }
 \end{align*}
 
@@ -117,4 +117,4 @@ The $\lambda$-term takes the state $\ket{\phi}$ as an argument, then matches the
 
 The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases. The final type of the term is $\sharp\basis{\B}\Arr \sharp\basis{\Bell}\times \sharp\basis{\B}$.
 
-{\color{red} BUSCAR OTROS EJEMPLOS DE ALGORITMOS QUE HAGAN MEDICIONES EN BASES NO COMPUTACIONALES.}
+{\color{red} LEER MEASUREMENT BASED QUANTUM COMPUTING CAPAZ AHÍ HAY MÁS EJEMPLOS}

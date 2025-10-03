@@ -1,76 +1,29 @@
 \section{Introduction}%
 \label{sec:introduction}
 
-The ZX calculus~\cite{vdw_working_cs_zx} has been used as intermediary representation language
-for quantum programs in optimization methods~\cite{DKPW2019qcircSimpl,borgna_hybrid_2021,Backens_2021}
-and in the design of error correcting schemes~\cite{de_beaudrap_zx_2020}.
+{\color{red} REESCRIBIR LA INTRODUCCIÓN. CAMBIAR DE PRESENTACIÓN DE ARTÍCULO A CÓMO ENTRA EN EL CONTEXTO DE LA TESIS}
+
+The ZX calculus~\cite{vdw_working_cs_zx} has been used as intermediary representation language for quantum programs in optimization methods~\cite{DKPW2019qcircSimpl,borgna_hybrid_2021,Backens_2021} and in the design of error correcting schemes~\cite{de_beaudrap_zx_2020}.
+
+The highly flexible representation of linear maps as open graphs with a complete formal rewriting system and the multiple extensions adapted to represent different sets of quantum primitives have proven useful in reasoning about the properties of quantum circuits.
+
+Quantum operations are usually represented as quantum circuits composed by primitive gates operating over a fixed number of qubits.The ZX calculus has a close correspondence to this model and is similarly limited to representing operations at a single-qubit level.
 %
-The highly flexible representation of linear maps as open graphs
-with a complete formal rewriting system
-and the multiple extensions adapted to represent
-different sets of quantum primitives
-have proven useful in reasoning about the properties of quantum circuits.
+In this work we will focus on the Scalable ZX extension~\cite{carette_szx-calculus_2019}, which generalizes the ZX diagrams to work with arbitrary qubit registers using a compact representation. Previous work~\cite{carette_quantum_2021} has shown that the SZX calculus is capable of encoding nontrivial algorithms via the presentation of multiple hand-written examples. For an efficient usage as an intermediate representation language, we require an automated compilation method from quantum programming languages to SZX diagrams. While ZX diagrams can be directly obtained from a program compiled to a quantum circuit, to the best of our knowledge there is no efficient method leveraging the parametricity of the SZX calculus.
 
-Quantum operations are usually represented as quantum circuits
-composed by primitive gates operating over a fixed number of qubits.
-The ZX calculus has a close correspondence to this model and is similarly 
-limited to representing operations at a single-qubit level.
-%
-In this work we will focus on the Scalable ZX extension~\cite{carette_szx-calculus_2019},
-which generalizes the ZX diagrams to work with arbitrary qubit registers
-using a compact representation.
-Previous work~\cite{carette_quantum_2021} has shown that the SZX calculus
-is capable of encoding nontrivial algorithms
-via the presentation of multiple hand-written examples.
-For an efficient usage as an intermediate representation language,
-we require an automated compilation method from quantum programming languages to SZX diagrams.
-While ZX diagrams can be directly obtained from a program compiled to a quantum circuit,
-to the best of our knowledge there is no efficient method leveraging the parametricity of the SZX calculus.
+There exist several quantum programming languages capable of encoding high-level parametric programs~\cite{qiskit,cirq,Steiger2018projectQ}. Quipper~\cite{Green2013quipper} is a language for quantum computing capable or generating families of quantum operations indexed by parameters. These parameters need to be instantiated at compile time to generate concrete quantum circuit representations. Quipper has multiple formal specifications, in this work we focus on the linear dependently typed Proto-Quipper-D formalization~\cite{fu_linear_2021,fu_tutorial_2020} to express high-level programs with integer parameters.
 
-There exist several quantum programming languages capable of encoding
-high-level parametric programs~\cite{qiskit,cirq,Steiger2018projectQ}.
-Quipper~\cite{Green2013quipper} is a language for quantum computing
-capable or generating families of quantum operations indexed by parameters.
-These parameters need to be instantiated at compile time to generate
-concrete quantum circuit representations.
-Quipper has multiple formal specifications, in this work we focus on the
-linear dependently typed Proto-Quipper-D formalization~\cite{fu_linear_2021,fu_tutorial_2020}
-to express high-level programs with integer parameters.
+The contributions of this article the following. We introduce a \textit{list initialization} notation to represent multiple elements of a SZX diagram family composed in parallel. We formally define a fragment of Proto-Quipper-D programs that can be described as families of diagrams. Then we present a novel compilation method that encodes quantum programs as families of SZX diagrams and demonstrate the codification and translation of a nontrivial algorithm using our procedure.
 
-The contributions of this article the following.
-We introduce a \textit{list initialization} notation to represent multiple elements
-of a SZX diagram family composed in parallel.
-We formally define a fragment of Proto-Quipper-D programs that can be described as families of diagrams.
-Then we present a novel compilation method that encodes quantum programs as families of SZX diagrams
-and demonstrate the codification and translation of a nontrivial algorithm using our procedure.
-
-In Section~\ref{sec:background} we outline both languages and introduce the list
-initialization notation. In Section~\ref{sec:fragment} we define the restricted
-Proto-Quipper-D fragment. In Section~\ref{sec:translation} we introduce the
-translation into SZX diagrams. Finally, in Section~\ref{sec:qft-example} we
-demonstrate an encoding of the Quantum Fourier Transform algorithm using our
-method.
+In Section~\ref{sec:background} we outline both languages and introduce the list initialization notation. In Section~\ref{sec:fragment} we define the restricted Proto-Quipper-D fragment. In Section~\ref{sec:translation} we introduce the translation into SZX diagrams. Finally, in Section~\ref{sec:qft-example} we demonstrate an encoding of the Quantum Fourier Transform algorithm using our method.
 
 \section{Background}%
 \label{sec:background}
 
-We describe a quantum state as a system of $n$ qubits
-corresponding to a vector in the $\C^{2^n}$ Hilbert space.
-We may partition the set of qubits into multi-qubit \textit{registers}
-representing logically related subsets.
-Quantum computations under the QRAM model correspond to compositions of unitary
-operators between these quantum states, called quantum gates.
-Additionally, the qubits may be initialized on a set state and measured.
+{\color{red} MOVER ESTO A UNA SECCIÓN DE PRELIMINARES?}
 
-High-level programs can be encoded in Quipper~\cite{Green2013quipper},
-a Haskell-like programming language for describing quantum computations.
-In this work we use a formalization of the language called
-Proto-Quipper-D\cite{fu_tutorial_2020} with support for linear and dependent types.
-Concrete quantum operations correspond to linear functions between quantum states,
-generated as a composition of primitive operations that can be described directly
-as a quantum circuit.
-Generic circuits may have additional parameters that must fixed at compilation time
-to produce the corresponding quantum circuit.
+We describe a quantum state as a system of $n$ qubits corresponding to a vector in the $\C^{2^n}$ Hilbert space. We may partition the set of qubits into multi-qubit \textit{registers} representing logically related subsets. Quantum computations under the QRAM model correspond to compositions of unitary operators between these quantum states, called quantum gates. Additionally, the qubits may be initialized on a set state and measured.
 
-In Section~\ref{sec:fragment} we describe a restricted fragment of the Proto-Quipper-D
-language containing the relevant operations for the work presented in this paper.
+High-level programs can be encoded in Quipper~\cite{Green2013quipper}, a Haskell-like programming language for describing quantum computations. In this work we use a formalization of the language called Proto-Quipper-D\cite{fu_tutorial_2020} with support for linear and dependent types. Concrete quantum operations correspond to linear functions between quantum states, generated as a composition of primitive operations that can be described directly as a quantum circuit. Generic circuits may have additional parameters that must fixed at compilation time to produce the corresponding quantum circuit.
+
+In Section~\ref{sec:fragment} we describe a restricted fragment of the Proto-Quipper-D language containing the relevant operations for the work presented in this paper.

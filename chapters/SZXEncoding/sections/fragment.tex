@@ -4,10 +4,11 @@
 We first define a base language from which to build our translation. In this section we present the calculus $\lambdaD$, as a subset of the strongly normalizing Proto-Quipper-D programs. Terms are inductively defined by:
 \begin{align*}
     M, N, L :=\; & x \;|\; C \;|\; \R \;|\; \; \U \;|\; 0 \;|\; 1 \;|\; n \;|\; \meas \;|\; \new \;|
-            \lambda x^S. M \;|\; M \ N \;|\; \lambda' x^P. M \;\\
-        & M\ @\ N \;|\;\star \;|\; M \otimes N \;|\; \Qlet{x^{S_1} \otimes y^{S_2}}{M}{N} \;|\;M;N \;|\; \\
-        & \vnil^A \;|\; M :: N \;|\; \Qlet{x^S :: y^{\typeVec S n}}{M}{N} \\
-        & M \square N \;|\; \ifz{L}{M}{N} \;|\; \Qfor{k^P}{M}{N}
+            \lambda x^S. M \;|\; M \ N \;|\;\\
+        & \lambda' x^P. M \;|\; M\ @\ N \;|\;\star \;|\; M \otimes N \;|\; M;N \;|\; \\
+        & \Qlet{x^{S_1} \otimes y^{S_2}}{M}{N} \;|\;\vnil^A \;|\; M :: N \;|\; \\
+        & \Qlet{x^S :: y^{\typeVec S n}}{M}{N} \;|\;M \square N \;|\;\\
+        & \ifz{L}{M}{N} \;|\; \Qfor{k^P}{M}{N}
 \end{align*}
 
 Where $C$ is a set of implicit bounded recursive primitives used for operating
@@ -183,8 +184,9 @@ $
 Since every diagram represents a linear map between qubits there is no
 representation equivalent to non-terminating terms, even for weakly normalizing
 programs. This is the main reason behind the design choice of the primitives
-set.
+set. {\color{red} (De esta forma, tenemos programas fuertemente normalizantes.)}
 %
+
 We include the operational semantics of the calculus and primitives in Appendix~
 \ref{sec:op-semantics}. The encoding of the primitives as Proto-Quipper-D functions
 is shown in Appendix~\ref{sec:primitive-trans}. 

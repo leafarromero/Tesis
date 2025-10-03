@@ -26,41 +26,26 @@ The translation of an evaluable type, $\natEval{A}$, is defined recursively as f
 Given a type judgement $\Phi \vdash L : P$ where $P$ is an evaluable type,
 we define $\natEval{L}_\Phi$ as the evaluation of the term into a function from parameters into products of natural numbers.
 Since the typing is syntax directed, the evaluation is defined directly over the terms as follows:
-\[
-    \natEval{x}_{x:\nat, \Phi} = x,|\Phi| \mapsto x
-    \qquad
-    \natEval{n}_\Phi = |\Phi| \mapsto n
-\]
-\[
-    \natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)
-\]
-\[
-    \natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)
-    \qquad 
-    \natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto []
-\]
-\[
-    \natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)
-    \qquad
-    \natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)
-\]
-\[
-    \natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto \begin{cases}
+
+
+\begin{align*}
+    &\natEval{x}_{x:\nat, \Phi} = x, |\Phi| \mapsto x \\[5pt]
+    &\natEval{n}_\Phi = |\Phi| \mapsto n\\[5pt]
+    &\natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\\[5pt]
+    &\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)\\[5pt]
+    &\natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto [] \\[5pt]
+    &\natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi) \\[5pt]
+    &\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\\[5pt]
+    &\natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto 
+    \begin{cases}
         \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{L}_\Phi(|\Phi|) = 0 \\
         \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
-    \end{cases}
-\]
-\[
-    \natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes_{i=n}^{m-1} i
-\]
-\[
-    \natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)
-\]
-\[
-    \natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi = |\Phi|\mapsto 
-        \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)
-    {\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)}}
-\]
+    \end{cases}\\[5pt]
+    &\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes_{i=n}^{m-1} i\\[5pt]
+    &\natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)\\[5pt]
+    &\natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi = |\Phi|\mapsto \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\\
+    &\qquad{\text{ where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)}
+\end{align*}
 
 \begin{lemma}%
     \label{lem:eval-type}
