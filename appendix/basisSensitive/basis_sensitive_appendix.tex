@@ -1,40 +1,5 @@
 
 \appendix
-\section{Simple linear algebra results}
-
-\begin{definition}
-    A \textit{Null vector} is a term distribution $\vec{t}$ of the form:
-    \[
-    \vec{t} \equiv \sum_{i=1}^{n} 0 \cdot t_i
-    \]
-    Note that the $t_i$ is a basic term, not a distribution.
-\end{definition}
-
-\begin{definition}
-    A set of value distribution is said to be \textit{linearly independent} if there not exists a non-trivial linear combination of its members such that it yields a null vector.
-\end{definition}
-
-\begin{definition}
-    Bases are linearly independent sets of value distributions.
-\end{definition}
-
-\begin{proposition}\label{prop:UniqueDecomposition}
-    If $B$ is a basis, then each vector has a unique decomposition in $B$.
-\end{proposition}
-
-\begin{proof}
-    Let $\vec{b_i}$, the basis vectors of $B$. And $\sum_i^n\alpha_i \vec{b_i}$, $\sum_i=1^n \beta^i \vec{b_i}$ decompositions of $\vec{v}$ onto $B$. Then we have:
-    \[\vec{v} - \vec{v} = 0 \cdot \vec{v} = \sum_{i=1}^{n} (\alpha_i - \beta_i) \vec{b_i}\]
-    Since the basis is linearly independent, $\alpha_i = \beta_i$.
-\end{proof}
-
-\begin{corollary}\label{cor:EquivalentDecomposition}
-    If $\vec{v}\equiv\vec{w}$, then they both have the same decomposition over a basis $B$.
-\end{corollary}
-\begin{proof}
-    Since $\vec{v} - \vec{w} \equiv \vec{v} - \vec{v} \equiv \vec{w} - \vec{w}$, we can use the same reasoning as proposition \ref{prop:UniqueDecomposition} to conclude that both have the same decomposition.
-\end{proof}
-
 \section{Proofs for validity of LetTens rule}
 \begin{proposition}\label{prop:InnerProdPairs} For all value distributions $\vec{v_1}, \vec{v_2}, \vec{w_1}, \vec{w_2}$ we have:
 \[
@@ -264,7 +229,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}} \scal{\vec{v_1}}
     Therefore:
     \begin{align*}
         &\scal{\vec{w_1}}{\vec{w_2}} \\
-        &= \scal{\vec{w_{11}}}{\vec{w_{22}} + 0\cdot\vec{w_{12}} + 0\cdot\vec{w_{01}} + 0\cdot\vec{w_{11}}}\\
+        &= \scal{\vec{w_{11}}}{\vec{w_{22}} + 0\;\vec{w_{12}} + 0\;\vec{w_{01}} + 0\;\vec{w_{11}}}\\
         &= \scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}} + \lambda\beta\vec{w_{01}} + \alpha\mu\vec{w_{10} + \alpha\beta\vec{w_{11}}}}\\
         &=\scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}} + \scal{\vec{w_{11}}}{\lambda\beta\vec{w_{01}}} + \scal{\vec{w_{11}}}{\alpha\mu\vec{w_{10}}} + \scal{\vec{w_{11}}}{\alpha\beta\vec{w_{11}}}\\
         &=\lambda\mu\scal{\vec{w_{11}}}{\vec{w_{00}}} + \lambda\beta\scal{\vec{w_{11}}}{\vec{w_{01}}} + \alpha\mu\scal{\vec{w_{11}}}{\vec{w_{10}}} + \alpha\beta\scal{\vec{w_{11}}}{\vec{w_{11}}}\\

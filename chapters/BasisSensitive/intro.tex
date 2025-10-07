@@ -8,9 +8,11 @@ In most quantum programming languages, qubits are interpreted in a canonical bas
 % Work in this chapter
 In this chapter we will introduce a quantum lambda calculus in the quantum-data / quantum-control paradigm. It uses as starting point the calculus defined in \cite{DiazcaroGuillermoMiquelValironLICS19}, which was introduced using a realizability technique. In the same manner, our aim is to follow this workflow to extract a type system able to track bases throughout the programs. This should allow us to treat qubit in known bases classically, while still handling unknown qubits linearly.
 
+To do this, we will decorate abstractions with the basis it is working in. Morally, the reduction system will consider values in that basis as its classical data. In the same manner, linear combination of these elements will represent quantum data and reduce linearly over the term.
+
 % How are planning to do this (Realizability technique)
 
-In 1945, Kleene introduced in \cite{KleeneJSL45} the notion of realizability as a semantics for Heyting arithmetic. Since then, it has evolved and found applications both in proof theory and functional programming. In our case, we will use it for extracting type systems from the operational semantics of a calculus, resulting in a system in which safety properties hold by construction.{\color{red} CITAR Y MENCIONAR DONDE SE INTRODUCE ESTA TECNICA PARA SISTEMAS DE TIPOS. LIBRO DE VAN OOSTROM?}
+In 1945, Kleene introduced in \cite{KleeneJSL45} the notion of realizability as a semantics for Heyting arithmetic. Since then, it has evolved and found applications both in proof theory and functional programming. In our case, we will use it for extracting type systems from the operational semantics of a calculus, resulting in a system in which safety properties hold by construction.
 
 The steps to define a programming language using this technique are as follows. First, define a calculus equipped with a deterministic evaluation strategy. Second, define types as sets of closed values in the language, optionally introducing operations to build more complex types. Third, define the typing judgement $\Gamma \vdash t : A$, where $\Gamma$ is a context of typed variables, $t$ a term in the calculus, and $A$ a type, as the property that for every substitution $\theta$ that map variables in $\Gamma$ to closed values of their respective type, the term $\theta(t)$ reduces to a value in $A$, i.e., $\theta(t) \twoheadrightarrow v \in A$.
 
