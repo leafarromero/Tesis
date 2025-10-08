@@ -4,14 +4,16 @@ The reduction system implements a mechanism where every vector in the space is r
 
 \begin{table*}[tb]
   \small
-  \begin{align*}
-    \sum_{i=1}^{n}\alpha_i(\Lam{x}{A}{\vec{t_i}})\ \vec{v} &\evalone \sum_{i=1}^{n} \alpha_i \vec{t_i}\ansubst{\vec v/x}{A}\\[5pt]
-    \text{If }&\vec{t_i}\ansubst{\vec v/x}{A}\text{ is defined}\\
-    \LetP{x}{B}{y}{B'}{\vec v}{\vec{t}} & \evalone\vec{t}\ansubst{\vec{v}/x\otimes y}{B\otimes B'}\\[5pt]
-    \gencase{\vec{v}}{\vec{v_1}}{\vec{v_n}}{\vec{t_1}}{\vec{t_2}}
-    &\evalone\sum_{i=1}^{n} \alpha_i \vec{t_i}\\
-    \text{If }&\vec{v}\equiv\sum_{i=1}^{n}\alpha_i \vec{v_i}
-  \end{align*}
+  
+  \[
+  \begin{array}{l}
+    \text{If }\vec{t_i}\ansubst{\vec v/x}{A}\text{ is defined:}\\[3pt]
+    \sum_{i=1}^{n}\alpha_i(\Lam{x}{A}{\vec{t_i}})\ \vec{v} \evalone \sum_{i=1}^{n} \alpha_i \vec{t_i}\ansubst{\vec v/x}{A}\\[12pt]
+    \LetP{x}{B}{y}{B'}{\vec v}{\vec{t}}\evalone\vec{t}\ansubst{\vec{v}/x\otimes y}{B\otimes B'}\\[12pt]
+    \text{If }\vec{v}\equiv\sum_{i=1}^{n}\alpha_i \vec{v_i}:\\[3pt]
+    \gencase{\vec{v}}{\vec{v_1}}{\vec{v_n}}{\vec{t_1}}{\vec{t_2}}\evalone\sum_{i=1}^{n}\alpha_i \vec{t_i}\\
+  \end{array}
+  \]
   
   \[
   \begin{array}{c c c}
@@ -69,11 +71,11 @@ The advantage of this general approach over a binary conditional is the possibil
 
 This particular set of four vectors is called the \textit{Bell basis}. It is useful in the field of quantum communication. In a later section, we will explore the quantum teleportation algorithm which heavily relies on these states. 
 
-Defining the system in this way determines a strategy in the \textit{call-by-value} family, which we dub \textit{call-by-arbitrary-basis}. Note that evaluation is weak, meaning that no reduction occurs under lambda, pairs, let or conditional constructors.
+Defining the system in this way determines a strategy in the \textit{call-by-value} family, which we dub \textit{call-by-arbitrary-basis}. Note that evaluation is weak, meaning that no reduction occurs under lambda, pairs, let or conditional constructors. This prevents unnecessary work, reducing sub-terms that may or may not be utilized.
 
 The congruence relation on terms gives rise to different redexes. However, we can show that the relation $\equiv$ commutes with the reflexive-transitive closure of the reduction $\evalone$ (We shall note $\eval$ as this reflexive-transitive closure). In other words, equivalence is preserved by the reduction $\eval$.
 
-\begin{theorem}[Congruence modulo-$\equiv$]
+\begin{theorem}[Reduction preserves equivalence]
   Let $\vec{t}$ and $\vec{s}$ be closed term distributions such that $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{t'}$, and $\vec{s}\evalone\vec{s'}$. Then there exists term distributions $\vec{r_1},\vec{r_2}$ such that $\vec{t'}\eval\vec{r_1}$, $\vec{s'}\eval\vec{r_2}$ and $\vec{r_1}\equiv\vec{r_2}$. Diagrammatically:
 
 \[
@@ -83,10 +85,15 @@ The congruence relation on terms gives rise to different redexes. However, we ca
    & \vec{r_1} & \equiv & \vec{r_2} &
   \end{tikzcd}
 \]
-
 \end{theorem}
+
+{\color{red} HASTA ACÁ LLEGUÉ CON LAS CORRECCIONES. DESPUÉS SEGUÍ HASTA AL FINAL ARREGLANDO DETALLES Y ME DEJÉ ANOTADO EN ROJO TODO'S PARA TERMINAR}
+
+
 \begin{proof}
-  Induction over the relation $\equiv$. 
+  {\color{red}TODO: TENGO QUE REHACER LA PRUEBA}
+  \iffalse
+  Induction over the relation $\equiv$.
   \begin{description}
     \item[$\vec{t} (\alpha\vec{s})\equiv\alpha(\vec{t}\vec{s})$:] If either $\vec{t}$ or $\vec{s}$ reduce, then merely reduce on both sides of the congruence. If $\vec{t} = \sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec t_i})$ and $\vec{s}=\vec v= \sum_{j=1}^{m} \delta_j \vec{a_j}$ for $\vec{a_j}\in A$, then:
     \begin{align*}
@@ -214,8 +221,9 @@ The congruence relation on terms gives rise to different redexes. However, we ca
   \end{align*}
   And we have that $\sum_{i=1}^{n} \alpha_i\beta_i\vec{r_i}\equiv\sum_{i=1}^{n}\alpha_i\vec{r_i} + \sum_{i=1}^{n}\beta_i \vec{r_i}$.
   \end{description}
+  \fi
 \end{proof}
 
 \begin{convention}
-  With the previous result in mind, we will consider term distributions modulo the $\equiv$ congruence. This will not affect distributions under $\lambda$-abstractions or case conditionals which we only consider up to $\alpha$-conversion.
+  With the previous result in mind, we will consider term distributions modulo the $\equiv$ congruence. This will not affect distributions under $\lambda$-abstractions or case conditionals which we only consider up to $\alpha$-conversion. Notice that reduction modulo $\equiv$ is deterministic.
 \end{convention}

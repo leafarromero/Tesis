@@ -33,7 +33,7 @@ We first define the terms for the algorithm. The top level $\mathsf{Deutsch}$ ab
     \caption{Deutsch algorithm term}
 \end{table*}
 
-On table \ref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the oracles encoding the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
+On Table \ref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the oracles encoding the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
 
 \begin{table*}
     \scriptsize
@@ -54,7 +54,11 @@ On table \ref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ co
     \label{tab:Oracles}
 \end{table*}
 
-Each of these oracles can be typed as $\B\to\B\to(\B\times\B)$. But since we are passing $\ket{+}$ and $\ket{-}$ as arguments, the typing we would be able to assign is: $\sharp\B\to\sharp\B\to(\B\otimes\B)$. This means that the final typing for $\mathsf{Deutsch}$ would be: $\TYP{}{\mathsf{Deutsch}}{(\sharp\B\Arr\sharp\B\Arr(\sharp\B\Arr\sharp\B))\Arr\sharp(\B\times\B)}$. This would seem to suggest that the result of the computation is a superposition of pairs of booleans.
+Each of these oracles can be typed as $\B\to\B\to(\B\times\B)$. But since we are passing $\ket{+}$ and $\ket{-}$ as arguments, the typing we would be able to assign is: $\sharp\B\to\sharp\B\to\sharp(\B\times\B)$. Which means that the final typing for $\mathsf{Deutsch}$ would be:
+\[
+\TYP{}{\mathsf{Deutsch}}{(\sharp\B\Arr\sharp\B\Arr(\sharp\B\Arr\sharp\B))\Arr\sharp(\B\times\B)}
+\]
+This would seem to suggest that the result of the computation is a superposition of pairs of booleans.
 
 However, this approach underutilizes the amount of information we have available. We know that the oracle will receive specifically the state $\ket{+-}$, and so we can rewrite the intervening terms taking this information into account. In table \ref{tab:DeutschShift} we restate the terms, but this time the abstractions and conditional cases are written in the basis $\XB=\{\ket{+},\ket{-}\}$.
 
@@ -83,13 +87,13 @@ However, this approach underutilizes the amount of information we have available
     \label{tab:DeutschShift}
 \end{table*}
 
-In this case, for each of the oracles we can assign the type $\XB\to\XB\to\XB\times\XB$ and type the term $\mathsf{Deutsch}$ as $(\XB\to\XB\to\XB\times\XB)\to\B$. There is a key difference here, the type of the oracles assure us that the result will be in the basis state $\XB\times\XB$. In other words, the result can either be a pair of $\ket{+}$ or $\ket{-}$ (up to a global phase). Since we know this fact, we can manipulate the result of $f$ as we would with classical bits, and discard the second component. 
+In this case, for each of the oracles we can assign the type $\XB\to\XB\to\XB\times\XB$ and type the term $\mathsf{Deutsch}$ as $(\XB\to\XB\to\XB\times\XB)\to\B$. There is a key difference here, the type of the oracles ensure that the result will be in the basis state $\XB\times\XB$. In other words, the result will be a pair with either $\ket{+}$ or $\ket{-}$ in its components (up to a global phase). Since we know this fact, we can manipulate the result of $f$ as we would with classical bits, and discard the second component. 
 
-Both functions are equivalent on an operational point of view. But reframing the into a different basis, allow us to give a more tight typing to the terms and more insight on how the algorithm works. If we analize the typing judgements, we observe that none of the variables has a $\sharp$ type. This has two consequences, first we can safely discard the second qubit and second, the Hadamard transform guarantees that the first qubit will yield a boolean. This correlates with the fact that Deutsch's algorithm is deterministic and, we can statically ensure the result will be a basis vector.
+Both functions are equivalent on an operational point of view. But reframing it onto a different basis, allows us to give a more tight typing to the terms and more insight on how the algorithm works. If we analize the typing judgements, we observe that none of the variables has a $\sharp$ type. This has two consequences, first we can safely discard the second qubit and second, the Hadamard transform guarantees that the first qubit will yield a boolean. This correlates with the fact that Deutsch's algorithm is deterministic and we can statically ensure the result will be a basis vector.
 
 \subsection{Quantum teleportation}
 
-The \emph{principle of deferred measurement} states that any quantum circuit involving the measurement of some qubit followed by a gate controlled by the outcome of this measurement is equivalent to another circuit in which no gates are controlled by previous measurement results. Instead, all gates are controlled by a quantum state. $\lambdaB$ does not implement a mechanism to measure states, but using the $\mathsf{case}$ constructor is possible to simulate these quantum controlled gates.
+The \emph{principle of deferred measurement} is a result which states that any quantum circuit can delay the measurements performed without modifying its outcome. More precisely, any gate controlled by the outcome of a measurement is equivalent to another gate whose control has not yet been measured. The calculus $\lambdaB$ does not implement a mechanism to measure states, but using the $\mathsf{case}$ constructor is possible to simulate these quantum controlled gates.
 
 A notable example of an algorithm which makes use of classical controlled gates is the \emph{quantum teleportation}. In it, two agents (usually called Alice and Bob) share two parts of a Bell state and make use of the entanglement to move a quantum state from a qubit owned by Alice to a qubit owned by Bob. The quantum circuit representation of the algorithm is the following:
 
@@ -101,7 +105,7 @@ A notable example of an algorithm which makes use of classical controlled gates 
     }
 \end{align*}
 
-The algorithm first encodes the Bell state $\Phi^+$ onto the second and third qubit and then performs a Bell basis measurement on the first and second qubit. In order to do this, it first decomposes applying a CNOT gate followed by a Hadamard gate on the first qubit (The adjoint of the Bell state generation). Then the first and second qubit are measured, which informs the correction needed for the third qubit to recover the state $\phi$.
+The algorithm first encodes the Bell state $\Phi^+$ onto the second and third qubit and then performs a Bell basis measurement on the first and second qubit. In order to do this, it first decomposes applying a CNOT gate followed by a Hadamard gate on the first qubit (the adjoint of the Bell state generation). Then the first and second qubit are measured, which informs the correction needed for the third qubit to recover the state $\phi$.
 
 We can simulate the operation of the algorithm, via a $\lambda$-term which instead of outright measuring, describes the steps to take in each of the possible outcomes. A possible implementation is:
 
@@ -117,4 +121,4 @@ The $\lambda$-term takes the state $\ket{\phi}$ as an argument, then matches the
 
 The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases. The final type of the term is $\sharp\basis{\B}\Arr \sharp\basis{\Bell}\times \sharp\basis{\B}$.
 
-{\color{red} LEER MEASUREMENT BASED QUANTUM COMPUTING CAPAZ AHÍ HAY MÁS EJEMPLOS}
+{\color{red} TODO: HABLAR DEL PAPER DE SIMON ACÁ EN UNA NUEVA SUBSECTION}

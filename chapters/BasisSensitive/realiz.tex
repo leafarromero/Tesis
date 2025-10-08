@@ -4,13 +4,17 @@ In this section, we present the type system corresponding to the untyped languag
 
 \subsection{Unitary Type Semantics}
 
-Given a deterministic machine, the next step to extract a language is to define the sets of values which will characterize its types. In order to achieve this we first need to identify the notion of what exactly constitutes a type.
-
-\begin{definition}{Unitary type}
-  We define a \textit{unitary type} (or just \textit{type}) as a notation $A$ together with a set of unitary value distributions noted $\sem{A}$ called the unitary semantics of $A$.
-\end{definition}
+Given the deterministic machine presented in the previous section, the next step to extract a typing system is to define the sets of values which will characterize its types. In order to achieve this we first need to identify the notion of what exactly constitutes a type.
 
 Our aim is to define types that are exclusively inhabited by values of norm equal to 1. The vectors that we wish to study all fall in the \emph{unit sphere}. We will write $\Sph$ for the set $\Sph := \{\vec v \in \vec{\Val}~|~\|\vec v\| =1\}$. This corresponds with the mathematical notion of representing quantum data as unit vectors in a Hilbert space. 
+
+\begin{definition}[Unitary value distribution]
+  We say a value distribution $\vec{v}$ is unitary when it has norm equal to $1$. In other words, when $\vec{v}\in\Sph$.
+\end{definition}
+
+\begin{definition}[Unitary type]
+  We define a \textit{unitary type} (or just \textit{type}) as a notation $A$ together with a set of unitary value distributions noted $\sem{A}$ called the unitary semantics of $A$.
+\end{definition}
 
 We next move onto the type realizers. Since our aim is to extract a quantum lambda calculus, we wish to filter global phases of qubits at this level. Since the global phase of a quantum state has no physical significance, we wish to assign the same types to a term $\vec{t}$ and $e^{i\theta}\cdot\vec{t}$. This idea will guide the definition of type realizers.
 
@@ -23,7 +27,7 @@ We next move onto the type realizers. Since our aim is to extract a quantum lamb
   For each type $A$, we note the set of its realizers as $\{\real A\}$.
 \end{definition}
 
-With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with a type grammar defined on Table \ref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards we refer to $\Type$ to the set of all types and $\BasisType$ to the set of all bases.
+With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with the type grammar defined on Table \ref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards denote by $\Type$ the set of all types and by $\BasisType$ the set of all bases.
 
 \begin{table*}[tb]
   \scriptsize
@@ -42,7 +46,7 @@ With the notions of unitary types and its realizers we can start defining the sp
   \label{tab:UnitaryTypes}
 \end{table*}
 
-The types $\basis{X}$ act as atomic types. They represent a finite set $X$ of orthogonal vectors conforming an orthonormal basis. We can represent boolean values with a basis of size 2, but we are not limited to only one kind since there are infinite bases to choose from.
+The types $\basis{X}$ act as atomic types. They represent a finite set $X$ of orthogonal vectors forming an orthonormal basis. We can represent boolean values with a basis of size 2, but we are not limited to only one kind since there are infinite bases to choose from.
 
 The type $A\times B$ represents the cartesian product of $A$ and $B$. However, the syntax grammar only allows for pairs of pure values. So there is a small subtlety on the type depicted in the table. For every $\vec{v}=\sum_{i=1}^{n}\alpha_i v_i\in\sem{A}$ and $\vec{w}=\sum_{j=1}^{m}\beta_j w_j\in\sem{B}$ (With $v_i$ and $w_j$ pure values) when we filter out the notation for pairs, we get:
 
@@ -52,11 +56,11 @@ The type $A\times B$ represents the cartesian product of $A$ and $B$. However, t
 
 We stress this fact for rigorousness, but for ease of reading from this point onwards we will make use of the previously defined notation.
 
-The arrow type $A\Arr B$ is conformed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. In doing so, we are left with the $\C$-linear combinations of value distributions of type $A$, this will represent a superposition of values of type $A$.
+The arrow type $A\Arr B$ is composed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. In doing so, we are left with the $\C$-linear combinations of value distributions of type $A$, this will represent a superposition of values of type $A$.
 
-The type grammar is standard except for type $\sharp A$. We use it to represent quantum data, i.e. linear resources, so terms of this type will not be able to be erased or duplicated. This can be thought as the opposite of the \textit{bang} ($!$) modality in linear logic. 
+The type grammar is standard except for type $\sharp A$. We use it to represent quantum data, i.e. linear resources, so terms of this type will not be able to be erased or duplicated. This can be thought as the opposite of the \textit{bang} ($!$) modality in linear logic. For a more in-depth analysis, refer to \cite{DiazcaroCIE2025}.
 
-Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (Intersected with the unitary sphere). This describes the possible linear combinations of values of type $A$. The following proposition proves that characterization:
+Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values of type $A$. The following proposition proves that characterization:
 
 \begin{proposition}\label{prop:SharpCharacterization}
   The type interpretation $\sem{\sharp A}$ contains the norm-$1$ linear combination of values in $\sem{A}$.
@@ -81,7 +85,7 @@ Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the spa
     \[
     \scal{\vec{v}}{\vec{w_2}} = \scal{\vec{w_1}+\vec{w_2}}{\vec{w_2}} = \|\vec{w_2}\|\neq 0
     \]
-    Then $\vec{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vec{v}\not\in\Span{\sem{A}}\cap\Sph$.
+    Then $\vec{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vec{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
   \end{description}
 \end{proof}
 
@@ -92,7 +96,7 @@ The following proposition shows that, as one would expect from the span, multipl
 \end{proposition}
 
 \begin{proof}
-  We want to prove that $(((\comp{A})^\bot)^\bot)^\bot = (\comp{A})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
+  We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
 
   \begin{description}
     \item[$A\subseteq A^{\bot^2}$:] Let $\vec{v}\in A$. Then, for all $\vec{w}\in\comp{A}$, $\scal{\vec{v}}{\vec{w}} = 0$. Then $\vec{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
@@ -114,7 +118,7 @@ The only thing left would be to check that our type algebra captures sets of val
 \end{proposition}
 
 \begin{proof}
-  Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{X}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $A\times B$.
+  Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{X}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $\sem{A\times B}$.
   
   Let $\vec v = \sum_{i=0}^{n} \alpha_i v_i \in\sem{A}$ and $\vec w = \sum_{j=0}^{m} \beta_j w_j$ where every $v_i$ are pairwise orthogonal, same for $w_j$. Then:
      
@@ -127,13 +131,13 @@ The only thing left would be to check that our type algebra captures sets of val
   
 \end{proof}
 
-Defining types as sets of values induces, at the same time, an intuitive way to define a subtyping relationship. We say a type $A$ is subtype of a type $B$ (Noted $A\leq B$) if the set of realizers of $A$ is included in the set of realizers of $B$ ($\{\real A\}\subseteq\{\real B\}$). If the sets coincide, we say that $A$ is isomorphic to $B$ (Noted $A\cong B$). 
+Defining types as sets of values also induces an intuitive way to define a subtyping relationship. We say a type $A$ is subtype of a type $B$ (noted $A\leq B$) if the set of realizers of $A$ is included in the set of realizers of $B$ ($\{\real A\}\subseteq\{\real B\}$). If the sets coincide, we say that $A$ is isomorphic to $B$ (noted $A\cong B$). 
 
 \begin{example}
   For example, for every type $A$, $A\leq\sharp A$. For bases, $\basis{\B}$ and $\basis{\XB}$ we have that: neither $\basis{\B}\not\leq\basis{\XB}$, nor $\basis{\B}\not\leq\basis{\XB}$. However, $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
 \end{example}
 
-Although, every type is defined by norm 1 value distributions, not every norm 1 distribution belongs to a type. Take for example the distribution $\frac{1}{\sqrt{2}} (\ket{0} + \Pair{\ket{0}}{\ket 0})$. Another case is a linear combination of abstractions with different bases. For example, the term:
+Although every type is defined by norm 1 value distributions, not every norm 1 distribution belongs to the interpretation of a type. Take for example the distribution $\frac{1}{\sqrt{2}} (\ket{0} + \Pair{\ket{0}}{\ket 0})$. Another case is a linear combination of abstractions with different bases. For example, the term:
 
 \[
 \frac{1}{\sqrt{2}}(\Lam{x}{\B}{\pauliX{x}}) + \frac{1}{\sqrt{2}}(\Lam{x}{\XB}{x})
@@ -142,6 +146,8 @@ Although, every type is defined by norm 1 value distributions, not every norm 1 
 Is not a member of an arrow type, since the bases decorating each abstraction do not match. However, it is computationally equivalent to the abstraction $(\Lam{x}{\B}{\ket{+}})$ which belongs to the set $\sem{\basis{\B}\Arr\basis{\XB}}$.
 
 \subsection{Characterization of unitary operators}
+
+{\color{red}TODO: ME QUEDA CAMBIAR LAS APARICIONES DE "VALUES OF TYPE..."}
 
 One of the main results of \cite{DiazcaroGuillermoMiquelValironLICS19}, is the characterization of $\C^2\to\C^2$ unitary operators using values of type $\sharp\B\Arr\sharp\B$ \cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}. In this subsection we expand on this result. Our goal is to prove that abstractions of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ (both bases of size $n$) represent $\C^n\to\C^n$ unitary operators.
 
@@ -156,7 +162,6 @@ Unitary operators are the isomorphisms of Hilbert spaces since they preserve the
 
 \begin{proof}
   \textit{The condition is necessary:} Suppose that $\Lam{x}{X}{\vec t_k}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vec v_i\in\sem{\sharp\basis{X}},\ \vec{t}\ansubst{\vec{v_i}/x}{X}\eval\vec w_i\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vec w_i \perp \vec w_j$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
-
   \begin{align*}
     (\Lam{x}{X}{\vec{t}})(\sum_{i=1}^n \alpha_i \vec{v_i}) &\to \vec t\ansubst{\sum_{i=1}^n \alpha_i \vec v_i/x}{X}\\
     &= \sum_{i=1}^{n} \alpha_i \vec{t}[\vec{v_i}/x]\\ 
@@ -164,7 +169,6 @@ Unitary operators are the isomorphisms of Hilbert spaces since they preserve the
   \end{align*}
 
   But since $\sum_{i=1}^n \alpha_i \vec{v_i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vec{w_i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vec{w_i}\|=1$. Therefore:
-
   \begin{align*}
     1 = \|\sum_{i=1}^n \alpha_i \vec{w_i}\| &= \scal{\sum_{i=1}^n \alpha_i \vec{w_i}}{\sum_{j=1}^n \alpha_j \vec{w_j}}\\
     &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec w_i}{\vec w_i } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vec w_i}{\vec w_j}\\
@@ -194,20 +198,24 @@ Unitary operators are the isomorphisms of Hilbert spaces since they preserve the
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vec w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by lemma \ref{prop:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\to\sharp B}$.
+  Then $\sum_{i=1}^n \alpha_i \vec w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Lemma \ref{prop:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\to\sharp B}$.\qedhere
 \end{proof}
 
 Next, we need to bridge the gap between the values in the calculus with vectors in the space $\C^n$. In order to do this, we introduce a meta-language operation $\pi_n$ which translates value distributions into vectors in $\C^n$. The operation simply writes the value in the canonical basis and takes the corresponding coefficients. 
 
-\begin{definition}  
+\begin{definition}
 Let $\basis{X}$ be an orthonormal basis of size $n$, then for every $\vec{v}\in\sem{\basis{X}}$:
 \[
 \vec{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i}
 \]
-Where $\ket{i}$ is the $n$-th dimensional product of $\ket{0}$ and $\ket{1}$ with $i$ written in binary and $\sum_{i=1}^{n}|\alpha_i|^2=1$. We define $\pi_n:\sem{\basis{X}}\to\C^n$ as (we omit the subscript when it can be deduced from the context):
+Where $\ket{i}$ is the $n$-th dimensional product of $\ket{0}$ and $\ket{1}$ with $i$ written in binary and $\sum_{i=1}^{n}|\alpha_i|^2=1$. (For example, $\ket{3}$ with $n=4$ is $\ket{0011}$). We define $\pi_n:\sem{\basis{X}}\to\C^n$ as::
 \[
 \pi_n(\vec{v}) = (\alpha_1,\dotsb ,\alpha_n)
 \]
+We will omit the subscript when it can be deduced from the context.
+\end{definition}
+
+\begin{definition}
 We say a $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})$ represents an operator $F:\C^n\to\C^n$ when:
 \[
 (\Lam{x}{X}{\vec{t}})\vec{v} \eval \vec{w} \iff F(\pi_n(\vec{v})) = \pi_n(\vec{w})
@@ -221,7 +229,7 @@ Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the
 \end{theorem}
 
 \begin{proof}
-  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by lemma \ref{lem:BasesIso} we have that, for every $\vec{v_i}\in\sem{\basis{X}}$ exist $\vec{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vec{t}[\vec{v_i}/x]\eval\vec{w_i}$ and $\vec{w_i}\perp\vec{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vec{v_i}))=\pi(\vec{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vec{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vec{w_i})\|_{\C^n}=\|\pi(\vec{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vec{w_i})}{\pi(\vec{w_j})}_{\C^n}=0$.
+  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by Lemma \ref{lem:BasesIso} we have that, for every $\vec{v_i}\in\sem{\basis{X}}$  there exist $\vec{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vec{t}[\vec{v_i}/x]\eval\vec{w_i}$ and $\vec{w_i}\perp\vec{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vec{v_i}))=\pi(\vec{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vec{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vec{w_i})\|_{\C^n}=\|\pi(\vec{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vec{w_i})}{\pi(\vec{w_j})}_{\C^n}=0$.
 
   \textit{The condition is sufficient:} Suppose that $(\Lam{x}{X}{\vec{t}})$ represents a unitary operator $F:\C^n\to\C^n$. From this we deduce that:
   \[
@@ -231,10 +239,10 @@ Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the
   \[
     (\Lam{x}{X}{\vec{t}})\vec{v_i}\evalone\vec{t}\ansubst{\vec{v_i}/x}{X} = \vec{t}[\vec{v_i}/x]\eval\vec{w_i}\in\sem{\sharp\basis{Y}},
   \]
-  since $\|\vec{w_i}\|=\|F(\pi(\vec{v_i}))\|_{\C^n} = 1$, we can deduce from lemma \ref{lem:BasesIso}, that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
+  since $\|\vec{w_i}\|=\|F(\pi(\vec{v_i}))\|_{\C^n} = 1$, we can deduce from Lemma \ref{lem:BasesIso}, that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
   \[
   \scal{\vec{w_i}}{\vec{w_j}}=\scal{F(\pi(\vec{v_i}))}{F(\pi(\vec{v_j}))}_{\C^n} = 0
-  \]
+  \]\qedhere
 \end{proof}
 
 These results can be extended to unitary distributions of lambda abstractions, since $(\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vec{t_i}})$ is syntactically different but computationally equivalent to $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t_i}})$. Ultimately, we generalized one of the main theorems in \cite{DiazcaroGuillermoMiquelValironLICS19}. The inclusion of the basis type in our system allow us to reason more easily about the action of the operators and translate the proof onto a more general case. 

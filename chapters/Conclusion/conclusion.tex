@@ -1,7 +1,7 @@
 \section{Conclusion}
 \subsection{Discussion: Towards a specification system}
 
-We found a somewhat interesting extreme when we drop the condition of bases to have size $n$, and we consider singletons. The resulting system replicates the term reduction inside the strict typing rules and forms a sort of specification system. In short, sequents take the following form: $x_1: \vec{v}_1, \dotsb, x_n: \vec{v}_n \vdash \vec t : \vec{w}$ (We omit the brackets in singleton sets). And so, we can read the previous sequent as: ``Every substitution $\sigma$ such that $\sigma(x_i)=\vec{v_i}$ validates that $\sigma(\vec{t})$, reduces to $\vec{w}$''. With this in mind, we can design inference rules that only use singleton sets as types. Let us take for example any non-abstraction value distribution $\vec{v}$, we describe a specification with tight typing in table \ref{tab:duplicationSpec}.
+We found a somewhat interesting extreme when we drop the condition of bases to have size $n$, and we consider singletons. The resulting system replicates the term reduction inside the strict typing rules and forms a sort of specification system. In short, sequents take the following form: $x_1: \vec{v}_1, \dotsb, x_n: \vec{v}_n \vdash \vec t : \vec{w}$ (we omit the brackets in singleton sets). And so, we can read the previous sequent as: ``Every substitution $\sigma$ such that $\sigma(x_i)=\vec{v_i}$ validates that $\sigma(\vec{t})$, reduces to $\vec{w}$''. With this in mind, we can design inference rules that only use singleton sets as types. Let us take for example any non-abstraction value distribution $\vec{v}$, we describe a specification with tight typing in Table \ref{tab:duplicationSpec}.
 
 \begin{table*}
 \scriptsize
