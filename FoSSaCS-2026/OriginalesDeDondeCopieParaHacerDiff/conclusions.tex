@@ -1,0 +1,26 @@
+\section{Conclusion}\label{sec:conclusion}
+
+% Introduction
+In this chapter we explore a quantum-data/quantum-control $\lambda$-calculus, with the additional feature of framing the abstraction in different bases besides the canonical one.
+
+% Syntax & substitutions
+The mechanism needed to implement this idea is the decoration in $\lambda$-terms and $\mathsf{let}$ constructors. Along with a new substitution which dictates the decomposition of the value distribution onto different bases. These changes do not add expressive power to the original calculus it is based from, however they provide a different point of view when writing programs. 
+
+% Reduction system
+The reduction system itself orchestrates the computation and makes use of the syntax and substitution previously defined. The main point to note is that the evaluation commutes with the congruence relationship, ensuring that interpreting a vector in a different basis does not alter the result of the computation. And in turn, allows us to consider value distributions modulo this congruence.
+
+% Realizability model
+The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterize the abstractions that represent unitary functions. This is the main result of the section and is a generalization of the characterization found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
+
+% Typing system
+The other main result of the chapter is the validity of the several typing rules described in Table \ref{tab:TypingRules}. Extracting them via the realizability technique, ensures their correctness and can later form the foundation of the type system for a programming language.
+
+% Examples
+Finally, we present two examples that showcase the advantage of the typing system and syntax. First Deutsch's algorithm, which exhibits a more expressive type and in turn, allows to treat the result classically. Second, the case for quantum teleportation, where we are able to simulate gates controlled by a Bell basis measurement as branches on a pattern matching $\mathsf{case}$. 
+
+% Things left to do
+There are a few remaining lines of research that stem from this work. A natural progression would be to provide a categorical model to study the calculus through a different lens and relate it to other well studied systems. 
+
+As well, we could try to give a translation into an intermediate language like ZX alongside the lines of the second chapter. Proving that, despite the programs being detached from the circuitry, they can still be  implemented concretely.
+
+% En la parte de conclusiones/trabajo futuro, me gustaría meter otra noción de producto interno que juegue bien con las funciones. Con esta definición una función es ortogonal a su eta expansión. O (\x. t_1 + t_2) _|_ (\x. t_2 + t_1)

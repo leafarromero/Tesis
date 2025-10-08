@@ -1,0 +1,40 @@
+\section{Introduction}
+
+% Motivation
+We previously presented the impossibility theorems which stated that is physically impossible to copy or delete a qubit. There is however, a subtlety in these impossibility theorems. Arbitrary qubits cannot be copied, but it is indeed possible to do so with known qubits. This implies that qubits with known values behave as classical data and can be treated accordingly. Moreover, it suffices to know the basis to which a qubit belongs in order to copy and delete it. This is a known fact in quantum information theory which underlies a number of quantum algorithms. 
+
+In most quantum programming languages, qubits are interpreted in a canonical basis (often called the computational basis). In this fashion, classical bits are represented by the basis vectors, and qubits as norm-1 linear combinations of bits. We are allowed to copy and delete classical bits freely, while such operations on arbitrary qubits remain restricted.
+
+% Work in this chapter
+In this chapter we will introduce a quantum lambda calculus in the quantum-data / quantum-control paradigm. It uses as starting point the calculus defined in \cite{DiazcaroGuillermoMiquelValironLICS19}, which was introduced using a realizability technique. In the same manner, our aim is to follow this workflow to extract a type system able to track bases throughout the programs. This should allow us to treat qubit in known bases classically, while still handling unknown qubits linearly.
+
+To do this, we will decorate abstractions with the basis it is working in. Morally, the reduction system will consider values in that basis as its classical data. In the same manner, linear combination of these elements will represent quantum data and reduce linearly over the term.
+
+% How are planning to do this (Realizability technique)
+
+In 1945, Kleene introduced in \cite{KleeneJSL45} the notion of realizability as a semantics for Heyting arithmetic. Since then, it has evolved and found applications both in proof theory and functional programming. In our case, we will use it for extracting type systems from the operational semantics of a calculus, resulting in a system in which safety properties hold by construction.
+
+The steps to define a programming language using this technique are as follows. First, define a calculus equipped with a deterministic evaluation strategy. Second, define types as sets of closed values in the language, optionally introducing operations to build more complex types. Third, define the typing judgement $\Gamma \vdash t : A$, where $\Gamma$ is a context of typed variables, $t$ a term in the calculus, and $A$ a type, as the property that for every substitution $\theta$ that map variables in $\Gamma$ to closed values of their respective type, the term $\theta(t)$ reduces to a value in $A$, i.e., $\theta(t) \twoheadrightarrow v \in A$.
+
+In this setting, each typing rule corresponds to a provable theorem. For instance, if $\Gamma \vdash t : A$ implies $\Delta \vdash r : B$, then the following rule is valid:
+\[
+  \infer{\Delta\vdash r:B}{\Gamma\vdash t:A}
+\]
+
+The main advantage of using realizability is that it provides us with a framework to define \emph{families of type systems}. We do not build the typing from ad-hoc rules, rather we define them according to the computational content of the calculus. We will present a set of rules which we deem adequate for a basic programming language. But, this set can be extended just as easily by proving the validity of new rules.
+
+% What do we aim to achieve? Plus the scope of the work
+The final aim of this chapter is twofold. First, to make use of this extracted type system to give a more accurate description of programs. Second, to take advantage of the syntax of the modified calculus to write algorithms in a more versatile manner, instead of simply translating from a circuit.
+
+The idea of keeping track of non-computational bases has been previously explored; see, for example \cite{Perdrix2008,Monzon2025}. In \cite{Perdrix2008}, Perdrix introduces an abstract model which keeps track of the basis of qubits which later utilizes to make static analysis of entanglement throughout the program.
+
+In \cite{Monzon2025}, Monzon and Díaz-Caro present a lambda-calculus which integrates some basis information of qubits into the type system. They then continue to prove meta-theoretic and safety properties, showing the calculus to be a strong proof-of-concept for basis analysis in type systems. Indeed, we will expand on these ideas on this chapter. 
+
+An important point to note, is that both of these systems are focused on the canonical basis alongside the Hadamard basis. Just taking into account these two bases already proved fruitful, however there are still improvements to be made. 
+
+First, the use of single-qubit bases does not take into account bases formed by multiple entangled qubits. That is, bases of vector spaces of higher dimensions which cannot be written as the product of two smaller bases.
+
+Second, the calculus \cite{Monzon2025} sacrifices higher-order computations as a trade-off for functions that act exclusively on qubits. We wish to recover this feature, that aligns with our aim of writing more flexible algorithms akin to modern programming languages.
+
+% Structure of the chapter
+The structure of the chapter is as follows: In section \ref{sec:calculus}, we define the syntax for the calculus. Then, in section \ref{sec:reduction} we detail the reduction system. We define the type algebra and prove a set of valid typing rules in section \ref{sec:model}. With the calculus fully defined, we showcase a few examples in section \ref{sec:examples}. We give closing remarks and discuss future work in \ref{sec:conclusion}.
