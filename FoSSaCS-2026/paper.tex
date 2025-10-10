@@ -1,5 +1,7 @@
 \documentclass[runningheads,orivec]{llncs}
 
+\usepackage{soul} % Borrar, es solo para highlights en el draft
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 
@@ -23,6 +25,15 @@
 \usepackage{color}
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \urlstyle{rm}
+\usepackage[capitalise,nameinlink]{cleveref}
+\usepackage[capitalise,nameinlink]{cleveref}
+\Crefname{section}{Section}{Sections}
+\Crefname{figure}{Figure}{Figures}
+\Crefname{table}{Table}{Tables}
+\Crefname{theorem}{Theorem}{Theorems}
+\Crefname{lemma}{Lemma}{Lemmas}
+\Crefname{definition}{Definition}{Definitions}
+
 
 % \qedhere compatible con llncs (sin amsthm)
 \makeatletter
@@ -234,29 +245,30 @@
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
 % an abbreviated paper title here
+\author{Anonymous Author(s) for submission}
 
-\author{
-  Alejandro Díaz-Caro\inst{1,2} %\orcidID{0000-0002-5175-6882}
-  \and
-  Octavio Malherbe\inst{3} %\orcidID{0009-0004-0624-9285}
-  \and
-  Rafael Romero\inst{2,4} %\orcidID{?}
-}
-
-\authorrunning{A. Díaz-Caro, O. Malherbe, and R. Romero}
-
-\institute{
-  Université de Lorraine, CNRS, Inria, LORIA, France
-  %\\\email{alejandro.diaz-caro@inria.fr}
-  \and
-  Universidad Nacional de Quilmes, Argentina
-  \and
-  Universidad de la República, Facultad de Ingeniería, IMERL, Uruguay
-  %\email{malherbe@fing.edu.uy}
-  \and
-  ICC, CONICET-Universidad de Buenos Aires, Argentina\\
-  %\email{lromero@dc.uba.ar}
-}
+%\author{
+%  Alejandro Díaz-Caro\inst{1,2} %\orcidID{0000-0002-5175-6882}
+%  \and
+%  Octavio Malherbe\inst{3} %\orcidID{0009-0004-0624-9285}
+%  \and
+%  Rafael Romero\inst{2,4} %\orcidID{?}
+%}
+%
+%\authorrunning{A. Díaz-Caro, O. Malherbe, and R. Romero}
+%
+%\institute{
+%  Université de Lorraine, CNRS, Inria, LORIA, France
+%  %\\\email{alejandro.diaz-caro@inria.fr}
+%  \and
+%  Universidad Nacional de Quilmes, Argentina
+%  \and
+%  Universidad de la República, Facultad de Ingeniería, IMERL, Uruguay
+%  %\email{malherbe@fing.edu.uy}
+%  \and
+%  ICC, CONICET-Universidad de Buenos Aires, Argentina\\
+%  %\email{lromero@dc.uba.ar}
+%}
 
 \maketitle 
 
@@ -269,52 +281,110 @@
 
 
 \section{Introduction}
+The no-cloning theorem \cite{WoottersZurek1982} and the no-deleting theorem
+\cite{PatiBraunstein2000} are two well-known results in quantum mechanics that
+state it is impossible to copy or delete an arbitrary qubit. This stands in
+stark contrast with classical information, where copying and deleting data are
+routine operations. There is, however, a subtlety: although arbitrary qubits
+cannot be copied or deleted, this is possible for known---and, in the case of
+deletion, separable---qubits. This implies that qubits with known values behave
+as classical data and can be treated accordingly. Moreover, it suffices to know
+the basis to which a qubit belongs in order to copy and, to some extent, delete it.
 
-% Motivation
-We previously presented the impossibility theorems which stated that is physically impossible to copy or delete a qubit. There is however, a subtlety in these impossibility theorems. Arbitrary qubits cannot be copied, but it is indeed possible to do so with known qubits. This implies that qubits with known values behave as classical data and can be treated accordingly. Moreover, it suffices to know the basis to which a qubit belongs in order to copy and delete it. This is a known fact in quantum information theory which underlies a number of quantum algorithms. 
+In most quantum programming languages, qubits are defined with respect to a
+canonical basis—often referred to as the computational basis. In this setting,
+classical bits correspond to the basis vectors, whereas qubits are unit-norm
+linear combinations of them. Classical bits can be copied and deleted freely,
+while such operations on arbitrary qubits are restricted.
 
-In most quantum programming languages, qubits are interpreted in a canonical basis (often called the computational basis). In this fashion, classical bits are represented by the basis vectors, and qubits as norm-1 linear combinations of bits. We are allowed to copy and delete classical bits freely, while such operations on arbitrary qubits remain restricted.
+In this paper we introduce a quantum $\lambda$-calculus within the
+quantum-control paradigm—by contrast with the classical-control one, where the
+control flow is classical and cannot be superposed. Our approach is inspired by
+a line of work on basis-sensitive quantum typing. The earliest system,
+Lambda-S \cite{DiazcaroDowekRinaldiBIO19}, could distinguish whether a qubit
+was in the computational basis, allowing duplication and erasure only in that
+case. Later, Lambda-S$_1$
+\cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} refined this
+approach by restricting to unit-norm vectors, introducing higher-order
+abstractions, and ensuring that terms of type qubit-to-qubit denote unitary
+maps. More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25}
+generalised Lambda-S to arbitrary non-entangled single-qubit bases, albeit
+through a purely syntactic framework restricted to first order. The calculus we
+present here extends these ideas to a unit-norm, higher-order setting over
+multiple-qubit bases, grounded in a realizability semantics.
 
-% Work in this chapter
-In this chapter we will introduce a quantum lambda calculus in the quantum-data / quantum-control paradigm. It uses as starting point the calculus defined in \cite{DiazcaroGuillermoMiquelValironLICS19}, which was introduced using a realizability technique. In the same manner, our aim is to follow this workflow to extract a type system able to track bases throughout the programs. This should allow us to treat qubit in known bases classically, while still handling unknown qubits linearly.
+The realizability methodology, originating with Kleene's work on Heyting
+arithmetic \cite{KleeneJSL45}, provides a constructive framework that connects
+operational semantics with type systems. In our context, it allows the
+extraction of a sound type system directly from the reduction semantics of the
+calculus, ensuring that safety properties hold by construction. The approach
+proceeds as follows:
+\begin{enumerate}
+  \item Define a calculus with a deterministic evaluation strategy.
+  \item Define types as sets of closed values in the language.
+  \item Define the typing judgement so that asserting that a term has a given
+  type is, by definition, to state that the term reduces to a value of the
+  corresponding type.
+\end{enumerate}
+Each typing rule therefore corresponds to a provable theorem in this setting.
+Rather than building ad hoc typing rules, the system is derived from the
+computational content of the calculus, making it possible to define whole
+families of type systems by proving the validity of new rules.
 
-To do this, we will decorate abstractions with the basis it is working in. Morally, the reduction system will consider values in that basis as its classical data. In the same manner, linear combination of these elements will represent quantum data and reduce linearly over the term.
+Following this approach, we enrich abstractions with explicit basis
+decorations. Intuitively, the reduction system treats values expressed in the
+chosen basis as classical data, while linear combinations of these values
+represent quantum data and reduce linearly within the term. This refinement
+enables duplication and erasure for qubits in known bases while maintaining
+linear handling for unknown qubits.
 
-% How are planning to do this (Realizability technique)
+The objective of this work is twofold. First, to employ the extracted type
+system to provide a more precise description of programs. Second, to take
+advantage of the extended syntax to express quantum algorithms in a flexible
+and compositional way, rather than merely translating circuits.
 
-In 1945, Kleene introduced in \cite{KleeneJSL45} the notion of realizability as a semantics for Heyting arithmetic. Since then, it has evolved and found applications both in proof theory and functional programming. In our case, we will use it for extracting type systems from the operational semantics of a calculus, resulting in a system in which safety properties hold by construction.
+The idea of tracking non-computational bases has been explored before, notably
+in \cite{Perdrix2008,DiazcaroMonzonAPLAS25}. In \cite{Perdrix2008}, Perdrix
+introduces an abstract model that tracks the basis of qubits to perform static
+entanglement analysis. In \cite{DiazcaroMonzonAPLAS25}, Monzon and Díaz-Caro
+present a $\lambda$-calculus integrating basis information into the type system,
+proving meta-theoretic and safety results that make it a solid proof of concept
+for basis-aware typing. We build upon these ideas, extending them beyond
+single-qubit bases to encompass multi-qubit entangled bases, and recovering
+higher-order computation to approach the expressive power of modern functional
+languages.
 
-The steps to define a programming language using this technique are as follows. First, define a calculus equipped with a deterministic evaluation strategy. Second, define types as sets of closed values in the language, optionally introducing operations to build more complex types. Third, define the typing judgement $\Gamma \vdash t : A$, where $\Gamma$ is a context of typed variables, $t$ a term in the calculus, and $A$ a type, as the property that for every substitution $\theta$ that map variables in $\Gamma$ to closed values of their respective type, the term $\theta(t)$ reduces to a value in $A$, i.e., $\theta(t) \twoheadrightarrow v \in A$.
+\paragraph{Contributions.}
+The contributions of this paper can be summarised as follows.
+\begin{itemize}
+  \item We introduce a \emph{basis-sensitive} quantum $\lambda$-calculus in the
+  quantum-control paradigm, extending previous systems to a setting that is
+  unit-norm, higher-order, and supports multiple-qubit entangled bases.
+  \item We provide a \emph{realizability-based semantics} that connects the
+  operational reduction system with the extracted type system, ensuring safety
+  by construction.
+  \item We formalise a \emph{type algebra} capable of tracking basis
+  information throughout programs, and derive typing rules corresponding to
+  provable theorems in the realizability interpretation.
+  \item We illustrate the expressive power of the calculus through examples
+  involving basis-dependent operations and multi-qubit structures, showing how
+  it subsumes and extends previous single-basis approaches.
+\end{itemize}
 
-In this setting, each typing rule corresponds to a provable theorem. For instance, if $\Gamma \vdash t : A$ implies $\Delta \vdash r : B$, then the following rule is valid:
-\[
-  \infer{\Delta\vdash r:B}{\Gamma\vdash t:A}
-\]
-
-The main advantage of using realizability is that it provides us with a framework to define \emph{families of type systems}. We do not build the typing from ad-hoc rules, rather we define them according to the computational content of the calculus. We will present a set of rules which we deem adequate for a basic programming language. But, this set can be extended just as easily by proving the validity of new rules.
-
-% What do we aim to achieve? Plus the scope of the work
-The final aim of this chapter is twofold. First, to make use of this extracted type system to give a more accurate description of programs. Second, to take advantage of the syntax of the modified calculus to write algorithms in a more versatile manner, instead of simply translating from a circuit.
-
-The idea of keeping track of non-computational bases has been previously explored; see, for example \cite{Perdrix2008,Monzon2025}. In \cite{Perdrix2008}, Perdrix introduces an abstract model which keeps track of the basis of qubits which later utilizes to make static analysis of entanglement throughout the program.
-
-In \cite{Monzon2025}, Monzon and Díaz-Caro present a lambda-calculus which integrates some basis information of qubits into the type system. They then continue to prove meta-theoretic and safety properties, showing the calculus to be a strong proof-of-concept for basis analysis in type systems. Indeed, we will expand on these ideas on this chapter. 
-
-An important point to note, is that both of these systems are focused on the canonical basis alongside the Hadamard basis. Just taking into account these two bases already proved fruitful, however there are still improvements to be made. 
-
-First, the use of single-qubit bases does not take into account bases formed by multiple entangled qubits. That is, bases of vector spaces of higher dimensions which cannot be written as the product of two smaller bases.
-
-Second, the calculus \cite{Monzon2025} sacrifices higher-order computations as a trade-off for functions that act exclusively on qubits. We wish to recover this feature, that aligns with our aim of writing more flexible algorithms akin to modern programming languages.
-
-% Structure of the chapter
-The structure of the chapter is as follows: In section \ref{sec:calculus}, we define the syntax for the calculus. Then, in section \ref{sec:reduction} we detail the reduction system. We define the type algebra and prove a set of valid typing rules in section \ref{sec:model}. With the calculus fully defined, we showcase a few examples in section \ref{sec:examples}. We give closing remarks and discuss future work in \ref{sec:conclusion}.
+The structure of the paper is as follows. In \Cref{sec:calculus}, we
+define the syntax of the calculus. In \Cref{sec:reduction}, we detail
+the reduction system. We then define the type algebra and prove a set of valid
+typing rules in \Cref{sec:model}. With the calculus fully defined, we
+illustrate its use through several examples in \Cref{sec:examples}.
+Finally, we conclude with remarks and directions for future work in
+\Cref{sec:conclusion}.
 
 \section{The calculus}\label{sec:calculus}
 \subsection{Syntax}
 
 This section presents the calculus upon which our realizability model will be designed. It is a lambda-calculus extended with linear combinations of lambda-terms, which form a vector space.
 
-The syntax of the calculus is described in Table \ref{tab:Syntax}. It is divided into four distinct syntactic categories: \textit{pure values, pure terms, value distributions and term distributions}. Values are composed by variables, a decorated lambda abstraction and two boolean values representing perpendicular vectors: $\ket 0$ and $\ket 1$. A pair of values is also a value itself. Terms include values, applications, pair constructors and destructors and pattern-matching testing for orthogonal vectors represented by the $\mathsf{case}$ operator. Both terms and value distributions are built by a $\C$-linear combination of either terms or values respectively. In Table \ref{tab:PairsNotation} we also include notation for linear distributions of pairs. We stress that this notation for pairs does not appear in the syntax, but is rather helpful to describe a particular state.
+The syntax of the calculus is described in \Cref{tab:Syntax}. It is divided into four distinct syntactic categories: \textit{pure values, pure terms, value distributions and term distributions}. Values are composed by variables, a decorated lambda abstraction and two boolean values representing perpendicular vectors: $\ket 0$ and $\ket 1$. A pair of values is also a value itself. Terms include values, applications, pair constructors and destructors and pattern-matching testing for orthogonal vectors represented by the $\mathsf{case}$ operator. Both terms and value distributions are built by a $\C$-linear combination of either terms or values respectively. In \Cref{tab:PairsNotation} we also include notation for linear distributions of pairs. We stress that this notation for pairs does not appear in the syntax, but is rather helpful to describe a particular state.
 
 \begin{table*}[t]
   \small
@@ -331,7 +401,7 @@ The syntax of the calculus is described in Table \ref{tab:Syntax}. It is divided
    \end{array}
   \]
    
-  Where $B$ is an $n$-th dimensional orthonormal basis as defined in Def. \ref{def:NthDimensionalBasis}.
+  Where $B$ is an $n$-th dimensional orthonormal basis as defined in \Cref{def:NthDimensionalBasis}.
 
   \caption{Syntax of the calculus}
   \label{tab:Syntax}
@@ -353,7 +423,7 @@ The syntax of the calculus is described in Table \ref{tab:Syntax}. It is divided
   We do not include a specific term representing the null vector $\vec{0}$ since we do not make use of it. Instead, any distribution $0\;\vec{t}$ will act as it.
 \end{remark}
 
-In order to handle the different bases in each abstraction, we need to define the congruence relation between values from Table \ref{tab:Congruence}. When we define the reduction system, this congruence will allow us to take an argument and interpret it in the corresponding basis of the function. Here, the structure of value distributions starts to take shape. The term and value distributions stop being merely syntactic terms and start acting as proper linear combinations. Since the congruence enables the associativity of the addition, we will use $\Sigma$ notation to represent sums.
+In order to handle the different bases in each abstraction, we need to define the congruence relation between values from \Cref{tab:Congruence}. When we define the reduction system, this congruence will allow us to take an argument and interpret it in the corresponding basis of the function. Here, the structure of value distributions starts to take shape. The term and value distributions stop being merely syntactic terms and start acting as proper linear combinations. Since the congruence enables the associativity of the addition, we will use $\Sigma$ notation to represent sums.
 
 The set of value distributions does not form a vector space, we can easily check this fact from the lack of a neutral element (which also entails a lack of additive inverse for elements). Instead, we work with a distributive-action space as described in \cite{DiazCaroMalherbe2022}.
 
@@ -366,7 +436,7 @@ A distributive-action space over a field $K$ is a commutative semi-group $(V,+)$
 \end{array}
 \]
 
-In this case we take $\C$ as our field $K$ and, we omit the dot for the scalar product. It is clear from the rules in Table \ref{tab:Congruence} that the set of distribution values satisfy the axioms of a distributive-action space. Moreover, the first rule of the congruence simulates the behaviour of the null vector for some $\vec{v}$. 
+In this case we take $\C$ as our field $K$ and, we omit the dot for the scalar product. It is clear from the rules in \Cref{tab:Congruence} that the set of distribution values satisfy the axioms of a distributive-action space. Moreover, the first rule of the congruence simulates the behaviour of the null vector for some $\vec{v}$. 
 
 \begin{table*}[tb]
   \small
@@ -408,7 +478,7 @@ In this case we take $\C$ as our field $K$ and, we omit the dot for the scalar p
 \end{table*}
 
 
-We expand on the rationale for the first rule of Table \ref{tab:Congruence} ($\vec{v_1} + 0\; \vec{v_2}~\equiv~\vec{v_1}$). The main idea of the calculus is to decompose the vectors corresponding to the arguments onto the bases attached to the abstractions. Taking an example from linear algebra, if we were to rewrite the vector $(1,0)$ as a linear combination of $\braces{\frac{(1,1)}{\sqrt{2}}, \frac{(1,-1)}{\sqrt{2}}}$ we would get:
+We expand on the rationale for the first rule of \Cref{tab:Congruence} ($\vec{v_1} + 0\; \vec{v_2}~\equiv~\vec{v_1}$). The main idea of the calculus is to decompose the vectors corresponding to the arguments onto the bases attached to the abstractions. Taking an example from linear algebra, if we were to rewrite the vector $(1,0)$ as a linear combination of $\braces{\frac{(1,1)}{\sqrt{2}}, \frac{(1,-1)}{\sqrt{2}}}$ we would get:
 
 \begin{align*}
   (1,0) &= (1,0) + 0 \; (0,1) \\
@@ -468,7 +538,7 @@ As a corollary, we can show that this result behaves well with the term congruen
   If $\vec{v}\equiv\vec{w}$, then they both have the same decomposition over a basis $B$.
 \end{corollary}
 \begin{proof}
-  Since $\vec{v} - \vec{w} \equiv \vec{v} - \vec{v} \equiv \vec{w} - \vec{w}$, we can use the same reasoning as proposition \ref{prop:UniqueDecomposition} to conclude that both have the same decomposition.
+  Since $\vec{v} - \vec{w} \equiv \vec{v} - \vec{v} \equiv \vec{w} - \vec{w}$, we can use the same reasoning as \Cref{prop:UniqueDecomposition} to conclude that both have the same decomposition.
 \end{proof}
 
 \subsection{Substitutions}
@@ -535,7 +605,7 @@ The next thing we need to show is that the substitution behaves well with respec
 \end{lemma}
 
 \begin{proof}
-  Since $\vec{v}\equiv\vec{w}$, by Corollary \ref{cor:EquivalentDecomposition}, we have that both $\vec{v}$ and $\vec{w}$ can be written as:
+  Since $\vec{v}\equiv\vec{w}$, by \Cref{cor:EquivalentDecomposition}, we have that both $\vec{v}$ and $\vec{w}$ can be written as:
   \[
   \vec{v} \equiv \vec{w} \equiv \sum_{i=1}^{n} \alpha_i \vec{b_i}\qquad\text{Where }\vec{b_i}\in B
   \]
@@ -546,7 +616,7 @@ The next thing we need to show is that the substitution behaves well with respec
 \end{proof}
 
 \begin{remark}
-  The result from lemma \ref{lem:EquivSubstitutions}, does not translate across bases, so $\vec{t}\ansubst{\vec{v}/x}{A} \not\equiv \vec{t}\ansubst{\vec{v}/x}{B}$. From here onwards we define $\ket{+}:=\frac{\ket{0}+\ket{1}}{\sqrt{2}}$ and $\ket{-}:=\frac{\ket{0}-\ket{1}}{\sqrt{2}}$. As well, we note $\XB = \{\ket{+}, \ket{-}\}$. With this in mind we have:
+  The result from \Cref{lem:EquivSubstitutions}, does not translate across bases, so $\vec{t}\ansubst{\vec{v}/x}{A} \not\equiv \vec{t}\ansubst{\vec{v}/x}{B}$. From here onwards we define $\ket{+}:=\frac{\ket{0}+\ket{1}}{\sqrt{2}}$ and $\ket{-}:=\frac{\ket{0}-\ket{1}}{\sqrt{2}}$. As well, we note $\XB = \{\ket{+}, \ket{-}\}$. With this in mind we have:
   
   \begin{align*}
     (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB} &= (\Lam{x}{C}{\ket{+}}) 
@@ -604,7 +674,7 @@ A question that might arise from the previous remark could be if taking an $\eta
 
 \section{Reduction system}\label{sec:reduction}
 
-The reduction system implements a mechanism where every vector in the space is read in the corresponding basis attached to the abstraction. It does this by allowing an evaluation step only when the argument can be decomposed onto that basis. The system works modulo the congruence defined in Table \ref{tab:Congruence}. We describe it in detail in Table \ref{tab:Reduction}.
+The reduction system implements a mechanism where every vector in the space is read in the corresponding basis attached to the abstraction. It does this by allowing an evaluation step only when the argument can be decomposed onto that basis. The system works modulo the congruence defined in \Cref{tab:Congruence}. We describe it in detail in \Cref{tab:Reduction}.
 
 \begin{table*}[tb]
   \small
@@ -862,7 +932,7 @@ We next move onto the type realizers. Since our aim is to extract a quantum lamb
   For each type $A$, we note the set of its realizers as $\{\real A\}$.
 \end{definition}
 
-With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with the type grammar defined on Table \ref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards denote by $\Type$ the set of all types and by $\BasisType$ the set of all bases.
+With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with the type grammar defined on \Cref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards denote by $\Type$ the set of all types and by $\BasisType$ the set of all bases.
 
 \begin{table*}[tb]
   \scriptsize
@@ -946,7 +1016,7 @@ The following proposition shows that, as one would expect from the span, multipl
   A basis type $\basis{X}$ may be formed by value distributions of pairs and so might be written as the product type of smaller bases. For example, let $X=\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, then $\basis{X}=\B\times\B$. However, for the case of entangled bases this cannot be done. A clear example is the Bell basis: $\mathsf{Bell}=\{\frac{\ket{00}+\ket{11}}{\sqrt{2}},\frac{\ket{00}-\ket{11}}{\sqrt{2}},\frac{\ket{01}+\ket{10}}{\sqrt{2}},\frac{\ket{01}-\ket{10}}{\sqrt{2}}\}$.
 \end{remark}
 
-The only thing left would be to check that our type algebra captures sets of value distributions we wish to study. Proposition \ref{prop:UnitaryTypes} states that every member of a type interpretation has norm $1$.
+The only thing left would be to check that our type algebra captures sets of value distributions we wish to study. \Cref{prop:UnitaryTypes} states that every member of a type interpretation has norm $1$.
 
 \begin{proposition}\label{prop:UnitaryTypes}
   For every type $A$, $\sem{A}\subseteq\Sph$.
@@ -1033,7 +1103,7 @@ Unitary operators are the isomorphisms of Hilbert spaces since they preserve the
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vec w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Lemma \ref{prop:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\to\sharp B}$.\qedhere
+  Then $\sum_{i=1}^n \alpha_i \vec w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{prop:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\to\sharp B}$.\qedhere
 \end{proof}
 
 Next, we need to bridge the gap between the values in the calculus with vectors in the space $\C^n$. In order to do this, we introduce a meta-language operation $\pi_n$ which translates value distributions into vectors in $\C^n$. The operation simply writes the value in the canonical basis and takes the corresponding coefficients. 
@@ -1064,7 +1134,7 @@ Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the
 \end{theorem}
 
 \begin{proof}
-  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by Lemma \ref{lem:BasesIso} we have that, for every $\vec{v_i}\in\sem{\basis{X}}$  there exist $\vec{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vec{t}[\vec{v_i}/x]\eval\vec{w_i}$ and $\vec{w_i}\perp\vec{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vec{v_i}))=\pi(\vec{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vec{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vec{w_i})\|_{\C^n}=\|\pi(\vec{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vec{w_i})}{\pi(\vec{w_j})}_{\C^n}=0$.
+  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by \Cref{lem:BasesIso} we have that, for every $\vec{v_i}\in\sem{\basis{X}}$  there exist $\vec{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vec{t}[\vec{v_i}/x]\eval\vec{w_i}$ and $\vec{w_i}\perp\vec{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vec{v_i}))=\pi(\vec{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vec{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vec{w_i})\|_{\C^n}=\|\pi(\vec{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vec{w_i})}{\pi(\vec{w_j})}_{\C^n}=0$.
 
   \textit{The condition is sufficient:} Suppose that $(\Lam{x}{X}{\vec{t}})$ represents a unitary operator $F:\C^n\to\C^n$. From this we deduce that:
   \[
@@ -1074,7 +1144,7 @@ Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the
   \[
     (\Lam{x}{X}{\vec{t}})\vec{v_i}\evalone\vec{t}\ansubst{\vec{v_i}/x}{X} = \vec{t}[\vec{v_i}/x]\eval\vec{w_i}\in\sem{\sharp\basis{Y}},
   \]
-  since $\|\vec{w_i}\|=\|F(\pi(\vec{v_i}))\|_{\C^n} = 1$, we can deduce from Lemma \ref{lem:BasesIso}, that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
+  since $\|\vec{w_i}\|=\|F(\pi(\vec{v_i}))\|_{\C^n} = 1$, we can deduce from \Cref{lem:BasesIso}, that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
   \[
   \scal{\vec{w_i}}{\vec{w_j}}=\scal{F(\pi(\vec{v_i}))}{F(\pi(\vec{v_j}))}_{\C^n} = 0
   \]\qedhere
@@ -1124,7 +1194,7 @@ In order for the calculus to be correct we need to ensure that qubits are treate
     \]
 \end{definition}
 
-Here we make use of the idempotence of $\sharp$ (Proposition \ref{prop:IdempotentSharp}) to define the strict domain. 
+Here we make use of the idempotence of $\sharp$ (\Cref{prop:IdempotentSharp}) to define the strict domain. 
 
 In order for a typing judgement $\Gamma\vdash \vec{t}: A$ to be valid, it needs to comply with two conditions. First, every free variable in the term $\vec{t}$ must be in the domain of the context $\Gamma$ and every variable in the strict context $\sdom{\Gamma}$ must appear in the term $\vec{t}$. This ensures there is no erasure of information and every variable is accounted. Linear treatment of quantum data is enforced by the substitution.
 
@@ -1138,7 +1208,7 @@ Second, every substitution in the unitary semantics of $\Gamma$, when applied to
     \end{itemize}
 \end{definition}
 
-With this definition in mind, we consider a typing rule to be valid, when starting from valid judgements we reach a valid conclusion. In Table \ref{tab:TypingRules} we enumerate several of these rules. One important thing to note is that there are infinite valid rules, we limit ourselves to listing a subset which could constitute a reasonable typing system for a typed calculus.
+With this definition in mind, we consider a typing rule to be valid, when starting from valid judgements we reach a valid conclusion. In \Cref{tab:TypingRules} we enumerate several of these rules. One important thing to note is that there are infinite valid rules, we limit ourselves to listing a subset which could constitute a reasonable typing system for a typed calculus.
 
 We are also interested on \emph{orthogonal terms}, that is, terms which reduce to orthogonal values. Naturally, unless these terms are closed, we need to take the context into consideration. We define orthogonality judgements in the following manner:
 
@@ -1231,14 +1301,14 @@ If both $\Delta_1$ and $\Delta_2$ are empty, we will note the judgement as $\SOR
     \label{tab:TypingRules}
 \end{table*}
 
-The main result of this section, is the proof of validity of each of the rules presented in Table \ref{tab:TypingRules}.
+The main result of this section, is the proof of validity of each of the rules presented in \Cref{tab:TypingRules}.
 
 \begin{theorem}
-    The rules in Table \ref{tab:TypingRules} are valid.
+    The rules in \Cref{tab:TypingRules} are valid.
 \end{theorem}
 
 \begin{proof}
-    For each typing rule in Table~\ref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
+    For each typing rule in \Cref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
     \begin{description}
     \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x_B:A}$, we have $\sigma=\ansubst{\vec v/x}{B}$ for some $\vec{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vec v}{B}=\vec{v}\real A$.
     
@@ -1251,7 +1321,7 @@ The main result of this section, is the proof of validity of each of the rules p
         &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{A}{\vec t_i[\sigma_j]}))\vec v\\
         &\to \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vec{t_i}[\sigma_j]\ansubst{\vec v/x}{A}\\
         &=\sum_{i=1}^{n}\alpha_i \vec{t_i}\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\\
-        &=(\sum_{i=1}^{n}\alpha_i \vec{t_i})\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\qquad{\text{By Lemma \ref{lem:distributiveSubstitution}}}
+        &=(\sum_{i=1}^{n}\alpha_i \vec{t_i})\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\qquad{\text{By \Cref{lem:distributiveSubstitution}}}
     \end{align*}
     
     Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\in\sem{\Gamma,x_A:A}$. Since we assume $\TYP{\Gamma, x_A:A}{\sum_{i=1}^{n}\alpha_i\vec t_i}{B}$, then $\vec{t_i}\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vec t_i})\in\sem{A\Arr B}$.
@@ -1345,7 +1415,7 @@ The main result of this section, is the proof of validity of each of the rules p
         \item $\FV{\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}}{\vec{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from Proposition \ref{prop:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from \Cref{prop:SharpCharacterization} we have that:
     
     \[\vec t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\cdot\vec{u}=e^{i\theta_1}\cdot(\sum_{k=1}^{l} \gamma_k \Pair{\vec v_k}{\vec u_k})\] 
     
@@ -1374,8 +1444,8 @@ The main result of this section, is the proof of validity of each of the rules p
         \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w_k}\| \\
         &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vec{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vec{w_{k'}}}\\
         &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vec{w_k}}{\vec{w_{k'}}}\\
-        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v_k}}{\vec{v_{k'}}}\scal{\vec{u_k}}{\vec{u_{k'}}}\quad(\text{from Lemma \ref{lem:UnitPreserTens}})\\
-        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u_k}}{\vec{v_k}}}{\Pair{\vec{u_{k'}}}{\vec{v_{k'}}}}\quad(\text{from Prop \ref{prop:InnerProdPairs}})\\
+        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v_k}}{\vec{v_{k'}}}\scal{\vec{u_k}}{\vec{u_{k'}}}\quad(\text{from \Cref{lem:UnitPreserTens}})\\
+        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u_k}}{\vec{v_k}}}{\Pair{\vec{u_{k'}}}{\vec{v_{k'}}}}\quad(\text{from \Cref{prop:InnerProdPairs}})\\
         &=\sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} \scal{\Pair{\vec{v_k}}{\vec{u_k}}}{\Pair{\vec{v_k}}{\vec{u_k}}} \\
         & \quad + \sum_{k,k'=1; k\neq k'}^n \overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{v_k}}{\vec{u_k}}}{\Pair{\vec{v_{k'}}}{\vec{u_{k'}}}}\\
         &= \sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} + 0 \\
@@ -1558,7 +1628,7 @@ We first define the terms for the algorithm. The top level $\mathsf{Deutsch}$ ab
     \caption{Deutsch algorithm term}
 \end{table*}
 
-On Table \ref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the oracles encoding the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
+On \Cref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the oracles encoding the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
 
 \begin{table*}
     \scriptsize
@@ -1585,7 +1655,7 @@ Each of these oracles can be typed as $\B\to\B\to(\B\times\B)$. But since we are
 \]
 This would seem to suggest that the result of the computation is a superposition of pairs of booleans.
 
-However, this approach underutilizes the amount of information we have available. We know that the oracle will receive specifically the state $\ket{+-}$, and so we can rewrite the intervening terms taking this information into account. In table \ref{tab:DeutschShift} we restate the terms, but this time the abstractions and conditional cases are written in the basis $\XB=\{\ket{+},\ket{-}\}$.
+However, this approach underutilizes the amount of information we have available. We know that the oracle will receive specifically the state $\ket{+-}$, and so we can rewrite the intervening terms taking this information into account. In \Cref{tab:DeutschShift} we restate the terms, but this time the abstractions and conditional cases are written in the basis $\XB=\{\ket{+},\ket{-}\}$.
 
 \begin{table*}
     \footnotesize
@@ -1663,7 +1733,7 @@ The reduction system itself orchestrates the computation and makes use of the sy
 The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterize the abstractions that represent unitary functions. This is the main result of the section and is a generalization of the characterization found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
 
 % Typing system
-The other main result of the chapter is the validity of the several typing rules described in Table \ref{tab:TypingRules}. Extracting them via the realizability technique, ensures their correctness and can later form the foundation of the type system for a programming language.
+The other main result of the chapter is the validity of the several typing rules described in \Cref{tab:TypingRules}. Extracting them via the realizability technique, ensures their correctness and can later form the foundation of the type system for a programming language.
 
 % Examples
 Finally, we present two examples that showcase the advantage of the typing system and syntax. First Deutsch's algorithm, which exhibits a more expressive type and in turn, allows to treat the result classically. Second, the case for quantum teleportation, where we are able to simulate gates controlled by a Bell basis measurement as branches on a pattern matching $\mathsf{case}$. 
@@ -1676,16 +1746,16 @@ As well, we could try to give a translation into an intermediate language like Z
 % En la parte de conclusiones/trabajo futuro, me gustaría meter otra noción de producto interno que juegue bien con las funciones. Con esta definición una función es ortogonal a su eta expansión. O (\x. t_1 + t_2) _|_ (\x. t_2 + t_1)
 
 
-\begin{credits}
-\subsubsection{\ackname} 
-Supported by the European Union through the MSCA SE project QCOMICAL (Grant Agreement ID: 101182521) 
-the Plan France 2030 through the PEPR integrated project EPiQ (ANR-21-PETQ-0007),
-and by the Uruguayan CSIC grant 22520220100073UD.
-
-\subsubsection{\discintname}
-The authors have no competing interests to declare that are
-relevant to the content of this article.
-\end{credits}
+%\begin{credits}
+%\subsubsection{\ackname} 
+%Supported by the European Union through the MSCA SE project QCOMICAL (Grant Agreement ID: 101182521) 
+%the Plan France 2030 through the PEPR integrated project EPiQ (ANR-21-PETQ-0007),
+%and by the Uruguayan CSIC grant 22520220100073UD.
+%
+%\subsubsection{\discintname}
+%The authors have no competing interests to declare that are
+%relevant to the content of this article.
+%\end{credits}
 %
 % ---- Bibliography ----
 %
@@ -1764,7 +1834,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}}$.
 \end{lemma}
 
 \begin{proof}
-    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vec{w_1},\vec{w_2}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_1}/x}{A}\eval\vec{w_1}$ and $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_2}/x}{A}\eval\vec{w_2}$. In particular, we have that $\|\vec{w_1}\| = \|\vec{w_2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vec{u_{01}},\vec{u_{02}},\vec{u_{03}},\vec{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vec{w_1},\vec{w_2}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_1}/x}{A}\eval\vec{w_1}$ and $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u_2}/x}{A}\eval\vec{w_2}$. In particular, we have that $\|\vec{w_1}\| = \|\vec{w_2}\|=1$. Applying \Cref{lem:VecRewrite}~four times, we know there are vectors $\vec{u_{01}},\vec{u_{02}},\vec{u_{03}},\vec{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
     
     \begin{align*}
         \vec{u_1} + \vec{u_2} = \lambda_1 \vec{u_{01}} & \vec{u_1} + i \vec{u_2} = \lambda_3 \vec{u_{03}} \\
@@ -1778,7 +1848,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}}$.
         \vec{w_1} + (-1) \vec{w_2} = \lambda_2 \vec{w_{02}} & \vec{w_1} + (-i) \vec{w_2} = \lambda_4 \vec{w_{04}} \\
     \end{align*}
 
-    Using the polarization identity (Prop~\ref{prop:Polarization}), we conclude that:
+    Using the polarization identity (\Cref{prop:Polarization}), we conclude that:
 
     \begin{align*}
         &\scal{\vec{w_1}}{\vec{w_2}}\\
@@ -1803,7 +1873,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = 0$.
 \end{lemma}
 
 \begin{proof}
-    From Lemma~$\ref{lem:VecRewrite}$~we know that there are $\vec{u_0}\in\sem{\sharp A}, \vec{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    From \Cref{lem:VecRewrite} we know that there are $\vec{u_0}\in\sem{\sharp A}, \vec{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
     \[
     \vec{u_2} + (-1) \vec{u_1} = \lambda\vec{u_0}\quad\text{and}\quad\vec{v_2} + (-1) \vec{v_1} = \mu \vec{v_0}
     \]
@@ -1831,24 +1901,24 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = 0$.
         \end{array}
         \]
         
-        \item\label{A8:it3} $\scal{\vec{u_1}}{\vec{u_2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vec{w_{1k}}}{\vec{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
+        \item\label{A8:it3} $\scal{\vec{u_1}}{\vec{u_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vec{w_{1k}}}{\vec{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
         
-        \item\label{A8:it4} $\scal{\vec{v_1}}{\vec{v_2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vec{w_{j1}}}{\vec{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
+        \item\label{A8:it4} $\scal{\vec{v_1}}{\vec{v_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vec{w_{j1}}}{\vec{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
     \end{enumerate}
 
     From the above, we get:
     \begin{align*}
         \scal{\vec{w_1}}{\vec{w_2}} &= \scal{\vec{w_{11}}}{\vec{w_{22}}} = \scal{\vec{w_{11}}}{\vec{w_{22}}+0\vec{w_{12}}} & \\
-        &=\scal{\vec{w_{11}}}{\vec{w_{12}}+ \lambda\vec{w_{02}}} & (\text{from (\ref{A8:it1}), } k=2)\\
+        &=\scal{\vec{w_{11}}}{\vec{w_{12}}+ \lambda\vec{w_{02}}} & (\text{from \Cref{A8:it1}, } k=2)\\
         &=\scal{\vec{w_{11}}}{\vec{w_{12}}} + \lambda \scal{\vec{w_{11}}}{\vec{w_{02}}} &\\
-        &= 0 + \lambda \scal{\vec{w_{11}}}{\vec{w_{02}}} & (\text{from (\ref{A8:it4}), } j=1)\\
+        &= 0 + \lambda \scal{\vec{w_{11}}}{\vec{w_{02}}} & (\text{from \Cref{A8:it4}, } j=1)\\
         &= \lambda \scal{\vec{w_{11}} + 0\vec{w_{21}}}{\vec{w_{02}}} & \\
-        &= \lambda \scal{\vec{w_{21}} + (-\lambda)\vec{w_{01}}}{\vec{w_{02}}} & (\text{from (\ref{A8:it1}), } k=1)\\
+        &= \lambda \scal{\vec{w_{21}} + (-\lambda)\vec{w_{01}}}{\vec{w_{02}}} & (\text{from \Cref{A8:it1}, } k=1)\\
         &= \lambda \scal{\vec{w_{21}}}{\vec{w_{02}}} - |\lambda|^2 \scal{\vec{w_{01}}}{\vec{w_{02}}} & \\
-        &= \lambda \scal{\vec{w_{21}}}{\vec{w_{02}}} - 0 & (\text{from (\ref{A8:it4}), } j=0)\\
+        &= \lambda \scal{\vec{w_{21}}}{\vec{w_{02}}} - 0 & (\text{from \Cref{A8:it4}, } j=0)\\
         &=\scal{\vec{w_{21}}}{\vec{w_{22}}- \vec{w_{12}}} & \\
         &=\scal{\vec{w_{21}}}{\vec{22}} - \scal{\vec{w_{21}}}{\vec{w_12}} & \\
-        &= 0 - \scal{\vec{w_{21}}}{\vec{w_{12}}} & (\text{from (\ref{A8:it4}), } j=2)\\
+        &= 0 - \scal{\vec{w_{21}}}{\vec{w_{12}}} & (\text{from \Cref{A8:it4}, } j=2)\\
     \end{align*}
     Hence $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{w_{11}}}{\vec{w_{22}}} = - \scal{\vec{w_{21}}}{\vec{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
     \[
@@ -1877,7 +1947,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}} \scal{\vec{v_1}}
     \[
     \scal{\vec{u_1}}{\vec{u_2}+(-\alpha)\vec{u_1}} = \scal{\vec{u_1}}{\vec{u_2}} - \alpha \scal{\vec{u_1}}{\vec{u_1}} = \alpha - \alpha = 0
     \]
-    And similarly that, $\scal{\vec{v_1}}{\vec{v_2}+ (-\beta) \vec{v_1}} = 0$. From Lemma \ref{lem:VecRewrite}, we know that there are $\vec{u_0}\in\sem{\sharp A}$, $\vec{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    And similarly that, $\scal{\vec{v_1}}{\vec{v_2}+ (-\beta) \vec{v_1}} = 0$. From \Cref{lem:VecRewrite}, we know that there are $\vec{u_0}\in\sem{\sharp A}$, $\vec{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
     \begin{align*}
         \vec{u_2} +(-\alpha)\vec{u_1} = \lambda\vec{u_0}& \text{ and } & \vec{v_2} + (-\beta)\vec{v_1} = \mu\vec{v_0} 
     \end{align*}
@@ -1897,29 +1967,29 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}} \scal{\vec{v_1}}
         \mu\vec{w_{j0}} + \beta \vec{w_{j1}} = \vec{w_{j2}} + 0 \vec{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
         \]
         
-        \item\label{A9:it3} $\scal{\vec{u_1}}{\lambda\vec{u_0}}=\scal{\vec{u_1}}{\vec{u_2}+(- \alpha)\vec{u_1}}=0$, so that from Lemma \ref{lem:InnerProdSingleVar} we get:
+        \item\label{A9:it3} $\scal{\vec{u_1}}{\lambda\vec{u_0}}=\scal{\vec{u_1}}{\vec{u_2}+(- \alpha)\vec{u_1}}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
         \[
         \scal{\vec{w_{1k}}}{\lambda\vec{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
         \]
         
-        \item\label{A9:it4} $\scal{\vec{v_1}}{\mu\vec{v_0}}=\scal{\vec{v_1}}{\vec{v_2} + (-\beta)}\vec{v_1}=0$, so that from Lemma \ref{lem:InnerProdSingleVar} we get:
+        \item\label{A9:it4} $\scal{\vec{v_1}}{\mu\vec{v_0}}=\scal{\vec{v_1}}{\vec{v_2} + (-\beta)}\vec{v_1}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
         \[
         \scal{\vec{w_{j1}}}{\mu\vec{w_{j0}}}=0
         \]
                 
-        \item\label{A9:it5} $\scal{\vec{u_1}}{\lambda\vec{u_0}}=\scal{\vec{v_1}}{\mu\vec{v_0}}=0$ so that from Lemma \ref{lem:OrthogonalSubstitution} we get:
+        \item\label{A9:it5} $\scal{\vec{u_1}}{\lambda\vec{u_0}}=\scal{\vec{v_1}}{\mu\vec{v_0}}=0$ so that from \Cref{lem:OrthogonalSubstitution} we get:
         \[
         \scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}}=0
         \]
-        (Again the equality $\scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vec{u_1}}{\vec{u_0}}=\scal{\vec{v_1}}{\vec{v_0}}=0$, from which we get $\scal{\vec{w_{11}}}{\vec{w_{00}}}=0$ by Lemma \ref{lem:OrthogonalSubstitution})
+        (Again the equality $\scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vec{u_1}}{\vec{u_0}}=\scal{\vec{v_1}}{\vec{v_0}}=0$, from which we get $\scal{\vec{w_{11}}}{\vec{w_{00}}}=0$ by \Cref{lem:OrthogonalSubstitution})
     \end{enumerate}
 
     From above, we get:
     \begin{align*}
         \vec{w_{22}} + 0\vec{w_{12}} + &0\vec{w_{01}} + 0\vec{w_{11}} \\
-        &= \lambda\vec{w_{02}} + \alpha\vec{w_{12}} + 0\vec{w_{01}} + 0\vec{w_{11}} & (\text{from \ref{A9:it1}}, k =1)\\
+        &= \lambda\vec{w_{02}} + \alpha\vec{w_{12}} + 0\vec{w_{01}} + 0\vec{w_{11}} & (\text{from~\Cref{A9:it1}}, k =1)\\
         &= \lambda(\vec{w_{02}}+0\vec{w_{01}}) + \alpha(\vec{w_{12}}+0\vec{w_{11}})&\\
-        &= \lambda(\mu\vec{w_{00}} + \beta\vec{w_{01}}) + \alpha(\mu\vec{w_{01}}+\beta\vec{w_{11}}) & (\text{from \ref{A9:it2}}, j=0,1)\\
+        &= \lambda(\mu\vec{w_{00}} + \beta\vec{w_{01}}) + \alpha(\mu\vec{w_{01}}+\beta\vec{w_{11}}) & (\text{from~\Cref{A9:it2}}, j=0,1)\\
         &= \lambda\mu\vec{w_{00}} + \lambda\beta\vec{w_{01}} + \alpha\mu\vec{w_{10} + \alpha\beta\vec{w_{11}}}
     \end{align*}
     Therefore:
@@ -1931,7 +2001,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}} \scal{\vec{v_1}}
         &=\lambda\mu\scal{\vec{w_{11}}}{\vec{w_{00}}} + \lambda\beta\scal{\vec{w_{11}}}{\vec{w_{01}}} + \alpha\mu\scal{\vec{w_{11}}}{\vec{w_{10}}} + \alpha\beta\scal{\vec{w_{11}}}{\vec{w_{11}}}\\
         &= 0 + 0 + 0 + \alpha\beta = \scal{\vec{u_1}}{\vec{u_2}}\scal{\vec{v_1}}{\vec{v_2}}
     \end{align*}
-    From \ref{A9:it5}, \ref{A9:it3} and \ref{A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
+    From~\Cref{A9:it5,A9:it3,A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
 \end{proof}
 \end{lemma}
 
