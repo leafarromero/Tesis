@@ -1,6 +1,6 @@
 \section{Reduction system}\label{sec:reduction}
 
-The reduction system implements a mechanism where every vector in the space is read in the corresponding basis attached to the abstraction. It does this by allowing an evaluation step only when the argument can be decomposed onto that basis. The system works modulo the congruence defined in Table \ref{tab:Congruence}. We describe it in detail in Table \ref{tab:Reduction}.
+The reduction system implements a mechanism where every vector in the space is read in the corresponding basis attached to the abstraction. It does this by allowing an evaluation step only when the argument can be decomposed onto that basis. The system works modulo the congruence defined in \Cref{tab:Congruence}. We describe it in detail in \Cref{tab:Reduction}.
 
 \begin{table*}[tb]
   \small
@@ -76,152 +76,34 @@ Defining the system in this way determines a strategy in the \textit{call-by-val
 The congruence relation on terms gives rise to different redexes. However, we can show that the relation $\equiv$ commutes with the reflexive-transitive closure of the reduction $\evalone$ (We shall note $\eval$ as this reflexive-transitive closure). In other words, equivalence is preserved by the reduction $\eval$.
 
 \begin{theorem}[Reduction preserves equivalence]
-  Let $\vec{t}$ and $\vec{s}$ be closed term distributions such that $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{t'}$, and $\vec{s}\evalone\vec{s'}$. Then there exists term distributions $\vec{r_1},\vec{r_2}$ such that $\vec{t'}\eval\vec{r_1}$, $\vec{s'}\eval\vec{r_2}$ and $\vec{r_1}\equiv\vec{r_2}$. Diagrammatically:
+  Let $\vec{t}$ and $\vec{s}$ be closed term distributions such that $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{v}$, and $\vec{s}\evalone\vec{w}$, where $\vec{v},\vec{w}$ are value distributions. Then $\vec{v}\equiv\vec{w}$. Diagrammatically:
 
 \[
   \begin{tikzcd}
-   & \vec{t} \arrow[ld]&[-2.5em] \equiv &[-2.5em] \vec{s}\arrow[rd] &\\
-   \vec{t'}\arrow[dr, twoheadrightarrow] & & & & \vec{s'}\arrow[ld, twoheadrightarrow] \\
-   & \vec{r_1} & \equiv & \vec{r_2} &
+   \vec{t} \arrow[d,twoheadrightarrow]&[-2.5em] \equiv &[-2.5em] \vec{s}\arrow[d,twoheadrightarrow]\\
+   \vec{v}& \equiv & \vec{w}
   \end{tikzcd}
 \]
 \end{theorem}
 
-{\color{red} HASTA ACÁ LLEGUÉ CON LAS CORRECCIONES. DESPUÉS SEGUÍ HASTA AL FINAL ARREGLANDO DETALLES Y ME DEJÉ ANOTADO EN ROJO TODO'S PARA TERMINAR}
-
-
 \begin{proof}
-  {\color{red}TODO: TENGO QUE REHACER LA PRUEBA}
-  \iffalse
-  Induction over the relation $\equiv$.
-  \begin{description}
-    \item[$\vec{t} (\alpha\vec{s})\equiv\alpha(\vec{t}\vec{s})$:] If either $\vec{t}$ or $\vec{s}$ reduce, then merely reduce on both sides of the congruence. If $\vec{t} = \sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec t_i})$ and $\vec{s}=\vec v= \sum_{j=1}^{m} \delta_j \vec{a_j}$ for $\vec{a_j}\in A$, then:
-    \begin{align*}
-      (\sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec{t_i}})) (\alpha\vec{v})&\evalone\sum_{i=1}^{n}\beta_i \vec{t_i}\ansubst{\alpha\vec{v}/x}{A}\\
-      &=\sum_{i=1}^{n}\beta_i \sum_{j=1}^{m}\alpha\delta_j \vec{t_i}[\vec{a_j}/x]
-    \end{align*}
-    On the other side:
-    \begin{align*}  
-    \alpha((\sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec{t_i}}))\vec v)&\evalone
-    \alpha(\sum_{i=1}^{n}\beta_i \vec{t_i}\ansubst{\vec{v}/x}{A})\\
-    &=\alpha(\sum_{i=1}^{n}\beta_i\sum_{j=1}^{m}\delta_j\vec{t_i}[\vec{a_j}/x])
-    \end{align*}
-
-    And we have that: 
-    \[\sum_{i=1}^{n}\beta_i \sum_{j=1}^{m}\alpha\delta_j \vec{t_i}[\vec{a_j}/x] \equiv \alpha(\sum_{i=1}^{n}\beta_i\sum_{j=1}^{m}\delta_j\vec{t_i}[\vec{a_i}/x])\]
-
-    \item[$(\alpha\vec{t})\vec{s}\equiv\alpha(\vec{t}\vec{s})$:] If either $\vec{t}$ or $\vec{s}$ reduce, then merely reduce them on both sides of the congruence. If $\vec{t} = \sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec t_i})$ and $\vec{s}=\vec v$ with $\vec{t_i}\ansubst{\vec{v}/x}{A}$ defined, then:
-    \[
-    (\alpha\sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec{t_i}}))\vec v \evalone
-    \alpha\sum_{i=1}^{n}\beta_i \vec{t_i}\ansubst{\vec v/x}{A}
-    \]
-    
-    On the other side:
-    \[  
-      \alpha(\sum_{i=1}^{n}\beta_i (\Lam{x}{A}{\vec{t_i}})\vec v) \evalone
-      \alpha\sum_{i=1}^{n}\beta_i \vec{t_i}\ansubst{\vec v/x}{A}
-    \]
-
-    \item[$(\vec{t}+\vec{s})\vec{r}\equiv \vec{t}\vec{s} + \vec{t}\vec{r}$:] There are two cases to consider. If there is a reduction on $\vec t,\vec s$ or $\vec r$, then we have to merely apply the same reduction on both sides of the congruence. If $\vec t=\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vec t_i})$, $\vec s=\sum_{j=1}^{m}\beta_j $ and $\vec r= \vec v$ then:
-    
-    \begin{align*}
-    (\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vec t})+\sum_{j=1}^{m}\beta_j(\Lam{x}{A}{\vec{s_j}}))\vec{v} &\evalone\\
-    \sum_{i=1}^{n}\alpha_i\vec{t_i}\ansubst{\vec{v}/x}{A} &+ \sum_{j=1}^{m}\beta_j\vec{s_j}\ansubst{\vec{v}/x}{A}
-    \end{align*}
-
-    On the other side:
-    \begin{align*}
-    (\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vec t})) \vec{v}+(\sum_{j=1}^{m}\beta_j(\Lam{x}{A}{\vec{s_j}}))\vec{v} &\eval\\
-    \sum_{i=1}^{n}\alpha_i\vec{t_i}\ansubst{\vec{v}/x}{A} &+ \sum_{j=1}^{m}\beta_j\vec{s_j}\ansubst{\vec{v}/x}{A}
-    \end{align*}
-
-    \item[$\vec{t}(\vec{s}+\vec{r})\equiv\vec{t}\vec{s} + \vec{t}\vec{r}$:] There are two cases to consider. If there is a reduction on $\vec{t},\vec{s}$ or $\vec{r}$, then we have to merely apply the same reduction on both sides of the congruence. If $\vec{t}=\sum_{i=1}^{n}\alpha_i(\Lam{x}{A}{\vec{t_i}})$, $\vec{s}=\vec{v}\equiv\sum_{j=1}^{m}\beta_j \vec{a_j}$ and $\vec{r}=\vec{w}\equiv\sum_{j=1}^{m}\delta_j \vec{a_j}$ with $\vec{a_j}\in A$. Then:
-    \begin{align*}
-    (\sum_{i=1}^{n}\alpha_i(\Lam{x}{A}{\vec{t_i}}))(\vec{v}+ \vec{w}) &\eval \sum_{i=1}^{n}\alpha_i\vec{t_i}\ansubst{\vec{v}+\vec{w}}{A}\\
-    &=\sum_{i=1}^{n}\alpha_i \sum_{j=1}^{m} (\beta_j+\delta_j) \vec{t_i}[\vec{a_j}/x]
-  \end{align*}
-    On the other side:
-    \begin{align*}
-      (\sum_{i=1}^{n}\alpha_i(\Lam{x}{A}{\vec{t_i}}))\vec{v} + (\sum_{i=1}^{n}\alpha_i(\Lam{x}{A}{\vec{t_i}}))\vec{w} &\eval\\
-      \sum_{i=1}^{n}\alpha_i\vec{t_i}\ansubst{\vec{v}/x}{A} + \sum_{i=1}^{n}&\alpha_i\vec{t_i}\ansubst{\vec{w}/x}{A}\\ 
-      =\sum_{i=1}^{n}\alpha_i\sum_{j=1}^{m}\beta_j \vec{t_i}[\vec{a_j}/x] + \sum_{i=1}^{n}&\alpha_i\sum_{j=1}^{m}\delta_j\vec{t_i}[\vec{a_j}/x]\\
-    \end{align*}
-    And we have that:
-    \begin{align*}
-    \sum_{i=1}^{n}\alpha_i \sum_{j=1}^{m} (\beta_j+\delta_j) \vec{t_i}[\vec{a_j}/x]&\equiv\\
-    \sum_{i=1}^{n}\alpha_i\sum_{j=1}^{m}\beta_j \vec{t_i}[\vec{a_j}/x] &+ \sum_{i=1}^{n}\alpha_i\sum_{j=1}^{m}\delta_j\vec{t_i}[\vec{a_j}/x]
-    \end{align*}
-
-    \item[$\LetP{x_1}{A}{x_2}{B}{(\alpha \vec{t})}{\vec{s}}\equiv\alpha(\LetP{x_1}{A}{x_2}{B}{\vec{t}}{\vec{s}})$:] \hfill\\
-    There are two cases to consider. If there is a reduction on $\vec{t}$, then we have to merely apply the same reduction on both sides of the congruence. If $\vec{t}=\vec{v}=\Pair{\vec{w}}{\vec{u}}$, then:
-    \begin{align*}
-      \LetP{x_1}{A}{x_2}{B}{(\alpha\vec{v})}{\vec{s}}&\evalone\vec{s}\ansubst{\alpha\vec{v}/ x_1\otimes x_2}{A\otimes B}\\
-      &= \alpha \vec{s}\ansubst{\vec{w}/ x_1}{A}\ansubst{\vec{u}/ x_2}{B}
-    \end{align*}
-    On the other side:
-    \begin{align*}
-      \alpha(\LetP{x_1}{A}{x_2}{B}{\vec{v}}{\vec{s}})&\evalone
-      \alpha (\vec{s}\ansubst{\vec{v}/ x_1\otimes x_2}{A\otimes B})\\
-      &=\alpha(\vec{s}\ansubst{\vec{w}/ x_1}{A}\ansubst{\vec{u}/ x_2}{B})
-    \end{align*}
-    And we have that:
-    \[
-      \alpha\vec{s}\ansubst{\vec{w}/ x_1}{A}\ansubst{\vec{u}/ x_2}{B}\equiv \alpha(\vec{s}\ansubst{\vec{w}/ x_1}{A}\ansubst{\vec{u}/ x_2}{B})
-    \]
-    
-    \item[\parbox{\linewidth}{\begin{align*}
-    &\LetP{x_1}{A}{x_2}{B}{\vec{t}+\vec{s}}{\vec{r}}\equiv\\
-    &(\LetP{x_1}{A}{x_2}{B}{\vec{t}}{\vec{r}}) +
-    (\LetP{x_1}{A}{x_2}{B}{\vec{s}}{\vec{r}})
-    \end{align*}}:]\hfill\\
-    
-    There are two cases to consider. If there is a reduction on either $\vec{t}$ or $\vec{s}$, then we have to merely apply the same reduction on both sides of the congruence. When $\vec{t}=\vec{u_1}\equiv\sum_{i=1}^{n}\alpha_i\Pair{\vec{v_i}}{\vec{w_i}}$, and $\vec{s}=\vec{u_2}\equiv\sum_{i=1}^{n}\beta_i\Pair{\vec{v_i}}{\vec{w_i}}$ where $\vec{v_i}\in A$ and $\vec{w_i}\in B$. Then:
-    \begin{align*}
-      \LetP{x_1}{A}{x_2}{B}{\vec{u_1}+\vec{u_2}}{\vec{r}}&\evalone\vec{r}\ansubst{\vec{u_1}+\vec{u_2}/x_1\otimes x_2}{A\otimes B}\\
-      &\sum_{i=1}^{n} (\alpha_i + \beta_i) \vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2]
-    \end{align*}
-    On the other side:
-    \begin{align*}
-      (\LetP{&x_1}{A}{x_2}{B}{\vec{u_1}}{\vec{r}})+(\LetP{x_1}{A}{x_2}{B}{\vec{u_2}}{\vec{r}})\\
-      &\eval\vec{r}\ansubst{\vec{u_1}/x_1\otimes x_2}{A\otimes B}\ansubst{\vec{u_2}/x_1\otimes x_2}{A\otimes B}\\
-      &=\sum_{i=1}^{n}\alpha_i \vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2] + \sum_{i=1}^{n}\beta_i\vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2]
-    \end{align*}
-    And we have that:
-    \begin{align*}
-      \sum_{i=1}^{n}(\alpha_i + \beta_i) &\vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2]\equiv\\
-      &\sum_{i=1}^{n}\alpha_i \vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2] + \sum_{i=1}^{n}\beta_i \vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2]
-    \end{align*}
-
-  \item[$\gencase{\alpha \vec{t}}{\vec{v}}{\vec{w}}{\vec{s_1}}{\vec{s_n}}\equiv
-  \alpha(\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{s_1}}{\vec{s_n}})$:] 
-  There are two cases to consider. If there is a reduction on $\vec{t}$ then we merely apply the same reduction on both sides of the congruence. If $\vec{t}=\vec{u}\equiv\sum_{i=1}^{n}\beta_i \vec{v_i}$, with $\sum_{i=1}^{n}|\beta_i|^2=1$, then:
+  Proof by induction of the length of the chain:
   \[
-  \gencase{\alpha \vec{u}}{\vec{v}}{\vec{w}}{\vec{s_1}}{\vec{s_2}}\evalone
-  \sum_{i=1}^{n}\alpha\beta_i \vec{s_i}
+  \vec{t}\equiv\vec{q_1}\equiv\dotsb\equiv\vec{q_n}\equiv\vec{s}
   \]
-  On the other side:
-  \[
-  \alpha(\gencase{\vec{u}}{\vec{v}}{\vec{w}}{\vec{s_1}}{\vec{s_2}})\evalone
-  \alpha(\sum_{i=1}^{n}\beta_i \vec{s_i})
-  \]
-  And we have that $\sum_{i=1}^{n}\alpha\beta_i \vec{s_i}\equiv\alpha(\sum_{i=1}^{n}\beta_i \vec{s_i})$.
-
-  \item[\parbox{\linewidth}{$\gencase{(\vec{t}+\vec{s})}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_n}}\equiv\\ \gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}+\\
-  \gencase{\vec{s}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}$:}] \hfill\\
   
-  There are two cases to consider. If there is a reduction on either $\vec{t}$ or $\vec{s}$ then we merely apply the same reduction on both sides of the congruence. If $\vec{t}=\vec{u_1}\equiv \sum_{i=1}^{n}\alpha_i \vec{v_1}$, $\vec{s}=\vec{u_2}\equiv\sum_{i=1}^{n}\beta_i \vec{v_i}$, then:
-  \begin{align*}
-  \gencase{(\vec{u_1}+\vec{u_2})}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{&\vec{r_n}}\eval\\
-  &\sum_{i=1}^{n} \alpha_i \beta_i \vec{r_i}
-  \end{align*}
-  On the other side:
-  \begin{align*}
-    &\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}+\\
-    &\gencase{\vec{s}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}\eval\sum_{i=1}^{n}\alpha_i\vec{r_i} + \sum_{i=1}^{n}\beta_i \vec{r_i}
-  \end{align*}
-  And we have that $\sum_{i=1}^{n} \alpha_i\beta_i\vec{r_i}\equiv\sum_{i=1}^{n}\alpha_i\vec{r_i} + \sum_{i=1}^{n}\beta_i \vec{r_i}$.
-  \end{description}
-  \fi
+  \begin{description}
+    \item[$n=0$:] Then, $\vec{t} = \vec{s}$. The vectors are not only equivalent, they are syntactically equal. In which case, $\vec{v}=\vec{w}$.
+
+    \item[$n>0$:] Then, there exists $\vec{q_i}$ such that $\vec{t}\equiv\dotsb\equiv\vec{q_i}\equiv\dotsb\equiv\vec{s}$. By inductive hypothesis:
+    \[
+    \begin{tikzcd}
+      \vec{t}\arrow[dd, twoheadrightarrow] &[-2.5em]\equiv\dotsb\equiv &[-2.5em]\vec{q_i}\arrow[dd, twoheadrightarrow]&[-2.5em] \equiv\dotsb\equiv &[-2.5em] \vec{s}\arrow[dd]\\[-1em]
+      & \text{HI} & & \text{HI} &\\
+      \vec{v} &\equiv& \vec{u} &\equiv& \vec{w}\\[-1em]
+    \end{tikzcd}
+    \]\qedhere
+    \end{description}
 \end{proof}
 
 \begin{convention}

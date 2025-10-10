@@ -39,7 +39,7 @@ In order for the calculus to be correct we need to ensure that qubits are treate
     \]
 \end{definition}
 
-Here we make use of the idempotence of $\sharp$ (Proposition \ref{prop:IdempotentSharp}) to define the strict domain. 
+Here we make use of the idempotence of $\sharp$ (\Cref{prop:IdempotentSharp}) to define the strict domain. 
 
 In order for a typing judgement $\Gamma\vdash \vec{t}: A$ to be valid, it needs to comply with two conditions. First, every free variable in the term $\vec{t}$ must be in the domain of the context $\Gamma$ and every variable in the strict context $\sdom{\Gamma}$ must appear in the term $\vec{t}$. This ensures there is no erasure of information and every variable is accounted. Linear treatment of quantum data is enforced by the substitution.
 
@@ -53,7 +53,7 @@ Second, every substitution in the unitary semantics of $\Gamma$, when applied to
     \end{itemize}
 \end{definition}
 
-With this definition in mind, we consider a typing rule to be valid, when starting from valid judgements we reach a valid conclusion. In Table \ref{tab:TypingRules} we enumerate several of these rules. One important thing to note is that there are infinite valid rules, we limit ourselves to listing a subset which could constitute a reasonable typing system for a typed calculus.
+With this definition in mind, we consider a typing rule to be valid, when starting from valid judgements we reach a valid conclusion. In \Cref{tab:TypingRules} we enumerate several of these rules. One important thing to note is that there are infinite valid rules, we limit ourselves to listing a subset which could constitute a reasonable typing system for a typed calculus.
 
 We are also interested on \emph{orthogonal terms}, that is, terms which reduce to orthogonal values. Naturally, unless these terms are closed, we need to take the context into consideration. We define orthogonality judgements in the following manner:
 
@@ -146,14 +146,14 @@ If both $\Delta_1$ and $\Delta_2$ are empty, we will note the judgement as $\SOR
     \label{tab:TypingRules}
 \end{table*}
 
-The main result of this section, is the proof of validity of each of the rules presented in Table \ref{tab:TypingRules}.
+The main result of this section, is the proof of validity of each of the rules presented in \Cref{tab:TypingRules}.
 
 \begin{theorem}
-    The rules in Table \ref{tab:TypingRules} are valid.
+    The rules in \Cref{tab:TypingRules} are valid.
 \end{theorem}
 
 \begin{proof}
-    For each typing rule in Table~\ref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
+    For each typing rule in \Cref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
     \begin{description}
     \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x_B:A}$, we have $\sigma=\ansubst{\vec v/x}{B}$ for some $\vec{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vec v}{B}=\vec{v}\real A$.
     
@@ -166,7 +166,7 @@ The main result of this section, is the proof of validity of each of the rules p
         &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{A}{\vec t_i[\sigma_j]}))\vec v\\
         &\to \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vec{t_i}[\sigma_j]\ansubst{\vec v/x}{A}\\
         &=\sum_{i=1}^{n}\alpha_i \vec{t_i}\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\\
-        &=(\sum_{i=1}^{n}\alpha_i \vec{t_i})\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\qquad{\text{By Lemma \ref{lem:distributiveSubstitution}}}
+        &=(\sum_{i=1}^{n}\alpha_i \vec{t_i})\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\qquad{\text{By \Cref{lem:distributiveSubstitution}}}
     \end{align*}
     
     Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\in\sem{\Gamma,x_A:A}$. Since we assume $\TYP{\Gamma, x_A:A}{\sum_{i=1}^{n}\alpha_i\vec t_i}{B}$, then $\vec{t_i}\ansubst{\sigma}{}\ansubst{\vec v/x}{A}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vec t_i})\in\sem{A\Arr B}$.
@@ -260,7 +260,7 @@ The main result of this section, is the proof of validity of each of the rules p
         \item $\FV{\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}}{\vec{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from Proposition \ref{prop:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from \Cref{prop:SharpCharacterization} we have that:
     
     \[\vec t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\cdot\vec{u}=e^{i\theta_1}\cdot(\sum_{k=1}^{l} \gamma_k \Pair{\vec v_k}{\vec u_k})\] 
     
@@ -289,8 +289,8 @@ The main result of this section, is the proof of validity of each of the rules p
         \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w_k}\| \\
         &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vec{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vec{w_{k'}}}\\
         &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vec{w_k}}{\vec{w_{k'}}}\\
-        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v_k}}{\vec{v_{k'}}}\scal{\vec{u_k}}{\vec{u_{k'}}}\quad(\text{from Lemma \ref{lem:UnitPreserTens}})\\
-        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u_k}}{\vec{v_k}}}{\Pair{\vec{u_{k'}}}{\vec{v_{k'}}}}\quad(\text{from Prop \ref{prop:InnerProdPairs}})\\
+        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v_k}}{\vec{v_{k'}}}\scal{\vec{u_k}}{\vec{u_{k'}}}\quad(\text{from \Cref{lem:UnitPreserTens}})\\
+        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u_k}}{\vec{v_k}}}{\Pair{\vec{u_{k'}}}{\vec{v_{k'}}}}\quad(\text{from \Cref{prop:InnerProdPairs}})\\
         &=\sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} \scal{\Pair{\vec{v_k}}{\vec{u_k}}}{\Pair{\vec{v_k}}{\vec{u_k}}} \\
         & \quad + \sum_{k,k'=1; k\neq k'}^n \overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{v_k}}{\vec{u_k}}}{\Pair{\vec{v_{k'}}}{\vec{u_{k'}}}}\\
         &= \sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} + 0 \\
@@ -435,5 +435,7 @@ The main result of this section, is the proof of validity of each of the rules p
     \end{description}
 \end{proof}
 
-{\color{red}TODO: AGREGAR MÁS PROSA Y DEMOSTRACIÓN DE SUBJECT REDUCTION.}
+{\color{red}LLEGUÉ HASTA ACÁ
+
+TODO: AGREGAR MÁS PROSA Y DEMOSTRACIÓN DE SUBJECT REDUCTION.}
 

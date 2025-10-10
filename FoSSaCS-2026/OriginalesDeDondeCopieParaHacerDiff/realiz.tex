@@ -27,7 +27,7 @@ We next move onto the type realizers. Since our aim is to extract a quantum lamb
   For each type $A$, we note the set of its realizers as $\{\real A\}$.
 \end{definition}
 
-With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with the type grammar defined on Table \ref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards denote by $\Type$ the set of all types and by $\BasisType$ the set of all bases.
+With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with the type grammar defined on \Cref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards denote by $\Type$ the set of all types and by $\BasisType$ the set of all bases.
 
 \begin{table*}[tb]
   \scriptsize
@@ -56,11 +56,11 @@ The type $A\times B$ represents the cartesian product of $A$ and $B$. However, t
 
 We stress this fact for rigorousness, but for ease of reading from this point onwards we will make use of the previously defined notation.
 
-The arrow type $A\Arr B$ is composed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. In doing so, we are left with the $\C$-linear combinations of value distributions of type $A$, this will represent a superposition of values of type $A$.
+The arrow type $A\Arr B$ is composed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. 
 
 The type grammar is standard except for type $\sharp A$. We use it to represent quantum data, i.e. linear resources, so terms of this type will not be able to be erased or duplicated. This can be thought as the opposite of the \textit{bang} ($!$) modality in linear logic. For a more in-depth analysis, refer to \cite{DiazcaroCIE2025}.
 
-Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values of type $A$. The following proposition proves that characterization:
+Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values in the unitary semantics of $A$. The following proposition proves that characterization:
 
 \begin{proposition}\label{prop:SharpCharacterization}
   The type interpretation $\sem{\sharp A}$ contains the norm-$1$ linear combination of values in $\sem{A}$.
@@ -111,7 +111,7 @@ The following proposition shows that, as one would expect from the span, multipl
   A basis type $\basis{X}$ may be formed by value distributions of pairs and so might be written as the product type of smaller bases. For example, let $X=\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, then $\basis{X}=\B\times\B$. However, for the case of entangled bases this cannot be done. A clear example is the Bell basis: $\mathsf{Bell}=\{\frac{\ket{00}+\ket{11}}{\sqrt{2}},\frac{\ket{00}-\ket{11}}{\sqrt{2}},\frac{\ket{01}+\ket{10}}{\sqrt{2}},\frac{\ket{01}-\ket{10}}{\sqrt{2}}\}$.
 \end{remark}
 
-The only thing left would be to check that our type algebra captures sets of value distributions we wish to study. Proposition \ref{prop:UnitaryTypes} states that every member of a type interpretation has norm $1$.
+The only thing left would be to check that our type algebra captures sets of value distributions we wish to study. \Cref{prop:UnitaryTypes} states that every member of a type interpretation has norm $1$.
 
 \begin{proposition}\label{prop:UnitaryTypes}
   For every type $A$, $\sem{A}\subseteq\Sph$.
@@ -147,9 +147,8 @@ Is not a member of an arrow type, since the bases decorating each abstraction do
 
 \subsection{Characterization of unitary operators}
 
-{\color{red}TODO: ME QUEDA CAMBIAR LAS APARICIONES DE "VALUES OF TYPE..."}
 
-One of the main results of \cite{DiazcaroGuillermoMiquelValironLICS19}, is the characterization of $\C^2\to\C^2$ unitary operators using values of type $\sharp\B\Arr\sharp\B$ \cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}. In this subsection we expand on this result. Our goal is to prove that abstractions of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ (both bases of size $n$) represent $\C^n\to\C^n$ unitary operators.
+One of the main results of \cite{DiazcaroGuillermoMiquelValironLICS19}, is the characterization of $\C^2\to\C^2$ unitary operators using values in $\sem{\sharp\B\Arr\sharp\B}$ \cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}. In this subsection we expand on this result. Our goal is to prove that abstractions of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ (both bases of size $n$) represent $\C^n\to\C^n$ unitary operators.
 
 Unitary operators are the isomorphisms of Hilbert spaces since they preserve the basic structure of the space. With this in mind, the first step is to show that the members in $\sharp\basis{X}\Arr\sharp{\basis{Y}}$ send basis vectors from $\basis{X}$ onto orthogonal vectors in $\sem{\sharp\basis{Y}}$. In other words, these abstractions preserve both norm and orthogonality.
 
@@ -198,7 +197,7 @@ Unitary operators are the isomorphisms of Hilbert spaces since they preserve the
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vec w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Lemma \ref{prop:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\to\sharp B}$.\qedhere
+  Then $\sum_{i=1}^n \alpha_i \vec w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{prop:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\to\sharp B}$.\qedhere
 \end{proof}
 
 Next, we need to bridge the gap between the values in the calculus with vectors in the space $\C^n$. In order to do this, we introduce a meta-language operation $\pi_n$ which translates value distributions into vectors in $\C^n$. The operation simply writes the value in the canonical basis and takes the corresponding coefficients. 
@@ -222,14 +221,14 @@ We say a $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})$ represents an operator $F
 \]
 \end{definition}
 
-Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the action of $F$ on vectors. This definition, in conjunction with the previous lemma, allow us build a characterization of unitary operators as values of type $\sharp\basis{X}\Arr\sharp\basis{X}$.
+This means, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the action of $F$ on vectors. This definition, in conjunction with the previous lemma, allow us build a characterization of unitary operators as values in $\sharp\basis{X}\Arr\sharp\basis{X}$.
 
 \begin{theorem}
-  Let $\basis{X}$, $\basis{Y}$ be orthonormal bases of size $n$. A closed $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})$ is a value of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ if and only if it represents a unitary operator $F:\C^n\to\C^n$.
+  Let $\basis{X}$, $\basis{Y}$ be orthonormal bases of size $n$. A closed $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$ if and only if it represents a unitary operator $F:\C^n\to\C^n$.
 \end{theorem}
 
 \begin{proof}
-  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by Lemma \ref{lem:BasesIso} we have that, for every $\vec{v_i}\in\sem{\basis{X}}$  there exist $\vec{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vec{t}[\vec{v_i}/x]\eval\vec{w_i}$ and $\vec{w_i}\perp\vec{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vec{v_i}))=\pi(\vec{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vec{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vec{w_i})\|_{\C^n}=\|\pi(\vec{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vec{w_i})}{\pi(\vec{w_j})}_{\C^n}=0$.
+  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by \Cref{lem:BasesIso} we have that, for every $\vec{v_i}\in\sem{\basis{X}}$  there exist $\vec{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vec{t}[\vec{v_i}/x]\eval\vec{w_i}$ and $\vec{w_i}\perp\vec{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vec{v_i}))=\pi(\vec{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vec{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vec{w_i})\|_{\C^n}=\|\pi(\vec{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vec{w_i})}{\pi(\vec{w_j})}_{\C^n}=0$.
 
   \textit{The condition is sufficient:} Suppose that $(\Lam{x}{X}{\vec{t}})$ represents a unitary operator $F:\C^n\to\C^n$. From this we deduce that:
   \[
@@ -239,7 +238,7 @@ Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the
   \[
     (\Lam{x}{X}{\vec{t}})\vec{v_i}\evalone\vec{t}\ansubst{\vec{v_i}/x}{X} = \vec{t}[\vec{v_i}/x]\eval\vec{w_i}\in\sem{\sharp\basis{Y}},
   \]
-  since $\|\vec{w_i}\|=\|F(\pi(\vec{v_i}))\|_{\C^n} = 1$, we can deduce from Lemma \ref{lem:BasesIso}, that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
+  since $\|\vec{w_i}\|=\|F(\pi(\vec{v_i}))\|_{\C^n} = 1$, we can deduce from \Cref{lem:BasesIso}, that $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
   \[
   \scal{\vec{w_i}}{\vec{w_j}}=\scal{F(\pi(\vec{v_i}))}{F(\pi(\vec{v_j}))}_{\C^n} = 0
   \]\qedhere

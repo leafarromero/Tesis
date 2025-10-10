@@ -961,11 +961,11 @@ The type $A\times B$ represents the cartesian product of $A$ and $B$. However, t
 
 We stress this fact for rigorousness, but for ease of reading from this point onwards we will make use of the previously defined notation.
 
-The arrow type $A\Arr B$ is composed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. In doing so, we are left with the $\C$-linear combinations of value distributions of type $A$, this will represent a superposition of values of type $A$.
+The arrow type $A\Arr B$ is composed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. 
 
 The type grammar is standard except for type $\sharp A$. We use it to represent quantum data, i.e. linear resources, so terms of this type will not be able to be erased or duplicated. This can be thought as the opposite of the \textit{bang} ($!$) modality in linear logic. For a more in-depth analysis, refer to \cite{DiazcaroCIE2025}.
 
-Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values of type $A$. The following proposition proves that characterization:
+Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values in the unitary semantics of $A$. The following proposition proves that characterization:
 
 \begin{proposition}\label{prop:SharpCharacterization}
   The type interpretation $\sem{\sharp A}$ contains the norm-$1$ linear combination of values in $\sem{A}$.
@@ -1052,9 +1052,8 @@ Is not a member of an arrow type, since the bases decorating each abstraction do
 
 \subsection{Characterization of unitary operators}
 
-{\color{red}TODO: ME QUEDA CAMBIAR LAS APARICIONES DE "VALUES OF TYPE..."}
 
-One of the main results of \cite{DiazcaroGuillermoMiquelValironLICS19}, is the characterization of $\C^2\to\C^2$ unitary operators using values of type $\sharp\B\Arr\sharp\B$ \cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}. In this subsection we expand on this result. Our goal is to prove that abstractions of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ (both bases of size $n$) represent $\C^n\to\C^n$ unitary operators.
+One of the main results of \cite{DiazcaroGuillermoMiquelValironLICS19}, is the characterization of $\C^2\to\C^2$ unitary operators using values in $\sem{\sharp\B\Arr\sharp\B}$ \cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}. In this subsection we expand on this result. Our goal is to prove that abstractions of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ (both bases of size $n$) represent $\C^n\to\C^n$ unitary operators.
 
 Unitary operators are the isomorphisms of Hilbert spaces since they preserve the basic structure of the space. With this in mind, the first step is to show that the members in $\sharp\basis{X}\Arr\sharp{\basis{Y}}$ send basis vectors from $\basis{X}$ onto orthogonal vectors in $\sem{\sharp\basis{Y}}$. In other words, these abstractions preserve both norm and orthogonality.
 
@@ -1127,10 +1126,10 @@ We say a $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})$ represents an operator $F
 \]
 \end{definition}
 
-Basically, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the action of $F$ on vectors. This definition, in conjunction with the previous lemma, allow us build a characterization of unitary operators as values of type $\sharp\basis{X}\Arr\sharp\basis{X}$.
+This means, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the action of $F$ on vectors. This definition, in conjunction with the previous lemma, allow us build a characterization of unitary operators as values in $\sharp\basis{X}\Arr\sharp\basis{X}$.
 
 \begin{theorem}
-  Let $\basis{X}$, $\basis{Y}$ be orthonormal bases of size $n$. A closed $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})$ is a value of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ if and only if it represents a unitary operator $F:\C^n\to\C^n$.
+  Let $\basis{X}$, $\basis{Y}$ be orthonormal bases of size $n$. A closed $\lambda$-abstraction $(\Lam{x}{X}{\vec{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$ if and only if it represents a unitary operator $F:\C^n\to\C^n$.
 \end{theorem}
 
 \begin{proof}
@@ -1590,7 +1589,10 @@ The main result of this section, is the proof of validity of each of the rules p
     \end{description}
 \end{proof}
 
-{\color{red}TODO: AGREGAR MÁS PROSA Y DEMOSTRACIÓN DE SUBJECT REDUCTION.}
+{\color{red}LLEGUÉ HASTA ACÁ
+
+TODO: AGREGAR MÁS PROSA Y DEMOSTRACIÓN DE SUBJECT REDUCTION.}
+
 
 
 \section{Examples}\label{sec:examples}
