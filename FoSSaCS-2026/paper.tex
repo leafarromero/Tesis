@@ -1,9 +1,15 @@
-\documentclass[runningheads,orivec]{llncs}
+\documentclass[runningheads,orivec,envcountsame,envcountsect]{llncs}
 
 \usepackage{soul} % Borrar, es solo para highlights en el draft
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+
+% === Unnumbered theorem-like envs for the appendix ===
+\spnewtheorem*{restatetheorem}{Theorem}{\bfseries}{}
+\spnewtheorem*{restatelemma}{Lemma}{\bfseries}{}
+\spnewtheorem*{restatecorollary}{Corollary}{\bfseries}{}
+% ====================================================
 
 \usepackage{graphicx}
 \graphicspath{{figures/}}
@@ -19,13 +25,26 @@
 \usepackage[only=llparenthesis,rrparenthesis,llbracket,rrbracket]{stmaryrd}
 \usepackage{qcircuit}
 
-\usepackage[bookmarks,backref]{hyperref}
-% If you use the hyperref package, please uncomment the following two lines
-% to display URLs in blue roman font according to Springer's eBook style:
-\usepackage{color}
+\usepackage{color}  % Springer pide usar este paquete de color, no xcolor   
+\definecolor{darkblue}{rgb}{0,0,0.5}
+\definecolor{darkgreen}{rgb}{0,0.4,0}
+\usepackage[
+  bookmarks,
+  colorlinks=true,     
+  linkcolor=darkblue,
+  citecolor=darkgreen,
+  urlcolor=blue,
+  bookmarksopen,
+  bookmarksopenlevel=2,
+  bookmarksdepth=2,
+  bookmarksnumbered=true
+]{hyperref}
+
+% Lo que sigue lo pide llncs obligatoriamente
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \urlstyle{rm}
-\usepackage[capitalise,nameinlink]{cleveref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage[capitalise,nameinlink]{cleveref}
 \Crefname{section}{Section}{Sections}
 \Crefname{figure}{Figure}{Figures}
@@ -33,6 +52,7 @@
 \Crefname{theorem}{Theorem}{Theorems}
 \Crefname{lemma}{Lemma}{Lemmas}
 \Crefname{definition}{Definition}{Definitions}
+\Crefname{proposition}{Proposition}{Propositions}
 
 
 % \qedhere compatible con llncs (sin amsthm)
@@ -95,7 +115,7 @@
 \newcommand\sspan[1]{\ensuremath{\mathsf{span}(#1)}}
 \newcommand\ansubst[2]{\ensuremath{\langle #1 \rangle_{#2}}}
 \newcommand\sqsubst[1]{\ensuremath{\left[ #1 \right]}}
-\newcommand\AbsBasis{\ensuremath{\mathcal{P}}}
+\newcommand\AbsBasis{\ensuremath{\mathcal{A}}}
 \newcommand\dom[1]{\mathrm{dom}(#1)}
 \newcommand\sdom[1]{\mathrm{dom}^{\sharp}(#1)}
 \newcommand\FV[1]{\mathrm{FV}(#1)}
@@ -382,295 +402,387 @@ Finally, we conclude with remarks and directions for future work in
 \section{The calculus}\label{sec:calculus}
 \subsection{Syntax}
 
-This section presents the calculus upon which our realizability model will be designed. It is a lambda-calculus extended with linear combinations of lambda-terms, which form a vector space.
+This section presents the calculus on which our realizability model will be
+built. It is a $\lambda$-calculus extended with linear combinations of terms,
+forming a pseudo-vector space. This expression is used in the sense that not
+all axioms of a vector space are satisfied, as will be shown later.
 
-The syntax of the calculus is described in \Cref{tab:Syntax}. It is divided into four distinct syntactic categories: \textit{pure values, pure terms, value distributions and term distributions}. Values are composed by variables, a decorated lambda abstraction and two boolean values representing perpendicular vectors: $\ket 0$ and $\ket 1$. A pair of values is also a value itself. Terms include values, applications, pair constructors and destructors and pattern-matching testing for orthogonal vectors represented by the $\mathsf{case}$ operator. Both terms and value distributions are built by a $\C$-linear combination of either terms or values respectively. In \Cref{tab:PairsNotation} we also include notation for linear distributions of pairs. We stress that this notation for pairs does not appear in the syntax, but is rather helpful to describe a particular state.
+The syntax of the calculus is described in
+\Cref{tab:Syntax}. The calculus is divided into four
+distinct syntactic categories: \emph{pure values} ($\Val$), \emph{pure terms}
+($\Lambda$), \emph{value distributions} ($\ValD$), and \emph{term
+distributions} ($\vec\Lambda$). Values are composed of variables, decorated
+lambda abstractions, and two basis values representing orthogonal vectors,
+$\ket 0$ and $\ket 1$. A pair of values is also considered a value.  Terms
+include values, applications, pair constructors and destructors, and pattern
+matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
+Both term and value distributions are built as $\C$-linear combinations of
+terms and values, respectively. In \Cref{tab:PairsNotation}
+we also include notation for linear combinations of
+pairs. We stress that this notation for pairs does not appear in the syntax,
+but is rather useful to describe specific states.
+
+We use $v,u,w$ to denote values and $t,s,r$ for terms, writing $\vec{}\;$ when
+they are distributions.
 
 \begin{table*}[t]
-  \small
-  \[\begin{array}{l@{\quad}rll@{}}
-    v&::=& x \mid \Lam{x}B{\vec{t}} \mid (v, v) \mid\ket{0} \mid \ket{1} \\[6pt]
-    t&::=& w \mid  t\,t \mid \LetP{x}{B}{y}{B}{\vec{t}}{\vec{t}} 
-    \mid\\
-    &&\gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}\\[6pt]
-    \vec{v}&::=& v \mid \vec{v}+\vec{v} \mid 
-    \alpha\;\vec{v}\qquad\hfill(\alpha\in\C)\\[6pt]
-    \vec{t}&::=&
-    t \mid \vec{t}+\vec{t} \mid 
-    \alpha\;\vec{t}\qquad\hfill(\alpha\in\C)
-   \end{array}
-  \]
-   
-  Where $B$ is an $n$-th dimensional orthonormal basis as defined in \Cref{def:NthDimensionalBasis}.
-
-  \caption{Syntax of the calculus}
+  \begin{align*}
+    v &::= x \mid \Lam{x}B{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
+    (\Val)\\
+    t &::= w \mid tt \mid (t,t) \mid
+    \LetP{x}{B_1}{y}{B_2}{\vec{t}}{\vec{t}}\mid
+    \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}} &
+    (\Lambda) \\
+    \vec{v} &::= v \mid \vec{v}+\vec{v} \mid \alpha \vec{v}
+    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+    \vec{t} &::= t \mid \vec{t}+\vec{t} \mid \alpha \vec{t}
+    \qquad\hfill(\alpha\in\C) & (\vec \Lambda)
+  \end{align*}
+  \caption{Syntax of the calculus, where $B, B_1, B_2$ are sets of value
+  distributions ($B, B_1, B_2 \subseteq \ValD$).}
   \label{tab:Syntax}
 \end{table*}
 
- \begin{table*}[tb]
-  \[
-    \begin{array}{c}
-      \Pair{\alpha\; v+\vec{v}_1}{\vec{v}_2}~ := ~\alpha\Pair{v}{\vec{v}_2} + \Pair{\vec{v}_1}{\vec{v}_2}\\
-      \Pair{w}{\alpha\; v+\vec{v}_1}~ := ~\alpha\Pair{w}{v} + \Pair{w}{\vec{v}_1}
-    \end{array}
-  \]
-  Where $v,w$ are pure values and $\vec{v_1}, \vec{v}_2$ value distributions.
-  \caption{Notation for writing pair distributions}
-  \label{tab:PairsNotation}
- \end{table*}
-
-\begin{remark}
-  We do not include a specific term representing the null vector $\vec{0}$ since we do not make use of it. Instead, any distribution $0\;\vec{t}$ will act as it.
-\end{remark}
-
-In order to handle the different bases in each abstraction, we need to define the congruence relation between values from \Cref{tab:Congruence}. When we define the reduction system, this congruence will allow us to take an argument and interpret it in the corresponding basis of the function. Here, the structure of value distributions starts to take shape. The term and value distributions stop being merely syntactic terms and start acting as proper linear combinations. Since the congruence enables the associativity of the addition, we will use $\Sigma$ notation to represent sums.
-
-The set of value distributions does not form a vector space, we can easily check this fact from the lack of a neutral element (which also entails a lack of additive inverse for elements). Instead, we work with a distributive-action space as described in \cite{DiazCaroMalherbe2022}.
-
-A distributive-action space over a field $K$ is a commutative semi-group $(V,+)$ equipped with a scalar multiplication $(\cdot): K\times V\to V$ such that for all $\vec{v},\vec{w}\in V, \alpha,\beta\in K$ it satisfies the following equations:
-
-\[
-\begin{array}{c c}
-1\cdot \vec{v} = \vec{v} & (\alpha + \beta)\cdot\vec{v} = \alpha\cdot\vec{v} + \beta\cdot\vec{v}\\
-\alpha\cdot(\beta\vec{v}) = \alpha\beta\cdot \vec{v} & \alpha\cdot(\vec{v} + \vec{w}) = \alpha\cdot\vec{v} + \alpha\cdot\vec{w}
-\end{array}
-\]
-
-In this case we take $\C$ as our field $K$ and, we omit the dot for the scalar product. It is clear from the rules in \Cref{tab:Congruence} that the set of distribution values satisfy the axioms of a distributive-action space. Moreover, the first rule of the congruence simulates the behaviour of the null vector for some $\vec{v}$. 
-
 \begin{table*}[tb]
-  \small
-  \vspace*{0.2cm}
-  \[
-    \begin{array}{l}
-      \vec{v_1} + 0\; \vec{v_2}~\equiv~\vec{v_1}\\  
-      \text{Where the $\vec{v_i}$ are neither an abstraction, nor a variable}
-    \end{array}   
-  \]
-  
-  \[\renewcommand*{\arraystretch}{1.2}
-    \begin{array}{c c}
-      1\;\vec{t}~\equiv~\vec{t}&
-      \alpha\;(\beta\;\vec{t})~\equiv~\delta\;\vec{t}\\[-2pt]
-      \multicolumn{2}{r}{\text{Where: } \delta = \alpha\beta}\\[2pt]
-      \vec{t}_1+\vec{t}_2 ~\equiv~\vec{t}_2+\vec{t}_1 &
-      (\vec{t}_1+\vec{t}_2)+\vec{t}_3~\equiv~\vec{t}_1+(\vec{t}_2+\vec{t}_3)\\
-      \multicolumn{2}{c}{(\alpha+\beta)\;\vec{t}~\equiv~\alpha\;\vec{t}+\beta\;\vec{t}}\\
-      \multicolumn{2}{c}{\alpha\;(\vec{t}_1+\vec{t}_2)~\equiv~\alpha\;\vec{t}_1+\alpha\;\vec{t}_2}\\
-      \vec t (\alpha \vec s)~\equiv~ \alpha (\vec{t}\vec{s})&
-      (\alpha \vec t) \vec s ~\equiv~ \alpha (\vec{t}\vec{s})\\
-      (\vec t + \vec s) \vec{r}~\equiv~\vec{t}\vec{r} + \vec{s}\vec{r} &
-      \vec t(\vec{s}+\vec{r})~\equiv~\vec{t}\vec{s} + \vec{t}\vec{r}\\
-      \multicolumn{2}{l}{\LetP{x_1}{A_1}{x_2}{B_2}{(\alpha\vec{t})}{\vec{s}}\equiv}\\
-      \multicolumn{2}{r}{\alpha(\LetP{x_1}{A_1}{x_2}{B_2}{\vec{t}}{\vec{s}})}\\
-      \multicolumn{2}{l}{\LetP{x_1}{A_1}{x_2}{B_2}{\vec{t}+\vec{s}}{\vec{r}}\equiv}\\
-      \multicolumn{2}{r}{(\LetP{x_1}{A_1}{x_2}{B_2}{\vec{t}}{\vec{r}})}\\
-      \multicolumn{2}{r}{+~(\LetP{x_1}{A_1}{x_2}{B_2}{\vec{s}}{\vec{r}})}\\
-      \multicolumn{2}{l}{\gencase{\alpha \vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}}\equiv}\\
-      \multicolumn{2}{r}{\alpha(\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}})}\\
-      \multicolumn{2}{l}{\gencase{(\vec{t}+\vec{s})}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_2}}\equiv}\\
-      \multicolumn{2}{r}{\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_2}}}\\
-      \multicolumn{2}{r}{+~\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_2}}}
-    \end{array}
-  \]
+  \begin{align*}
+    \Pair{\alpha  v+\vec{v}_1}{\vec{v}_2} & :=
+    \alpha\Pair{v}{\vec{v}_2} + \Pair{\vec{v}_1}{\vec{v}_2}\\
+    \Pair{w}{\alpha  v+\vec{v}_1} &:= \alpha\Pair{w}{v} + \Pair{w}{\vec{v}_1}
+  \end{align*}
+  \caption{Notation for pair distributions}
+  \label{tab:PairsNotation}
+\end{table*}
+
+The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
+destructors are intended to denote the bases of the pseudo-vector spaces in
+which the terms are expressed; their precise nature will be made explicit
+later. Before formally defining the notion of bases, we need to establish the
+algebraic structure underlying the space of value distributions. This is
+achieved by introducing the congruence relation defined in
+\Cref{tab:Congruence}. The congruence captures the intended behaviour of
+addition and scalar multiplication, allowing us to treat linear combinations of
+terms and values as genuine algebraic entities rather than mere syntactic
+constructions. In particular, it enforces properties such as commutativity and
+associativity of addition and distributivity of scalar multiplication, which
+will later justify the use of summation notation ($\Sigma$).
+
+\begin{table*}[t]
+  \begin{align*}
+    \vec{v_1} + 0\vec{v_2} &\equiv \vec{v_1}
+  \end{align*}
+  \begin{align*}
+    1\vec{t} &\equiv \vec{t} &
+    \alpha(\beta\vec{t}) &\equiv (\alpha\beta)\vec{t} \\
+    \vec{t}_1+\vec{t}_2 &\equiv \vec{t}_2+\vec{t}_1 &
+    (\vec{t}_1+\vec{t}_2)+\vec{t}_3 &\equiv \vec{t}_1+(\vec{t}_2+\vec{t}_3) \\
+    (\alpha+\beta)\vec{t} &\equiv \alpha\vec{t}+\beta\vec{t} &
+    \alpha(\vec{t}_1+\vec{t}_2) &\equiv \alpha\vec{t}_1+\alpha\vec{t}_2 \\
+    \vec{t}(\alpha\vec{s}) &\equiv \alpha(\vec{t}\vec{s}) &
+    (\alpha\vec{t})\vec{s} &\equiv \alpha(\vec{t}\vec{s}) \\
+    (\vec{t}+\vec{s})\vec{r} &\equiv \vec{t}\vec{r}+\vec{s}\vec{r} &
+    \vec{t}(\vec{s}+\vec{r}) &\equiv \vec{t}\vec{s}+\vec{t}\vec{r} &&
+  \end{align*}
+  \begin{align*}
+    \LetP{x_1}{A_1}{x_2}{B_2}{(\alpha\vec{t})}{\vec{s}}
+    &\equiv \alpha(\LetP{x_1}{A_1}{x_2}{B_2}{\vec{t}}{\vec{s}}) \\
+    \LetP{x_1}{A_1}{x_2}{B_2}{\vec{t}+\vec{s}}{\vec{r}}
+    &
+    \equiv
+    \begin{aligned}[t]
+      &(\LetP{x_1}{A_1}{x_2}{B_2}{\vec{t}}{\vec{r}})\\
+      &+(\LetP{x_1}{A_1}{x_2}{B_2}{\vec{s}}{\vec{r}}) 
+    \end{aligned}\\
+    \gencase{\alpha \vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}}
+    &\equiv \alpha(\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}}) \\
+    \gencase{(\vec{t}+\vec{s})}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_2}}
+    &\equiv\begin{aligned}[t]
+      &\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_2}}\\
+      &+\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r_1}}{\vec{r_2}}
+    \end{aligned}
+  \end{align*}
   \caption{Term congruence}
   \label{tab:Congruence}
 \end{table*}
 
-
-We expand on the rationale for the first rule of \Cref{tab:Congruence} ($\vec{v_1} + 0\; \vec{v_2}~\equiv~\vec{v_1}$). The main idea of the calculus is to decompose the vectors corresponding to the arguments onto the bases attached to the abstractions. Taking an example from linear algebra, if we were to rewrite the vector $(1,0)$ as a linear combination of $\braces{\frac{(1,1)}{\sqrt{2}}, \frac{(1,-1)}{\sqrt{2}}}$ we would get:
-
+The structure induced by this congruence does not form a true vector space,
+since it lacks a neutral element, and therefore also additive inverses.
+Instead, it forms a \emph{distributive-action space over $\C$}, as described
+in~\cite{DiazCaroMalherbe2022}. A distributive-action space over $\C$ is
+a commutative semigroup $(V,+)$ equipped with a scalar multiplication
+satisfying, for all $\vec v,\vec w\in V$ and $\alpha,\beta\in \C$,
 \begin{align*}
-  (1,0) &= (1,0) + 0 \; (0,1) \\
-  &=\frac{1}{2} ((1,0) + (1,0) + (0,1) - (0,1))\\
-  &=\frac{1}{\sqrt{2}}\;\left(\frac{(1,1)}{\sqrt{2}} + \frac{(1,-1)}{\sqrt{2}}\right)  
+  1\vec{v} &= \vec{v} & (\alpha + \beta)\vec{v} &= \alpha\vec{v} + \beta\vec{v}\\
+  \alpha(\beta\vec{v}) &= \alpha\beta\vec{v} & \alpha(\vec{v} + \vec{w}) &= \alpha\vec{v} + \alpha\vec{w}
 \end{align*}
+The rules in \Cref{tab:Congruence} ensure that the set of value distributions
+satisfies the axioms of a distributive-action space. Moreover, its first rule
+plays the role of a neutral element by simulating the behaviour of a null
+vector for certain distributions.
 
-If we match the vector $(1,0)$ to $\ket{0}$ and $(0,1)$ to $\ket{1}$, we would need a way to introduce the second coordinate into the equation. That is where the first rule comes into play. We restrict ourselves to vectors, since introducing variables or abstractions could break safety properties of the system.
-%ACÁ PUEDO PONER UN EJEMPLO. ID APLICADO A ID Y EN CADA UNO DE LOS TÉRMINOS AGREGO UN DUPLICADOR. EVENTUALMENTE REDUCE A ID+0.OMEGA QUE NO TIENE FORMA NORMAL.
+The notion of basis in this calculus builds on this algebraic foundation. Once
+the pseudo-vector structure (distributive-action space) is established, we can
+define which subsets $B\subseteq \ValD$ qualify as \emph{bases}, thereby
+justifying the decorations appearing in the syntax of
+\Cref{tab:Syntax}.
 
-The core mechanism of the calculus lies in decorating variable bindings with sets of value distributions. Keeping with linear algebra terminology, we will refer to these sets as \textit{(orthonormal) bases}, for reasons which will shortly become clear. These bases will inform the reduction system on how to operate its arguments. 
 
-In order to properly characterize the sets that decorate the lambda abstractions, we first have to define which are the values that they must contain.
-% Definición de qubit
-\begin{definition}
-  A $1$-dimensional qubit is a value distribution of the form: $\alpha \ket{0} + \beta \ket{1}$ where $|\alpha|^2 + |\beta|^2 = 1$. An $n$-th dimensional qubit is a value distribution of the form $\alpha\Pair{\ket{0}}{\vec w_1} + \beta\Pair{\ket{1}}{\vec{w_2}} $ where $\vec w_1$ and $\vec{w_2}$ are $(n-1)$ dimensional qubits and the same previous conditions apply to $\alpha$ and $\beta$.
+Before proceeding further, let us clarify the rationale behind the first rule
+of \Cref{tab:Congruence} ($\vec{v_1} + 0\vec{v_2}
+\equiv \vec{v_1}$). The core idea of the calculus is that arguments are
+decomposed over the bases associated with their corresponding abstractions. As
+an illustration from linear algebra, consider rewriting the vector $(1,0)$ as a
+linear combination of $\braces{\frac{(1,1)}{\sqrt{2}},
+\frac{(1,-1)}{\sqrt{2}}}$:
+\begin{align*}
+  (1,0) &= (1,0) + 0(0,1) 
+        = \tfrac{1}{2}\big((1,0) + (1,0) + (0,1) - (0,1)\big)\\
+        &= \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}} +
+          \tfrac{(1,-1)}{\sqrt{2}}\right).
+\end{align*}
+If we identify $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we need a way
+to account for the missing second coordinate in this expansion. This is exactly
+the role played by the first rule of the congruence. We restrict its use to
+vectors only, since applying it to variables or abstractions could compromise
+the safety properties of the system.
+
+The core mechanism of the calculus lies in decorating variable bindings with
+sets of value distributions. Following linear algebra terminology, we refer to
+these sets as \emph{(orthonormal) bases}, a terminology that will soon become
+clear. These bases inform the reduction system on how to operate on their
+arguments.
+
+To properly characterise the sets that decorate the lambda abstractions, we
+must first specify the kind of values they contain.
+\begin{definition}[Qubits]
+  A \emph{one-dimensional qubit} is a value distribution of the form
+  $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
+  \emph{$n$-dimensional qubit} is a value distribution of the form
+  $\alpha\Pair{\ket{0}}{\vec w_1} + \beta\Pair{\ket{1}}{\vec w_2}$, where
+  $\vec w_1$ and $\vec w_2$ are $(n-1)$-dimensional qubits, and $\alpha$ and
+  $\beta$ satisfy the same normalisation condition.
 \end{definition}
 
-% Definición de producto interno, ortogonalidad e independencia lineal. 
-From this point forward we shall write $\vec{\Val}$ to the space of all closed value distributions which we will call \emph{vectors}. This space can be equipped with an inner product $\scal{\vec v}{\vec w}$ and an $\ell_2-norm$ $\|\vec v\|$ defined as:
-
+From now on, we call the value distributions, i.e. the elements of $\ValD$,
+\emph{vectors}. The distributive-action space $\ValD$ is equipped with an inner
+product $\scal{\vec v}{\vec w}$ and an $\ell_2$-norm $\|\vec v\|$ defined as:
 \begin{align*}
-  \textstyle\scal{\vec{v}}{\vec{w}}&:=\textstyle\sum_{i=1}^n\sum_{j=1}^m\overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j}\\
-  \textstyle\|\vec{v}\,\|&:=\textstyle\sqrt{\scal{\vec{v}}{\vec{v}\,}}=\textstyle\sqrt{\sum_{i=1}^n|\alpha_i|^2}    
+  \scal{\vec{v}}{\vec{w}} &:= \sum_{i=1}^n\sum_{j=1}^m
+  \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},\\
+  \|\vec{v}\| &:= \sqrt{\scal{\vec{v}}{\vec{v}}}
+  = \sqrt{\sum_{i=1}^n|\alpha_i|^2}.
 \end{align*}
+Where $\vec{v}=\sum_{i=1}^n\alpha_i v_i$ and
+$\vec{w}=\sum_{j=1}^m\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
+delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
 
-Where $\vec{v}=\sum_{i=1}^n\alpha_i\; v_i$ and $\vec{w}=\sum_{j=1}^m\beta_j\; w_j$, and where $\delta_{v_i,w_j}$ is the Kronecker delta such that it is $1$ if $v_i=w_j$ and $0$ otherwise.
-
-With the notion of an internal product, we can finalize the details on the calculus syntax. As one might expect, we will say two values are orthogonal when their internal product equals to zero. With the previous definition we can describe the sets decorating the abstractions.
-
-\begin{definition}\label{def:NthDimensionalBasis}
-We will say a set of value distributions $B$ is an $n$-th dimensional orthonormal basis when it satisfies the following conditions:
-\begin{enumerate}
-  \item Each member of $B$ is a qubit of dimension $n$.
-  \item Each member has norm equal to $1$.
-  \item Each member of $B$ is pairwise orthogonal to every other member. 
-\end{enumerate}
+With this notion of inner product, we can complete the description of the
+calculus syntax. As expected, two values are \emph{orthogonal} when their inner
+product is equal to zero. Using this, we can now formally define the sets that
+decorate abstractions.
+\begin{definition}[Basis]\label{def:NthDimensionalBasis}
+  A set of value distributions $B$ is an \emph{$n$-dimensional orthonormal
+  basis} if it satisfies the following conditions:
+  \begin{enumerate}
+    \item Each element of $B$ is an $n$-dimensional qubit.
+    \item Each element has norm $1$.
+    \item Distinct elements of $B$ are pairwise orthogonal.
+  \end{enumerate}
 \end{definition}
 
-Unlike the usual definition of orthonormal basis, we also need to ensure that the members are qubits. In other words, they are neither variables nor abstractions. Morally, these sets will keep track of the basis the term is working on. A qubit which is a member of this set will be treated on a call-by-value strategy and its data can be treated classically. Any other qubit will first be interpreted as a $\C$-linear combination of elements of the basis and then the function will apply linearly to each component. If the argument cannot be written in the decorating basis, the evaluation gets stuck. 
+From now on, the syntax introduced in \Cref{tab:Syntax}
+is restricted to sets $B$ forming $n$-dimensional
+orthonormal bases.
 
-As one would expect from a basis in lineal algebra, there is no non-trivial linear combination of its members that yields a null vector. Otherwise, there would be a basis vector which breaks the pairwise orthogonality condition. This implies that every decomposition onto a base is unique.
 
-\begin{proposition}\label{prop:UniqueDecomposition}
-  If $B$ is an $n$-th dimensional basis, then each $n$-th dimensional qubit has a unique decomposition in $B$.
-\end{proposition}
+Unlike the standard definition of an orthonormal basis, we also require that
+its elements be qubits—neither variables nor abstractions. Intuitively, these
+sets record the basis in which a term is expressed. A qubit belonging to such a
+set is treated under a call-by-value strategy, allowing its data to be handled
+classically. Any other qubit is first decomposed as a $\C$-linear combination
+of the basis elements, after which the function is applied linearly to each
+component. If an argument cannot be expressed in the decorating basis, the
+evaluation becomes stuck.
 
-\begin{proof}
-  Let $\vec{b_i}$, the basis vectors of $B$. And $\sum_i^n\alpha_i \vec{b_i}$, $\sum_i=1^n \beta^i \vec{b_i}$ two decompositions of $\vec{v}$ onto $B$. Then we have:
-  \[\vec{v} - \vec{v} = 0 \; \vec{v} = \sum_{i=1}^{n} (\alpha_i - \beta_i) \vec{b_i}\]
-  Since the basis is linearly independent, $\alpha_i = \beta_i$.
-\end{proof}
+As in classical linear algebra, no non-trivial linear combination of basis
+elements yields the null vector; otherwise, some basis vector would violate
+pairwise orthogonality. Consequently, each decomposition over a basis is
+unique.
 
-As a corollary, we can show that this result behaves well with the term congruence.
+\begin{theorem}[Unique decomposition]\label{thm:UniqueDecomposition}
+  If $B$ is an $n$-dimensional basis, then every $n$-dimensional qubit has a
+  unique decomposition over $B$.
+\end{theorem}
 
-\begin{corollary}\label{cor:EquivalentDecomposition}
-  If $\vec{v}\equiv\vec{w}$, then they both have the same decomposition over a basis $B$.
+\begin{corollary}[Preservation under congruence]\label{cor:EquivalentDecomposition}
+  If $\vec{v} \equiv \vec{w}$, then they share the same decomposition over any
+  basis $B$.
 \end{corollary}
-\begin{proof}
-  Since $\vec{v} - \vec{w} \equiv \vec{v} - \vec{v} \equiv \vec{w} - \vec{w}$, we can use the same reasoning as \Cref{prop:UniqueDecomposition} to conclude that both have the same decomposition.
-\end{proof}
+
+From now on, we let $\B=\{\ket{0},\ket{1}\}$ denote the classical computational
+basis. Similarly, we define
+$\ket{+}:=\frac 1{\sqrt{2}}(\ket{0}+\ket{1})$ and
+$\ket{-}:=\frac 1{\sqrt{2}}(\ket{0}-\ket{1})$, and let
+$\XB=\{\ket{+},\ket{-}\}$.
 
 \subsection{Substitutions}
+Beta-reduction depends on the basis chosen for the abstraction, so we must
+define a substitution that takes this mechanism into account. Intuitively, this
+operation substitutes variables with vectors expressed in the chosen basis; the
+accompanying coefficients are those of the value distribution being
+substituted.
 
-The beta reduction will depend on the basis chosen for the abstraction, so we have to define a new substitution which will take this mechanism into account. This operation will substitute the variables for vectors in the chosen basis. The accompanying coefficients correspond to the value distribution which is the object of the substitution.
-  
-With this substitution we also define a special kind of basis which we call $\AbsBasis$ which will act as the canonical basis for lambda abstractions. In this way, we restrict distributions of functions to a single possible basis.
+Alongside this substitution, we introduce a special basis, denoted
+$\AbsBasis$, which acts as the canonical basis for $\lambda$-abstractions. In
+this way, we restrict function distributions to a single admissible basis.
 
-\begin{definition}
-  For a term distribution $\vec{t}$, value distribution $\vec{v}$, variable $x$ and orthogonal basis $B$, we define the substitution $\vec{t}\ansubst{\vec{v}/x}{A}$ as:
-  
+Before introducing the basis-dependent substitution, let us recall the
+standard notation. For a term distribution $\vec t$, a variable $x$, and a
+value distribution $\vec v$, the expression $\vec t[\vec v/x]$ denotes the
+usual capture-avoiding substitution of $\vec v$ for $x$ in $\vec t$.
+
+\begin{definition}[Basis-dependent substitution]
+  Let $\vec t$ be a term distribution, $\vec v$ a value distribution, $x$ a
+  variable, and $B$ an orthonormal basis. We define the substitution
+  $\vec t\ansubst{\vec v/x}{B}$ as follows:
   \[
-  \vec{t}\ansubst{\vec{v}/x}{B} = 
+    \vec t\ansubst{\vec v/x}{B} \;=\;
     \begin{cases}
-      \sum_{i\in I} \alpha_i \vec t\ [\vec b_i / x] 
-      & B=\{\vec{b_i}\}_{i\in I}\wedge\vec{v}\equiv\sum\limits_{i\in I} \alpha_i \vec{b_i} \\
-      \sum_{i\in I}\alpha_i\vec{t}\ [v_i/x] & B = \AbsBasis\wedge\vec{v}=\sum\limits_{i\in I}\alpha_i v_i\\
-      \text{Undefined} & \text{Otherwise}
+      \ds\sum_{i\in I}\alpha_i\,\vec t\,[\vec b_i/x] &
+        \text{if } B=\{\vec b_i\}_{i\in I}\ \text{and}\
+        \vec v \equiv \ds\sum_{i\in I}\alpha_i\,\vec b_i,\\[6pt]
+      \ds\sum_{i\in I}\alpha_i\,\vec t\,[v_i/x] &
+        \text{if } B=\AbsBasis\ \text{and}\
+        \vec v = \ds\sum_{i\in I}\alpha_i\,v_i,\\[2pt]
+      \text{undefined} & \text{otherwise.}
     \end{cases}
   \]
-  
-  The difference between the first two cases is subtle. While the first case substitutes linearly with the decomposition onto the basis $B$. The second, substitutes linearly over the pure values that conform $\vec{v}$ when $B=\AbsBasis$. In this manner, this modality recovers the substitution originally described in \cite{DiazcaroGuillermoMiquelValironLICS19}. This case is important because it is the only way to substitute with a $\lambda$-abstraction since they cannot form part of orthonormal bases. 
-
-  This definition can also be extended to a pair of values in the following way. Let $\vec v = \sum_{i\in I} \alpha_i \Pair{\vec{v_i}}{\vec{w_i}}$:
+  The definition also extends to pairs of values. If
+  $\vec v=\sum_{i\in I}\alpha_i\,\Pair{\vec v_i}{\vec w_i}$, then
   \[
-    \vec t\ansubst{\vec{v}/x\otimes y}{B_1 \otimes B_2} = \sum_{i\in I} \alpha_i \vec t\ansubst{\vec{v_i}/x}{B_1}\ansubst{\vec{w_i}/y}{B_2}
+    \vec t\ansubst{\vec v/x\otimes y}{B_1\otimes B_2}
+      \;=\; \sum_{i\in I}\alpha_i\,
+      \bigl(\vec t\ansubst{\vec v_i/x}{B_1}\ansubst{\vec w_i/y}{B_2}\bigr),
   \]
+  where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
+  with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
+  purely notational.
 \end{definition}
 
+\paragraph{Remark.}
+The two cases in the definition capture distinct substitution modes.  
+In the first, substitution proceeds linearly using the decomposition of
+$\vec v$ over the explicit basis $B$.  
+In the second, when $B=\AbsBasis$, substitution proceeds linearly over the pure
+values that form $\vec v$.  
+This case recovers the substitution mechanism of earlier
+basis-sensitive calculi---such as the one in
+\cite{DiazcaroGuillermoMiquelValironLICS19}---but generalises it by introducing
+basis-dependent behaviour.  
+This special case is also the only one applicable to
+$\lambda$-abstractions, since abstractions cannot belong to orthonormal bases.
+
+
 \begin{example}
-From here onwards, we define $\B = \{\ket{0}, \ket{1}\}$. This basis represents the classical boolean bits. Let: 
-\[\vec{v}= \frac{1}{\sqrt{2}} \Pair{\ket{0}}{\ket{1}} - \frac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}}\]
-Then the substitution $\vec{t}\ansubst{\vec{v}/x\otimes y}{\B\otimes\B}$ yields:
-
-\begin{align*}
-\vec{t}\ansubst{\vec{v}/x\otimes &y}{\B\otimes\B} = \\ 
-&\frac{1}{\sqrt{2}}\;\vec{t}\;\ansubst{\ket{0}/x}{\B}\ansubst{\ket{1}/y}{\B} - \frac{1}{\sqrt{2}}\;\vec{t}\;\ansubst{\ket{1}/x}{\B}\ansubst{\ket{0}/y}{\B}
-\end{align*}
-
+  Let
+  \[
+    \vec v = \tfrac{1}{\sqrt{2}}\Pair{\ket{0}}{\ket{1}}
+             - \tfrac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}}.
+  \]
+  Then the substitution $(y,x)\ansubst{\vec v/x\otimes y}{\B\otimes\B}$ yields
+  \begin{align*}
+    (y,x)\ansubst{\vec v/x\otimes y}{\B\otimes\B}
+    &= \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{0}/x][\ket{1}/y]
+       - \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{1}/x][\ket{0}/y] \\
+    &= \tfrac{1}{\sqrt{2}}\,(\ket{1},\ket{0})
+       - \tfrac{1}{\sqrt{2}}\,(\ket{0},\ket{1}).
+  \end{align*}
+  That is, the substitution on $(y,x)$ effectively swaps the two components of the pair.
 \end{example}
 
-With this new substitution defined, we set out to prove some lemmas which will be useful later for proving the validity of some typing judgements. First, we want to show that the basis dependent substitution commutes with the linear combination of terms.
+With this new substitution in place, we can establish a few properties that
+will later be instrumental in proving the soundness of typing judgements.
 
-\begin{lemma}\label{lem:distributiveSubstitution}
-  For term distributions $\vec{t_i}$, value distribution $\vec{v}$, variable $x$, $\alpha_i\in\C$ and basis $B$ such that $\ansubst{\vec v/x}{B}$ is defined: 
-  
-  \[(\sum_i \alpha_i\vec t_i)\ansubst{\vec v/x}{B} \equiv \sum_i \alpha_i\vec t_i \ansubst{\vec v/x}{B}\] 
+We first show that basis-dependent substitution distributes over linear
+combinations of terms.
+
+\begin{lemma}[Distributivity over linear combinations]\label{lem:distributiveSubstitution}
+  For term distributions $\vec{t_i}$, a value distribution $\vec{v}$, a
+  variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
+  $\ansubst{\vec v/x}{B}$ is defined:
+  \[
+    \Bigl(\sum_i \alpha_i\vec t_i\Bigr)\ansubst{\vec v/x}{B}
+    \equiv
+    \sum_i \alpha_i\vec t_i \ansubst{\vec v/x}{B}.
+  \]
 \end{lemma}
 
-\begin{proof}
-  Let $B\neq\AbsBasis$ and $\vec{v}\equiv\sum\limits_{j=0}^n \beta_j \vec{b_j}$ with each $\vec{b_j}\in B$
-  \begin{align*}
-    (\sum_i \alpha_i\vec t)\ansubst{\vec v/x}{B} &= \sum_{j=1}^m \beta_j(\sum_{i=1}^{n} \alpha_i t_i)[\vec b_j/x]\\
-    &\equiv \sum_{i=1}^{n} \alpha_i (\sum_{j=1}^m \beta_j t_i [\vec b_j/x])\\
-    &= \sum_{i=1}^{n} \alpha_i \vec{t_i}\ansubst{\vec v/x}{B}
-  \end{align*}
-  The case where $B=\AbsBasis$ is similar.
-\end{proof}
+The next result states that substitution behaves consistently within each
+equivalence class induced by the congruence $\equiv$.
 
-The next thing we need to show is that the substitution behaves well with respect to the term congruence previously defined. In essence, the following results states that for each member of the same equivalence class defined by $\equiv$, the result of substitution for those vectors is always syntactically the same.
-
-\begin{lemma}\label{lem:EquivSubstitutions}
-  For value distributions $\vec{v},\vec{w}$, term distribution $\vec{t}$ and a orthonormal basis $B$ such that $\ansubst{\vec{v}/x}{B}$ and $\ansubst{\vec{w}/x}{B}$ are defined. If $\vec{v}\equiv\vec{w}$, then $\vec{t}\ansubst{\vec{v}/x}{B}=\vec{t}\ansubst{\vec{w}/x}{B}$.
+\begin{lemma}[Compatibility with congruence]\label{lem:EquivSubstitutions}
+  For value distributions $\vec{v},\vec{w}$, a term distribution $\vec{t}$, and
+  an orthonormal basis $B$ such that both
+  $\ansubst{\vec{v}/x}{B}$ and $\ansubst{\vec{w}/x}{B}$ are defined:
+  if $\vec{v}\equiv\vec{w}$, then
+  $\vec{t}\ansubst{\vec{v}/x}{B}
+  =\vec{t}\ansubst{\vec{w}/x}{B}$.
 \end{lemma}
 
-\begin{proof}
-  Since $\vec{v}\equiv\vec{w}$, by \Cref{cor:EquivalentDecomposition}, we have that both $\vec{v}$ and $\vec{w}$ can be written as:
-  \[
-  \vec{v} \equiv \vec{w} \equiv \sum_{i=1}^{n} \alpha_i \vec{b_i}\qquad\text{Where }\vec{b_i}\in B
-  \]
-  Then:
-  \[
-  \vec{t}\ansubst{\vec{v}/x}{B} = \sum_{i=1}^{n} \alpha_i \vec{t}\ [\vec{b_i}/x] = \vec{t}\ansubst{\vec{w}/x}{B}
-  \]
-\end{proof}
-
-\begin{remark}
-  The result from \Cref{lem:EquivSubstitutions}, does not translate across bases, so $\vec{t}\ansubst{\vec{v}/x}{A} \not\equiv \vec{t}\ansubst{\vec{v}/x}{B}$. From here onwards we define $\ket{+}:=\frac{\ket{0}+\ket{1}}{\sqrt{2}}$ and $\ket{-}:=\frac{\ket{0}-\ket{1}}{\sqrt{2}}$. As well, we note $\XB = \{\ket{+}, \ket{-}\}$. With this in mind we have:
-  
+\begin{remark}[Non-invariance across bases]
+  The property in \Cref{lem:EquivSubstitutions} does not extend across
+  different bases; that is,
+  $\vec{t}\ansubst{\vec{v}/x}{A}\not\equiv\vec{t}\ansubst{\vec{v}/x}{B}$.
+  For example,
   \begin{align*}
-    (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB} &= (\Lam{x}{C}{\ket{+}}) 
-    \not\equiv \\ 
-    &\frac{1}{\sqrt{2}} ((\Lam{x}{C}{\ket{0}}) + (\Lam{x}{C}{\ket{1}}))
-    = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}
+    (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB}
+    &= \Lam{x}{C}{\ket{+}} \\
+    &\not\equiv
+       \tfrac{1}{\sqrt{2}}\big((\Lam{x}{C}{\ket{0}})
+       + (\Lam{x}{C}{\ket{1}})\big)
+       = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}.
   \end{align*}
-  
-  This boils down to the fact that the $\equiv$-relation does not commute, neither with the lambda abstraction nor the case construct. This is due to the fact that, despite being computationally equivalent, the terms $\Lam{x}{B}{\sum_{i=1}^{n}\alpha_i \vec{t_i}}$ and $\sum_{i=1}^{n}\alpha_i \Lam{x}{B}{\vec{t_i}}$ are not congruent (Similarly for the case construct)
-
-  This design choice comes from a physical interpretation. If we think of $(\Lam{x}{B}{\alpha\;\vec{v_1} + \beta\;\vec{v_2}})$ as an experiment that produces the superposition of the states represented by $\vec{v_1}$ and $\vec{v_2}$. We would like to differentiate it from the superposition of experiments $\alpha\;(\Lam{x}{B}{\vec{v_1}}) + \beta\;(\Lam{x}{B}{\vec{v_2}})$.
+  This difference arises because the relation $\equiv$ does not commute with
+  lambda abstraction or with the case construct. Although the two terms are
+  operationally equivalent, the calculus distinguishes between the
+  superposition of results,
+  $\Lam{x}{B}{\alpha\vec v_1 + \beta\vec v_2}$,
+  and the superposition of functions,
+  $\alpha(\Lam{x}{B}{\vec v_1}) + \beta(\Lam{x}{B}{\vec v_2})$.
+  This distinction reflects a physical intuition: the former corresponds to a
+  single experiment producing a superposition of outcomes, while the latter
+  represents a superposition of distinct experiments.
 \end{remark}
 
-We now introduce notation for generalized substitutions over a term. A substitution $\sigma$ can be thought as a set of singular substitutions applied consecutively over a term. More precisely, for a term $\vec{t}$, value distributions $\vec{v_1}\dotsb\vec{v_n}$, variables $x_1,\dotsb ,x_n$ and, bases $B_1,\dotsb B_n$:
-
+Finally, we introduce a convenient notation for generalised substitutions over
+a term by closed values. A substitution $\sigma$ can be seen as a finite set of
+individual substitutions applied consecutively to a term. Formally, for a term
+$\vec{t}$, closed value distributions $\vec{v_1},\dots,\vec{v_n}$, variables
+$x_1,\dots,x_n$, and bases $B_1,\dots,B_n$:
 \[
-  \vec{t}\ansubst{\sigma}{} := \vec{t}\ansubst{\vec{v_1}/x_1}{B_1}\dotsb\ansubst{\vec{v_n}/x_n}{B_n}
+  \vec{t}\ansubst{\sigma}{}
+  := \vec{t}\ansubst{\vec{v_1}/x_1}{B_1}\dotsb\ansubst{\vec{v_n}/x_n}{B_n}.
 \]
-
-Since every $\vec{v_1},\dotsb ,\vec{v_n}$ is closed, the order of the substitutions is irrelevant. We can think of the substitution $\sigma$ as a partial function from variables to pairs of value distributions and bases. We denote $x_1,\dotsb, x_n$ as the domain of $\sigma$ (Noted $\dom{\sigma}$). In the same way, we can extend the substitution, for a term $\vec{t}$, substitution $\sigma$, value distribution $\vec{v}$, variable $x\not\in\dom{\sigma}$ and basis $B$:
-
+Since each $\vec{v_i}$ is closed, the order of substitutions is irrelevant. We
+regard $\sigma$ as a partial function from variables to pairs of closed value
+distributions and bases, and write $\dom{\sigma}$ for its domain. The operation
+extends naturally: for a term $\vec{t}$, substitution $\sigma$, a new variable
+$x\notin\dom{\sigma}$, value distribution $\vec{v}$, and basis $B$,
 \[
-  \vec{t}\ansubst{\sigma}{}\ansubst{\vec{v}/x}{B} = \vec{t}\ansubst{\sigma'}{}
+  \vec{t}\ansubst{\sigma}{}\ansubst{\vec{v}/x}{B}
+  = \vec{t}\ansubst{\sigma'}{},
 \]
-
-Such that $\sigma'$ behaves the same as $\sigma$ and, it maps $x$ to $\vec{v}$ in the basis $B$. This operation can also extend different generalized substitutions, $\sigma_1, \sigma_2$ with $\dom{\sigma_1}\cap\dom{\sigma_2}=\emptyset$:
-
+where $\sigma'$ extends $\sigma$ by mapping $x$ to $(\vec v,B)$. Likewise, two
+disjoint substitutions $\sigma_1$ and $\sigma_2$ can be merged:
 \[
-\vec{v}\ansubst{\sigma'}{} = \vec{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}
+  \vec{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}
+  = \vec{t}\ansubst{\sigma'}{},
 \]
-Such that behaves as either $\sigma_1$ or $\sigma_2$ for variables in their respective domains.
+where $\dom{\sigma_1}\cap\dom{\sigma_2}=\emptyset$ and $\sigma'$ coincides with
+$\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 
-\iffalse
-%Este lema no estoy seguro de donde ponerlo. Es posible que lo corte
-A question that might arise from the previous remark could be if taking an $\eta$-expansion on a different basis would yield different a result. In this particular instance, it is fairly simple to see that it is not the case.
+\bigskip
+\hl{Voy por acá}
 
-\begin{lemma}[$\eta$-expansion]
-  For every $\lambda$-abstraction $(\Lam{x}{\basis{X}}{\vec t})$ where $y\not\in\FV{\vec{t}}$, value distribution $\vec{v}\in\sem{\sharp{\basis{X}}}$ a .nd 
-  
-  \[
-    (\Lam{y}{\basis{Y}}{(\Lam{x}{\basis{X}}{\vec t})\ y})\ \vec{v}\evalone (\Lam{x}{\basis{X}}{\vec{t}})\ \vec v
-  \]
-\end{lemma}
-
-\begin{proof}
-  Let $\vec{v}\equiv\sum_{i=1}^{n} \alpha_i \vec{b_i}$ where $\vec{b_i}\in\sem{\basis{Y}}$, we have that:
-  \begin{align*}
-    (\Lam{y}{\basis{Y}}{(\Lam{x}{\basis{X}}{\vec{t}})}\ y)\ \vec{v}&\evalone(\Lam{x}{\basis{X}}{\vec{t}})\ansubst{\vec{v}/y}{\basis{Y}}\\ 
-    &= \sum_{i=1}^{n} \alpha_i (\Lam{x}{\basis{X}}{\vec{t}}) \vec{b_i}\\ 
-    &\equiv (\Lam{x}{\basis{X}}{\vec{t}})(\sum_{i=1}^{n}\alpha_i \vec{b_i})\\
-    &\equiv (\Lam{x}{\basis{X}}{\vec{t}})\vec{v}
-  \end{align*}
-\end{proof}
-\fi
 
 \section{Reduction system}\label{sec:reduction}
 
@@ -967,12 +1079,12 @@ The type grammar is standard except for type $\sharp A$. We use it to represent 
 
 Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values in the unitary semantics of $A$. The following proposition proves that characterization:
 
-\begin{proposition}\label{prop:SharpCharacterization}
+\begin{theorem}\label{prop:SharpCharacterization}
   The type interpretation $\sem{\sharp A}$ contains the norm-$1$ linear combination of values in $\sem{A}$.
   \[
   \sem{\sharp A} = (\sem{A}^\bot)^\bot = \Span(\sem{A})\cap\Sph
   \]
-\end{proposition}
+\end{theorem}
 
 \begin{proof}
   Proof by double inclusion.
@@ -996,9 +1108,9 @@ Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the spa
 
 The following proposition shows that, as one would expect from the span, multiple applications of the sharp operator does not produce a different result beyond the first one.   
 
-\begin{proposition}\label{prop:IdempotentSharp}
+\begin{theorem}\label{prop:IdempotentSharp}
   The $\sharp$ operator is idempotent, that is $\sem{\sharp A} = \sem{\sharp (\sharp A)}$
-\end{proposition}
+\end{theorem}
 
 \begin{proof}
   We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
@@ -1018,9 +1130,9 @@ The following proposition shows that, as one would expect from the span, multipl
 
 The only thing left would be to check that our type algebra captures sets of value distributions we wish to study. \Cref{prop:UnitaryTypes} states that every member of a type interpretation has norm $1$.
 
-\begin{proposition}\label{prop:UnitaryTypes}
+\begin{theorem}\label{prop:UnitaryTypes}
   For every type $A$, $\sem{A}\subseteq\Sph$.
-\end{proposition}
+\end{theorem}
 
 \begin{proof}
   Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{X}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $\sem{A\times B}$.
@@ -1767,9 +1879,90 @@ As well, we could try to give a translation into an intermediate language like Z
 \bibliographystyle{splncs04}
 \bibliography{basisSensitive}
 
+\clearpage
 \appendix
-\section{Proofs for validity of LetTens rule}
-\begin{proposition}\label{prop:InnerProdPairs} For all value distributions $\vec{v_1}, \vec{v_2}, \vec{w_1}, \vec{w_2}$ we have:
+
+\section*{Omitted proofs from \ref{sec:calculus}}\label{sec:appendixA}
+\phantomsection
+\addcontentsline{toc}{section}{Omitted proofs from Section 2}
+
+\begin{restatetheorem}[Restatement of \Cref{thm:UniqueDecomposition}]
+  \itshape
+  If $B$ is an $n$-dimensional basis, then every $n$-dimensional qubit has
+  a unique decomposition over $B$.
+\end{restatetheorem}
+\begin{proof}
+  Let $\vec{b_i}$ be the basis vectors of $B$. Suppose
+  $\sum_{i=1}^n \alpha_i \vec{b_i}$ and $\sum_{i=1}^n \beta_i \vec{b_i}$
+  are two decompositions of $\vec{v}$ over $B$. Then
+  \[
+    0=\vec{v}-\vec{v}=\sum_{i=1}^{n}(\alpha_i-\beta_i)\vec{b_i}.
+  \]
+  By linear independence, $\alpha_i=\beta_i$ for all $i$.
+\end{proof}
+
+\begin{restatecorollary}[Restatement of \Cref{cor:EquivalentDecomposition}]
+  \itshape
+  If $\vec{v}\equiv\vec{w}$, then they share the same decomposition over any
+  basis $B$.
+\end{restatecorollary}
+\begin{proof}
+  Since $\vec{v}-\vec{w}\equiv\vec{v}-\vec{v}\equiv\vec{w}-\vec{w}$, the same
+  argument as in \Cref{thm:UniqueDecomposition} shows that $\vec{v}$ and $\vec{w}$ have the
+  same decomposition over $B$.
+\end{proof}
+
+\begin{restatelemma}[Restatement of \Cref{lem:distributiveSubstitution}]
+  \itshape
+  For term distributions $\vec{t_i}$, a value distribution $\vec{v}$, a
+  variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
+  $\ansubst{\vec v/x}{B}$ is defined:
+  \[
+    \Bigl(\sum_i \alpha_i\vec t_i\Bigr)\ansubst{\vec v/x}{B}
+    \equiv
+    \sum_i \alpha_i\vec t_i \ansubst{\vec v/x}{B}.
+  \]
+\end{restatelemma}
+\begin{proof}
+  Let $B\neq\AbsBasis$ and
+  $\vec{v}\equiv\sum_{j=1}^n\beta_j\vec{b_j}$ with each $\vec{b_j}\in B$.
+  Then
+  \begin{align*}
+    \Bigl(\sum_i \alpha_i\vec t_i\Bigr)\ansubst{\vec v/x}{B}
+    &= \sum_{j=1}^n \beta_j\Bigl(\sum_{i=1}^{n}\alpha_i t_i\Bigr)[\vec b_j/x]\\
+    &\equiv \sum_{i=1}^{n}\alpha_i\Bigl(\sum_{j=1}^n\beta_j t_i[\vec b_j/x]\Bigr)
+    = \sum_{i=1}^{n}\alpha_i\vec{t_i}\ansubst{\vec v/x}{B}.
+  \end{align*}
+  The case $B=\AbsBasis$ is analogous.
+\end{proof}
+
+\begin{restatelemma}[Restatement of \Cref{lem:EquivSubstitutions}]
+  \itshape
+  For value distributions $\vec{v},\vec{w}$, a term distribution $\vec{t}$, and
+  an orthonormal basis $B$ such that both
+  $\ansubst{\vec{v}/x}{B}$ and $\ansubst{\vec{w}/x}{B}$ are defined:
+  if $\vec{v}\equiv\vec{w}$, then
+  $\vec{t}\ansubst{\vec{v}/x}{B}
+  =\vec{t}\ansubst{\vec{w}/x}{B}$.
+\end{restatelemma}
+\begin{proof}
+  Since $\vec{v}\equiv\vec{w}$, by
+  \Cref{cor:EquivalentDecomposition},
+  both can be written as
+  $\vec{v}\equiv\vec{w}\equiv\sum_{i=1}^{n}\alpha_i\vec{b_i}$ with
+  $\vec{b_i}\in B$. Hence
+  \[
+    \vec{t}\ansubst{\vec{v}/x}{B}
+    = \sum_{i=1}^{n}\alpha_i\vec{t}[\vec{b_i}/x]
+    = \vec{t}\ansubst{\vec{w}/x}{B}.
+  \]
+\end{proof}
+
+\section*{A Proofs for validity of LetT}
+\phantomsection  
+\addcontentsline{toc}{section}{A Proofs for validity of LetT}
+
+\begin{theorem}\label{prop:InnerProdPairs} For all value distributions $\vec{v_1}, \vec{v_2}, \vec{w_1}, \vec{w_2}$ we have:
 \[
 \scal{\Pair{\vec{v_1}}{\vec{w_1}}}{\Pair{\vec{v_2}}{\vec{w_2}}} = \scal{\vec{v_1}}{\vec{v_2}}\scal{\vec{w_1}}{\vec{w_2}}
 \]
@@ -1787,7 +1980,7 @@ As well, we could try to give a translation into an intermediate language like Z
     \end{align*}
 \end{proof}  
 
-\end{proposition}
+\end{theorem}
 
 \begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
 Given a type $A$, two vectors $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vec{u_0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
@@ -1815,13 +2008,13 @@ Given a type $A$, two vectors $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$ and a scala
     \]
 \end{proof}
 
-\begin{proposition}[Polarization identity]\label{prop:Polarization} %A6
+\begin{theorem}[Polarization identity]\label{prop:Polarization} %A6
 For all values $\vec{v}$ and $\vec{w}$ we have:
 \begin{align*}
 &\scal{\vec{v}}{\vec{w}}=\\
 &\frac{1}{4} (\|\vec{v}+\vec{w}\|^2 - \|\vec{v} + (-1) \vec{w}\|^2 - i\|\vec{v} + i\vec{w}\|^2 + i\|\vec{v}+ (-i)\vec{w}\|^2)
 \end{align*}
-\end{proposition}
+\end{theorem}
 
 \begin{lemma}\label{lem:InnerProdSingleVar} %A7
 Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vec{u_1},\vec{u_2}\in\sem{\sharp A}$, there are value distributions $\vec{w_1}, \vec{w_2}\in\sem{C}$ such that:
@@ -1997,7 +2190,7 @@ And, $\scal{\vec{w_1}}{\vec{w_2}} = \scal{\vec{u_1}}{\vec{u_2}} \scal{\vec{v_1}}
     Therefore:
     \begin{align*}
         &\scal{\vec{w_1}}{\vec{w_2}} \\
-        &= \scal{\vec{w_{11}}}{\vec{w_{22}} + 0\;\vec{w_{12}} + 0\;\vec{w_{01}} + 0\;\vec{w_{11}}}\\
+        &= \scal{\vec{w_{11}}}{\vec{w_{22}} + 0 \vec{w_{12}} + 0 \vec{w_{01}} + 0 \vec{w_{11}}}\\
         &= \scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}} + \lambda\beta\vec{w_{01}} + \alpha\mu\vec{w_{10} + \alpha\beta\vec{w_{11}}}}\\
         &=\scal{\vec{w_{11}}}{\lambda\mu\vec{w_{00}}} + \scal{\vec{w_{11}}}{\lambda\beta\vec{w_{01}}} + \scal{\vec{w_{11}}}{\alpha\mu\vec{w_{10}}} + \scal{\vec{w_{11}}}{\alpha\beta\vec{w_{11}}}\\
         &=\lambda\mu\scal{\vec{w_{11}}}{\vec{w_{00}}} + \lambda\beta\scal{\vec{w_{11}}}{\vec{w_{01}}} + \alpha\mu\scal{\vec{w_{11}}}{\vec{w_{10}}} + \alpha\beta\scal{\vec{w_{11}}}{\vec{w_{11}}}\\
