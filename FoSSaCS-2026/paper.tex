@@ -539,12 +539,12 @@ decomposed over the bases associated with their corresponding abstractions. As
 an illustration from linear algebra, consider rewriting the vector $(1,0)$ as a
 linear combination of $\braces{\frac{(1,1)}{\sqrt{2}},
 \frac{(1,-1)}{\sqrt{2}}}$:
-\begin{align*}
-  (1,0) &= (1,0) + 0(0,1) 
-        = \tfrac{1}{2}\big((1,0) + (1,0) + (0,1) - (0,1)\big)\\
-        &= \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}} +
-          \tfrac{(1,-1)}{\sqrt{2}}\right).
-\end{align*}
+\[
+  (1,0) = (1,0) + 0(0,1) 
+  = \tfrac{1}{2}\big((1,0) + (1,0) + (0,1) - (0,1)\big)
+  = \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}} +
+  \tfrac{(1,-1)}{\sqrt{2}}\right).
+\]
 If we identify $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we need a way
 to account for the missing second coordinate in this expansion. This is exactly
 the role played by the first rule of the congruence. We restrict its use to
@@ -571,12 +571,13 @@ must first specify the kind of values they contain.
 From now on, we call the value distributions, i.e. the elements of $\ValD$,
 \emph{vectors}. The distributive-action space $\ValD$ is equipped with an inner
 product $\scal{\vv v}{\vv w}$ and an $\ell_2$-norm $\|\vv v\|$ defined as:
-\begin{align*}
-  \scal{\vv{v}}{\vv{w}} &:= \sum_{i=1}^n\sum_{j=1}^m
-  \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},\\
-  \|\vv{v}\| &:= \sqrt{\scal{\vv{v}}{\vv{v}}}
+\[
+  \scal{\vv{v}}{\vv{w}} := \sum_{i=1}^n\sum_{j=1}^m
+  \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},
+  \qquad\qquad
+  \|\vv{v}\| := \sqrt{\scal{\vv{v}}{\vv{v}}}
   = \sqrt{\sum_{i=1}^n|\alpha_i|^2}.
-\end{align*}
+\]
 Where $\vv{v}=\sum_{i=1}^n\alpha_i v_i$ and
 $\vv{w}=\sum_{j=1}^m\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
 delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
