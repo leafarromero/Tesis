@@ -856,7 +856,7 @@ s+\beta\vv r)$ equivalent to $\alpha\,t\vv s+\beta\,t\vv r$.
 
 The only exception arises in higher-order reductions. Since no orthogonal bases
 are defined for abstractions, we introduce a special basis~$\AbsBasis$, which
-acts as the traditional computational basis. It can be regarded as consisting
+acts as the canonical basis for higher-order values. It can be regarded as consisting
 of all pure values. For example:
 \[
   (\Lam{x}{\AbsBasis}{\vv{t}})
@@ -971,7 +971,7 @@ in a Hilbert space.
 \end{definition}
 
 
-We next move on to the type realizers. As our aim is to extract a quantum
+We next move to type realizers. As our aim is to extract a quantum
 lambda calculus, we wish to identify terms differing only by a global phase at
 this level. Since the global phase of a quantum state has no physical
 significance, we assign the same type to a term~$\vv{t}$ and to
@@ -983,7 +983,7 @@ realizers.
   \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
   distribution~$\vv v$ such that:
   \begin{itemize}
-    \item $\vv{t}\eval e^{i\theta}\vv{v}$;
+    \item $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
     \item $\vv{v}\in\sem{A}$.
   \end{itemize}
   We denote the set of realizers of~$A$ by~$\{\real A\}$.
@@ -1239,7 +1239,7 @@ This means, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes th
   \]\qedhere
 \end{proof}
 
-These results can be extended to unitary distributions of lambda abstractions, since $(\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}})$ is syntactically different but computationally equivalent to $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})$. Ultimately, we generalized one of the main theorems in \cite{DiazcaroGuillermoMiquelValironLICS19}. The inclusion of the basis type in our system allow us to reason more easily about the action of the operators and translate the proof onto a more general case. 
+These results can be extended to unitary distributions of lambda abstractions, since $(\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}})$ is syntactically different but computationally equivalent to $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})$. Ultimately, we generalised one of the main theorems in \cite{DiazcaroGuillermoMiquelValironLICS19}. The inclusion of the basis type in our system allow us to reason more easily about the action of the operators and translate the proof onto a more general case. 
 
 
 \subsection{Typing rules}    
@@ -1692,7 +1692,7 @@ In this chapter we examine two use cases for the $\lambdaB$ calculus. First, tak
 
 The Deutsch-Josza algorithm is a small example designed to showcase a problem which is solved exponentially faster by a quantum computer over a classical one. In it, we take as input a black box oracle which encodes a function $f:\{0,1\}^n\to\{0,1\}$. This function can be either \emph{constant} or \emph{balanced} (It outputs $0$ for exactly half the inputs and $1$ for the other half). The task to solve is to determine under which of the two classes the oracle falls.
 
-In this section we will focus on the case where $n=1$, the original formulation of Deutsch's algorithm. However, this results can be generalized to any arbitrary $n$. The quantum circuit implementing the algorithm is the following:
+In this section we will focus on the case where $n=1$, the original formulation of Deutsch's algorithm. However, this results can be generalised to any arbitrary $n$. The quantum circuit implementing the algorithm is the following:
 
 \begin{align*}
     \Qcircuit @C=1em @R=.7em {
@@ -1821,7 +1821,7 @@ The mechanism needed to implement this idea is the decoration in $\lambda$-terms
 The reduction system itself orchestrates the computation and makes use of the syntax and substitution previously defined. The main point to note is that the evaluation commutes with the congruence relationship, ensuring that interpreting a vector in a different basis does not alter the result of the computation. And in turn, allows us to consider value distributions modulo this congruence.
 
 % Realizability model
-The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterize the abstractions that represent unitary functions. This is the main result of the section and is a generalization of the characterization found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
+The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterize the abstractions that represent unitary functions. This is the main result of the section and is a generalisation of the characterization found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
 
 % Typing system
 The other main result of the chapter is the validity of the several typing rules described in \Cref{tab:TypingRules}. Extracting them via the realizability technique, ensures their correctness and can later form the foundation of the type system for a programming language.
