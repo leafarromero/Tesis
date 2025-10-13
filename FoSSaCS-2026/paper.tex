@@ -1127,18 +1127,23 @@ If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
   since $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
 \end{example}
 
-
-\bigskip
-\hl{Voy por acá}
-\bigskip
-
-Although every type is defined by norm 1 value distributions, not every norm 1 distribution belongs to the interpretation of a type. Take for example the distribution $\frac{1}{\sqrt{2}} (\ket{0} + \Pair{\ket{0}}{\ket 0})$. Another case is a linear combination of abstractions with different bases. For example, the term:
-
+Although every type is defined by norm-1 value distributions, not every
+norm-1 distribution is contained in the interpretation of a type.
+For example, consider the distribution
+$\tfrac{1}{\sqrt{2}}(\ket{0} + \ket{00})$.
+Another example is a linear combination of abstractions defined over different
+bases. For instance, the term
 \[
-\frac{1}{\sqrt{2}}(\Lam{x}{\B}{\pauliX{x}}) + \frac{1}{\sqrt{2}}(\Lam{x}{\XB}{x})
+  \tfrac{1}{\sqrt{2}}(\Lam{x}{\B}{\pauliX{x}})
+  + \tfrac{1}{\sqrt{2}}(\Lam{x}{\XB}{x})
 \]
+is not a member of an arrow type, since the bases decorating each abstraction
+do not match. However, it is computationally equivalent to the abstraction
+$(\Lam{x}{\B}{\ket{+}})$, which in turn belongs to the set
+$\sem{\basis{\B}\Arr\basis{\XB}}$.
 
-Is not a member of an arrow type, since the bases decorating each abstraction do not match. However, it is computationally equivalent to the abstraction $(\Lam{x}{\B}{\ket{+}})$ which belongs to the set $\sem{\basis{\B}\Arr\basis{\XB}}$.
+
+\hl{Voy por acá}
 
 \subsection{Characterization of unitary operators}
 
