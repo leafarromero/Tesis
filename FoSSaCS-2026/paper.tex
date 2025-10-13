@@ -121,7 +121,7 @@
 \newcommand\sspan[1]{\ensuremath{\mathsf{span}(#1)}}
 \newcommand\ansubst[2]{\ensuremath{\langle #1 \rangle_{#2}}}
 \newcommand\sqsubst[1]{\ensuremath{\left[ #1 \right]}}
-\newcommand\AbsBasis{\ensuremath{\mathcal{P}}}
+\newcommand\AbsBasis{\ensuremath{\mathbb{A}}}
 \newcommand\dom[1]{\mathrm{dom}(#1)}
 \newcommand\sdom[1]{\mathrm{dom}^{\sharp}(#1)}
 \newcommand\FV[1]{\mathrm{FV}(#1)}
@@ -412,8 +412,7 @@ work in \Cref{sec:conclusion}.
 \subsection{Syntax and congruence}
 This section presents the calculus on which our realizability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms,
-forming a pseudo-vector space. This expression is used in the sense that not
-all axioms of a vector space are satisfied, as will be shown later.
+forming a vector space. 
 
 The syntax of the calculus is described in
 \Cref{tab:Syntax}. The calculus is divided into four
@@ -464,17 +463,18 @@ they are distributions.
 \end{table}
 
 The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
-destructors are intended to denote the bases of the pseudo-vector spaces in
-which the terms are expressed; their precise nature will be made explicit
-later. Before formally defining the notion of bases, we need to establish the
-algebraic structure underlying the space of value distributions. This is
-achieved by introducing the congruence relation defined in
-\Cref{tab:Congruence}. The congruence captures the intended behaviour of
-addition and scalar multiplication, allowing us to treat linear combinations of
-terms and values as genuine algebraic entities rather than mere syntactic
-constructions. In particular, it enforces properties such as commutativity and
-associativity of addition and distributivity of scalar multiplication, which
-will later justify the use of summation notation ($\Sigma$).
+destructors denote the bases of the vector spaces in which the terms are
+expressed; their precise nature will be made explicit later.
+Before formally defining the notion of bases, we first establish the
+algebraic structure underlying the space of value distributions.
+This is achieved by introducing the congruence relation defined in
+\Cref{tab:Congruence}.
+The congruence captures the intended behaviour of addition and scalar
+multiplication, allowing us to treat linear combinations of terms and values
+as genuine algebraic entities rather than mere syntactic constructions.
+In particular, it enforces the commutativity and associativity of addition and
+the distributivity of scalar multiplication, thereby justifying the use of
+summation notation~$\sum$.
 
 \begin{table}[t]
   \begin{align*}
@@ -512,52 +512,41 @@ will later justify the use of summation notation ($\Sigma$).
   \label{tab:Congruence}
 \end{table}
 
-The structure induced by this congruence does not form a true vector space,
-since it lacks a neutral element, and therefore also additive inverses.
-Instead, it forms a \emph{distributive-action space over $\C$}, as described
-in~\cite{DiazCaroMalherbe2022}. A distributive-action space over $\C$ is
-a commutative semigroup $(V,+)$ equipped with a scalar multiplication
-satisfying, for all $\vv v,\vv w\in V$ and $\alpha,\beta\in \C$,
-\begin{align*}
-  1\vv{v} &= \vv{v} & (\alpha + \beta)\vv{v} &= \alpha\vv{v} + \beta\vv{v}\\
-  \alpha(\beta\vv{v}) &= \alpha\beta\vv{v} & \alpha(\vv{v} + \vv{w}) &= \alpha\vv{v} + \alpha\vv{w}
-\end{align*}
-The rules in \Cref{tab:Congruence} ensure that the set of value distributions
-satisfies the axioms of a distributive-action space. Moreover, its first rule
-plays the role of a neutral element by simulating the behaviour of a null
-vector for certain distributions.
-
-The notion of basis in this calculus builds on this algebraic foundation. Once
-the pseudo-vector structure (distributive-action space) is established, we can
-define which subsets $B\subseteq \ValD$ qualify as \emph{bases}, thereby
-justifying the decorations appearing in the syntax of
-\Cref{tab:Syntax}.
+The rules in \Cref{tab:Congruence} ensure that the
+set of value distributions satisfies the axioms of a vector space.  The notion
+of basis in this calculus builds on this algebraic foundation. Once the vector
+structure is established, we can define which subsets $B\subseteq \ValD$
+qualify as \emph{bases}, thereby justifying the decorations appearing in the
+syntax of \Cref{tab:Syntax}.
 
 
-Before proceeding further, let us clarify the rationale behind the first rule
-of \Cref{tab:Congruence} ($\vv{v_1} + 0\vv{v_2}
-\equiv \vv{v_1}$). The core idea of the calculus is that arguments are
-decomposed over the bases associated with their corresponding abstractions. As
-an illustration from linear algebra, consider rewriting the vector $(1,0)$ as a
-linear combination of $\braces{\frac{(1,1)}{\sqrt{2}},
-\frac{(1,-1)}{\sqrt{2}}}$:
+Before proceeding further, let us briefly illustrate the intuition behind
+the congruence of \Cref{tab:Congruence}.
+The key idea of the calculus is that arguments are decomposed over the bases
+associated with their corresponding abstractions.
+As in linear algebra, a vector can be rewritten as a linear combination of
+basis elements; for instance,
 \[
-  (1,0) = (1,0) + 0(0,1) 
-  = \tfrac{1}{2}\big((1,0) + (1,0) + (0,1) - (0,1)\big)
-  = \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}} +
-  \tfrac{(1,-1)}{\sqrt{2}}\right).
+  (1,0)
+  = \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}}
+  + \tfrac{(1,-1)}{\sqrt{2}}\right)
 \]
-If we identify $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we need a way
-to account for the missing second coordinate in this expansion. This is exactly
-the role played by the first rule of the congruence. We restrict its use to
-vectors only, since applying it to variables or abstractions could compromise
-the safety properties of the system.
+expresses $(1,0)$ in the basis
+$\{\tfrac{(1,1)}{\sqrt{2}}, \tfrac{(1,-1)}{\sqrt{2}}\}$.
+By identifying $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we see
+that the calculus allows every vector (or value distribution)
+to be expressed as a superposition of elements of the basis attached to
+each abstraction.
+The congruence ensures that these linear combinations behave
+algebraically as in a complex vector space, supporting the standard
+rules of addition, scalar multiplication, and the zero vector.
+
+
 
 The core mechanism of the calculus lies in decorating variable bindings with
 sets of value distributions. Following linear algebra terminology, we refer to
-these sets as \emph{(orthonormal) bases}, a terminology that will soon become
-clear. These bases inform the reduction system on how to operate on their
-arguments.
+these sets as \emph{(orthonormal) bases}, as we will define later. These bases
+inform the reduction system on how to operate on their arguments.
 
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
@@ -569,11 +558,11 @@ must first specify the kind of values they contain.
   $\vv w_1$ and $\vv w_2$ are $(n-1)$-dimensional qubits, and $\alpha$ and
   $\beta$ satisfy the same normalisation condition.
 \end{definition}
-\noindent\textit{Notation.}
-We may use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and similarly for longer tuples.
+We may use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
+similarly for longer tuples.
 
 From now on, we call the value distributions, i.e. the elements of $\ValD$,
-\emph{vectors}. The distributive-action space $\ValD$ is equipped with an inner
+\emph{vectors}. The vector space $\ValD$ is equipped with an inner
 product $\scal{\vv v}{\vv w}$ and an $\ell_2$-norm $\|\vv v\|$ defined as:
 \[
   \scal{\vv{v}}{\vv{w}} := \sum_{i=1}^n\sum_{j=1}^m
@@ -697,11 +686,11 @@ $\lambda$-abstractions, since abstractions cannot belong to orthonormal bases.
 
 \begin{example}
   Let
-  \[
+  \(
     \vv v
     = \tfrac{1}{\sqrt{2}}\Pair{\ket{0}}{\ket{1}}
-      - \tfrac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}},
-  \]
+      - \tfrac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}}
+    \),
   which, using the notation introduced after \Cref{def:Qubit}, can also be written as
   $\vv v = \tfrac{1}{\sqrt{2}}\ket{01}
            - \tfrac{1}{\sqrt{2}}\ket{10}$.
