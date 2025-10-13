@@ -464,7 +464,7 @@ they are distributions.
 
 The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
-expressed; their precise nature will be made explicit later.
+expressed; their precise nature is made explicit below.
 Before formally defining the notion of bases, we first establish the
 algebraic structure underlying the space of value distributions.
 This is achieved by introducing the congruence relation defined in
@@ -473,8 +473,8 @@ The congruence captures the intended behaviour of addition and scalar
 multiplication, allowing us to treat linear combinations of terms and values
 as genuine algebraic entities rather than mere syntactic constructions.
 In particular, it enforces the commutativity and associativity of addition and
-the distributivity of scalar multiplication, thereby justifying the use of
-summation notation~$\sum$.
+the distributivity of scalar multiplication, thereby justifying summation
+notation~$\sum$.
 
 \begin{table}[t]
   \begin{align*}
@@ -569,9 +569,9 @@ product $\scal{\vv v}{\vv w}$ and an $\ell_2$-norm $\|\vv v\|$ defined as:
   \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},
   \qquad\qquad
   \|\vv{v}\| := \sqrt{\scal{\vv{v}}{\vv{v}}}
-  = \sqrt{\sum_{i=1}^n|\alpha_i|^2}.
+  = \sqrt{\sum_{i=1}^n|\alpha_i|^2},
 \]
-Where $\vv{v}=\sum_{i=1}^n\alpha_i v_i$ and
+where $\vv{v}=\sum_{i=1}^n\alpha_i v_i$ and
 $\vv{w}=\sum_{j=1}^m\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
 delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
 
@@ -581,9 +581,9 @@ product is equal to zero. Using this, we can now formally define the sets that
 decorate abstractions.
 \begin{definition}[Basis]\label{def:NthDimensionalBasis}
   A set of value distributions $B$ is an \emph{$n$-dimensional orthonormal
-  basis} if it satisfies the following conditions:
+  basis} if it satisfies:
   \begin{enumerate}
-    \item Each element of $B$ is an $n$-dimensional qubit.
+    \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\Cref{def:Qubit})}.
     \item Each element has norm $1$.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate}
@@ -755,7 +755,7 @@ equivalence class induced by the congruence $\equiv$.
     = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}.
   \]
   This difference arises because the relation $\equiv$ does not commute with
-  lambda abstraction or with the case construct. Although the two terms are
+  lambda abstraction, nor with the case construct. Although the two terms are
   operationally equivalent, the calculus distinguishes between the
   superposition of results,
   $\Lam{x}{B}{\alpha\vv v_1 + \beta\vv v_2}$,
@@ -839,6 +839,11 @@ and $\vv r'\equiv\vv r$.
   \caption{Reduction system}
   \label{tab:Reduction}
 \end{table}
+
+The side condition~$\alpha\neq0$ in the contextual rule for scalar
+multiplication prevents vacuous reductions such as $0t\lraneq 0r$, which would
+otherwise introduce spurious nondeterminism. This ensures that the reduction
+relation~$\lraneq$ remains deterministic.
 
 The three main rules are the $\beta$-reduction, the $\mathsf{let}$ binding, and
 the $\mathsf{case}$ pattern matching. Both the $\lambda$ abstraction and the
