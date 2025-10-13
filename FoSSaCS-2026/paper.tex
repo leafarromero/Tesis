@@ -15,7 +15,7 @@
 \spnewtheorem*{restatecorollary}{Corollary}{\bfseries}{}
 % ====================================================
 
-\usepackage[a]{esvect} % variantes: [a], [b], [c], [e]...
+\usepackage[b]{esvect} % variantes: [a], [b], [c], [e]...
 % y usar \vv{v} en lugar de \vv{v}
 \usepackage{graphicx}
 \graphicspath{{figures/}}
@@ -252,8 +252,7 @@
 \newcommand{\Bell}{\mathsf{Bell}}
 \newcommand{\lambdaB}{\lambda_B}
 %%% If construct
-\newcommand\qif[5]{\ensuremath{#1\ ?_{#2,#3}\ #4\ \cdot\ #5}}
-\newcommand\basis[1]{\ensuremath{B_{ #1 }}}
+\newcommand\basis[1]{\ensuremath{\mathsf{B}_{#1}}}
 \newcommand\genbasis[3]{\ensuremath{B_{\{#1\}_{#2}^{#3}}}}
 
 %%% Teleportation algorithm
@@ -397,17 +396,20 @@ The contributions of this paper can be summarised as follows.
   it subsumes and extends previous single-basis approaches.
 \end{itemize}
 
-The structure of the paper is as follows. In \Cref{sec:calculus}, we
-define the syntax of the calculus. In \Cref{sec:reduction}, we detail
-the reduction system. We then define the type algebra and prove a set of valid
-typing rules in \Cref{sec:model}. With the calculus fully defined, we
-illustrate its use through several examples in \Cref{sec:examples}.
-Finally, we conclude with remarks and directions for future work in
-\Cref{sec:conclusion}.
+The structure of the paper is as follows.  In
+\Cref{sec:calculus}, we introduce the core
+language, its syntax, congruence rules, and basis-dependent substitution.
+\Cref{sec:reduction} details the
+operational semantics.  \Cref{sec:model}
+presents the realizability model, including
+unitary type semantics, the characterization of unitary operators, and the
+typing rules.  \Cref{sec:examples} illustrates the
+calculus through representative programs.  All omitted proofs are deferred to
+the appendices.  Finally, we conclude with remarks and directions for future
+work in \Cref{sec:conclusion}.
 
-\section{The calculus}\label{sec:calculus}
-\subsection{Syntax}
-
+\section{Core language}\label{sec:calculus}
+\subsection{Syntax and congruence}
 This section presents the calculus on which our realizability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms,
 forming a pseudo-vector space. This expression is used in the sense that not
@@ -439,9 +441,9 @@ they are distributions.
     \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
     \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
     (\Lambda) \\
-    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v}
+    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
     \qquad\hfill(\alpha\in\C) & (\ValD) \\
-    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t}
+    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
     \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
   \end{align*}
   \caption{Syntax of the calculus, where $B, B_1, B_2$ are sets of value
@@ -451,11 +453,11 @@ they are distributions.
 
 \begin{table}[t]
   \[
-    \Pair{\alpha  v+\vv{v}_1}{\vv{v}_2} 
-    := \alpha\Pair{v}{\vv{v}_2} + \Pair{\vv{v}_1}{\vv{v}_2}
+    \Pair{\alpha  v+\vv{v_1}}{\vv{v_2}} 
+    := \alpha\Pair{v}{\vv{v_2}} + \Pair{\vv{v_1}}{\vv{v_2}}
     \qquad\qquad
-    \Pair{w}{\alpha  v+\vv{v}_1} 
-    := \alpha\Pair{w}{v} + \Pair{w}{\vv{v}_1}
+    \Pair{w}{\alpha  v+\vv{v_1}} 
+    := \alpha\Pair{w}{v} + \Pair{w}{\vv{v_1}}
   \]
   \caption{Notation for pair distributions}
   \label{tab:PairsNotation}
@@ -476,15 +478,13 @@ will later justify the use of summation notation ($\Sigma$).
 
 \begin{table}[t]
   \begin{align*}
-    \vv{v_1} + 0\vv{v_2} &\equiv \vv{v_1}
-  \end{align*}
-  \begin{align*}
+    0\vec t &\equiv \vv 0 & \vec t+\vv 0 &\equiv \vec t \\
     1\vv{t} &\equiv \vv{t} &
     \alpha(\beta\vv{t}) &\equiv (\alpha\beta)\vv{t} \\
-    \vv{t}_1+\vv{t}_2 &\equiv \vv{t}_2+\vv{t}_1 &
-    (\vv{t}_1+\vv{t}_2)+\vv{t}_3 &\equiv \vv{t}_1+(\vv{t}_2+\vv{t}_3) \\
+    \vv{t_1}+\vv{t_2} &\equiv \vv{t_2}+\vv{t_1} &
+    (\vv{t_1}+\vv{t_2})+\vv{t_3} &\equiv \vv{t_1}+(\vv{t_2}+\vv{t_3}) \\
     (\alpha+\beta)\vv{t} &\equiv \alpha\vv{t}+\beta\vv{t} &
-    \alpha(\vv{t}_1+\vv{t}_2) &\equiv \alpha\vv{t}_1+\alpha\vv{t}_2 \\
+    \alpha(\vv{t_1}+\vv{t_2}) &\equiv \alpha\vv{t_1}+\alpha\vv{t_2} \\
     \vv{t}(\alpha\vv{s}) &\equiv \alpha(\vv{t}\vv{s}) &
     (\alpha\vv{t})\vv{s} &\equiv \alpha(\vv{t}\vv{s}) \\
     (\vv{t}+\vv{s})\vv{r} &\equiv \vv{t}\vv{r}+\vv{s}\vv{r} &
@@ -561,7 +561,7 @@ arguments.
 
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
-\begin{definition}[Qubits]
+\begin{definition}[Qubits]\label{def:Qubit}
   A \emph{one-dimensional qubit} is a value distribution of the form
   $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
   \emph{$n$-dimensional qubit} is a value distribution of the form
@@ -569,6 +569,8 @@ must first specify the kind of values they contain.
   $\vv w_1$ and $\vv w_2$ are $(n-1)$-dimensional qubits, and $\alpha$ and
   $\beta$ satisfy the same normalisation condition.
 \end{definition}
+\noindent\textit{Notation.}
+We may use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and similarly for longer tuples.
 
 From now on, we call the value distributions, i.e. the elements of $\ValD$,
 \emph{vectors}. The distributive-action space $\ValD$ is equipped with an inner
@@ -635,7 +637,7 @@ $\ket{+}:=\frac 1{\sqrt{2}}(\ket{0}+\ket{1})$ and
 $\ket{-}:=\frac 1{\sqrt{2}}(\ket{0}-\ket{1})$, and let
 $\XB=\{\ket{+},\ket{-}\}$.
 
-\subsection{Substitutions}
+\subsection{Basis-dependent substitutions}
 Beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
 operation substitutes variables with vectors expressed in the chosen basis; the
@@ -696,18 +698,27 @@ $\lambda$-abstractions, since abstractions cannot belong to orthonormal bases.
 \begin{example}
   Let
   \[
-    \vv v = \tfrac{1}{\sqrt{2}}\Pair{\ket{0}}{\ket{1}}
-             - \tfrac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}}.
+    \vv v
+    = \tfrac{1}{\sqrt{2}}\Pair{\ket{0}}{\ket{1}}
+      - \tfrac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}},
   \]
-  Then the substitution $(y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}$ yields
+  which, using the notation introduced after \Cref{def:Qubit}, can also be written as
+  $\vv v = \tfrac{1}{\sqrt{2}}\ket{01}
+           - \tfrac{1}{\sqrt{2}}\ket{10}$.
+  Then the substitution
+  $(y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}$ yields
   \begin{align*}
     (y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}
     &= \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{0}/x][\ket{1}/y]
        - \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{1}/x][\ket{0}/y] \\
     &= \tfrac{1}{\sqrt{2}}\,(\ket{1},\ket{0})
-       - \tfrac{1}{\sqrt{2}}\,(\ket{0},\ket{1}).
+       - \tfrac{1}{\sqrt{2}}\,(\ket{0},\ket{1}),
   \end{align*}
-  That is, the substitution on $(y,x)$ effectively swaps the two components of the pair.
+  that is,
+  $\tfrac{1}{\sqrt{2}}\ket{10}
+   - \tfrac{1}{\sqrt{2}}\ket{01}$.
+  Thus, as expected, the substitution on $(y,x)$ effectively swaps the two
+  components of the pair.
 \end{example}
 
 With this new substitution in place, we can establish a few properties that
@@ -794,7 +805,7 @@ where $\dom{\sigma_1}\cap\dom{\sigma_2}=\emptyset$ and $\sigma'$ coincides with
 $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 
 
-\section{Reduction system}\label{sec:reduction}
+\section{Operational semantics}\label{sec:reduction}
 
 The reduction system implements a mechanism in which every vector in the space
 is interpreted with respect to the basis attached to each abstraction. An
@@ -825,7 +836,9 @@ and $\vv r'\equiv\vv r$.
       \qquad\qquad
       \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
       \qquad\qquad
-      \infer{\alpha\cdot t+\vv s\lraneq\alpha\cdot\vv r+\vv s}{t\lraneq\vv r}
+      \infer{\alpha t\lraneq \alpha \vec r}{t\lraneq\vec r & \alpha\neq 0}
+      \qquad\qquad
+      \infer{t+\vv s\lraneq\vv r+\vv s}{t\lraneq\vv r}
       \\[5pt]
       \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
       \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
@@ -926,7 +939,7 @@ equivalence is preserved by reduction modulo~$\equiv$.
   \]
 \end{theorem}
 
-\begin{remark}
+\begin{remark}\label{rmk:determinism}
   Since the reduction relation $\eval$ is defined modulo~$\equiv$, the result
   above is equivalent to stating that there exists a single distribution
   $\vv{r}$ such that $\vv{t'}\eval\vv{r}$ and $\vv{s'}\eval\vv{r}$.
@@ -937,148 +950,193 @@ equivalence is preserved by reduction modulo~$\equiv$.
 \end{remark}
 
 
-\bigskip
-\hl{Voy por acá}
-\bigskip
-
 \section{Realizability model}\label{sec:model}
 
-In this section, we present the type system corresponding to the untyped language introduced in the previous section, along with its realizability semantics.
+\subsection{Unitary type semantics}
+Given the deterministic machine presented in the previous section
+(see~\Cref{rmk:determinism}), the next
+step towards extracting a typing system is to define the sets of values that
+characterise its types. To achieve this, we first need to identify the notion
+of a type.
 
-\subsection{Unitary Type Semantics}
-
-Given the deterministic machine presented in the previous section, the next step to extract a typing system is to define the sets of values which will characterize its types. In order to achieve this we first need to identify the notion of what exactly constitutes a type.
-
-Our aim is to define types that are exclusively inhabited by values of norm equal to 1. The vectors that we wish to study all fall in the \emph{unit sphere}. We will write $\Sph$ for the set $\Sph := \{\vv v \in \vv{\Val}~|~\|\vv v\| =1\}$. This corresponds with the mathematical notion of representing quantum data as unit vectors in a Hilbert space. 
+Our aim is to define types exclusively inhabited by values of norm~1. The
+vectors we wish to study all belong to the \emph{unit sphere}. We write $\Sph$
+for the set $\Sph := \{\vv v \in \vv{\Val} \mid \|\vv v\| = 1\}$, which
+corresponds to the mathematical representation of quantum data as unit vectors
+in a Hilbert space.
 
 \begin{definition}[Unitary value distribution]
-  We say a value distribution $\vv{v}$ is unitary when it has norm equal to $1$. In other words, when $\vv{v}\in\Sph$.
+  A value distribution $\vv{v}$ is said to be \emph{unitary} if its norm equals~1,
+  that is, if $\vv{v}\in\Sph$.
 \end{definition}
 
 \begin{definition}[Unitary type]
-  We define a \textit{unitary type} (or just \textit{type}) as a notation $A$ together with a set of unitary value distributions noted $\sem{A}$ called the unitary semantics of $A$.
+  A \emph{unitary type} (or simply a \emph{type}) is a notation~$A$ together
+  with a set of unitary value distributions, denoted~$\sem{A}$, called the
+  \emph{unitary semantics} of~$A$.
 \end{definition}
 
-We next move onto the type realizers. Since our aim is to extract a quantum lambda calculus, we wish to filter global phases of qubits at this level. Since the global phase of a quantum state has no physical significance, we wish to assign the same types to a term $\vv{t}$ and $e^{i\theta}\cdot\vv{t}$. This idea will guide the definition of type realizers.
+
+We next move on to the type realizers. As our aim is to extract a quantum
+lambda calculus, we wish to identify terms differing only by a global phase at
+this level. Since the global phase of a quantum state has no physical
+significance, we assign the same type to a term~$\vv{t}$ and to
+$e^{i\theta}\vv{t}$. This idea will guide the definition of type
+realizers.
 
 \begin{definition}[Type realizer]
-  Given a type $A$ and a term distribution $\vv t$, we say that $\vv t$ realizes $A$ (noted $\vv t \real A$), when there is a value distribution $\vv v$ such that:
+  Given a type~$A$ and a term distribution~$\vv t$, we say that~$\vv t$
+  \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
+  distribution~$\vv v$ such that:
   \begin{itemize}
-    \item $\vv{t}\twoheadrightarrow e^{i\theta}\cdot\vv{v}$
-    \item $\vv{v}\in\sem{A}$
+    \item $\vv{t}\eval e^{i\theta}\vv{v}$;
+    \item $\vv{v}\in\sem{A}$.
   \end{itemize}
-  For each type $A$, we note the set of its realizers as $\{\real A\}$.
+  We denote the set of realizers of~$A$ by~$\{\real A\}$.
 \end{definition}
 
-With the notions of unitary types and its realizers we can start defining the specific approach for our previously defined language. We begin with the type grammar defined on \Cref{tab:UnitaryTypes} and build a simple algebra from the sets of values we aim to represent. From this point onwards denote by $\Type$ the set of all types and by $\BasisType$ the set of all bases.
+With the notions of unitary types and their realizers in place, we can now
+define a concrete approach for our language. We begin with the type grammar
+given in~\Cref{tab:UnitaryTypes} and build a simple algebra from the sets of
+values we aim to represent.
 
-\begin{table}[tb]
-  \scriptsize
-    \[
-    T := \basis{X} \mid T\to T \mid T\times T \mid \sharp T
-    \]
-    \begin{align*}
-    \sem{\basis{X}}&:= X\qquad\text{Where: $X$ is an orthonormal basis}\\
-    \sem{A\times B}&:= \bigl\{ (\vv v, \vv w): \vv v \in{\sem{A}},~\vv w\in\sem{B}\bigr\}\\
+Before that, we introduce the notion of orthogonal complement, which will be
+used in the semantics of the~$\sharp$~type:
+\[
+  \comp{A} = \{\, \vv{v}\in \Sph \mid \scal{\vv{v}}{a} = 0 \text{ for all } a\in A\,\}.
+\]
+From this point onwards, we denote by~$\Type$ the set of all types and
+by~$\BasisType$ the set of all bases.
+
+\begin{table}[t]
+  \[
+    A := \basis{X} \mid A\Arr A \mid A\times A \mid \sharp A,
+    \qquad\text{where $X$ is any orthonormal basis.}
+  \]
+  \begin{align*}
+    \sem{\basis{X}}&:= X\\
+    \sem{A\times B}&:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
     \sem{A\Arr B}&:=
-    \bigl\{\sum_{i=1}^{n}\alpha_i(\Lam{x}{B}{\vv{t_i}})\in\Sph:\forall\vv{w}\in\sem{A}, (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{A}\real B\bigr\}\\
-    \sem{\sharp{A}}&:= {(\sem{A}^\bot)}^\bot\\
-    &\text{Where: }\comp{A} = \{ \vv{v}\in \Sph \,\mid\, \scal{\vv{v}}{a} = 0,\, \forall a\in A\}
+    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{B}{\vv{t_i}})\in\Sph
+      \;\bigm|\;
+      \forall\vv{w}\in\sem{A},\,
+      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{A}\real B
+    \bigr\}\\
+    \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot
   \end{align*}
   \caption{Type notations and semantics}
   \label{tab:UnitaryTypes}
 \end{table}
 
-The types $\basis{X}$ act as atomic types. They represent a finite set $X$ of orthogonal vectors forming an orthonormal basis. We can represent boolean values with a basis of size 2, but we are not limited to only one kind since there are infinite bases to choose from.
+The types $\basis{X}$ serve as atomic types. Each of them represents a finite
+set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
+boolean type can be represented by a basis of size~2, yet we are not restricted
+to a single one, since there are infinitely many bases to choose from.
 
-The type $A\times B$ represents the cartesian product of $A$ and $B$. However, the syntax grammar only allows for pairs of pure values. So there is a small subtlety on the type depicted in the table. For every $\vv{v}=\sum_{i=1}^{n}\alpha_i v_i\in\sem{A}$ and $\vv{w}=\sum_{j=1}^{m}\beta_j w_j\in\sem{B}$ (With $v_i$ and $w_j$ pure values) when we filter out the notation for pairs, we get:
-
+Pairs are written using the same notation introduced earlier
+(see~\Cref{tab:PairsNotation}).  The type~$A\times B$ corresponds to the
+cartesian product of~$A$ and~$B$.  However, since the syntax admits pairs only
+of pure values, the semantic clause in~\Cref{tab:UnitaryTypes} should be read
+as an abbreviation for the following expanded form:
 \[
-  \sem{A\times B}:= \bigl\{ \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i, w_j): \vv v \in{\sem{A}},~\vv w\in\sem{B}\bigr\}
+  \sem{A\times B}
+  := \bigl\{
+       \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i,w_j)
+       \;\bigm|\;
+       \sum_{i=1}^{n}\alpha_i v_i\in\sem{A},~
+       \sum_{j=1}^{m}\beta_j w_j\in\sem{B}
+     \bigr\}.
 \]
+We stress this for rigour, but for readability we shall continue using the
+concise notation of pairs.
 
-We stress this fact for rigorousness, but for ease of reading from this point onwards we will make use of the previously defined notation.
+The arrow type~$A\Arr B$ consists of distributions of $\lambda$-abstractions
+that map elements of~$\sem{A}$ to realizers of~$B$.  
+Finally, the type~$\sharp A$ denotes the double orthogonal complement of~$A$
+intersected with the unit sphere.
 
-The arrow type $A\Arr B$ is composed by the distributions of lambda abstractions that take values from the interpretation of $A$ to realizers of $B$. The last type $\sharp A$ takes the double orthogonal complement and intersects it with the unit sphere. 
+The type grammar is otherwise standard, except for the constructor~$\sharp A$,
+which represents quantum data---linear resources that cannot be erased or
+duplicated.  
 
-The type grammar is standard except for type $\sharp A$. We use it to represent quantum data, i.e. linear resources, so terms of this type will not be able to be erased or duplicated. This can be thought as the opposite of the \textit{bang} ($!$) modality in linear logic. For a more in-depth analysis, refer to \cite{DiazcaroCIE2025}.
+Intuitively, applying the~$\sharp$ operator to a type~$A$ yields the span of the
+original interpretation (intersected with the unit sphere).  This captures the
+possible linear combinations of values in the unitary semantics of~$A$, as
+stated in the following proposition.
 
-Intuitively, applying the sharp ($\sharp$) operator to a type $A$ yields the span of the original type (intersected with the unitary sphere). This describes the possible linear combinations of values in the unitary semantics of $A$. The following proposition proves that characterization:
-
-\begin{theorem}\label{prop:SharpCharacterization}
-  The type interpretation $\sem{\sharp A}$ contains the norm-$1$ linear combination of values in $\sem{A}$.
+\begin{theorem}\label{thm:SharpCharacterization}
+  The interpretation of a type~$\sharp A$ contains precisely the
+  norm-$1$ linear combinations of values in~$\sem{A}$:
   \[
-  \sem{\sharp A} = (\sem{A}^\bot)^\bot = \Span(\sem{A})\cap\Sph
+    \sem{\sharp A}
+    = (\sem{A}^\bot)^\bot
+    = \Span(\sem{A}) \cap \Sph.
+    \tag*{\qed}
   \]
 \end{theorem}
 
-\begin{proof}
-  Proof by double inclusion.
-  \begin{description}
-    \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vv{v}\in\Span(\sem{A})\cap\Sph$. Then $\vv{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vv{v_i}$ with $\vv{v_i}\in\sem{A}$. Taking $\vv{w}\in\sem{A}^\bot$, we examine the inner product:
-    
-    \begin{align*}
-    \scal{\vv{v}}{\vv{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{w}}\\
-    &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vv{v_i}}{\vv{w}}=0
-    \end{align*}
 
-    Then $\vv{v}\in(\sem{A}^\bot)^\bot$.
 
-    \item[$(\sem{A}^\bot)^\bot\subseteq \Span(\sem{A})\cap\Sph$:] Reasoning by contradiction, we assume that there is a $\vv{v}\in(\sem{A}^\bot)^\bot$ such that $v\not\in\Span(\sem{A})\cap\Sph$. Since $\vv{v}\not\in\Span(\sem{A})$, $\vv{v}=\vv{w_1} + \vv{w_2}$ such that $\vv{w_1}\in\Span{\sem{A}}$ and $\vv{w_2}$ is a non-null vector which cannot be written as a linear combination of elements of $\sem{A}$. In other words, $\vv{w_2}\in\sem{A}^\bot$. Taking the inner product:
-    \[
-    \scal{\vv{v}}{\vv{w_2}} = \scal{\vv{w_1}+\vv{w_2}}{\vv{w_2}} = \|\vv{w_2}\|\neq 0
-    \]
-    Then $\vv{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vv{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
-  \end{description}
-\end{proof}
+The following theorem shows that, as expected for a span, multiple
+applications of the~$\sharp$ operator have no further effect beyond the first
+application.
 
-The following proposition shows that, as one would expect from the span, multiple applications of the sharp operator does not produce a different result beyond the first one.   
-
-\begin{theorem}\label{prop:IdempotentSharp}
-  The $\sharp$ operator is idempotent, that is $\sem{\sharp A} = \sem{\sharp (\sharp A)}$
+\begin{theorem}\label{thm:IdempotentSharp}
+  The~$\sharp$ operator is idempotent; that is,
+  $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
+  \qed
 \end{theorem}
-
-\begin{proof}
-  We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
-
-  \begin{description}
-    \item[$A\subseteq A^{\bot^2}$:] Let $\vv{v}\in A$. Then, for all $\vv{w}\in\comp{A}$, $\scal{\vv{v}}{\vv{w}} = 0$. Then $\vv{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
-    
-    \item[$A^{\bot^3}\subseteq \comp{A}$:] Let $\vv{u}\in \comp[3]{A}$. Then, for all $\vv{v}\in\comp[2]{A}$, $\scal{\vv u}{\vv v} = 0$. Since we have shown that $A\subseteq \comp[2]{A}$, we have that for all $\vv{w}\in A$, $\scal{\vv u}{\vv w} = 0$. Then $\vv u\in\comp{A}$. With this we have $\comp[3]{A}\subseteq \comp{A}$.
-  \end{description}
-
-  With these two inclusions we have that $\comp{A}=\comp[3]{A}$. So we conclude that: $\sem{\sharp(\sharp A)} = \comp[4]{A} = \comp[2]{A} = \sem{\sharp A}$ \qedhere
-\end{proof}
 
 \begin{remark}
-  A basis type $\basis{X}$ may be formed by value distributions of pairs and so might be written as the product type of smaller bases. For example, let $X=\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, then $\basis{X}=\B\times\B$. However, for the case of entangled bases this cannot be done. A clear example is the Bell basis: $\mathsf{Bell}=\{\frac{\ket{00}+\ket{11}}{\sqrt{2}},\frac{\ket{00}-\ket{11}}{\sqrt{2}},\frac{\ket{01}+\ket{10}}{\sqrt{2}},\frac{\ket{01}-\ket{10}}{\sqrt{2}}\}$.
+  A basis type~$\basis{X}$ may consist of value distributions of pairs and can
+  therefore be written as the product type of smaller bases. For example, if
+  $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\basis{X}=\B\times\B$.
+  However, this is not possible for entangled bases. A clear example is the
+  Bell basis:
+  \[
+    \mathsf{Bell}
+    =\Bigl\{
+      \tfrac{1}{\sqrt{2}}(\ket{00}+\ket{11}),
+      \tfrac{1}{\sqrt{2}}(\ket{00}-\ket{11}),
+      \tfrac{1}{\sqrt{2}}(\ket{01}+\ket{10}),
+      \tfrac{1}{\sqrt{2}}(\ket{01}-\ket{10})
+    \Bigr\}.
+  \]
 \end{remark}
 
-The only thing left would be to check that our type algebra captures sets of value distributions we wish to study. \Cref{prop:UnitaryTypes} states that every member of a type interpretation has norm $1$.
+It remains to verify that our type algebra indeed captures the intended sets of
+value distributions. The following theorem shows that every member of a type
+interpretation has norm~$1$.
 
 \begin{theorem}\label{prop:UnitaryTypes}
-  For every type $A$, $\sem{A}\subseteq\Sph$.
+  For every type~$A$, $\sem{A}\subseteq\Sph$.
+  \qed
 \end{theorem}
 
-\begin{proof}
-  Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{X}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $\sem{A\times B}$.
-  
-  Let $\vv v = \sum_{i=0}^{n} \alpha_i v_i \in\sem{A}$ and $\vv w = \sum_{j=0}^{m} \beta_j w_j$ where every $v_i$ are pairwise orthogonal, same for $w_j$. Then:
-     
-  \[(\vv v, \vv w) = \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i\beta_j (v_i,w_j)\]
-  
-  So we have: 
-  \[\|\Pair{\vv v}{\vv w}\| = \sqrt{\sum_{i=1}^n\sum_{j=1}^{m} |\alpha_i\beta_j|^2} = \sqrt{\sum_{i=1}^n |\alpha_i|^2 \sum_{j=1}^{m} |\beta_j|^2}\]
-
-  Since both $\vv v\in\sem{A}$ and $\vv w\in\sem{B}$, by inductive hypothesis, we have that $\|\vv v\| = \| \vv w \| = 1$. Which is to say $\sum_{i=1}^{n} |\alpha_i|^2 = \sum_{j=1}^{m} |\beta_j| = 1$. So we conclude $\|\Pair{\vv{v}}{\vv{w}}\| = 1$.
-  
-\end{proof}
-
-Defining types as sets of values also induces an intuitive way to define a subtyping relationship. We say a type $A$ is subtype of a type $B$ (noted $A\leq B$) if the set of realizers of $A$ is included in the set of realizers of $B$ ($\{\real A\}\subseteq\{\real B\}$). If the sets coincide, we say that $A$ is isomorphic to $B$ (noted $A\cong B$). 
+Defining types as sets of values naturally induces a semantic notion of
+subtyping. We say that a type~$A$ is a subtype of a type~$B$
+(written~$A\leq B$) when the set of realizers of~$A$ is included in that of~$B$,
+that is, $\{\real A\}\subseteq\{\real B\}$.
+If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
+(written~$A\cong B$).
 
 \begin{example}
-  For example, for every type $A$, $A\leq\sharp A$. For bases, $\basis{\B}$ and $\basis{\XB}$ we have that: neither $\basis{\B}\not\leq\basis{\XB}$, nor $\basis{\B}\not\leq\basis{\XB}$. However, $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
+  For every type~$A$, we have $A\leq\sharp A$.
+  For the base types $\basis{\B}$ and $\basis{\XB}$, however,
+  neither inclusion holds:
+  \[
+    \basis{\B}\not\leq\basis{\XB}
+    \quad\text{and}\quad
+    \basis{\XB}\not\leq\basis{\B}.
+  \]
+  Nevertheless, their linear extensions coincide,
+  since $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
 \end{example}
+
+
+\bigskip
+\hl{Voy por acá}
+\bigskip
 
 Although every type is defined by norm 1 value distributions, not every norm 1 distribution belongs to the interpretation of a type. Take for example the distribution $\frac{1}{\sqrt{2}} (\ket{0} + \Pair{\ket{0}}{\ket 0})$. Another case is a linear combination of abstractions with different bases. For example, the term:
 
@@ -1140,7 +1198,7 @@ Unitary operators are the isomorphisms of Hilbert spaces since they preserve the
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vv w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{prop:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\to\sharp B}$.\qedhere
+  Then $\sum_{i=1}^n \alpha_i \vv w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\to\sharp B}$.\qedhere
 \end{proof}
 
 Next, we need to bridge the gap between the values in the calculus with vectors in the space $\C^n$. In order to do this, we introduce a meta-language operation $\pi_n$ which translates value distributions into vectors in $\C^n$. The operation simply writes the value in the canonical basis and takes the corresponding coefficients. 
@@ -1231,7 +1289,7 @@ In order for the calculus to be correct we need to ensure that qubits are treate
     \]
 \end{definition}
 
-Here we make use of the idempotence of $\sharp$ (\Cref{prop:IdempotentSharp}) to define the strict domain. 
+Here we make use of the idempotence of $\sharp$ (\Cref{thm:IdempotentSharp}) to define the strict domain. 
 
 In order for a typing judgement $\Gamma\vdash \vv{t}: A$ to be valid, it needs to comply with two conditions. First, every free variable in the term $\vv{t}$ must be in the domain of the context $\Gamma$ and every variable in the strict context $\sdom{\Gamma}$ must appear in the term $\vv{t}$. This ensures there is no erasure of information and every variable is accounted. Linear treatment of quantum data is enforced by the substitution.
 
@@ -1260,8 +1318,7 @@ We are also interested on \emph{orthogonal terms}, that is, terms which reduce t
 
 If both $\Delta_1$ and $\Delta_2$ are empty, we will note the judgement as $\SORTH{\Gamma}{\vv{t}}{\vv{s}}{A}$. We will be mostly interested in these cases.
 
-\begin{table}
-    \small
+\begin{table}[t]
     $
     \begin{array}{c}
     \infer[\snam{Axiom}]{\TYP{x_X:A}{x}{A}}{\basis{X}\leq A \vee X=\AbsBasis}\quad
@@ -1277,7 +1334,7 @@ If both $\Delta_1$ and $\Delta_2$ are empty, we will note the judgement as $\SOR
     \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vv{s}\,\vv{t}}{B}}{
         \TYP{\Gamma}{\vv{s}}{A\Arr B} & \TYP{\Delta}{\vv{t}}{A}
     }\ 
-    \infer[\snam{GlobalPhase}]{\TYP{\Gamma}{e^{i\theta}\cdot\vv{t}}{A}}
+    \infer[\snam{GlobalPhase}]{\TYP{\Gamma}{e^{i\theta}\vv{t}}{A}}
     {\TYP{\Gamma}{\vv{t}}{A}}
     \\
     \noalign{\medskip}
@@ -1402,7 +1459,7 @@ The main result of this section, is the proof of validity of each of the rules p
         &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vv{t}\,[\sigma_{\Gamma i}]}{\vv{s}\,[\sigma_{\Delta j}]}\\
         &=\Pair{\sum_{i=1}^{n} \alpha_i \vv{t}\, [\sigma_{\Gamma i}]}{\sum_{j=1}^{m} \beta_j \vv{s}\, [\sigma_{\Delta j}]}\\
         &=\Pair{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\eval \Pair{e^{i\theta_1}\cdot\vv v}{e^{i\theta_2}\cdot\vv w}\qquad\text{where: }\vv{v}\in\sem{A}, \vv{w}\in\sem{B}\\
+        &\eval \Pair{e^{i\theta_1}\vv v}{e^{i\theta_2}\vv w}\qquad\text{where: }\vv{v}\in\sem{A}, \vv{w}\in\sem{B}\\
         &= e^{i\theta} \Pair{\vv{v}}{\vv{w}}\qquad\text{where: }\vv{v}\in\sem{A},\vv{w}\in\sem{B}
     \end{align*}
     
@@ -1428,12 +1485,12 @@ The main result of this section, is the proof of validity of each of the rules p
         &= \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(\LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{s}})[\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
         &\equiv \LetP{x}{B_1}{y}{B_2}{\sum_{i=1}^{n}\alpha_i[\sigma_{\Gamma i}]\vv{t}}{\sum_{j=1}^{m}\beta_j \vv{s}[\sigma_{\Delta j}]}\\
         &= \LetP{x}{B_1}{y}{B_2}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\eval \LetP{x}{B_1}{y}{B_2}{e^{i\theta}\cdot\Pair{\vv{v}}{\vv{w}}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
+        &\eval \LetP{x}{B_1}{y}{B_2}{e^{i\theta} \Pair{\vv{v}}{\vv{w}}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
         &\hspace*{4cm}{\text{Where: }}\vv{v}\in\sem{A},\vv{w}\in\sem{B}\\
-        &\lraneq e^{i\theta_1}\cdot(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vv{v}}{\vv{w}}/x_1\otimes x_2}{B_1\otimes B_2})\\
-        &= e^{i\theta_1}\cdot(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x_1}{B_1}\ansubst{\vv{w}/x_2}{B_2})\\
-        &\eval e^{i\theta_1}\cdot (e^{i\theta_2}\cdot \vv{u})\qquad\text{where: }\vv{u}\in\sem{C}\\
-        &\equiv e^{i\theta}\cdot \vv{u}\qquad\text{where: }\theta=\theta_1 + \theta_2
+        &\lraneq e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vv{v}}{\vv{w}}/x_1\otimes x_2}{B_1\otimes B_2})\\
+        &= e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x_1}{B_1}\ansubst{\vv{w}/x_2}{B_2})\\
+        &\eval e^{i\theta_1}  (e^{i\theta_2}  \vv{u})\qquad\text{where: }\vv{u}\in\sem{C}\\
+        &\equiv e^{i\theta}  \vv{u}\qquad\text{where: }\theta=\theta_1 + \theta_2
     \end{align*}
     
     Since $\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x_1}{B_1}\ansubst{\vv{w}/x_2}{B_2}\in\sem{\Delta,{x_1}_{B_1}:A_1,{x_2}_{B_2}:A_2}$, then we can conclude that $(\LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real C$.
@@ -1452,9 +1509,9 @@ The main result of this section, is the proof of validity of each of the rules p
         \item $\FV{\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from \Cref{prop:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from \Cref{thm:SharpCharacterization} we have that:
     
-    \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\cdot\vv{u}=e^{i\theta_1}\cdot(\sum_{k=1}^{l} \gamma_k \Pair{\vv v_k}{\vv u_k})\] 
+    \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vv v_k}{\vv u_k})\] 
     
     With:
     \begin{itemize}
@@ -1470,10 +1527,10 @@ The main result of this section, is the proof of validity of each of the rules p
         &=\sum_{i=1}^{n}\sum_{j=1}^{m}\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}\ [\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
         &\equiv \LetP{x_1}{B_1}{x_2}{B_2}{\sum_{i=1}^{n}\alpha_i\vv{t}\ [\sigma_{\Gamma i}]}{\sum_{j=1}^{m}\beta_j \vv{s}\ [\sigma_{\Delta j}]}\\
         &=\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\eval\LetP{x_1}{B_1}{x_2}{B_2}{e^{i\theta_1}\cdot\vv{u}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\lraneq e^{i\theta_1}\cdot(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{u}/x_1\otimes x_2}{B_1\otimes B_2})\\
-        &=e^{i\theta_1}\cdot(\sum_{k=1}^{l}\gamma_k\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{B_1}\ansubst{\vv{u_k}/y}{B_2})\\
-        &\eval e^{i\theta_1}\cdot(\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\\
+        &\eval\LetP{x_1}{B_1}{x_2}{B_2}{e^{i\theta_1}\vv{u}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
+        &\lraneq e^{i\theta_1}(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{u}/x_1\otimes x_2}{B_1\otimes B_2})\\
+        &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{B_1}\ansubst{\vv{u_k}/y}{B_2})\\
+        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\\
     \end{align*}
 
     Since $\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{B_1}\ansubst{\vv{u_k}/y}{B_2}\in\sem{\Delta, x_{B_1}:\sharp A_1, y_{B2}:\sharp A_2}$, for every $k$, then $\vv{w_k}\in\sem{C}$. It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\|=1$. For that, we observe:
@@ -1509,7 +1566,7 @@ The main result of this section, is the proof of validity of each of the rules p
 
 
     
-    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\cdot\vv{v_k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\cdot\vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{v_k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
 
     \begin{align*}
         (&\gencase{\vv{t}}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
@@ -1517,10 +1574,10 @@ The main result of this section, is the proof of validity of each of the rules p
         &= (\sum_{i=1}^{n}\alpha_i \gencase{\vv{t}[\sigma_{\Gamma i}]}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{} \\
         &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &=(\gencase{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &\eval(\gencase{e^{i\theta_1}\cdot\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &\lraneq e^{i\theta_1}\cdot(\vv{s_k}\ansubst{\sigma_\Delta}{})\\
-        &\eval e^{i\theta_1}\cdot(e^{i\rho_k}\cdot\vv{u_k})\qquad\text{Where: }\vv{u_k}\in\sem{A}\\
-        &\equiv e^{i\theta}\cdot\vv{u_k}\qquad\text{With: }\theta=\theta_1 +\theta_2
+        &\eval(\gencase{e^{i\theta_1}\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
+        &\lraneq e^{i\theta_1}(\vv{s_k}\ansubst{\sigma_\Delta}{})\\
+        &\eval e^{i\theta_1}(e^{i\rho_k} \vv{u_k})\qquad\text{Where: }\vv{u_k}\in\sem{A}\\
+        &\equiv e^{i\theta} \vv{u_k}\qquad\text{With: }\theta=\theta_1 +\theta_2
     \end{align*}
     
     Since we pose no restriction on $k$, we can conclude that:
@@ -1542,7 +1599,7 @@ The main result of this section, is the proof of validity of each of the rules p
         \item $\FV{\gencase{\vv{t}}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$, then $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\cdot\vv{u}=e^{i\theta_1}\cdot(\sum_{i=1}^{n}\beta_i \vv{v_i})$ where $\sum_{i=1}^{n}|\beta_i|^2$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\cdot\vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$, then $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vv{u}=e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{v_i})$ where $\sum_{i=1}^{n}|\beta_i|^2$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
 
     \begin{align*}
         (&\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
@@ -1550,18 +1607,18 @@ The main result of this section, is the proof of validity of each of the rules p
         &=(\sum_{i=1}^{n}\alpha_i \gencase{\vv{t}[\sigma_{\Gamma i}]}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{} \\
         &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv {v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &=(\gencase{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &\eval(\gencase{e^{i\theta_1}\cdot\vv{u}}{\vv{v}}{\vv{w}}{\vv{s_1}}{\vv{s_2}})\ansubst{\sigma_\Delta}{}\\
-        &\lraneq e^{i\theta_1}\cdot(\sum_{i=1}^{n}\beta_i s_i)\ansubst{\sigma_\Delta}{}\\
-        &= e^{i\theta_1}\cdot(\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i})[\sigma_{\Delta j}])\\
-        &= e^{i\theta_1}\cdot(\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i}[[\sigma_{\Delta j}]]))\\
-        &\equiv e^{i\theta_1}\cdot(\sum_{i,j=1}^{n}\beta_i\delta_j\vv{s_i}[\sigma_{\Delta j}])\\
-        &= e^{i\theta_1}\cdot(\sum_{i=1}^{n}\beta_i \vv{s_i}\ansubst{\sigma_\Delta}{})\\
-        &\eval e^{i\theta_1}\cdot(\sum_{i=1}^{n}\beta_i e^{i\rho_i}\cdot\vv{u_i})
+        &\eval(\gencase{e^{i\theta_1} \vv{u}}{\vv{v}}{\vv{w}}{\vv{s_1}}{\vv{s_2}})\ansubst{\sigma_\Delta}{}\\
+        &\lraneq e^{i\theta_1} (\sum_{i=1}^{n}\beta_i s_i)\ansubst{\sigma_\Delta}{}\\
+        &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i})[\sigma_{\Delta j}])\\
+        &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i}[[\sigma_{\Delta j}]]))\\
+        &\equiv e^{i\theta_1} (\sum_{i,j=1}^{n}\beta_i\delta_j\vv{s_i}[\sigma_{\Delta j}])\\
+        &= e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{s_i}\ansubst{\sigma_\Delta}{})\\
+        &\eval e^{i\theta_1} (\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i})
     \end{align*}
     
-    It remains to be seen that: $\|\sum_{i=1}^{n}\beta_i e^{i\rho_i}\cdot\vv{u_i}\|=1$:
+    It remains to be seen that: $\|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}\|=1$:
     \begin{align*}
-        \|\sum_{i=1}^{n}\beta_i e^{i\rho_i}\cdot\vv{u_i}\| &= \scal{\sum_{i=1}^{n}\beta_i e^{i\rho_i}\cdot\vv{u_i}}{\sum_{i=1}^{n}\beta_i e^{i\rho_i}\cdot\vv{u_i}}\\
+        \|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}\| &= \scal{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}}{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}}\\
         &= \sum_{i,j=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vv{u_i}}{\vv{u_j}}\\
         &= \sum_{i=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_i e^{i\rho_i} \scal{\vv{u_i}}{\vv{u_i}}\\
         &\qquad + \sum_{i,j=1; i\neq j}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vv{u_i}}{\vv{u_j}}\\
@@ -1576,7 +1633,7 @@ The main result of this section, is the proof of validity of each of the rules p
 
     \item[Sum] If the hypothesis is valid then for every $i$, $\sdom{\Gamma}\subseteq\FV{\vv{t_i}}\subseteq\dom{\Gamma}$.
     
-    From this we can conclude that $\sdom{\Gamma}\subseteq\sum_{i=1}^{n}\alpha_i \vv{t_i}\subseteq\dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we have for every $i$, $\vv{t_i}\ansubst{\sigma}{}\eval e^{i\rho_i}\cdot\vv{v_i}$ where $\vv{v_i}\in\sem{A}$. Moreover, for every $i\neq j$, $\vv{v_i}\perp\vv{v_j}$ and $\sum_{i=1}^{n}|\alpha_i|^2=1$. Then:
+    From this we can conclude that $\sdom{\Gamma}\subseteq\sum_{i=1}^{n}\alpha_i \vv{t_i}\subseteq\dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we have for every $i$, $\vv{t_i}\ansubst{\sigma}{}\eval e^{i\rho_i} \vv{v_i}$ where $\vv{v_i}\in\sem{A}$. Moreover, for every $i\neq j$, $\vv{v_i}\perp\vv{v_j}$ and $\sum_{i=1}^{n}|\alpha_i|^2=1$. Then:
     \begin{align*}
     (\sum_{i=1}^{n}\alpha_i\vv{t_i})\ansubst{\sigma}{} 
     &= \sum_{j=1}^{m}\beta_j(\sum_{i=1}^{n}\alpha_i \vv{t_i})[\sigma_j]\\
@@ -1715,7 +1772,7 @@ However, this approach underutilizes the amount of information we have available
         {\\ && \ket{+}}{\\ && \ket{-}}
         {\Pair{x}{\ket{+}}}{\Pair{\pauliZXB{x}}{\ket{-}} \\ &&}}}\\
         \pauliZXB{} &:=& \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}}\\
-        \pauliXXB{} &:=& \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{(-1)\cdot \ket{-}}}\\
+        \pauliXXB{} &:=& \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{(-1)\ket{-}}}\\
     \end{array}
     \]
     \caption{Deutsch term and oracles in the shifted Hadamard basis.}
@@ -1808,7 +1865,7 @@ As well, we could try to give a translation into an intermediate language like Z
 \clearpage
 \appendix
 
-\section*{Omitted proofs from \ref{sec:calculus}}\label{sec:appendixA}
+\section*{Omitted proofs from \Cref{sec:calculus}}\label{sec:appendixA}
 \phantomsection
 \addcontentsline{toc}{section}{Omitted proofs from Section 2}
 
@@ -1884,7 +1941,7 @@ As well, we could try to give a translation into an intermediate language like Z
   \]
 \end{proof}
 
-\section*{Omitted proofs from \ref{sec:reduction}}\label{sec:appendixB}
+\section*{Omitted proofs from \Cref{sec:reduction}}\label{sec:appendixB}
 \phantomsection
 \addcontentsline{toc}{section}{Omitted proofs from Section 3}
 
@@ -1913,6 +1970,77 @@ As well, we could try to give a translation into an intermediate language like Z
 \begin{proof}
   \hl{TO-DO}
 \end{proof}
+
+\section*{Omitted proofs from \Cref{sec:model}}\label{sec:appendixC}
+\phantomsection
+\addcontentsline{toc}{section}{Omitted proofs from Section 4}
+
+\begin{restatetheorem}[Restatement of \Cref{thm:SharpCharacterization}]
+  \itshape
+  The interpretation of a type~$\sharp A$ contains precisely the
+  norm-$1$ linear combinations of values in~$\sem{A}$:
+  \[
+    \sem{\sharp A}
+    = (\sem{A}^\bot)^\bot
+    = \Span(\sem{A}) \cap \Sph.
+  \]
+\end{restatetheorem}
+\begin{proof}
+  Proof by double inclusion.
+  \begin{description}
+    \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vv{v}\in\Span(\sem{A})\cap\Sph$. Then $\vv{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vv{v_i}$ with $\vv{v_i}\in\sem{A}$. Taking $\vv{w}\in\sem{A}^\bot$, we examine the inner product:
+    
+    \begin{align*}
+    \scal{\vv{v}}{\vv{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{w}}\\
+    &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vv{v_i}}{\vv{w}}=0
+    \end{align*}
+
+    Then $\vv{v}\in(\sem{A}^\bot)^\bot$.
+
+    \item[$(\sem{A}^\bot)^\bot\subseteq \Span(\sem{A})\cap\Sph$:] Reasoning by contradiction, we assume that there is a $\vv{v}\in(\sem{A}^\bot)^\bot$ such that $v\not\in\Span(\sem{A})\cap\Sph$. Since $\vv{v}\not\in\Span(\sem{A})$, $\vv{v}=\vv{w_1} + \vv{w_2}$ such that $\vv{w_1}\in\Span{\sem{A}}$ and $\vv{w_2}$ is a non-null vector which cannot be written as a linear combination of elements of $\sem{A}$. In other words, $\vv{w_2}\in\sem{A}^\bot$. Taking the inner product:
+    \[
+    \scal{\vv{v}}{\vv{w_2}} = \scal{\vv{w_1}+\vv{w_2}}{\vv{w_2}} = \|\vv{w_2}\|\neq 0
+    \]
+    Then $\vv{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vv{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
+  \end{description}
+\end{proof}
+
+\begin{restatetheorem}[Restatement of \Cref{thm:IdempotentSharp}]
+  \itshape
+  The~$\sharp$ operator is idempotent; that is,
+  $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
+\end{restatetheorem}
+\begin{proof}
+  We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
+
+  \begin{description}
+    \item[$A\subseteq A^{\bot^2}$:] Let $\vv{v}\in A$. Then, for all $\vv{w}\in\comp{A}$, $\scal{\vv{v}}{\vv{w}} = 0$. Then $\vv{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
+    
+    \item[$A^{\bot^3}\subseteq \comp{A}$:] Let $\vv{u}\in \comp[3]{A}$. Then, for all $\vv{v}\in\comp[2]{A}$, $\scal{\vv u}{\vv v} = 0$. Since we have shown that $A\subseteq \comp[2]{A}$, we have that for all $\vv{w}\in A$, $\scal{\vv u}{\vv w} = 0$. Then $\vv u\in\comp{A}$. With this we have $\comp[3]{A}\subseteq \comp{A}$.
+  \end{description}
+
+  With these two inclusions we have that $\comp{A}=\comp[3]{A}$. So we conclude that: $\sem{\sharp(\sharp A)} = \comp[4]{A} = \comp[2]{A} = \sem{\sharp A}$ \qedhere
+\end{proof}
+
+\begin{restatetheorem}[Restatement of \Cref{prop:UnitaryTypes}]
+  \itshape
+  For every type~$A$, $\sem{A}\subseteq\Sph$.
+\end{restatetheorem}
+
+\begin{proof}
+  Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{X}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $\sem{A\times B}$.
+  
+  Let $\vv v = \sum_{i=0}^{n} \alpha_i v_i \in\sem{A}$ and $\vv w = \sum_{j=0}^{m} \beta_j w_j$ where every $v_i$ are pairwise orthogonal, same for $w_j$. Then:
+     
+  \[(\vv v, \vv w) = \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i\beta_j (v_i,w_j)\]
+  
+  So we have: 
+  \[\|\Pair{\vv v}{\vv w}\| = \sqrt{\sum_{i=1}^n\sum_{j=1}^{m} |\alpha_i\beta_j|^2} = \sqrt{\sum_{i=1}^n |\alpha_i|^2 \sum_{j=1}^{m} |\beta_j|^2}\]
+
+  Since both $\vv v\in\sem{A}$ and $\vv w\in\sem{B}$, by inductive hypothesis, we have that $\|\vv v\| = \| \vv w \| = 1$. Which is to say $\sum_{i=1}^{n} |\alpha_i|^2 = \sum_{j=1}^{m} |\beta_j| = 1$. So we conclude $\|\Pair{\vv{v}}{\vv{w}}\| = 1$.
+  \qed
+\end{proof}
+
 
 \section*{A Proofs for validity of LetT}
 \phantomsection  
