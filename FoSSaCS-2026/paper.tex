@@ -911,19 +911,19 @@ equivalence is preserved by reduction modulo~$\equiv$.
   $\vv{r_1}\equiv\vv{r_2}$.
   Diagrammatically:
   \[
-    \begin{tikzcd}
+    \begin{tikzcd}[row sep=small,baseline=(current bounding box.south)]
       & \vv{t}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
-        &[-2.5em] \equiv
-        &[-2.5em] \vv{s}
+        &[-3em] \equiv
+        &[-3em] \vv{s}
         \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         &\\
       \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
       \vv{s'}\arrow[ld,"*"',pos=0.9] \\
       & \vv{r_1} & \equiv & \vv{r_2} & 
     \end{tikzcd}
+    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
   \]
-  \qed
 \end{theorem}
 
 \begin{remark}
