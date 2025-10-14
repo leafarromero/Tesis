@@ -207,7 +207,7 @@
 \def\arr{\rightarrow}
 \def\Arr{\Rightarrow}
 \def\Type{\mathbb{T}}
-\def\BasisType{\Type_{\basis{}}}
+\def\BasisType{\Type_\flat}
 %%% Semantics
 \def\sem#1{\llbracket#1\rrbracket}
 \def\semr#1{\{{\real}~#1\}}
@@ -493,14 +493,14 @@ notation~$\sum$.
     \vv{t}(\vv{s}+\vv{r}) &\equiv \vv{t}\vv{s}+\vv{t}\vv{r} &&
   \end{align*}
   \begin{align*}
-    \LetP{x_1}{A_1}{x_2}{B_2}{(\alpha\vv{t})}{\vv{s}}
-    &\equiv \alpha(\LetP{x_1}{A_1}{x_2}{B_2}{\vv{t}}{\vv{s}}) \\
-    \LetP{x_1}{A_1}{x_2}{B_2}{\vv{t}+\vv{s}}{\vv{r}}
+    \LetP{x_1}{B_1}{x_2}{B_2}{(\alpha\vv{t})}{\vv{s}}
+    &\equiv \alpha(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}) \\
+    \LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}+\vv{s}}{\vv{r}}
     &
     \equiv
     \begin{aligned}[t]
-      &(\LetP{x_1}{A_1}{x_2}{B_2}{\vv{t}}{\vv{r}})\\
-      &+(\LetP{x_1}{A_1}{x_2}{B_2}{\vv{s}}{\vv{r}}) 
+      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{r}})\\
+      &+(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{s}}{\vv{r}}) 
     \end{aligned}\\
     \gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}
     &\equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}) \\
@@ -862,9 +862,9 @@ acts as the canonical basis for higher-order values. It can be regarded as consi
 of all pure values. For example:
 \[
   (\Lam{x}{\AbsBasis}{\vv{t}})
-  \sum_{i=1}^{n}\alpha_i(\Lam{y}{\basis{X}}{\vv{s_i}})
+  \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
   \lra
-  \sum_{i=1}^n\alpha_i\vv t[\Lam{y}{\basis{X}}{\vv{s_i}}/x].
+  \sum_{i=1}^n\alpha_i\vv t[\Lam{y}{X}{\vv{s_i}}/x].
 \]
 
 The $\mathsf{case}$ pattern matching controls program flow. It generalises the
@@ -1010,10 +1010,10 @@ used in the semantics of the~$\sharp$~type:
     \sem{\basis{X}}&:= X\\
     \sem{A\times B}&:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
     \sem{A\Arr B}&:=
-    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{\basis{X}}{\vv{t_i}})\in\Sph
+    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{X}{\vv{t_i}})\in\Sph
       \;\bigm|\;
       \forall\vv{w}\in\sem{A},\,
-      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{\basis{X}}\real B
+      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{X}\real B
     \bigr\}\\
     \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot
   \end{align*}
@@ -1083,7 +1083,7 @@ application.
 \begin{remark}
   A basis type~$\basis{X}$ may consist of value distributions of pairs and can
   therefore be written as the product type of smaller bases. For example, if
-  $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\basis{X}=\B\times\B$.
+  $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\basis{X}=\basis{\B}\times\basis{\B}$.
   However, this is not possible for entangled bases. A clear example is the
   Bell basis:
   \[
@@ -1133,24 +1133,24 @@ $\tfrac{1}{\sqrt{2}}(\ket{0} + \ket{00})$.
 Another example is a linear combination of abstractions defined over different
 bases. For instance, the term
 \[
-  \tfrac{1}{\sqrt{2}}(\Lam{x}{\B}{\pauliX{x}})
-  + \tfrac{1}{\sqrt{2}}(\Lam{x}{\XB}{x})
+  \tfrac{1}{\sqrt{2}}(\Lam{x}{{\B}}{\pauliX{x}})
+  + \tfrac{1}{\sqrt{2}}(\Lam{x}{{\XB}}{x})
 \]
 is not a member of an arrow type, since the bases decorating each abstraction
 do not match. However, it is computationally equivalent to the abstraction
-$(\Lam{x}{\B}{\ket{+}})$, which in turn belongs to the set
+$(\Lam{x}{{\B}}{\ket{+}})$, which in turn belongs to the set
 $\sem{\basis{\B}\Arr\basis{\XB}}$.
 
 
 We denote by~$\Type$ the set of all types and by~$\BasisType$ the set of all
-basis types~$\basis{X}$, for any basis~$X$.
+basis types~$\basis{X}$.
 
 \subsection{Characterisation of unitary operators}
 
 
 One of the main results of~\cite{DiazcaroGuillermoMiquelValironLICS19}
 is the characterisation of $\C^2\to\C^2$ unitary operators using values in
-$\sem{\sharp\B\Arr\sharp\B}$~\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
+$\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
 In this subsection we extend this result. Our goal is to prove that abstractions
 of type $\sharp\basis{X}\Arr\sharp\basis{Y}$, where both bases have size~$n$,
 represent unitary operators
@@ -1164,8 +1164,8 @@ words, these abstractions preserve both norm and orthogonality.
 
 \begin{lemma}\label{lem:BasesIso}
   Let $X$ and $Y$ be orthonormal bases of the same finite
-  dimension, and let $\Lam{x}{X}{\vv t}$ be a closed $\lambda$-abstraction.
-  Then $\Lam{x}{X}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  dimension, and let $\Lam{x}{{X}}{\vv t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if 
   for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
   there exist value distributions
@@ -1214,10 +1214,10 @@ operational behaviour coincides with the action of that operator on vectors.
 Formally:
 
 \begin{definition}
-  A $\lambda$-abstraction $\Lam{x}{X}{\vv{t}}$ is said to \emph{represent}
+  A $\lambda$-abstraction $\Lam{x}{{X}}{\vv{t}}$ is said to \emph{represent}
   an operator $F:\C^n\to\C^n$ if
   \[
-    (\Lam{x}{X}{\vv{t}})\vv{v} \eval \vv{w}
+    (\Lam{x}{{X}}{\vv{t}})\vv{v} \eval \vv{w}
     \quad\text{if and only if}\quad
     F(\vv{v}) = \vv{w}.
   \]
@@ -1234,14 +1234,14 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
 \begin{theorem}[Characterisation of Unitary Operators]
   Let $X$ and $Y$ be orthonormal bases of size~$n$.
   A closed $\lambda$-abstraction
-  $\Lam{x}{X}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if it represents a unitary operator
   $F:\C^n\to\C^n$.
 \end{theorem}
 
 \begin{proof}
   \textit{Necessity.}
-  Suppose that $\Lam{x}{X}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+  Suppose that $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   Then, by \Cref{lem:BasesIso}, for every
   $\vv{v_i}\in\sem{\basis{X}}$ there exists
   $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
@@ -1250,22 +1250,22 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
   Let $F:\C^n\to\C^n$ be the operator defined by
   $F(\vv{v_i})=\vv{w_i}$.
   By linearity over~$X$, it follows that
-  $\Lam{x}{X}{\vv{t}}$ represents~$F$.
+  $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
   Moreover, $F$ is unitary since
   $\|\vv{w_i}\|_{\C^n}=\|\vv{w_j}\|_{\C^n}=1$ and
   $\scal{\vv{w_i}}{\vv{w_j}}_{\C^n}=0$.
 
   \smallskip
   \textit{Sufficiency.}
-  Conversely, suppose that $\Lam{x}{X}{\vv{t}}$ represents a
+  Conversely, suppose that $\Lam{x}{{X}}{\vv{t}}$ represents a
   unitary operator $F:\C^n\to\C^n$.
   Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
   $\vv{w_i}\in\sem{\basis{Y}}$ such that
   $F(\vv{v_i}) = \vv{w_i}$ and
-  $(\Lam{x}{X}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
+  $(\Lam{x}{{X}}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
   Hence,
   \[
-    (\Lam{x}{X}{\vv{t}})\vv{v_i}
+    (\Lam{x}{{X}}{\vv{t}})\vv{v_i}
     \lraneq
     \vv{t}\ansubst{\vv{v_i}/x}{X}
     = \vv{t}[\vv{v_i}/x]
@@ -1274,7 +1274,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
   \]
   since $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$.
   From \Cref{lem:BasesIso}, it follows that
-  $\Lam{x}{X}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$,
+  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$,
   and moreover
   \(
     \scal{\vv{w_i}}{\vv{w_j}}
@@ -1287,9 +1287,9 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
 \begin{remark}
   This result naturally extends to unitary distributions of $\lambda$-ab\-strac\-tions, 
   since a term of the form 
-  $\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}$ 
+  $\Lam{x}{{X}}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}$ 
   is syntactically different but computationally equivalent to 
-  $\sum_{i=1}^{n}\alpha_i \Lam{x}{X}{\vv{t_i}}$. 
+  $\sum_{i=1}^{n}\alpha_i \Lam{x}{{X}}{\vv{t_i}}$. 
   Hence, the characterisation of unitary operators also applies to 
   superpositions of abstractions sharing the same basis~$X$.
 \end{remark}
@@ -1305,7 +1305,7 @@ what it means for a typing rule to be valid.
   finite mapping $\Gamma:\Var\to\Type\times\BasisType$ assigning a type and a
   basis to each variable in its domain. We write
   \[
-    \Gamma = {x_1}^{\basis{X_1}}:A_1,\dotsb, {x_n}^{\basis{X_n}}:A_n
+    \Gamma = {x_1}^{{X_1}}:A_1,\dotsb, {x_n}^{{X_n}}:A_n
   \]
   to indicate that $\Gamma(x_i)=(A_i,\basis{X_i})$ for each~$i$.
 \end{definition}
@@ -1316,10 +1316,10 @@ we also wish to record that information. This is not strictly necessary, as the
 basis with respect to which a variable is interpreted should not affect its
 type. For instance, consider the following substitutions:
 \begin{align*}
-(\Lam{x}{\B}{\Pair{x}{y}})\ansubst{\ket{0}/y}{\basis{\B}}
+(\Lam{x}{\B}{\Pair{x}{y}})\ansubst{\ket{0}/y}{\B}
   &= \Lam{x}{\B}{\Pair{x}{\ket{0}}},\\
 \text{and}\quad
-(\Lam{x}{\B}{(x, y)})\ansubst{\ket{0}/y}{\basis{\XB}}
+(\Lam{x}{\B}{(x, y)})\ansubst{\ket{0}/y}{\XB}
   &= \tfrac{1}{\sqrt{2}}
     \bigl((\Lam{x}{\B}{\Pair{x}{\ket{+}}})
          + (\Lam{x}{\B}{\Pair{x}{\ket{-}}})\bigr).
@@ -1341,7 +1341,7 @@ it will simplify the forthcoming proofs.
       \text{ and } \forall {x_i} \in \dom{\Gamma},\\
       &\Gamma(x_i) = (A_i, \basis{X_i})
       \text{ implies }
-      \sigma(x_i) = \ansubst{\vv{v_i}/x_i}{\basis{X_i}}
+      \sigma(x_i) = \ansubst{\vv{v_i}/x_i}{{X_i}}
       \text{ for some }\vv{v_i} \in \sem{A_i}\}.
   \end{align*}
 \end{definition}
@@ -1447,10 +1447,10 @@ typing system for the calculus.
 \begin{table}[t]
   \[
     \begin{array}{c}
-      \infer[\snam{Axiom}]{\TYP{x^{\basis{X}}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
+      \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
       \qquad
-	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{\basis{X}}{\vv{t_i}})}{A\Arr B}}
-	{\TYP{\Gamma,x^{\basis{X}}:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}}
+	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{{X}}{\vv{t_i}})}{A\Arr B}}
+	{\TYP{\Gamma,x^{X}:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}}
       \\
       \noalign{\medskip}
       \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vv{s}\,\vv{t}}{B}}
@@ -1463,15 +1463,15 @@ typing system for the calculus.
       \\
       \noalign{\medskip}
       \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
-      {\LetP{x}{{\basis{X}}}{y}{{\basis{Y}}}{\vv{t}}{\vv{s}}}{C}}{
+      {\LetP{x}{{X}}{y}{{Y}}{\vv{t}}{\vv{s}}}{C}}{
 	\TYP{\Gamma}{\vv{t}}{A\times B}&
-	\TYP{\Delta,x^{{\basis{X}}}:A,y^{{\basis{Y}}}:B}{\vv{s}}{C}
+	\TYP{\Delta,x^{{X}}:A,y^{Y}:B}{\vv{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
-      {\LetP{x}{{\basis{X}}}{y}{{\basis{Y}}}{\vv{t}}{\vv{s}}}{\sharp C}}{
+      {\LetP{x}{{X}}{y}{{Y}}{\vv{t}}{\vv{s}}}{\sharp C}}{
 	\TYP{\Gamma}{\vv{t}}{\sharp(A\times B)}&
-	\TYP{\Delta,x^{{\basis{X}}}:\sharp A,y^{{\basis{Y}}}:\sharp B}{\vv{s}}{C}
+	\TYP{\Delta,x^{X}:\sharp A,y^{Y}:\sharp B}{\vv{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
@@ -1492,11 +1492,11 @@ typing system for the calculus.
       \sum_{i=1}^{n}|\alpha_i|^2 = 1}
       \\
       \noalign{\medskip}
-      \infer[\snam{Contr}]{\TYP{\Gamma,x^{\basis{X}}:{\basis{X}}}{\vv{t}\,[y:=x]}{B}}{
-	\TYP{\Gamma,x^{\basis{X}}:{\basis{X}},y^{\basis{X}}:{\basis{X}}}{\vv{t}}{B}
+      \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:{\basis{X}}}{\vv{t}\,[y:=x]}{B}}{
+	\TYP{\Gamma,x^{X}:{\basis{X}},y^{X}:{\basis{X}}}{\vv{t}}{B}
       } 
       \qquad
-	\infer[\snam{Weak}]{\TYP{\Gamma,x^{\basis{X}}:\basis{X}}{\vv{t}}{C}}{
+	\infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vv{t}}{C}}{
 	  \TYP{\Gamma}{\vv{t}}{C}
 	}
       \\
@@ -1948,8 +1948,8 @@ As well, we could try to give a translation into an intermediate language like Z
 
 \begin{restatelemma}[Restatement of \Cref{lem:BasesIso}]
   Let $X$ and $Y$ be orthonormal bases of the same finite
-  dimension, and let $\Lam{x}{X}{\vv t}$ be a closed $\lambda$-abstraction.
-  Then $\Lam{x}{X}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  dimension, and let $\Lam{x}{{X}}{\vv t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if 
   for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
   there exist value distributions
@@ -1963,9 +1963,9 @@ As well, we could try to give a translation into an intermediate language like Z
   \]
 \end{restatelemma}
 \begin{proof}
-  \textit{The condition is necessary:} Suppose that $\Lam{x}{X}{\vv{t_k}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vv{v_i}\in\sem{\sharp\basis{X}},\ \vv{t}\ansubst{\vv{v_i}/x}{X}\eval\vv{w_i}\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vv{w_i} \perp \vv{w_j}$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
+  \textit{The condition is necessary:} Suppose that $\Lam{x}{{X}}{\vv{t_k}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vv{v_i}\in\sem{\sharp\basis{X}},\ \vv{t}\ansubst{\vv{v_i}/x}{X}\eval\vv{w_i}\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vv{w_i} \perp \vv{w_j}$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
   \begin{align*}
-    (\Lam{x}{X}{\vv{t}})(\sum_{i=1}^n \alpha_i \vv{v_i}) &\lra \vv t\ansubst{\sum_{i=1}^n \alpha_i \vv{v_i}/x}{X}
+    (\Lam{x}{{X}}{\vv{t}})(\sum_{i=1}^n \alpha_i \vv{v_i}) &\lra \vv t\ansubst{\sum_{i=1}^n \alpha_i \vv{v_i}/x}{X}
     = \sum_{i=1}^{n} \alpha_i \vv{t}[\vv{v_i}/x] 
     \eval \sum_{i=1}^n \alpha_i \vv{w_i}
   \end{align*}
@@ -1988,7 +1988,7 @@ As well, we could try to give a translation into an intermediate language like Z
   \]
   Given any $\vv u\in\sem{\sharp\basis{X}}$ we have that $\vv u = \sum_{i=1}^n \alpha_i \vv{v_i}$ with $\sum_{i=1}^n |\alpha_i|^2 = 1$ and $\vv{v_i}\in\sem{\basis{X}}$. Then 
   \[
-    (\Lam{x}{X}{\vv t}) \vv u \lra \vv{t_k}\ansubst{\vv u/x}{X}=\sum_{i=1}^{n}\alpha_i \vv{t}[\vv{v_i}/x]\eval\sum_{i=1}^n \alpha_i\vv{w_i}
+    (\Lam{x}{{X}}{\vv t}) \vv u \lra \vv{t_k}\ansubst{\vv u/x}{X}=\sum_{i=1}^{n}\alpha_i \vv{t}[\vv{v_i}/x]\eval\sum_{i=1}^n \alpha_i\vv{w_i}
   \]
 
   We have that for each $i$, $\vv{w_i}\in\sem{\sharp\basis{Y}}$. In order to show that $(\Lam{x}{A}{\vv t})\vv u\real\sharp\basis{Y}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vv{w_i}\| = 1$
