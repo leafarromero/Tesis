@@ -253,7 +253,8 @@
 \newcommand{\Bell}{\mathsf{Bell}}
 \newcommand{\lambdaB}{\lambda_B}
 %%% If construct
-\newcommand\basis[1]{\ensuremath{\mathsf{B}_{#1}}}
+%\newcommand\basis[1]{\ensuremath{\mathsf{B}_{#1}}}
+\newcommand\basis[1]{\ensuremath{\flat_{#1}}}
 \newcommand\genbasis[3]{\ensuremath{\basis{\{#1\}_{#2}^{#3}}}}
 
 %%% Teleportation algorithm
@@ -1009,10 +1010,10 @@ used in the semantics of the~$\sharp$~type:
     \sem{\basis{X}}&:= X\\
     \sem{A\times B}&:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
     \sem{A\Arr B}&:=
-    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{B}{\vv{t_i}})\in\Sph
+    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{\basis{X}}{\vv{t_i}})\in\Sph
       \;\bigm|\;
       \forall\vv{w}\in\sem{A},\,
-      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{A}\real B
+      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{\basis{X}}\real B
     \bigr\}\\
     \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot
   \end{align*}
