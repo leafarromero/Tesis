@@ -1420,20 +1420,20 @@ These will be the cases of primary interest.
 These two notions ---typing and orthogonality judgements--- provide the
 semantic foundation upon which the typing rules of the calculus are built.
 
-Before presenting the rules, we introduce a useful property that will appear
-in some of them.  
-We say that a type~$A$ is \emph{flat} (written~$\flat A$) when its elements are
-pairwise orthogonal, that is:
-\[
-  \flat A
-  \text{ if and only if }
-  \forall\,\vv v,\vv w\in\sem{A},~
-  \vv v\neq\vv w
-  \text{ implies }
-  \scal{\vv v}{\vv w}=0.
-\]
-Intuitively, flat types correspond to bases whose elements are mutually
-orthogonal, such as~$\basis{\B}$ or~$\basis{\XB}$.
+%Before presenting the rules, we introduce a useful property that will appear
+%in some of them.  
+%We say that a type~$A$ is \emph{flat} (written~$\flat A$) when its elements are
+%pairwise orthogonal, that is:
+%\[
+%  \flat A
+%  \text{ if and only if }
+%  \forall\,\vv v,\vv w\in\sem{A},~
+%  \vv v\neq\vv w
+%  \text{ implies }
+%  \scal{\vv v}{\vv w}=0.
+%\]
+%Intuitively, flat types correspond to bases whose elements are mutually
+%orthogonal, such as~$\basis{\B}$ or~$\basis{\XB}$.
 
 With these definitions in mind, we regard a typing rule as \emph{valid} when
 valid premises entail a valid conclusion.  
@@ -1448,10 +1448,8 @@ typing system for the calculus.
     \begin{array}{c}
       \infer[\snam{Axiom}]{\TYP{x^{\basis{X}}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
       \qquad
-      {\color{red}
 	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{\basis{X}}{\vv{t_i}})}{A\Arr B}}
 	{\TYP{\Gamma,x^{\basis{X}}:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}}
-      }
       \\
       \noalign{\medskip}
       \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vv{s}\,\vv{t}}{B}}
@@ -1466,13 +1464,13 @@ typing system for the calculus.
       \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
       {\LetP{x}{{\basis{X}}}{y}{{\basis{Y}}}{\vv{t}}{\vv{s}}}{C}}{
 	\TYP{\Gamma}{\vv{t}}{A\times B}&
-	\TYP{\Delta,x^{{\basis{X}}}:A,y_{{\basis{Y}}}:B}{\vv{s}}{C}
+	\TYP{\Delta,x^{{\basis{X}}}:A,y^{{\basis{Y}}}:B}{\vv{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
       {\LetP{x}{{\basis{X}}}{y}{{\basis{Y}}}{\vv{t}}{\vv{s}}}{\sharp C}}{
 	\TYP{\Gamma}{\vv{t}}{\sharp(A\times B)}&
-	\TYP{\Delta,x^{{\basis{X}}}:\sharp A,y_{{\basis{Y}}}:\sharp B}{\vv{s}}{C}
+	\TYP{\Delta,x^{{\basis{X}}}:\sharp A,y^{{\basis{Y}}}:\sharp B}{\vv{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
@@ -1493,15 +1491,13 @@ typing system for the calculus.
       \sum_{i=1}^{n}|\alpha_i|^2 = 1}
       \\
       \noalign{\medskip}
-      \infer[\snam{Contr}]{\TYP{\Gamma,x^A:A}{\vv{t}\,[y:=x]}{B}}{
-	\TYP{\Gamma,x^A:A,y_A:A}{\vv{t}}{B}&\flat{A}
+      \infer[\snam{Contr}]{\TYP{\Gamma,x^{\basis{X}}:{\basis{X}}}{\vv{t}\,[y:=x]}{B}}{
+	\TYP{\Gamma,x^{\basis{X}}:{\basis{X}},y^{\basis{X}}:{\basis{X}}}{\vv{t}}{B}
       } 
       \qquad
-      {\color{red}
-	\infer[\snam{Weak}]{\TYP{\Gamma,x^{\basis{X}}:A}{\vv{t}}{C}}{
-	  \TYP{\Gamma}{\vv{t}}{C}& \flat{A} & \basis{X}\leq A
+	\infer[\snam{Weak}]{\TYP{\Gamma,x^{\basis{X}}:\basis{X}}{\vv{t}}{C}}{
+	  \TYP{\Gamma}{\vv{t}}{C}
 	}
-      }
       \\
       \noalign{\medskip}
       \infer[\snam{Sub}]{\TYP{\Gamma}{\vv{t}}{B}}{\TYP{\Gamma}{\vv{t}}{A} & \SUB{A}{B}}
