@@ -1862,11 +1862,13 @@ As well, we could try to give a translation into an intermediate language like Z
 \bibliography{basisSensitive}
 
 \clearpage
+
+\makeatletter
+\renewcommand*\theHsection{\thesection}
+\makeatother
 \appendix
 
-\section*{Omitted proofs from \Cref{sec:calculus}}\label{sec:appendixA}
-\phantomsection
-\addcontentsline{toc}{section}{Omitted proofs from Section 2}
+\section{Omitted proofs from Section~\ref{sec:calculus}}\label{sec:appendixA}
 
 \begin{restatetheorem}[Restatement of \Cref{thm:UniqueDecomposition}]
   \itshape
@@ -1940,9 +1942,7 @@ As well, we could try to give a translation into an intermediate language like Z
   \]
 \end{proof}
 
-\section*{Omitted proofs from \Cref{sec:reduction}}\label{sec:appendixB}
-\phantomsection
-\addcontentsline{toc}{section}{Omitted proofs from Section 3}
+\section{Omitted proofs from Section~\ref{sec:reduction}}\label{sec:appendixB}
 
 \begin{lemma}[Weak diamond property for $\lraneq$]\label{lem:SquigDiamond}
   Let $\vv{t}, \vv{s_1}, \vv{s_2}$ term distributions such that $\vv{t}\lraneq{s_1}$ and $\vv{t}\lraneq\vv{s_2}$. Then, either there exists a term distribution $\vv{r}$ such that $\vv{s_1}\lraneq\vv{r}$ and $\vv{s_2}\lraneq \vv{r}$. Or, $\vv{s_1}=\vv{s_2}$. Diagrammatically:
@@ -2043,9 +2043,7 @@ As well, we could try to give a translation into an intermediate language like Z
   \end{description}
 \end{proof}
 
-\section*{Omitted proofs from \Cref{sec:model}}\label{sec:appendixC}
-\phantomsection
-\addcontentsline{toc}{section}{Omitted proofs from Section 4}
+\section{Omitted proofs from Section~\ref{sec:model}}\label{sec:appendixC}
 
 \begin{restatetheorem}[Restatement of \Cref{thm:SharpCharacterization}]
   \itshape
@@ -2114,9 +2112,7 @@ As well, we could try to give a translation into an intermediate language like Z
 \end{proof}
 
 
-\section*{A Proofs for validity of LetT}
-\phantomsection  
-\addcontentsline{toc}{section}{A Proofs for validity of LetT}
+\section{A Proofs for validity of LetT}
 
 \begin{theorem}\label{prop:InnerProdPairs} For all value distributions $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
 \[
