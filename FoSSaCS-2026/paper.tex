@@ -1944,6 +1944,46 @@ As well, we could try to give a translation into an intermediate language like Z
 \phantomsection
 \addcontentsline{toc}{section}{Omitted proofs from Section 3}
 
+\begin{lemma}[Weak diamond property for $\lraneq$]\label{lem:SquigDiamond}
+  Let $\vv{t}, \vv{s_1}, \vv{s_2}$ term distributions such that $\vv{t}\lraneq{s_1}$ and $\vv{t}\lraneq\vv{s_2}$. Then, either there exists a term distribution $\vv{r}$ such that $\vv{s_1}\lraneq\vv{r}$ and $\vv{s_2}\lraneq \vv{r}$. Or, $\vv{s_1}=\vv{s_2}$. Diagrammatically:
+  \[
+    \begin{tikzcd}
+      & \vv{t}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+      &\\
+      \vv{s_1}\arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
+      \vv{s_2}\arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
+      & \vv{r} &
+    \end{tikzcd}
+    \quad\text{ Or }\quad
+    \begin{tikzcd}
+      &[-2em] \vv{t}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+      &[-2em]\\
+      \vv{s_1}& = &\vv{s_2}\\
+    \end{tikzcd}
+  \]
+\end{lemma}
+
+\begin{proof}
+  The proof follows from the fact that the $\lraneq$ reduction is deterministic over pure values. And, in case of term distributions, we only need to match the reduction on the corresponding sub-terms. Let $\vv{t}=\sum\limits_{i=1}^n \alpha_i \vv{t_i}$, $\vv{s_1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}$, and $\vv{s_2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i}+\alpha_k\vv{s_k}$. Where $\vv{t_j}\lraneq\vv{s_j}$ and $\vv{t_k}\lraneq\vv{s_k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
+  \[
+    \begin{tikzcd}
+      &[-1em] \sum\limits_{i=1}^n \alpha_i \vv{t_i}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+      &[-1em]\\
+      \sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}
+      \arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
+      \sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i} + \alpha_k\vv{s_k}
+      \arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
+      & \sum\limits_{i=1; i\neq j,k}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}+\alpha_k\vv{s_k} &
+    \end{tikzcd}
+  \]
+\end{proof}
+
 \begin{restatetheorem}[Restatement of \Cref{thm:confluence}]
   \itshape
   Let $\vv{t}$ and $\vv{s}$ be closed term distributions with
@@ -1967,7 +2007,40 @@ As well, we could try to give a translation into an intermediate language like Z
   \]
 \end{restatetheorem}
 \begin{proof}
-  \hl{TO-DO}
+  We do a case-by-case analysis over the relation $\vv{t}\equiv\vv{s}$.
+  \begin{description}
+    \item[$\vv{t_1} + 0\vv{t_2}\equiv\vv{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond} since the reductions can only be performed in $\vv{t_1}$.
+    
+    \item[$0\vv{t}\equiv\vv{0}$:] The term distributions cannot reduce on either side of the equivalence.
+    
+    \item[$1\vv{t}\equiv\vv{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\alpha(\beta \vv{t})\equiv\delta\vv{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\vv{t_1}+\vv{t_2}\equiv\vv{t_2}+\vv{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    
+    \item[$\vv{t_1}+(\vv{t_2}+\vv{t_3})\equiv(\vv{t_1}+\vv{t_2})+\vv{t_3}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    
+    \item[$(\alpha+\beta)\vv{t}\equiv\vv{t}$:] We start analyzing the coefficients. If $\alpha+\beta = 0$, then there cannot be a reduction on the left hand-side. If $(\alpha + \beta)\neq 0$ and either $\alpha=0$ or $\beta=0$, then we are on a particular case of $\vv{t_1} + 0\vv{t_2}\equiv\vv{t_1}$ with $\vv{t_1}=\vv{t_2}$. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\alpha(\vv{t_1}+\vv{t_2})\equiv\alpha\vv{t_1}+\alpha\vv{t_2}$:] If $\alpha=0$, then the term distributions cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\vv{t} (\alpha\vv{s})\equiv\alpha(\vv{t}\vv{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    If $\vv{t} = (\Lam{x}{B}{\vv{t_1}})$ and $\vv{s}=\vv{v}$ and $\vv{t_1}\ansubst{\vv{v}}{B}$, is defined then (we consider the case $B\neq\AbsBasis$):
+    \begin{align*}
+      (\Lam{x}{B}{\vv{t_i}}) (\alpha\vv{v}) &\lraneq \vv{t_1}\ansubst{\alpha\vv{v}/x}{B}\\
+      &= \sum_{i=1}^{n} \alpha\beta_i \vv{t_1}[\vv{b_i}/x]\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B\\
+    \end{align*}
+    On the other side:
+    \begin{align*}
+      \alpha ((\Lam{x}{B}{\vv{t_1}}) \vv{v}) &\lraneq \alpha(\vv{t_1\ansubst{\vv{v}}{B}})\\
+      &=\alpha(\sum_{i=1}^{n} \beta_i \vv{t_1}[\vv{b_i}/x])\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B\\
+    \end{align*}
+
+    And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
+    
+  \end{description}
 \end{proof}
 
 \section*{Omitted proofs from \Cref{sec:model}}\label{sec:appendixC}
