@@ -1180,28 +1180,33 @@ words, these abstractions preserve both norm and orthogonality.
   \]
 \end{lemma}
 
-%Next, we need to bridge the gap between values in the calculus and vectors in
-%the space~$\C^n$. To this end, we introduce a meta-language operation~$\pi_n$
-%that translates value distributions into vectors of~$\C^n$. The operation
-%simply expresses each value in the canonical basis and extracts the
-%corresponding coefficients.
-%
-%\begin{definition}
-%  Let $X$ be an orthonormal basis of size~$n$. For every $\vv{v}\in X$, we can
-%  write
-%  \[
-%    \vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i},
-%  \]
-%  where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
-%  corresponding to the binary representation of~$i$, and
-%  $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
-%  $\ket{0011}$. We define $\pi_n:X\to\C^n$ by
-%  \[
-%    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_n).
-%  \]
-%  The subscript may be omitted when clear from context.
-%\end{definition}
-%
+Terms such as $\ket{0}$ and $\ket{1}$ are syntactic objects of the
+calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
+terms on Hilbert spaces, we shall occasionally abuse notation and identify
+value distributions representing qubits with their corresponding canonical
+basis vectors in~$\C^n$. Of course, this identification applies only to those
+distributions that denote quantum data, not to general syntactic values such as
+$\lambda$-abstractions---in particular, to all elements of
+$\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
+be made precise as follows.
+
+\begin{definition}
+  Let $X$ be an orthonormal basis of size~$n$. For every $\vv{v}\in X$, we can
+  write
+  \(
+    \vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i}
+  \),
+  where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
+  corresponding to the binary representation of~$i$, and
+  $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
+  $\ket{0011}$. We then define $\pi_n:X\to\C^n$ by
+  \(
+    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_n)
+  \).
+\end{definition}
+
+To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vv v$
+directly.
 
 We now establish a correspondence between $\lambda$-abstractions and operators
 on~$\C^n$. Intuitively, an abstraction represents a linear operator when its
