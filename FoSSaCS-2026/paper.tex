@@ -1304,7 +1304,7 @@ what it means for a typing rule to be valid.
   finite mapping $\Gamma:\Var\to\Type\times\BasisType$ assigning a type and a
   basis to each variable in its domain. We write
   \[
-    \Gamma = {x_1}_{\basis{X_1}}:A_1,\dotsb, {x_n}_{\basis{X_n}}:A_n
+    \Gamma = {x_1}^{\basis{X_1}}:A_1,\dotsb, {x_n}^{\basis{X_n}}:A_n
   \]
   to indicate that $\Gamma(x_i)=(A_i,\basis{X_i})$ for each~$i$.
 \end{definition}
@@ -1446,11 +1446,11 @@ typing system for the calculus.
 \begin{table}[t]
   \[
     \begin{array}{c}
-      \infer[\snam{Axiom}]{\TYP{x_{\basis{X}}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
+      \infer[\snam{Axiom}]{\TYP{x^{\basis{X}}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
       \qquad
       {\color{red}
 	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{\basis{X}}{\vv{t_i}})}{A\Arr B}}
-	{\TYP{\Gamma,x_{\basis{X}}:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}}
+	{\TYP{\Gamma,x^{\basis{X}}:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}}
       }
       \\
       \noalign{\medskip}
@@ -1466,13 +1466,13 @@ typing system for the calculus.
       \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
       {\LetP{x}{{\basis{X}}}{y}{{\basis{Y}}}{\vv{t}}{\vv{s}}}{C}}{
 	\TYP{\Gamma}{\vv{t}}{A\times B}&
-	\TYP{\Delta,x_{{\basis{X}}}:A,y_{{\basis{Y}}}:B}{\vv{s}}{C}
+	\TYP{\Delta,x^{{\basis{X}}}:A,y_{{\basis{Y}}}:B}{\vv{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
       {\LetP{x}{{\basis{X}}}{y}{{\basis{Y}}}{\vv{t}}{\vv{s}}}{\sharp C}}{
 	\TYP{\Gamma}{\vv{t}}{\sharp(A\times B)}&
-	\TYP{\Delta,x_{{\basis{X}}}:\sharp A,y_{{\basis{Y}}}:\sharp B}{\vv{s}}{C}
+	\TYP{\Delta,x^{{\basis{X}}}:\sharp A,y_{{\basis{Y}}}:\sharp B}{\vv{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
@@ -1493,13 +1493,13 @@ typing system for the calculus.
       \sum_{i=1}^{n}|\alpha_i|^2 = 1}
       \\
       \noalign{\medskip}
-      \infer[\snam{Contr}]{\TYP{\Gamma,x_A:A}{\vv{t}\,[y:=x]}{B}}{
-	\TYP{\Gamma,x_A:A,y_A:A}{\vv{t}}{B}&\flat{A}
+      \infer[\snam{Contr}]{\TYP{\Gamma,x^A:A}{\vv{t}\,[y:=x]}{B}}{
+	\TYP{\Gamma,x^A:A,y_A:A}{\vv{t}}{B}&\flat{A}
       } 
       \qquad
       {\color{red}
-	\infer[\snam{Weak}]{\TYP{\Gamma,x_A:B}{\vv{t}}{C}}{
-	  \TYP{\Gamma}{\vv{t}}{B}& \flat{A} & A\leq B
+	\infer[\snam{Weak}]{\TYP{\Gamma,x^{\basis{X}}:A}{\vv{t}}{C}}{
+	  \TYP{\Gamma}{\vv{t}}{C}& \flat{A} & \basis{X}\leq A
 	}
       }
       \\
@@ -2012,11 +2012,11 @@ As well, we could try to give a translation into an intermediate language like Z
 \begin{proof}
     For each typing rule in \Cref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
     \begin{description}
-    \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x_B:A}$, we have $\sigma=\ansubst{\vv v/x}{B}$ for some $\vv{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vv v}{B}=\vv{v}\real A$.
+    \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x^B:A}$, we have $\sigma=\ansubst{\vv v/x}{B}$ for some $\vv{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vv v}{B}=\vv{v}\real A$.
     
     \item[Sub] Trivial since $\semr{A}\subseteq\semr{A'}$. 
 
-    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x_A:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x_A:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
+    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^A:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x_A:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
     
     \begin{align*}
         (\sum_{i=1}^{n} \alpha_i(\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{A}{\vv{t_i}}) [\sigma_i])) \vv{v} \\
