@@ -1284,11 +1284,17 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
   \qedhere
 \end{proof}
 
+\begin{remark}
+  This result naturally extends to unitary distributions of $\lambda$-abstractions, 
+  since a term of the form 
+  $\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}$ 
+  is syntactically different but computationally equivalent to 
+  $\sum_{i=1}^{n}\alpha_i \Lam{x}{X}{\vv{t_i}}$. 
+  Hence, the characterisation of unitary operators also applies to 
+  superpositions of abstractions sharing the same basis~$X$.
+\end{remark}
+
 \hl{Voy por acá}
-
-These results can be extended to unitary distributions of lambda abstractions, since $(\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}})$ is syntactically different but computationally equivalent to $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})$. 
-
-
 \subsection{Typing rules}    
 Our focus in this section is to enumerate and prove the validity of various typing rules. The objective being to extract a reasonable set of rules to constitute a type system. We first need to lay the groundwork to properly define what does it mean for a typing rule to be valid.
 
