@@ -200,6 +200,7 @@
 \def\nevalat{\mathrel{\not\triangleright}}
 \def\lraneq{\rightsquigarrow}
 \def\eval{\lra^*}
+\def\lave{\mathrel{\reflectbox{$\eval$}}}
 %%% Types
 \def\Unit{\mathbb{U}}
 \def\Bool{\mathbb{B}}
@@ -402,7 +403,7 @@ language, its syntax, congruence rules, and basis-dependent substitution.
 \Cref{sec:reduction} details the
 operational semantics.  \Cref{sec:model}
 presents the realizability model, including
-unitary type semantics, the characterization of unitary operators, and the
+unitary type semantics, the characterisation of unitary operators, and the
 typing rules.  \Cref{sec:examples} illustrates the
 calculus through representative programs.  All omitted proofs are deferred to
 the appendices.  Finally, we conclude with remarks and directions for future
@@ -554,8 +555,8 @@ must first specify the kind of values they contain.
   A \emph{one-dimensional qubit} is a value distribution of the form
   $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
   \emph{$n$-dimensional qubit} is a value distribution of the form
-  $\alpha\Pair{\ket{0}}{\vv w_1} + \beta\Pair{\ket{1}}{\vv w_2}$, where
-  $\vv w_1$ and $\vv w_2$ are $(n-1)$-dimensional qubits, and $\alpha$ and
+  $\alpha\Pair{\ket{0}}{\vv{w_1}} + \beta\Pair{\ket{1}}{\vv{w_2}}$, where
+  $\vv{w_1}$ and $\vv{w_2}$ are $(n-1)$-dimensional qubits, and $\alpha$ and
   $\beta$ satisfy the same normalisation condition.
 \end{definition}
 We may use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
@@ -649,9 +650,9 @@ usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
   \[
     \vv t\ansubst{\vv v/x}{B} \;=\;
     \begin{cases}
-      \ds\sum_{i\in I}\alpha_i\,\vv t\,[\vv b_i/x] &
-        \text{if } B=\{\vv b_i\}_{i\in I}\ \text{and}\
-        \vv v \equiv \ds\sum_{i\in I}\alpha_i\,\vv b_i,\\[6pt]
+      \ds\sum_{i\in I}\alpha_i\,\vv t\,[\vv{b_i}/x] &
+        \text{if } B=\{\vv{b_i}\}_{i\in I}\ \text{and}\
+        \vv v \equiv \ds\sum_{i\in I}\alpha_i\,\vv{b_i},\\[6pt]
       \ds\sum_{i\in I}\alpha_i\,\vv t\,[v_i/x] &
         \text{if } B=\AbsBasis\ \text{and}\
         \vv v = \ds\sum_{i\in I}\alpha_i\,v_i,\\[2pt]
@@ -659,11 +660,11 @@ usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
     \end{cases}
   \]
   The definition also extends to pairs of values. If
-  $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv v_i}{\vv w_i}$, then
+  $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$, then
   \[
     \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
       \;=\; \sum_{i\in I}\alpha_i\,
-      \bigl(\vv t\ansubst{\vv v_i/x}{B_1}\ansubst{\vv w_i/y}{B_2}\bigr),
+      \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
   \]
   where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
   with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
@@ -721,9 +722,9 @@ combinations of terms.
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
   $\ansubst{\vv v/x}{B}$ is defined:
   \[
-    \Bigl(\sum_i \alpha_i\vv t_i\Bigr)\ansubst{\vv v/x}{B}
+    \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
     \equiv
-    \sum_i \alpha_i\vv t_i \ansubst{\vv v/x}{B}.
+    \sum_i \alpha_i\vv{t_i} \ansubst{\vv v/x}{B}.
     \tag*{\qed}
   \]
 \end{lemma}
@@ -758,9 +759,9 @@ equivalence class induced by the congruence $\equiv$.
   lambda abstraction, nor with the case construct. Although the two terms are
   operationally equivalent, the calculus distinguishes between the
   superposition of results,
-  $\Lam{x}{B}{\alpha\vv v_1 + \beta\vv v_2}$,
+  $\Lam{x}{B}{\alpha\vv{v_1} + \beta\vv{v_2}}$,
   and the superposition of functions,
-  $\alpha(\Lam{x}{B}{\vv v_1}) + \beta(\Lam{x}{B}{\vv v_2})$.
+  $\alpha(\Lam{x}{B}{\vv{v_1}}) + \beta(\Lam{x}{B}{\vv{v_2}})$.
   This distinction reflects a physical intuition: the former corresponds to a
   single experiment producing a superposition of outcomes, while the latter
   represents a superposition of distinct experiments.
@@ -832,8 +833,8 @@ and $\vv r'\equiv\vv r$.
       \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
       \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
       \\[5pt]
-      \infer{\gencase{\vv t}{\vv v}{\vv w}{\vv s_1}{\vv s_n}\lraneq
-      \gencase{\vv r}{\vv v}{\vv w}{\vv s_1}{\vv s_n}}{t\lraneq \vv r}
+      \infer{\gencase{\vv t}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}\lraneq
+      \gencase{\vv r}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}}{t\lraneq \vv r}
     \end{array}
   \]
   \caption{Reduction system}
@@ -1143,108 +1144,144 @@ $(\Lam{x}{\B}{\ket{+}})$, which in turn belongs to the set
 $\sem{\basis{\B}\Arr\basis{\XB}}$.
 
 
-\hl{Voy por acá}
 
-\subsection{Characterization of unitary operators}
+\subsection{Characterisation of unitary operators}
 
 
-One of the main results of \cite{DiazcaroGuillermoMiquelValironLICS19}, is the characterization of $\C^2\to\C^2$ unitary operators using values in $\sem{\sharp\B\Arr\sharp\B}$ \cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}. In this subsection we expand on this result. Our goal is to prove that abstractions of type $\sharp\basis{X}\Arr\sharp\basis{Y}$ (both bases of size $n$) represent $\C^n\to\C^n$ unitary operators.
+One of the main results of~\cite{DiazcaroGuillermoMiquelValironLICS19}
+is the characterisation of $\C^2\to\C^2$ unitary operators using values in
+$\sem{\sharp\B\Arr\sharp\B}$~\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
+In this subsection we extend this result. Our goal is to prove that abstractions
+of type $\sharp\basis{X}\Arr\sharp\basis{Y}$, where both bases have size~$n$,
+represent unitary operators
+$\C^n\to\C^n$.
 
-Unitary operators are the isomorphisms of Hilbert spaces since they preserve the basic structure of the space. With this in mind, the first step is to show that the members in $\sharp\basis{X}\Arr\sharp{\basis{Y}}$ send basis vectors from $\basis{X}$ onto orthogonal vectors in $\sem{\sharp\basis{Y}}$. In other words, these abstractions preserve both norm and orthogonality.
+Unitary operators are isomorphisms between Hilbert spaces, as they preserve the
+structure of the space. With this in mind, the first step is to show that the
+members of $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$ map basis vectors from
+$\sem{\basis{X}}$ onto orthogonal vectors in $\sem{\sharp\basis{Y}}$. In other
+words, these abstractions preserve both norm and orthogonality.
 
 \begin{lemma}\label{lem:BasesIso}
-  Given types $\basis{X}$, $\basis{Y}$ of size $n$ and a closed $\lambda$-abstraction $\Lam{x}{X}{\vv t}$ we have that $\Lam{x}{A}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$ if and only if there are value distributions $\vv w_i\in\sem{\sharp\basis{Y}}$ such that $\forall\vv v_i\in\sem{\basis{X}}$:
+  Let $X$ and $Y$ be orthonormal bases of the same finite
+  dimension, and let $\Lam{x}{X}{\vv t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{X}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  if and only if 
+  for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
+  there exist value distributions
+  $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
   \[
-    \vv{t}[\vv{v_i}/x]\eval\vv{w_i}\perp\vv{w_j}\twoheadleftarrow \vv{t}[\vv{v_j}/x] \qquad \text{if } i\neq j
+    \vv{t}[\vv{v_i}/x]\eval\vv{w_i}
+    \quad\text{and}\quad
+    \vv{t}[\vv{v_j}/x]\eval\vv{w_j},
+    \quad\text{with } 
+    \vv{w_i}\perp\vv{w_j}\text{ whenever }i\neq j.
+    \tag*{\qed}
   \]
 \end{lemma}
 
-\begin{proof}
-  \textit{The condition is necessary:} Suppose that $\Lam{x}{X}{\vv t_k}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vv v_i\in\sem{\sharp\basis{X}},\ \vv{t}\ansubst{\vv{v_i}/x}{X}\eval\vv w_i\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vv w_i \perp \vv w_j$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
-  \begin{align*}
-    (\Lam{x}{X}{\vv{t}})(\sum_{i=1}^n \alpha_i \vv{v_i}) &\to \vv t\ansubst{\sum_{i=1}^n \alpha_i \vv v_i/x}{X}\\
-    &= \sum_{i=1}^{n} \alpha_i \vv{t}[\vv{v_i}/x]\\ 
-    &\twoheadrightarrow \sum_{i=1}^n \alpha_i \vv w_i
-  \end{align*}
+%Next, we need to bridge the gap between values in the calculus and vectors in
+%the space~$\C^n$. To this end, we introduce a meta-language operation~$\pi_n$
+%that translates value distributions into vectors of~$\C^n$. The operation
+%simply expresses each value in the canonical basis and extracts the
+%corresponding coefficients.
+%
+%\begin{definition}
+%  Let $X$ be an orthonormal basis of size~$n$. For every $\vv{v}\in X$, we can
+%  write
+%  \[
+%    \vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i},
+%  \]
+%  where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
+%  corresponding to the binary representation of~$i$, and
+%  $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
+%  $\ket{0011}$. We define $\pi_n:X\to\C^n$ by
+%  \[
+%    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_n).
+%  \]
+%  The subscript may be omitted when clear from context.
+%\end{definition}
+%
 
-  But since $\sum_{i=1}^n \alpha_i \vv{v_i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vv{w_i}\|=1$. Therefore:
-  \begin{align*}
-    1 = \|\sum_{i=1}^n \alpha_i \vv{w_i}\| &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv w_i}{\vv w_i } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv w_i}{\vv w_i } + \sum_{i,j=1; i<j}^n 2~\Rpart{\bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \|\vv w_i\|^2 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 + 2\sum_{i,j=1; i<j}^n\Rpart{\bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}}\\
-    &= 1 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}}
-  \end{align*}
-
-  And thus we are left with $\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}} = 0$. Taking $\alpha_{i'} = \alpha_{j'} = \frac{1}{\sqrt{2}}$ with $0$ for the rest of coefficients, we have $\Rpart{\scal{\vv w_{i'}}{\vv w_{j'}}} = 0$ for any two arbitrary $i'$ and $j'$. In the same way, taking $\alpha_{i'} = \frac{1}{\sqrt{2}}$ and $\alpha_{j'}=\frac{i}{\sqrt{2}}$ with $0$ for the rest of the coefficients, we have $\Ipart{\scal{\vv{w_{i'}}}{\vv w_{j'}}} = 0$ for any two arbitrary $i'$ and $j'$. Finally, we can conclude that $\scal{\vv w_i}{\vv w_j}=0$ if $i\neq j$.
-
-  \textit{The condition is sufficient:} Suppose that there are $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that for every $\vv v_i\in\sem{\basis{X}}$:
-  \[
-    \vv t[\vv v_i/x] \eval \vv{w_i} \perp \vv{w_j} \twoheadleftarrow \vv t[\vv v_j/x]\qquad \text{If } i\neq j
-  \]
-  Given any $\vv u\in\sem{\sharp\basis{X}}$ we have that $\vv u = \sum_{i=1}^n \alpha_i \vv v_i$ with $\sum_{i=1}^n |\alpha_i|^2 = 1$ and $\vv v_i\in\sem{\basis{X}}$. Then 
-  \[
-    (\Lam{x}{X}{\vv t}) \vv u \to \vv t_k\ansubst{\vv u/x}{X}=\sum_{i=1}^{n}\alpha_i \vv{t}[\vv{v_i}/x]\eval\sum_{i=1}^n \alpha_i\vv w_i
-  \]
-
-  We have that for each $i$, $\vv w_i\in\sem{\sharp\basis{Y}}$. In order to show that $(\Lam{x}{A}{\vv t})\vv u\real\sharp\basis{Y}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vv w_i\| = 1$
-
-  \begin{align*}
-    \|\sum_{i=1}^n \alpha_i \vv w_i\|^2 &= \scal{\sum_{i=1}^n \alpha_i \vv w_i}{\sum_{j=1}^n \alpha_j \vv w_j}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv w_i}{\vv w_i } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv w_i}{\vv w_j}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 + 0\\
-    &= 1
-  \end{align*}
-
-  Then $\sum_{i=1}^n \alpha_i \vv w_i\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\to\sharp B}$.\qedhere
-\end{proof}
-
-Next, we need to bridge the gap between the values in the calculus with vectors in the space $\C^n$. In order to do this, we introduce a meta-language operation $\pi_n$ which translates value distributions into vectors in $\C^n$. The operation simply writes the value in the canonical basis and takes the corresponding coefficients. 
+We now establish a correspondence between $\lambda$-abstractions and operators
+on~$\C^n$. Intuitively, an abstraction represents a linear operator when its
+operational behaviour coincides with the action of that operator on vectors.
+Formally:
 
 \begin{definition}
-Let $\basis{X}$ be an orthonormal basis of size $n$, then for every $\vv{v}\in\sem{\basis{X}}$:
-\[
-\vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i}
-\]
-Where $\ket{i}$ is the $n$-th dimensional product of $\ket{0}$ and $\ket{1}$ with $i$ written in binary and $\sum_{i=1}^{n}|\alpha_i|^2=1$. (For example, $\ket{3}$ with $n=4$ is $\ket{0011}$). We define $\pi_n:\sem{\basis{X}}\to\C^n$ as::
-\[
-\pi_n(\vv{v}) = (\alpha_1,\dotsb ,\alpha_n)
-\]
-We will omit the subscript when it can be deduced from the context.
+  A $\lambda$-abstraction $\Lam{x}{X}{\vv{t}}$ is said to \emph{represent}
+  an operator $F:\C^n\to\C^n$ if
+  \[
+    (\Lam{x}{X}{\vv{t}})\vv{v} \eval \vv{w}
+    \quad\text{if and only if}\quad
+    F(\vv{v}) = \vv{w}.
+  \]
 \end{definition}
 
-\begin{definition}
-We say a $\lambda$-abstraction $(\Lam{x}{X}{\vv{t}})$ represents an operator $F:\C^n\to\C^n$ when:
-\[
-(\Lam{x}{X}{\vv{t}})\vv{v} \eval \vv{w} \iff F(\pi_n(\vv{v})) = \pi_n(\vv{w})
-\]
-\end{definition}
+In other words, a $\lambda$-term represents a function
+$F:\C^n\to\C^n$ precisely when it encodes the action of~$F$ on vectors.
 
-This means, a lambda term represents a function $F:\C^n\to\C^n$ if it encodes the action of $F$ on vectors. This definition, in conjunction with the previous lemma, allow us build a characterization of unitary operators as values in $\sharp\basis{X}\Arr\sharp\basis{X}$.
 
-\begin{theorem}
-  Let $\basis{X}$, $\basis{Y}$ be orthonormal bases of size $n$. A closed $\lambda$-abstraction $(\Lam{x}{X}{\vv{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$ if and only if it represents a unitary operator $F:\C^n\to\C^n$.
+This definition, together with the previous lemma, allows us to build a
+characterisation of unitary operators as values in
+$\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
+
+\begin{theorem}[Characterisation of Unitary Operators]
+  Let $X$ and $Y$ be orthonormal bases of size~$n$.
+  A closed $\lambda$-abstraction
+  $\Lam{x}{X}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  if and only if it represents a unitary operator
+  $F:\C^n\to\C^n$.
 \end{theorem}
 
 \begin{proof}
-  \textit{The condition is necessary:} Suppose that $(\Lam{x}{X}{\vv{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, then by \Cref{lem:BasesIso} we have that, for every $\vv{v_i}\in\sem{\basis{X}}$  there exist $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and $\vv{w_i}\perp\vv{w_j}$ if $i\neq j$. Let $F:\C^n\to\C^n$ be the operator defined as $F(\pi(\vv{v_i}))=\pi(\vv{w_i})$. From the linear application on $X$, it is clear that $(\Lam{x}{X}{\vv{t}})$ represents the operator $F$. Moreover, the operator $F$ is unitary since $\|\pi(\vv{w_i})\|_{\C^n}=\|\pi(\vv{w_j})\|_{\C^n}=1$ and $\scal{\pi(\vv{w_i})}{\pi(\vv{w_j})}_{\C^n}=0$.
+  \textit{Necessity.}
+  Suppose that $\Lam{x}{X}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+  Then, by \Cref{lem:BasesIso}, for every
+  $\vv{v_i}\in\sem{\basis{X}}$ there exists
+  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
+  $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
+  $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
+  Let $F:\C^n\to\C^n$ be the operator defined by
+  $F(\vv{v_i})=\vv{w_i}$.
+  By linearity over~$X$, it follows that
+  $\Lam{x}{X}{\vv{t}}$ represents~$F$.
+  Moreover, $F$ is unitary since
+  $\|\vv{w_i}\|_{\C^n}=\|\vv{w_j}\|_{\C^n}=1$ and
+  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^n}=0$.
 
-  \textit{The condition is sufficient:} Suppose that $(\Lam{x}{X}{\vv{t}})$ represents a unitary operator $F:\C^n\to\C^n$. From this we deduce that:
+  \smallskip
+  \textit{Sufficiency.}
+  Conversely, suppose that $\Lam{x}{X}{\vv{t}}$ represents a
+  unitary operator $F:\C^n\to\C^n$.
+  Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
+  $\vv{w_i}\in\sem{\basis{Y}}$ such that
+  $F(\vv{v_i}) = \vv{w_i}$ and
+  $(\Lam{x}{X}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
+  Hence,
   \[
-  (\Lam{x}{X}{\vv{t}})\vv{v_i}\eval\vv{w_i}\
+    (\Lam{x}{X}{\vv{t}})\vv{v_i}
+    \lraneq
+    \vv{t}\ansubst{\vv{v_i}/x}{X}
+    = \vv{t}[\vv{v_i}/x]
+    \eval \vv{w_i}
+    \in \sem{\sharp\basis{Y}},
   \]
-  For some $\vv{v_i}\in\sem{\basis{X}},\ \vv{w_i}\in\sem{\basis{Y}}$ such that $F(\pi(\vv{v_i})) = \pi(\vv{w_i})$. Then we have:
-  \[
-    (\Lam{x}{X}{\vv{t}})\vv{v_i}\lraneq\vv{t}\ansubst{\vv{v_i}/x}{X} = \vv{t}[\vv{v_i}/x]\eval\vv{w_i}\in\sem{\sharp\basis{Y}},
-  \]
-  since $\|\vv{w_i}\|=\|F(\pi(\vv{v_i}))\|_{\C^n} = 1$, we can deduce from \Cref{lem:BasesIso}, that $(\Lam{x}{X}{\vv{t}})\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$. Then:
-  \[
-  \scal{\vv{w_i}}{\vv{w_j}}=\scal{F(\pi(\vv{v_i}))}{F(\pi(\vv{v_j}))}_{\C^n} = 0
-  \]\qedhere
+  since $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$.
+  From \Cref{lem:BasesIso}, it follows that
+  $\Lam{x}{X}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$,
+  and moreover
+  \(
+    \scal{\vv{w_i}}{\vv{w_j}}
+    = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
+    = 0.
+  \)
+  \qedhere
 \end{proof}
 
-These results can be extended to unitary distributions of lambda abstractions, since $(\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}})$ is syntactically different but computationally equivalent to $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})$. Ultimately, we generalised one of the main theorems in \cite{DiazcaroGuillermoMiquelValironLICS19}. The inclusion of the basis type in our system allow us to reason more easily about the action of the operators and translate the proof onto a more general case. 
+\hl{Voy por acá}
+
+These results can be extended to unitary distributions of lambda abstractions, since $(\Lam{x}{X}{\sum_{i=1}^{n}\alpha_i \vv{t_i}})$ is syntactically different but computationally equivalent to $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})$. 
 
 
 \subsection{Typing rules}    
@@ -1372,7 +1409,7 @@ If both $\Delta_1$ and $\Delta_2$ are empty, we will note the judgement as $\SOR
     \noalign{\medskip}
     \infer[\snam{Sum}]
         {\TYP{\Gamma}{\sum_{i=1}^{n} \vv{t_i}}{\sharp A}}
-        {\forall i\neq j,\, \SORTH{\Gamma}{\vv t_i}{\vv t_j}{A} &
+        {\forall i\neq j,\, \SORTH{\Gamma}{\vv{t_i}}{\vv{t_j}}{A} &
         \sum_{i=1}^{n}|\alpha_i|^2 = 1}
     \\
     \noalign{\medskip}
@@ -1407,17 +1444,17 @@ The main result of this section, is the proof of validity of each of the rules p
     
     \item[Sub] Trivial since $\semr{A}\subseteq\semr{A'}$. 
 
-    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x_A:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv t_i}\subseteq \dom{\Gamma,x_A:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv t_i})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv t_i}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
+    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x_A:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x_A:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
     
     \begin{align*}
-        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{A}{\vv t_i}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{A}{\vv t_i}) [\sigma_i])) \vv{v} \\
-        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{A}{\vv t_i[\sigma_j]}))\vv v\\
-        &\to \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vv{t_i}[\sigma_j]\ansubst{\vv v/x}{A}\\
+        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{A}{\vv{t_i}}) [\sigma_i])) \vv{v} \\
+        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{A}{\vv{t_i}[\sigma_j]}))\vv v\\
+        &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vv{t_i}[\sigma_j]\ansubst{\vv v/x}{A}\\
         &=\sum_{i=1}^{n}\alpha_i \vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\\
         &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\qquad{\text{By \Cref{lem:distributiveSubstitution}}}
     \end{align*}
     
-    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\in\sem{\Gamma,x_A:A}$. Since we assume $\TYP{\Gamma, x_A:A}{\sum_{i=1}^{n}\alpha_i\vv t_i}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv t_i})\in\sem{A\Arr B}$.
+    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\in\sem{\Gamma,x_A:A}$. Since we assume $\TYP{\Gamma, x_A:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}})\in\sem{A\Arr B}$.
 
     \item[App] If the hypotheses are valid, then:
     \begin{itemize}
@@ -1510,12 +1547,12 @@ The main result of this section, is the proof of validity of each of the rules p
     
     Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from \Cref{thm:SharpCharacterization} we have that:
     
-    \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vv v_k}{\vv u_k})\] 
+    \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vv{v_k}}{\vv{u_k}})\] 
     
     With:
     \begin{itemize}
         \item $\sum_{k=1}^{l} |\gamma_k|^2 = 1$
-        \item $\forall k,\ \vv v_k\in\sem{A_1},\ \vv u_k\in\sem{A_2}$
+        \item $\forall k,\ \vv{v_k}\in\sem{A_1},\ \vv{u_k}\in\sem{A_2}$
         \item $\forall k\neq l, \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_l}}{\vv{u_l}}}= 0$
     \end{itemize}
     
@@ -1568,10 +1605,10 @@ The main result of this section, is the proof of validity of each of the rules p
     Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{v_k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
 
     \begin{align*}
-        (&\gencase{\vv{t}}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
-        &= (\gencase{\vv{t}}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &= (\sum_{i=1}^{n}\alpha_i \gencase{\vv{t}[\sigma_{\Gamma i}]}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{} \\
-        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
+        (&\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
+        &= (\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &= (\sum_{i=1}^{n}\alpha_i \gencase{\vv{t}[\sigma_{\Gamma i}]}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{} \\
+        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &=(\gencase{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &\eval(\gencase{e^{i\theta_1}\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &\lraneq e^{i\theta_1}(\vv{s_k}\ansubst{\sigma_\Delta}{})\\
@@ -1594,8 +1631,8 @@ The main result of this section, is the proof of validity of each of the rules p
     From this we can conclude that:
     
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vv{t}}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}}}$
-        \item $\FV{\gencase{\vv{t}}{\vv v_1}{\vv v_n}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}$
+        \item $\FV{\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
     \end{itemize}
     
     Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$, then $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vv{u}=e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{v_i})$ where $\sum_{i=1}^{n}|\beta_i|^2$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
@@ -1745,7 +1782,7 @@ On \Cref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ corresp
     \label{tab:Oracles}
 \end{table}
 
-Each of these oracles can be typed as $\B\to\B\to(\B\times\B)$. But since we are passing $\ket{+}$ and $\ket{-}$ as arguments, the typing we would be able to assign is: $\sharp\B\to\sharp\B\to\sharp(\B\times\B)$. Which means that the final typing for $\mathsf{Deutsch}$ would be:
+Each of these oracles can be typed as $\B\Arr\B\Arr(\B\times\B)$. But since we are passing $\ket{+}$ and $\ket{-}$ as arguments, the typing we would be able to assign is: $\sharp\B\Arr\sharp\B\Arr\sharp(\B\times\B)$. Which means that the final typing for $\mathsf{Deutsch}$ would be:
 \[
 \TYP{}{\mathsf{Deutsch}}{(\sharp\B\Arr\sharp\B\Arr(\sharp\B\Arr\sharp\B))\Arr\sharp(\B\times\B)}
 \]
@@ -1778,7 +1815,7 @@ However, this approach underutilizes the amount of information we have available
     \label{tab:DeutschShift}
 \end{table}
 
-In this case, for each of the oracles we can assign the type $\XB\to\XB\to\XB\times\XB$ and type the term $\mathsf{Deutsch}$ as $(\XB\to\XB\to\XB\times\XB)\to\B$. There is a key difference here, the type of the oracles ensure that the result will be in the basis state $\XB\times\XB$. In other words, the result will be a pair with either $\ket{+}$ or $\ket{-}$ in its components (up to a global phase). Since we know this fact, we can manipulate the result of $f$ as we would with classical bits, and discard the second component. 
+In this case, for each of the oracles we can assign the type $\XB\Arr\XB\Arr\XB\times\XB$ and type the term $\mathsf{Deutsch}$ as $(\XB\Arr\XB\Arr\XB\times\XB)\Arr\B$. There is a key difference here, the type of the oracles ensure that the result will be in the basis state $\XB\times\XB$. In other words, the result will be a pair with either $\ket{+}$ or $\ket{-}$ in its components (up to a global phase). Since we know this fact, we can manipulate the result of $f$ as we would with classical bits, and discard the second component. 
 
 Both functions are equivalent on an operational point of view. But reframing it onto a different basis, allows us to give a more tight typing to the terms and more insight on how the algorithm works. If we analize the typing judgements, we observe that none of the variables has a $\sharp$ type. This has two consequences, first we can safely discard the second qubit and second, the Hadamard transform guarantees that the first qubit will yield a boolean. This correlates with the fact that Deutsch's algorithm is deterministic and we can statically ensure the result will be a basis vector.
 
@@ -1826,7 +1863,7 @@ The mechanism needed to implement this idea is the decoration in $\lambda$-terms
 The reduction system itself orchestrates the computation and makes use of the syntax and substitution previously defined. The main point to note is that the evaluation commutes with the congruence relationship, ensuring that interpreting a vector in a different basis does not alter the result of the computation. And in turn, allows us to consider value distributions modulo this congruence.
 
 % Realizability model
-The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterize the abstractions that represent unitary functions. This is the main result of the section and is a generalisation of the characterization found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
+The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterise the abstractions that represent unitary functions. This is the main result of the section and is a generalisation of the characterisation found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
 
 % Typing system
 The other main result of the chapter is the validity of the several typing rules described in \Cref{tab:TypingRules}. Extracting them via the realizability technique, ensures their correctness and can later form the foundation of the type system for a programming language.
@@ -1902,9 +1939,9 @@ As well, we could try to give a translation into an intermediate language like Z
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
   $\ansubst{\vv v/x}{B}$ is defined:
   \[
-    \Bigl(\sum_i \alpha_i\vv t_i\Bigr)\ansubst{\vv v/x}{B}
+    \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
     \equiv
-    \sum_i \alpha_i\vv t_i \ansubst{\vv v/x}{B}.
+    \sum_i \alpha_i\vv{t_i} \ansubst{\vv v/x}{B}.
   \]
 \end{restatelemma}
 \begin{proof}
@@ -1912,9 +1949,9 @@ As well, we could try to give a translation into an intermediate language like Z
   $\vv{v}\equiv\sum_{j=1}^n\beta_j\vv{b_j}$ with each $\vv{b_j}\in B$.
   Then
   \begin{align*}
-    \Bigl(\sum_i \alpha_i\vv t_i\Bigr)\ansubst{\vv v/x}{B}
-    &= \sum_{j=1}^n \beta_j\Bigl(\sum_{i=1}^{n}\alpha_i t_i\Bigr)[\vv b_j/x]\\
-    &\equiv \sum_{i=1}^{n}\alpha_i\Bigl(\sum_{j=1}^n\beta_j t_i[\vv b_j/x]\Bigr)
+    \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
+    &= \sum_{j=1}^n \beta_j\Bigl(\sum_{i=1}^{n}\alpha_i t_i\Bigr)[\vv{b_j}/x]\\
+    &\equiv \sum_{i=1}^{n}\alpha_i\Bigl(\sum_{j=1}^n\beta_j t_i[\vv{b_j}/x]\Bigr)
     = \sum_{i=1}^{n}\alpha_i\vv{t_i}\ansubst{\vv v/x}{B}.
   \end{align*}
   The case $B=\AbsBasis$ is analogous.
@@ -2111,6 +2148,62 @@ As well, we could try to give a translation into an intermediate language like Z
   \qed
 \end{proof}
 
+\begin{restatelemma}[Restatement of \Cref{lem:BasesIso}]
+  Let $X$ and $Y$ be orthonormal bases of the same finite
+  dimension, and let $\Lam{x}{X}{\vv t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{X}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  if and only if 
+  for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
+  there exist value distributions
+  $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
+  \[
+    \vv{t}[\vv{v_i}/x]\eval\vv{w_i}
+    \quad\text{and}\quad
+    \vv{t}[\vv{v_j}/x]\eval\vv{w_j},
+    \quad\text{with } 
+    \vv{w_i}\perp\vv{w_j}\text{ whenever }i\neq j.
+  \]
+\end{restatelemma}
+\begin{proof}
+  \textit{The condition is necessary:} Suppose that $\Lam{x}{X}{\vv{t_k}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vv{v_i}\in\sem{\sharp\basis{X}},\ \vv{t}\ansubst{\vv{v_i}/x}{X}\eval\vv{w_i}\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vv{w_i} \perp \vv{w_j}$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
+  \begin{align*}
+    (\Lam{x}{X}{\vv{t}})(\sum_{i=1}^n \alpha_i \vv{v_i}) &\lra \vv t\ansubst{\sum_{i=1}^n \alpha_i \vv{v_i}/x}{X}
+    = \sum_{i=1}^{n} \alpha_i \vv{t}[\vv{v_i}/x] 
+    \eval \sum_{i=1}^n \alpha_i \vv{w_i}
+  \end{align*}
+
+  But since $\sum_{i=1}^n \alpha_i \vv{v_i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vv{w_i}\|=1$. Therefore:
+  \begin{align*}
+    1 = \|\sum_{i=1}^n \alpha_i \vv{w_i}\| &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i<j}^n 2~\Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \|\vv{w_i}\|^2 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 + 2\sum_{i,j=1; i<j}^n\Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}\\
+    &= 1 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}
+  \end{align*}
+
+  And thus we are left with $\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}} = 0$. Taking $\alpha_{i'} = \alpha_{j'} = \frac{1}{\sqrt{2}}$ with $0$ for the rest of coefficients, we have $\Rpart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. In the same way, taking $\alpha_{i'} = \frac{1}{\sqrt{2}}$ and $\alpha_{j'}=\frac{i}{\sqrt{2}}$ with $0$ for the rest of the coefficients, we have $\Ipart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. Finally, we can conclude that $\scal{\vv{w_i}}{\vv{w_j}}=0$ if $i\neq j$.
+
+  \textit{The condition is sufficient:} Suppose that there are $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that for every $\vv{v_i}\in\sem{\basis{X}}$:
+  \[
+    \vv t[\vv{v_i}/x] \eval \vv{w_i} \perp \vv{w_j} \lave \vv t[\vv{v_j}/x]\qquad \text{If } i\neq j
+  \]
+  Given any $\vv u\in\sem{\sharp\basis{X}}$ we have that $\vv u = \sum_{i=1}^n \alpha_i \vv{v_i}$ with $\sum_{i=1}^n |\alpha_i|^2 = 1$ and $\vv{v_i}\in\sem{\basis{X}}$. Then 
+  \[
+    (\Lam{x}{X}{\vv t}) \vv u \lra \vv{t_k}\ansubst{\vv u/x}{X}=\sum_{i=1}^{n}\alpha_i \vv{t}[\vv{v_i}/x]\eval\sum_{i=1}^n \alpha_i\vv{w_i}
+  \]
+
+  We have that for each $i$, $\vv{w_i}\in\sem{\sharp\basis{Y}}$. In order to show that $(\Lam{x}{A}{\vv t})\vv u\real\sharp\basis{Y}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vv{w_i}\| = 1$
+
+  \begin{align*}
+    \|\sum_{i=1}^n \alpha_i \vv{w_i}\|^2 &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 + 0\\
+    &= 1
+  \end{align*}
+
+  Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
+\end{proof}
 
 \section{A Proofs for validity of LetT}
 
