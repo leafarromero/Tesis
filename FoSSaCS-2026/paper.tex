@@ -980,7 +980,7 @@ significance, we assign the same type to a term~$\vv{t}$ and to
 $e^{i\theta}\vv{t}$. This idea will guide the definition of type
 realizers.
 
-\begin{definition}[Type realizer]
+\begin{definition}[Type realizer]\label{def:Realizer}
   Given a type~$A$ and a term distribution~$\vv t$, we say that~$\vv t$
   \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
   distribution~$\vv v$ such that:
@@ -1520,6 +1520,31 @@ The main result of this section is the validity of all the rules presented in
 
 \begin{theorem}\label{thm:TypingRulesValidity}
   All the typing rules in \Cref{tab:TypingRules} are valid.
+  \qed
+\end{theorem}
+
+
+The usual safety properties follow straightforwardly in this framework.
+\emph{Confluence} is an immediate consequence of the reduction being
+deterministic (cf.~\Cref{rmk:determinism}).  
+\emph{Strong normalisation} follows directly from the definition of a
+realizer (cf.~\Cref{def:Realizer}).  
+\emph{Subject reduction} is also immediate: indeed, if
+$\TYP{\Gamma}{\vv{t}}{A}$ and $\vv{t}\to\vv{u}$, then
+$\TYP{\Gamma}{\vv{u}}{A}$ by definition.
+
+However, if we restrict ourselves to a subset of typing rules—such as those
+presented in \Cref{tab:TypingRules}—we must
+ensure that this restricted system still suffices to type all reducts of a
+term, once the underlying realizability semantics is abstracted away.  In our
+case, the rules proven valid in \Cref{thm:TypingRulesValidity}
+suffice to guarantee subject reduction, as
+stated below.
+
+\begin{theorem}[Subject reduction]\label{thm:SubjectReduction}
+  If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
+  \Cref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
+  $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
   \qed
 \end{theorem}
 
@@ -2287,6 +2312,15 @@ As well, we could try to give a translation into an intermediate language like Z
     
     \item[Phase] It follows from the definition of type realizers.
     \end{description}
+\end{proof}
+
+\begin{restatetheorem}[Restatement of \Cref{thm:SubjectReduction}]
+  If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
+  \Cref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
+  $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
+\end{restatetheorem}
+\begin{proof}
+  {\color{red}TO-DO}
 \end{proof}
 
 \section{A Proofs for validity of LetT}
