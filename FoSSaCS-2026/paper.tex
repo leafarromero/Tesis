@@ -2275,6 +2275,247 @@ abstract programs in~$\lambdaB$ to concrete circuit implementations.
   Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
 \end{proof}
 
+Before proving the soundness of the typing rules (\Cref{thm:TypingRulesValidity}), we need the following results.
+
+\begin{theorem}\label{prop:InnerProdPairs} For all value distributions $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
+\[
+\scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}} = \scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}
+\]
+\begin{proof}
+    Let us write $\vv{v_1}=\sum_{i_1=1}^{n_1}\alpha_{i_1} v_{i_1}$, $\vv{v_2}=\sum_{i_2=1}^{n_2}\alpha'_{i_2} v_{i_2}$, $\vv{w_1}=\sum_{j_1=1}^{m_1}\beta_{j_1} w_{j_1}$ and $\vv{w_2}=\sum_{j_2=1}^{m_2}\beta'_{j_2} w_{j_2}$. Then we have:
+    \begin{align*}
+        &\scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}}\\
+        &=\scal{\sum_{i_1=1}^{n_1}\sum_{j_1=1}^{m_1} \alpha_{i_1}\beta'_{j_1}\Pair{v_{i_1}}{w_{j_1}}}{\sum_{i_2=1}^{n_2}\sum_{j_2=1}^{m_2} \alpha_{i_2}\beta'_{j_2}\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \scal{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{v_{i_1}}{v_{i_2}}\Kron{w_{j_1}}{w_{j_2}}\\
+        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Kron{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Kron{w_{j_1}}{w_{j_2}})\\
+        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Pair{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Pair{w_{j_1}}{w_{j_2}})\\
+        &=\scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}\\
+    \end{align*}
+\end{proof}  
+
+\end{theorem}
+
+\begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
+Given a type $A$, two vectors $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vv{u_0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
+\[
+\vv{u_1} + \alpha\vv{u_2} = \lambda \vv{u_0} 
+\]
+\end{lemma}
+\begin{proof}
+    Let $\lambda:=\|\vv{u_1}+\alpha\vv{u_2}\|$. When $\lambda\neq 0$, we take $\vv{u_0}=\frac{1}{\lambda}(\vv{u_1}+\alpha\vv{u_2})\in\sem{\sharp A}$, and we are done.
+
+    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vv{u_1}\|=0$ which is absurd since $\|\vv{u_1}\|=1$. Moreover, since $\lambda=\|\vv{u_1}+\alpha\vv{u_2}\|=0$, we observe that all the coefficients of the distribution $\vv{u_1}+\alpha\vv{u_2}$ are zeroes when written in canonical form which implies that:
+    \[
+    \vv{u_1}+\alpha\vv{u_2} = 0(\vv{u_1}+\alpha\vv{u_2}) = 0\vv{u_1}+0\vv{u_2}
+    \]
+    Using the triangular inequality we observe that:
+    \begin{align*}
+    0 &< 2|\alpha|\\
+    &= \|2\alpha\vv{u_2}\|\\
+    &\leq\|\vv{u_1}+\alpha\vv{u_2}\| + \|\vv{u_1 }+ (-\alpha)\vv{u_2}\|\\
+    &= \|\vv{u_1}+(-\alpha)\vv{u_2}\|
+    \end{align*}
+    Hence $\lambda' := \|\vv{u_1}+(-\alpha)\vv{u_2}\|>0$. Taking $\vv{u_0}:= \frac{1}{\lambda'}(\vv{u_1}+ (-\alpha)\vv{u_2})\in\sem{\sharp A}$, we easily see that:
+    \[
+    \vv{u_1}+\alpha\vv{u_2} = 0\vv{u_1} + 0\vv{u_2} = 0(\frac{1}{\lambda'} (\vv{u_1} + (-\alpha) \vv{u_2})) = \lambda \vv{u_0}
+    \]
+\end{proof}
+
+\begin{theorem}[Polarization identity]\label{prop:Polarization} %A6
+For all values $\vv{v}$ and $\vv{w}$ we have:
+\[
+  \scal{\vv{v}}{\vv{w}}=
+  \frac{1}{4} (\|\vv{v}+\vv{w}\|^2 - \|\vv{v} + (-1) \vv{w}\|^2 - i\|\vv{v} + i\vv{w}\|^2 + i\|\vv{v}+ (-i)\vv{w}\|^2)
+\]
+\end{theorem}
+
+\begin{lemma}\label{lem:InnerProdSingleVar} %A7
+Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value distributions $\vv{w_1}, \vv{w_2}\in\sem{C}$ such that:
+\[
+\begin{array}{c}
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
+\end{array}
+\]
+
+And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
+\end{lemma}
+
+\begin{proof}
+    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying \Cref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    
+    \begin{align*}
+        \vv{u_1} + \vv{u_2} = \lambda_1 \vv{u_{01}} & \vv{u_1} + i \vv{u_2} = \lambda_3 \vv{u_{03}} \\
+        \vv{u_1} + (-1) \vv{u_2} = \lambda_2 \vv{u_{02}} & \vv{u_1} + (-i) \vv{u_2} = \lambda_4 \vv{u_{04}} \\
+    \end{align*}
+
+    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, we also know that there are value distributions $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
+
+    \begin{align*}
+        \vv{w_1} + \vv{w_2} = \lambda_1 \vv{w_{01}} & \vv{w_1} + i \vv{w_2} = \lambda_3 \vv{w_{03}} \\
+        \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} \\
+    \end{align*}
+
+    Using the polarization identity (\Cref{prop:Polarization}), we conclude that:
+
+    \begin{align*}
+        &\scal{\vv{w_1}}{\vv{w_2}}\\
+        &= \frac{1}{4}(\|\vv{w_1}+\vv{w_2}\| - \|\vv{w_1} + (-1)\vv{w_2}\| - i \|\vv{v_1} + i \vv{v_2}\| + i \|\vv{v_1} + (-i) \vv{v_2}\|)\\
+        &= \frac{1}{4}((\lambda_1)^2\|\vv{w_{01}}\| - (\lambda_2)^2\|\vv{w_{02}}\| - i (\lambda_)^2 \|\vv{w_{03}}\| + i (\lambda_)^2\|\vv{w_{04}}\|)\\
+        &= \frac{1}{4}((\lambda_1)^2\|\vv{u_{01}}\| - (\lambda_2)^2\|\vv{u_{02}}\| - i (\lambda_)^2 \|\vv{u_{03}}\| + i (\lambda_)^2\|\vv{u_{04}}\|)\\
+        &= \frac{1}{4}(\|\vv{u_1}+\vv{u_2}\| - \|\vv{u_1} + (-1)\vv{u_2}\| - i \|\vv{u_1} + i \vv{u_2}\| + i \|\vv{u_1} + (-i) \vv{u_2}\|)\\
+        &=\scal{u_1}{u_2}
+    \end{align*}
+
+\end{proof}
+
+\begin{lemma}\label{lem:OrthogonalSubstitution} %A8
+Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
+\[
+\begin{array}{c}
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
+\end{array}
+\]
+And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
+\end{lemma}
+
+\begin{proof}
+    From \Cref{lem:VecRewrite} we know that there are $\vv{u_0}\in\sem{\sharp A}, \vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    \[
+    \vv{u_2} + (-1) \vv{u_1} = \lambda\vv{u_0}\quad\text{and}\quad\vv{v_2} + (-1) \vv{v_1} = \mu \vv{v_0}
+    \]
+    For all $j,k\in\{0,1,2\}$, we have $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_j}/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\eval\vv{w_{jk}}$. In particular, we can take $\vv{w_1}=\vv{w_{11}}$ and $\vv{w_2}=\vv{w_{22}}$. Now we observe that:
+    \begin{enumerate}
+        \item\label{A8:it1} $\vv{u_1}+\lambda\vv{u_0}= \vv{u_1} + \vv{u_2} + (-1) \vv{u_1}= \vv{u_2} + 0\vv{u_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \begin{array}{c c}
+            \begin{array}{c}
+                \vv{w_{1k}} + \lambda\vv{w_{0k}} = \vv{w_{2k}} + 0 \vv{w_{1k}}\\
+                \vv{w_{2k}} + (-\lambda)\vv{w_{0k}} = \vv{w_{1k}} + 0 \vv{w_{2k}}
+            \end{array}&
+            (\text{for all }k\in\{0,1,2\})
+        \end{array}
+        \]
+        
+        \item\label{A8:it2} $\vv{v_1}+\mu\vv{v_0}= \vv{v_1} + \vv{v_2} + (-1) \vv{v_1}= \vv{v_2} + 0\vv{v_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \begin{array}{c c}
+            \begin{array}{c}
+                \vv{w_{j1}} + \mu\vv{w_{j0}} = \vv{w_{j2}} + 0 \vv{w_{j1}}\\
+                \vv{w_{j2}} + (-\mu)\vv{w_{j0}} = \vv{w_{j1}} + 0 \vv{w_{j2}}
+            \end{array}&
+            (\text{for all }j\in\{0,1,2\})
+        \end{array}
+        \]
+        
+        \item\label{A8:it3} $\scal{\vv{u_1}}{\vv{u_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
+        
+        \item\label{A8:it4} $\scal{\vv{v_1}}{\vv{v_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
+    \end{enumerate}
+
+    From the above, we get:
+    \begin{align*}
+        \scal{\vv{w_1}}{\vv{w_2}} &= \scal{\vv{w_{11}}}{\vv{w_{22}}} = \scal{\vv{w_{11}}}{\vv{w_{22}}+0\vv{w_{12}}} & \\
+        &=\scal{\vv{w_{11}}}{\vv{w_{12}}+ \lambda\vv{w_{02}}} & (\text{from \Cref{A8:it1}, } k=2)\\
+        &=\scal{\vv{w_{11}}}{\vv{w_{12}}} + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} &\\
+        &= 0 + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} & (\text{from \Cref{A8:it4}, } j=1)\\
+        &= \lambda \scal{\vv{w_{11}} + 0\vv{w_{21}}}{\vv{w_{02}}} & \\
+        &= \lambda \scal{\vv{w_{21}} + (-\lambda)\vv{w_{01}}}{\vv{w_{02}}} & (\text{from \Cref{A8:it1}, } k=1)\\
+        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - |\lambda|^2 \scal{\vv{w_{01}}}{\vv{w_{02}}} & \\
+        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - 0 & (\text{from \Cref{A8:it4}, } j=0)\\
+        &=\scal{\vv{w_{21}}}{\vv{w_{22}}- \vv{w_{12}}} & \\
+        &=\scal{\vv{w_{21}}}{\vv{22}} - \scal{\vv{w_{21}}}{\vv{w_12}} & \\
+        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from \Cref{A8:it4}, } j=2)\\
+    \end{align*}
+    Hence $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
+    \[
+    \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\scal{\vv{w_{12}}}{\vv{w_{21}}}
+    \]
+    So that we have:
+    \[
+        \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\overline{\scal{\vv{w_{21}}}{\vv{w_{12}}}}\in\R
+    \]
+    If we now replace $\vv{u_2}\in\sem{\sharp A}$ with $i\vv{u_2}\in\sem{\sharp A}$, the very same technique allows us to prove that $i\scal{\vv{w_1}}{\vv{w_2}}=\scal{\vv{w_1}}{i \vv{w_2}}\in\R$. Therefore, $\scal{\vv{w_1}}{\vv{w_2}}=0$.
+\end{proof}
+
+\begin{lemma}\label{lem:UnitPreserTens} %A9
+Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and $\vv{v_1},\vv{v_2}\in\sem{\sharp B}$, there are value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
+\[
+\begin{array}{c}
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
+\end{array}
+\]
+
+And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{v_2}}$.
+
+\begin{proof}
+    Let $\alpha=\scal{\vv{u_1}}{\vv{u_2}}$ and $\beta=\scal{\vv{v_1}}{\vv{v_2}}$. We observe that:
+    \[
+    \scal{\vv{u_1}}{\vv{u_2}+(-\alpha)\vv{u_1}} = \scal{\vv{u_1}}{\vv{u_2}} - \alpha \scal{\vv{u_1}}{\vv{u_1}} = \alpha - \alpha = 0
+    \]
+    And similarly that, $\scal{\vv{v_1}}{\vv{v_2}+ (-\beta) \vv{v_1}} = 0$. From \Cref{lem:VecRewrite}, we know that there are $\vv{u_0}\in\sem{\sharp A}$, $\vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    \begin{align*}
+        \vv{u_2} +(-\alpha)\vv{u_1} = \lambda\vv{u_0}& \text{ and } & \vv{v_2} + (-\beta)\vv{v_1} = \mu\vv{v_0} 
+    \end{align*}
+    For all $j,k\in\{0,1,2\}$, we have$\ansubst{\sigma}{}\ansubst{\vv{u_j}/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\in\sem{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}$, hence there is $\vv{w_{jk}}\in\sem{C}$ such that:
+    \[
+    \vv{s}\ansubst{\sigma}{}\ansubst{u_j/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\eval\vv{w_{jk}}
+    \]
+    In particular, we can take $\vv{w_1}=\vv{w_{11}}$ and $\vv{w_2}=\vv{w_{22}}$. Now we observe that:
+    \begin{enumerate}
+        \item\label{A9:it1} $\lambda \vv{u_0} + \alpha\vv{u_1}=\vv{u_2} + (-\alpha) \vv{u_1} + \alpha \vv{u_1} = \vv{u_2} + 0 \vv{u_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \lambda\vv{w_{0k}} + \alpha \vv{w_{1k}} = \vv{w_{2k}} + 0 \vv{w_{1k}} \qquad(\text{for all }k\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it2} $\mu\vv{v_0} + \beta\vv{v_1}=\vv{v_2} + (-\beta) \vv{v_1} + \beta \vv{v_1} = \vv{v_2} + 0 \vv{v_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \mu\vv{w_{j0}} + \beta \vv{w_{j1}} = \vv{w_{j2}} + 0 \vv{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it3} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{u_1}}{\vv{u_2}+(- \alpha)\vv{u_1}}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
+        \[
+        \scal{\vv{w_{1k}}}{\lambda\vv{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it4} $\scal{\vv{v_1}}{\mu\vv{v_0}}=\scal{\vv{v_1}}{\vv{v_2} + (-\beta)}\vv{v_1}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
+        \[
+        \scal{\vv{w_{j1}}}{\mu\vv{w_{j0}}}=0
+        \]
+                
+        \item\label{A9:it5} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{v_1}}{\mu\vv{v_0}}=0$ so that from \Cref{lem:OrthogonalSubstitution} we get:
+        \[
+        \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}=0
+        \]
+        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vv{u_1}}{\vv{u_0}}=\scal{\vv{v_1}}{\vv{v_0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by \Cref{lem:OrthogonalSubstitution})
+    \end{enumerate}
+
+    From above, we get:
+    \begin{align*}
+        \vv{w_{22}} + 0\vv{w_{12}} + &0\vv{w_{01}} + 0\vv{w_{11}} \\
+        &= \lambda\vv{w_{02}} + \alpha\vv{w_{12}} + 0\vv{w_{01}} + 0\vv{w_{11}} & (\text{from~\Cref{A9:it1}}, k =1)\\
+        &= \lambda(\vv{w_{02}}+0\vv{w_{01}}) + \alpha(\vv{w_{12}}+0\vv{w_{11}})&\\
+        &= \lambda(\mu\vv{w_{00}} + \beta\vv{w_{01}}) + \alpha(\mu\vv{w_{01}}+\beta\vv{w_{11}}) & (\text{from~\Cref{A9:it2}}, j=0,1)\\
+        &= \lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10} + \alpha\beta\vv{w_{11}}}
+    \end{align*}
+    Therefore:
+    \begin{align*}
+        &\scal{\vv{w_1}}{\vv{w_2}} \\
+        &= \scal{\vv{w_{11}}}{\vv{w_{22}} + 0 \vv{w_{12}} + 0 \vv{w_{01}} + 0 \vv{w_{11}}}\\
+        &= \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10} + \alpha\beta\vv{w_{11}}}}\\
+        &=\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}} + \scal{\vv{w_{11}}}{\lambda\beta\vv{w_{01}}} + \scal{\vv{w_{11}}}{\alpha\mu\vv{w_{10}}} + \scal{\vv{w_{11}}}{\alpha\beta\vv{w_{11}}}\\
+        &=\lambda\mu\scal{\vv{w_{11}}}{\vv{w_{00}}} + \lambda\beta\scal{\vv{w_{11}}}{\vv{w_{01}}} + \alpha\mu\scal{\vv{w_{11}}}{\vv{w_{10}}} + \alpha\beta\scal{\vv{w_{11}}}{\vv{w_{11}}}\\
+        &= 0 + 0 + 0 + \alpha\beta = \scal{\vv{u_1}}{\vv{u_2}}\scal{\vv{v_1}}{\vv{v_2}}
+    \end{align*}
+    From~\Cref{A9:it5,A9:it3,A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
+\end{proof}
+\end{lemma}
+
+Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
 \begin{restatetheorem}[Restatement of \Cref{thm:TypingRulesValidity}]
   \itshape
   All the typing rules in \Cref{tab:TypingRules} are valid.
@@ -2639,247 +2880,5 @@ abstract programs in~$\lambdaB$ to concrete circuit implementations.
       \qedhere
   \end{itemize}
 \end{proof}
-
-\section{A Proofs for validity of LetT}
-
-\begin{theorem}\label{prop:InnerProdPairs} For all value distributions $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
-\[
-\scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}} = \scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}
-\]
-\begin{proof}
-    Let us write $\vv{v_1}=\sum_{i_1=1}^{n_1}\alpha_{i_1} v_{i_1}$, $\vv{v_2}=\sum_{i_2=1}^{n_2}\alpha'_{i_2} v_{i_2}$, $\vv{w_1}=\sum_{j_1=1}^{m_1}\beta_{j_1} w_{j_1}$ and $\vv{w_2}=\sum_{j_2=1}^{m_2}\beta'_{j_2} w_{j_2}$. Then we have:
-    \begin{align*}
-        &\scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}}\\
-        &=\scal{\sum_{i_1=1}^{n_1}\sum_{j_1=1}^{m_1} \alpha_{i_1}\beta'_{j_1}\Pair{v_{i_1}}{w_{j_1}}}{\sum_{i_2=1}^{n_2}\sum_{j_2=1}^{m_2} \alpha_{i_2}\beta'_{j_2}\Pair{v_{i_2}}{w_{j_2}}}\\
-        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \scal{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
-        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
-        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{v_{i_1}}{v_{i_2}}\Kron{w_{j_1}}{w_{j_2}}\\
-        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Kron{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Kron{w_{j_1}}{w_{j_2}})\\
-        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Pair{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Pair{w_{j_1}}{w_{j_2}})\\
-        &=\scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}\\
-    \end{align*}
-\end{proof}  
-
-\end{theorem}
-
-\begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
-Given a type $A$, two vectors $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vv{u_0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
-\[
-\vv{u_1} + \alpha\vv{u_2} = \lambda \vv{u_0} 
-\]
-\end{lemma}
-\begin{proof}
-    Let $\lambda:=\|\vv{u_1}+\alpha\vv{u_2}\|$. When $\lambda\neq 0$, we take $\vv{u_0}=\frac{1}{\lambda}(\vv{u_1}+\alpha\vv{u_2})\in\sem{\sharp A}$, and we are done.
-
-    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vv{u_1}\|=0$ which is absurd since $\|\vv{u_1}\|=1$. Moreover, since $\lambda=\|\vv{u_1}+\alpha\vv{u_2}\|=0$, we observe that all the coefficients of the distribution $\vv{u_1}+\alpha\vv{u_2}$ are zeroes when written in canonical form which implies that:
-    \[
-    \vv{u_1}+\alpha\vv{u_2} = 0(\vv{u_1}+\alpha\vv{u_2}) = 0\vv{u_1}+0\vv{u_2}
-    \]
-    Using the triangular inequality we observe that:
-    \begin{align*}
-    0 &< 2|\alpha|\\
-    &= \|2\alpha\vv{u_2}\|\\
-    &\leq\|\vv{u_1}+\alpha\vv{u_2}\| + \|\vv{u_1 }+ (-\alpha)\vv{u_2}\|\\
-    &= \|\vv{u_1}+(-\alpha)\vv{u_2}\|
-    \end{align*}
-    Hence $\lambda' := \|\vv{u_1}+(-\alpha)\vv{u_2}\|>0$. Taking $\vv{u_0}:= \frac{1}{\lambda'}(\vv{u_1}+ (-\alpha)\vv{u_2})\in\sem{\sharp A}$, we easily see that:
-    \[
-    \vv{u_1}+\alpha\vv{u_2} = 0\vv{u_1} + 0\vv{u_2} = 0(\frac{1}{\lambda'} (\vv{u_1} + (-\alpha) \vv{u_2})) = \lambda \vv{u_0}
-    \]
-\end{proof}
-
-\begin{theorem}[Polarization identity]\label{prop:Polarization} %A6
-For all values $\vv{v}$ and $\vv{w}$ we have:
-\begin{align*}
-&\scal{\vv{v}}{\vv{w}}=\\
-&\frac{1}{4} (\|\vv{v}+\vv{w}\|^2 - \|\vv{v} + (-1) \vv{w}\|^2 - i\|\vv{v} + i\vv{w}\|^2 + i\|\vv{v}+ (-i)\vv{w}\|^2)
-\end{align*}
-\end{theorem}
-
-\begin{lemma}\label{lem:InnerProdSingleVar} %A7
-Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value distributions $\vv{w_1}, \vv{w_2}\in\sem{C}$ such that:
-\[
-\begin{array}{c}
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
-\end{array}
-\]
-
-And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
-\end{lemma}
-
-\begin{proof}
-    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying \Cref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
-    
-    \begin{align*}
-        \vv{u_1} + \vv{u_2} = \lambda_1 \vv{u_{01}} & \vv{u_1} + i \vv{u_2} = \lambda_3 \vv{u_{03}} \\
-        \vv{u_1} + (-1) \vv{u_2} = \lambda_2 \vv{u_{02}} & \vv{u_1} + (-i) \vv{u_2} = \lambda_4 \vv{u_{04}} \\
-    \end{align*}
-
-    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, we also know that there are value distributions $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
-
-    \begin{align*}
-        \vv{w_1} + \vv{w_2} = \lambda_1 \vv{w_{01}} & \vv{w_1} + i \vv{w_2} = \lambda_3 \vv{w_{03}} \\
-        \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} \\
-    \end{align*}
-
-    Using the polarization identity (\Cref{prop:Polarization}), we conclude that:
-
-    \begin{align*}
-        &\scal{\vv{w_1}}{\vv{w_2}}\\
-        &= \frac{1}{4}(\|\vv{w_1}+\vv{w_2}\| - \|\vv{w_1} + (-1)\vv{w_2}\| - i \|\vv{v_1} + i \vv{v_2}\| + i \|\vv{v_1} + (-i) \vv{v_2}\|)\\
-        &= \frac{1}{4}((\lambda_1)^2\|\vv{w_{01}}\| - (\lambda_2)^2\|\vv{w_{02}}\| - i (\lambda_)^2 \|\vv{w_{03}}\| + i (\lambda_)^2\|\vv{w_{04}}\|)\\
-        &= \frac{1}{4}((\lambda_1)^2\|\vv{u_{01}}\| - (\lambda_2)^2\|\vv{u_{02}}\| - i (\lambda_)^2 \|\vv{u_{03}}\| + i (\lambda_)^2\|\vv{u_{04}}\|)\\
-        &= \frac{1}{4}(\|\vv{u_1}+\vv{u_2}\| - \|\vv{u_1} + (-1)\vv{u_2}\| - i \|\vv{u_1} + i \vv{u_2}\| + i \|\vv{u_1} + (-i) \vv{u_2}\|)\\
-        &=\scal{u_1}{u_2}
-    \end{align*}
-
-\end{proof}
-
-\begin{lemma}\label{lem:OrthogonalSubstitution} %A8
-Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
-\[
-\begin{array}{c}
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
-\end{array}
-\]
-And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
-\end{lemma}
-
-\begin{proof}
-    From \Cref{lem:VecRewrite} we know that there are $\vv{u_0}\in\sem{\sharp A}, \vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
-    \[
-    \vv{u_2} + (-1) \vv{u_1} = \lambda\vv{u_0}\quad\text{and}\quad\vv{v_2} + (-1) \vv{v_1} = \mu \vv{v_0}
-    \]
-    For all $j,k\in\{0,1,2\}$, we have $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_j}/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\eval\vv{w_{jk}}$. In particular, we can take $\vv{w_1}=\vv{w_{11}}$ and $\vv{w_2}=\vv{w_{22}}$. Now we observe that:
-    \begin{enumerate}
-        \item\label{A8:it1} $\vv{u_1}+\lambda\vv{u_0}= \vv{u_1} + \vv{u_2} + (-1) \vv{u_1}= \vv{u_2} + 0\vv{u_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
-        \[
-        \begin{array}{c c}
-            \begin{array}{c}
-                \vv{w_{1k}} + \lambda\vv{w_{0k}} = \vv{w_{2k}} + 0 \vv{w_{1k}}\\
-                \vv{w_{2k}} + (-\lambda)\vv{w_{0k}} = \vv{w_{1k}} + 0 \vv{w_{2k}}
-            \end{array}&
-            (\text{for all }k\in\{0,1,2\})
-        \end{array}
-        \]
-        
-        \item\label{A8:it2} $\vv{v_1}+\mu\vv{v_0}= \vv{v_1} + \vv{v_2} + (-1) \vv{v_1}= \vv{v_2} + 0\vv{v_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
-        \[
-        \begin{array}{c c}
-            \begin{array}{c}
-                \vv{w_{j1}} + \mu\vv{w_{j0}} = \vv{w_{j2}} + 0 \vv{w_{j1}}\\
-                \vv{w_{j2}} + (-\mu)\vv{w_{j0}} = \vv{w_{j1}} + 0 \vv{w_{j2}}
-            \end{array}&
-            (\text{for all }j\in\{0,1,2\})
-        \end{array}
-        \]
-        
-        \item\label{A8:it3} $\scal{\vv{u_1}}{\vv{u_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
-        
-        \item\label{A8:it4} $\scal{\vv{v_1}}{\vv{v_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
-    \end{enumerate}
-
-    From the above, we get:
-    \begin{align*}
-        \scal{\vv{w_1}}{\vv{w_2}} &= \scal{\vv{w_{11}}}{\vv{w_{22}}} = \scal{\vv{w_{11}}}{\vv{w_{22}}+0\vv{w_{12}}} & \\
-        &=\scal{\vv{w_{11}}}{\vv{w_{12}}+ \lambda\vv{w_{02}}} & (\text{from \Cref{A8:it1}, } k=2)\\
-        &=\scal{\vv{w_{11}}}{\vv{w_{12}}} + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} &\\
-        &= 0 + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} & (\text{from \Cref{A8:it4}, } j=1)\\
-        &= \lambda \scal{\vv{w_{11}} + 0\vv{w_{21}}}{\vv{w_{02}}} & \\
-        &= \lambda \scal{\vv{w_{21}} + (-\lambda)\vv{w_{01}}}{\vv{w_{02}}} & (\text{from \Cref{A8:it1}, } k=1)\\
-        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - |\lambda|^2 \scal{\vv{w_{01}}}{\vv{w_{02}}} & \\
-        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - 0 & (\text{from \Cref{A8:it4}, } j=0)\\
-        &=\scal{\vv{w_{21}}}{\vv{w_{22}}- \vv{w_{12}}} & \\
-        &=\scal{\vv{w_{21}}}{\vv{22}} - \scal{\vv{w_{21}}}{\vv{w_12}} & \\
-        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from \Cref{A8:it4}, } j=2)\\
-    \end{align*}
-    Hence $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
-    \[
-    \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\scal{\vv{w_{12}}}{\vv{w_{21}}}
-    \]
-    So that we have:
-    \[
-        \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\overline{\scal{\vv{w_{21}}}{\vv{w_{12}}}}\in\R
-    \]
-    If we now replace $\vv{u_2}\in\sem{\sharp A}$ with $i\vv{u_2}\in\sem{\sharp A}$, the very same technique allows us to prove that $i\scal{\vv{w_1}}{\vv{w_2}}=\scal{\vv{w_1}}{i \vv{w_2}}\in\R$. Therefore, $\scal{\vv{w_1}}{\vv{w_2}}=0$.
-\end{proof}
-
-\begin{lemma}\label{lem:UnitPreserTens} %A9
-Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and $\vv{v_1},\vv{v_2}\in\sem{\sharp B}$, there are value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
-\[
-\begin{array}{c}
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
-\end{array}
-\]
-
-And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{v_2}}$.
-
-\begin{proof}
-    Let $\alpha=\scal{\vv{u_1}}{\vv{u_2}}$ and $\beta=\scal{\vv{v_1}}{\vv{v_2}}$. We observe that:
-    \[
-    \scal{\vv{u_1}}{\vv{u_2}+(-\alpha)\vv{u_1}} = \scal{\vv{u_1}}{\vv{u_2}} - \alpha \scal{\vv{u_1}}{\vv{u_1}} = \alpha - \alpha = 0
-    \]
-    And similarly that, $\scal{\vv{v_1}}{\vv{v_2}+ (-\beta) \vv{v_1}} = 0$. From \Cref{lem:VecRewrite}, we know that there are $\vv{u_0}\in\sem{\sharp A}$, $\vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
-    \begin{align*}
-        \vv{u_2} +(-\alpha)\vv{u_1} = \lambda\vv{u_0}& \text{ and } & \vv{v_2} + (-\beta)\vv{v_1} = \mu\vv{v_0} 
-    \end{align*}
-    For all $j,k\in\{0,1,2\}$, we have$\ansubst{\sigma}{}\ansubst{\vv{u_j}/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\in\sem{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}$, hence there is $\vv{w_{jk}}\in\sem{C}$ such that:
-    \[
-    \vv{s}\ansubst{\sigma}{}\ansubst{u_j/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\eval\vv{w_{jk}}
-    \]
-    In particular, we can take $\vv{w_1}=\vv{w_{11}}$ and $\vv{w_2}=\vv{w_{22}}$. Now we observe that:
-    \begin{enumerate}
-        \item\label{A9:it1} $\lambda \vv{u_0} + \alpha\vv{u_1}=\vv{u_2} + (-\alpha) \vv{u_1} + \alpha \vv{u_1} = \vv{u_2} + 0 \vv{u_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
-        \[
-        \lambda\vv{w_{0k}} + \alpha \vv{w_{1k}} = \vv{w_{2k}} + 0 \vv{w_{1k}} \qquad(\text{for all }k\in\{0,1,2\})
-        \]
-        
-        \item\label{A9:it2} $\mu\vv{v_0} + \beta\vv{v_1}=\vv{v_2} + (-\beta) \vv{v_1} + \beta \vv{v_1} = \vv{v_2} + 0 \vv{v_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
-        \[
-        \mu\vv{w_{j0}} + \beta \vv{w_{j1}} = \vv{w_{j2}} + 0 \vv{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
-        \]
-        
-        \item\label{A9:it3} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{u_1}}{\vv{u_2}+(- \alpha)\vv{u_1}}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
-        \[
-        \scal{\vv{w_{1k}}}{\lambda\vv{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
-        \]
-        
-        \item\label{A9:it4} $\scal{\vv{v_1}}{\mu\vv{v_0}}=\scal{\vv{v_1}}{\vv{v_2} + (-\beta)}\vv{v_1}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
-        \[
-        \scal{\vv{w_{j1}}}{\mu\vv{w_{j0}}}=0
-        \]
-                
-        \item\label{A9:it5} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{v_1}}{\mu\vv{v_0}}=0$ so that from \Cref{lem:OrthogonalSubstitution} we get:
-        \[
-        \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}=0
-        \]
-        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vv{u_1}}{\vv{u_0}}=\scal{\vv{v_1}}{\vv{v_0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by \Cref{lem:OrthogonalSubstitution})
-    \end{enumerate}
-
-    From above, we get:
-    \begin{align*}
-        \vv{w_{22}} + 0\vv{w_{12}} + &0\vv{w_{01}} + 0\vv{w_{11}} \\
-        &= \lambda\vv{w_{02}} + \alpha\vv{w_{12}} + 0\vv{w_{01}} + 0\vv{w_{11}} & (\text{from~\Cref{A9:it1}}, k =1)\\
-        &= \lambda(\vv{w_{02}}+0\vv{w_{01}}) + \alpha(\vv{w_{12}}+0\vv{w_{11}})&\\
-        &= \lambda(\mu\vv{w_{00}} + \beta\vv{w_{01}}) + \alpha(\mu\vv{w_{01}}+\beta\vv{w_{11}}) & (\text{from~\Cref{A9:it2}}, j=0,1)\\
-        &= \lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10} + \alpha\beta\vv{w_{11}}}
-    \end{align*}
-    Therefore:
-    \begin{align*}
-        &\scal{\vv{w_1}}{\vv{w_2}} \\
-        &= \scal{\vv{w_{11}}}{\vv{w_{22}} + 0 \vv{w_{12}} + 0 \vv{w_{01}} + 0 \vv{w_{11}}}\\
-        &= \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10} + \alpha\beta\vv{w_{11}}}}\\
-        &=\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}} + \scal{\vv{w_{11}}}{\lambda\beta\vv{w_{01}}} + \scal{\vv{w_{11}}}{\alpha\mu\vv{w_{10}}} + \scal{\vv{w_{11}}}{\alpha\beta\vv{w_{11}}}\\
-        &=\lambda\mu\scal{\vv{w_{11}}}{\vv{w_{00}}} + \lambda\beta\scal{\vv{w_{11}}}{\vv{w_{01}}} + \alpha\mu\scal{\vv{w_{11}}}{\vv{w_{10}}} + \alpha\beta\scal{\vv{w_{11}}}{\vv{w_{11}}}\\
-        &= 0 + 0 + 0 + \alpha\beta = \scal{\vv{u_1}}{\vv{u_2}}\scal{\vv{v_1}}{\vv{v_2}}
-    \end{align*}
-    From~\Cref{A9:it5,A9:it3,A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
-\end{proof}
-\end{lemma}
-
-
 
 \end{document}
