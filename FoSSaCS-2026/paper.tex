@@ -1738,8 +1738,6 @@ The $\lambda$-term takes the state $\ket{\phi}$ as an argument, then matches the
 
 The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases. The final type of the term is $\sharp\basis{\B}\Arr \sharp\basis{\Bell}\times \sharp\basis{\B}$.
 
-{\color{red} TODO: HABLAR DEL PAPER DE SIMON ACÁ EN UNA NUEVA SUBSECTION}
-
 \section{Conclusion}\label{sec:conclusion}
 
 % Introduction
@@ -2494,7 +2492,23 @@ As well, we could try to give a translation into an intermediate language like Z
   \).
 \end{restatelemma}
 \begin{proof}
-  \hl{TO-DO}
+  We assume $\dom{\Gamma}\cap\dom{\Delta}=\emptyset$, otherwise we just perform variable renamings. If the hypothesis are valid, then:
+  \begin{itemize}
+  \item $\vv{t}\ansubst{\sigma}{}\real B$ for every $\sigma\in\sem{\Gamma,\,x^{X}\!:\!A}$
+  \item $\vv{v}\ansubst{\sigma}{}\real A$ for every $\sigma\in\sem{\Delta}$
+  \end{itemize}
+
+  For every $\sigma\in\sem{\Gamma,\Delta}$ we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
+  \begin{align*}
+    \vv{t}\ansubst{\vv{v}/x}{X}\ansubst{\sigma}{} &= \vv{t}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+    &=\vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}\ansubst{\sigma_\Delta}{}/x}{X}\quad\text{since }\dom{\sigma_\Gamma}\cap\dom{\sigma_\Delta}=\emptyset\\
+    &\eval \vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{e^{i\theta_1}\vv{w}/x}{X}\quad \text{with } \vv{w}\in\sem{A} \text{ since } \TYP{\Delta}{\vv{v}}{A}
+  \end{align*}
+  Since the substitution $\ansubst{\sigma_\Gamma}{}\ansubst{e^{i\theta_1}\vv{w}/x}{X}\in\sem{\Gamma,\,x^{X}\!:\!A}$, we have that:
+  \[
+    \vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{e^{i\theta_1}\vv{w}/x}{X}\eval e^{i\theta_2}\vv{u} \qquad\text{with }\vv{u}\in\sem{B}
+  \]
+  Then we can finally conclude, $\TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}$.
 \end{proof}
 
 \begin{restatetheorem}[Restatement of \Cref{thm:SubjectReduction}]
