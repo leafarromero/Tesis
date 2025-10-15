@@ -1551,12 +1551,12 @@ stated below.
     \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
     \quad\text{and}\quad
     \TYP{\Delta}{\vv{v}}{A}
-  \),
+  \) can be derived using the set of rules in \Cref{tab:TypingRules},
   and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
   then
   \(
     \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
-  \).
+  \) can also be derived by the same set of rules.
   \qed
 \end{lemma}
 
@@ -2560,12 +2560,13 @@ abstract programs in~$\lambdaB$ to concrete circuit implementations.
     \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
     \quad\text{and}\quad
     \TYP{\Delta}{\vv{v}}{A}
-  \),
+  \) can be derived using the set of rules in \Cref{tab:TypingRules},
   and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
   then
   \(
     \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
-  \).
+  \) can also be derived by the same set of rules.
+
 \end{restatelemma}
 \begin{proof}
   We assume $\dom{\Gamma}\cap\dom{\Delta}=\emptyset$, otherwise we just perform variable renamings. If the hypothesis are valid, then:
