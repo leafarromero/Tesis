@@ -2143,19 +2143,17 @@ As well, we could try to give a translation into an intermediate language like Z
     \begin{description}
     \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x^B:A}$, we have $\sigma=\ansubst{\vv v/x}{B}$ for some $\vv{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vv v}{B}=\vv{v}\real A$.
     
-    \item[Sub] Trivial since $\semr{A}\subseteq\semr{A'}$. 
-
-    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^A:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x_A:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
+    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^X:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x^X:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
     
     \begin{align*}
-        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{A}{\vv{t_i}}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{A}{\vv{t_i}}) [\sigma_i])) \vv{v} \\
-        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{A}{\vv{t_i}[\sigma_j]}))\vv v\\
-        &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vv{t_i}[\sigma_j]\ansubst{\vv v/x}{A}\\
-        &=\sum_{i=1}^{n}\alpha_i \vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\\
-        &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\qquad{\text{By \Cref{lem:distributiveSubstitution}}}
+        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{X}{\vv{t_i}}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{X}{\vv{t_i}}) [\sigma_i])) \vv{v} \\
+        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{X}{\vv{t_i}[\sigma_j]}))\vv v\\
+        &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vv{t_i}[\sigma_j]\ansubst{\vv v/x}{X}\\
+        &=\sum_{i=1}^{n}\alpha_i \vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\\
+        &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\qquad{\text{By \Cref{lem:distributiveSubstitution}}}
     \end{align*}
     
-    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\in\sem{\Gamma,x_A:A}$. Since we assume $\TYP{\Gamma, x_A:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{A}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{A}{\vv{t_i}})\in\sem{A\Arr B}$.
+    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})\in\sem{A\Arr B}$.
 
     \item[App] If the hypotheses are valid, then:
     \begin{itemize}
@@ -2179,7 +2177,7 @@ As well, we could try to give a translation into an intermediate language like Z
     \end{align*}
     
     Then we can conclude that $(\vv{t}\vv{s})\ansubst{\sigma}{}\real B$.
-    
+
     \item[Pair] If the hypotheses are valid, then:
 
     \begin{itemize}
@@ -2197,80 +2195,80 @@ As well, we could try to give a translation into an intermediate language like Z
         &=\Pair{\sum_{i=1}^{n} \alpha_i \vv{t}\, [\sigma_{\Gamma i}]}{\sum_{j=1}^{m} \beta_j \vv{s}\, [\sigma_{\Delta j}]}\\
         &=\Pair{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
         &\eval \Pair{e^{i\theta_1}\vv v}{e^{i\theta_2}\vv w}\qquad\text{where: }\vv{v}\in\sem{A}, \vv{w}\in\sem{B}\\
-        &= e^{i\theta} \Pair{\vv{v}}{\vv{w}}\qquad\text{where: }\vv{v}\in\sem{A},\vv{w}\in\sem{B}
+        &= e^{i\theta} \Pair{\vv{v}}{\vv{w}}\qquad\text{where: }\theta=\theta_1 + \theta_2
     \end{align*}
     
-    From this we can conclude that $\Pair{\vv t}{\vv{s}}\ansubst{\sigma}{}\real A\times B$. Finally, $\TYP{\Gamma,\Delta}{\Pair{\vv{t}}{\vv{s}}}{A\times B}$
+    From this we can conclude that $\Pair{\vv t}{\vv{s}}\ansubst{\sigma}{}\real A\times B$.
     
     \item[LetPair] If the hypotheses are valid, then:
     \begin{itemize}
         \item $\sdom{\Gamma}\subseteq \FV{\vv t} \subseteq \dom{\Gamma}$ and $\vv t \ansubst{\sigma_\Gamma}{}\Vdash A\times B\ \forall \sigma_\Gamma\in\sem\Gamma$
-        \item $\sdom{\Delta, {x_1}_{B_1}:A_1, {x_2}_{B_2}:A_2}\subseteq\FV{\vv s}$
-        \item $\FV{\vv{s}}\subseteq \dom{\Delta,{x_1}_{B_1}:A_1, {x_2}_{B_2}:A_2}$
-        \item $\vv s \ansubst{\sigma_\Delta}{}\Vdash C\ \forall \sigma_\Delta\in\sem{\Delta, {x_1}_{B_1}:A_1, {x_2}_{B_2}:A_2}$
+        \item $\sdom{\Delta, {x}^{X}:A, {y}^{Y}:B}\subseteq\FV{\vv s}$
+        \item $\FV{\vv{s}}\subseteq \dom{\Delta, {x}^{X}:A, {y}^{Y}:B}$
+        \item $\vv s \ansubst{\sigma_\Delta}{}\Vdash C\ \forall \sigma_\Delta\in\sem{\Delta, {x}^{X}:A, {y}^{Y}:B}$
     \end{itemize}
     From this, we can conclude that:
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{B_1}{y}{B_2}{\vv{s}}{\vv{t}}}$
-        \item $\FV{\LetP{x}{B_1}{y}{B_2}{\vv{s}}{\vv{t}}}\subseteq\dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y}{\vv{s}}{\vv{t}}}$
+        \item $\FV{\LetP{x}{X}{y}{Y}{\vv{s}}{\vv{t}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
     Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Then we have:
     \begin{align*}
-        (&\LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{s}})\ansubst{\sigma}{} = \\
-        &(\LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{s}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &= \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(\LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{s}})[\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
-        &\equiv \LetP{x}{B_1}{y}{B_2}{\sum_{i=1}^{n}\alpha_i[\sigma_{\Gamma i}]\vv{t}}{\sum_{j=1}^{m}\beta_j \vv{s}[\sigma_{\Delta j}]}\\
-        &= \LetP{x}{B_1}{y}{B_2}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\eval \LetP{x}{B_1}{y}{B_2}{e^{i\theta} \Pair{\vv{v}}{\vv{w}}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
+        (&\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{} = \\
+        &(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &= (\sum_{i=1}^{n}\alpha_i(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})[\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta j}}{}\\
+        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i[\sigma_{\Gamma i}]\vv{t}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
+        &= (\LetP{x}{X}{y}{Y}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
+        &\eval (\LetP{x}{X}{y}{Y}{e^{i\theta} \Pair{\vv{v}}{\vv{w}}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
         &\hspace*{4cm}{\text{Where: }}\vv{v}\in\sem{A},\vv{w}\in\sem{B}\\
-        &\lraneq e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vv{v}}{\vv{w}}/x_1\otimes x_2}{B_1\otimes B_2})\\
-        &= e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x_1}{B_1}\ansubst{\vv{w}/x_2}{B_2})\\
+        &\lra e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vv{v}}{\vv{w}}/x\otimes y}{X\otimes Y})\\
+        &= e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x}{X}\ansubst{\vv{w}/y}{Y})\\
         &\eval e^{i\theta_1}  (e^{i\theta_2}  \vv{u})\qquad\text{where: }\vv{u}\in\sem{C}\\
         &\equiv e^{i\theta}  \vv{u}\qquad\text{where: }\theta=\theta_1 + \theta_2
     \end{align*}
     
-    Since $\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x_1}{B_1}\ansubst{\vv{w}/x_2}{B_2}\in\sem{\Delta,{x_1}_{B_1}:A_1,{x_2}_{B_2}:A_2}$, then we can conclude that $(\LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real C$.
+    Since $\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x}{X}\ansubst{\vv{w}/y}{Y}\in\sem{\Delta,{x}^{X}:A,{y}^Y:B}$, then we can conclude that $(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real C$.
 
     \item[LetTens] If the hypotheses are valid then:
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv t} \subseteq \dom{\Gamma}$ and $\vv t \ansubst{\sigma}{}\Vdash A\otimes B\ \forall \sigma\in\sem\Gamma$
-        \item $\sdom{\Delta, {x_1}_{B_1}:\sharp A_1, {x_2}_{B_2}:\sharp A_2}\subseteq \FV{\vv s}$
-        \item $\subseteq \dom{\Delta,{x_1}:{B_1}, {x_2}_{B_2}:A_2}$
-        \item $\vv s \ansubst{\sigma}{}\Vdash \sharp C\ \forall \sigma\in\sem{\Delta, {x_1}_{B_1}:\sharp A_1, {x_2}_{B_2}:\sharp A_2}$
+        \item $\sdom{\Gamma}\subseteq \FV{\vv t} \subseteq \dom{\Gamma}$ and $\vv t \ansubst{\sigma}{}\Vdash \sharp(A\times B)\ \forall \sigma\in\sem\Gamma$
+        \item $\sdom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}\subseteq \FV{\vv s}$
+        \item $\subseteq \dom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
+        \item $\vv s \ansubst{\sigma}{}\Vdash \sharp C\ \forall \sigma\in\sem{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
     \end{itemize}
     
     From this we can conclude that:
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}}$
-        \item $\FV{\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}}\subseteq\dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y|}{\vv{t}}{\vv{s}}}$
+        \item $\FV{\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A_1\times A_2)$, from \Cref{thm:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from \Cref{thm:SharpCharacterization} we have that:
     
     \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vv{v_k}}{\vv{u_k}})\] 
     
     With:
     \begin{itemize}
         \item $\sum_{k=1}^{l} |\gamma_k|^2 = 1$
-        \item $\forall k,\ \vv{v_k}\in\sem{A_1},\ \vv{u_k}\in\sem{A_2}$
+        \item $\forall k,\ \vv{v_k}\in\sem{A},\ \vv{u_k}\in\sem{B}$
         \item $\forall k\neq l, \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_l}}{\vv{u_l}}}= 0$
     \end{itemize}
     
     Then:
     \begin{align*}
-        (&\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}})\ansubst{\sigma}{} \\
-        &= \LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &=\sum_{i=1}^{n}\sum_{j=1}^{m}\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}\ [\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
-        &\equiv \LetP{x_1}{B_1}{x_2}{B_2}{\sum_{i=1}^{n}\alpha_i\vv{t}\ [\sigma_{\Gamma i}]}{\sum_{j=1}^{m}\beta_j \vv{s}\ [\sigma_{\Delta j}]}\\
-        &=\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\eval\LetP{x_1}{B_1}{x_2}{B_2}{e^{i\theta_1}\vv{u}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\lraneq e^{i\theta_1}(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{u}/x_1\otimes x_2}{B_1\otimes B_2})\\
-        &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{B_1}\ansubst{\vv{u_k}/y}{B_2})\\
-        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\\
+        (&\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{} \\
+        &= \LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=1}^{n}\alpha_i\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}\ [\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta}}{}\\
+        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i\vv{t}\ [\sigma_{\Gamma i}]}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
+        &=(\LetP{x}{X}{y}{Y}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\LetP{x}{X}{y}{Y}{e^{i\theta_1}\vv{u}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
+        &\lra e^{i\theta_1}(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{u}/x\otimes y}{X\otimes Y})\\
+        &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{X}\ansubst{\vv{u_k}/y}{Y})\\
+        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\quad\text{where: }\vv{w_k}\in\sem{C}\\
     \end{align*}
 
-    Since $\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{B_1}\ansubst{\vv{u_k}/y}{B_2}\in\sem{\Delta, x_{B_1}:\sharp A_1, y_{B2}:\sharp A_2}$, for every $k$, then $\vv{w_k}\in\sem{C}$. It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\|=1$. For that, we observe:
+    It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\|=1$. For that, we observe:
     \begin{align*}
         \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\| \\
         &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vv{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vv{w_{k'}}}\\
@@ -2283,8 +2281,7 @@ As well, we could try to give a translation into an intermediate language like Z
         &= \sum_{k=1}^{l} |\gamma_k|^2 |e^{i\rho_k}|^2 = 1
     \end{align*}
 
-    Then $\sum_{i=1}^{n}\alpha_i\vv{w_i}\in\sem{\sharp C}$. Finally, we can conclude that: 
-    \[(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real{\sharp C}\]
+    Then $\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\in\sem{\sharp C}$. Finally, we can conclude that: $(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real{\sharp C}$
 
     \item[Case] If the hypotheses are valid then:
     \begin{itemize}
@@ -2295,13 +2292,11 @@ As well, we could try to give a translation into an intermediate language like Z
     \end{itemize}
 
     From this we can conclude that:
-    
+
     \begin{itemize}
         \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vv{t}}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}}$
         \item $\FV{\gencase{\vv{t}}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
     \end{itemize}
-
-
     
     Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{v_k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
 
@@ -2317,15 +2312,13 @@ As well, we could try to give a translation into an intermediate language like Z
         &\equiv e^{i\theta} \vv{u_k}\qquad\text{With: }\theta=\theta_1 +\theta_2
     \end{align*}
     
-    Since we pose no restriction on $k$, we can conclude that:
-    \[(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\real A\]
-
+    Since we pose no restriction on $k$, we can conclude that: $(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\real A$
 
     \item[UnitCase] If the hypotheses are valid, then:
     \begin{itemize}
         \item $\sdom{\Gamma}\subseteq \FV{\vv{t}}\subseteq \dom{\Gamma}$
         \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$
-        \item For every $i$, $\sdom{\Delta}\subseteq \FV{\vv{s_i}}\subseteq \dom{\Delta}$
+        \item For every $i\in\{0,\dotsb ,n\}$, $\sdom{\Delta}\subseteq \FV{\vv{s_i}}\subseteq \dom{\Delta}$
         \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vv{s_i}\ansubst{\sigma_\Delta}{}\real A$
     \end{itemize}
     
@@ -2336,7 +2329,7 @@ As well, we could try to give a translation into an intermediate language like Z
         \item $\FV{\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$, then $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vv{u}=e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{v_i})$ where $\sum_{i=1}^{n}|\beta_i|^2$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$, then $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vv{u}\equiv e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{v_i})$ where $\sum_{i=1}^{n}|\beta_i|^2=1$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
 
     \begin{align*}
         (&\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
@@ -2345,9 +2338,8 @@ As well, we could try to give a translation into an intermediate language like Z
         &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv {v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &=(\gencase{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
         &\eval(\gencase{e^{i\theta_1} \vv{u}}{\vv{v}}{\vv{w}}{\vv{s_1}}{\vv{s_2}})\ansubst{\sigma_\Delta}{}\\
-        &\lraneq e^{i\theta_1} (\sum_{i=1}^{n}\beta_i s_i)\ansubst{\sigma_\Delta}{}\\
+        &\lra e^{i\theta_1} (\sum_{i=1}^{n}\beta_i s_i)\ansubst{\sigma_\Delta}{}\\
         &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i})[\sigma_{\Delta j}])\\
-        &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i}[[\sigma_{\Delta j}]]))\\
         &\equiv e^{i\theta_1} (\sum_{i,j=1}^{n}\beta_i\delta_j\vv{s_i}[\sigma_{\Delta j}])\\
         &= e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{s_i}\ansubst{\sigma_\Delta}{})\\
         &\eval e^{i\theta_1} (\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i})
@@ -2363,11 +2355,8 @@ As well, we could try to give a translation into an intermediate language like Z
         &= \sum_{i=1}^{n}|\beta_i|^2 = 1
     \end{align*}
 
-    Then we can conclude that $\sum_{i=1}^{n}\beta_i e^{i\rho_i}\vv{u_i}\in\sem{\sharp A}$ and finally:
-    \[
-        (\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\real\sharp A
-    \]
-
+    Then we can conclude that $\sum_{i=1}^{n}\beta_i e^{i\rho_i}\vv{u_i}\in\sem{\sharp A}$ and finally: $(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\real\sharp A $
+  
     \item[Sum] If the hypothesis is valid then for every $i$, $\sdom{\Gamma}\subseteq\FV{\vv{t_i}}\subseteq\dom{\Gamma}$.
     
     From this we can conclude that $\sdom{\Gamma}\subseteq\sum_{i=1}^{n}\alpha_i \vv{t_i}\subseteq\dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we have for every $i$, $\vv{t_i}\ansubst{\sigma}{}\eval e^{i\rho_i} \vv{v_i}$ where $\vv{v_i}\in\sem{A}$. Moreover, for every $i\neq j$, $\vv{v_i}\perp\vv{v_j}$ and $\sum_{i=1}^{n}|\alpha_i|^2=1$. Then:
@@ -2379,7 +2368,7 @@ As well, we could try to give a translation into an intermediate language like Z
     &\eval \sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\\
     \end{align*}
 
-    It remains to be seen that $\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\|=1$. But:
+    It remains to be seen that $\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\|=1$:
     \begin{align*}
     &\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\| \\
     &=\scal{\sum_{i=1}^{n} \alpha_i e^{i\rho_i}\vv{v_i}}{\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}}\\
@@ -2391,29 +2380,30 @@ As well, we could try to give a translation into an intermediate language like Z
 
     Then we can conclude that $\sum_{i=1}^{n}\alpha_i e^{i\rho_i}\vv{v_i}\in\sem{\sharp A}$ and finally $(\sum_{i=1}^{n}\alpha_i\vv{t_i})\ansubst{\sigma}{}\real\sharp A$.
 
-    \item[Weak] Given $\sigma\in\sem{\Gamma,x_A:B}$, we observe that $\ansubst{\sigma}=\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{A}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{B}$. Using the first hypothesis, we know that $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}$ where $\vv{w}\in\sem{B}$. Then we have:
-    \[
-    \vv{t}\ansubst{\sigma}{}=\vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{A}\eval e^{i\theta}\vv{w}\ansubst{\vv{v}/x}{A}
-    \]
-    Since $\vv{v}\in\sem{A}$, $\vv{w}\ansubst{\vv{v}/x}{A}=\vv{w}[\vv{v}/x]=\vv{w}$ and $\vv{w}\in\sem{B}$, we can finally conclude that $\vv{t}\ansubst{\sigma}{}\real B$.
-
-    \item[Contr] If the hypothesis is valid, we have that $\sdom{\Gamma, x_A:A, y_A:A}\subseteq\FV{\vv{t}}\subseteq\dom{\Gamma,x_A:A, y_A:A}$ and given $\sigma\in\sem{\Gamma,x_A:A, y_A:A}$, then $\vv{t}\ansubst{\sigma}{}\in\sem{B}$. Since we assume $\flat A$, we have that $\sdom{\Gamma,x_A:A, y_A:A}=\sdom{\Gamma,x_A:A}$. Therefore:
+    \item[Contr] If the hypothesis is valid, we have that $\sdom{\Gamma, x^X:\basis{X}, y^X:\basis{X}}\subseteq\FV{\vv{t}}\subseteq\dom{\Gamma,x^X:\basis{X}, y^X:\basis{X}}$ and given $\sigma\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, then $\vv{t}\ansubst{\sigma}{}\in\sem{B}$. Then, we have that $\sdom{\Gamma, x^X:\basis{X}, y^X:\basis{X}}=\sdom{\Gamma, x^X:\basis{X}}$. Therefore:
     
     \[
-    \sdom{\Gamma,x_A:A}\subseteq\FV{\vv{t}}[x/y]\subseteq\dom{\Gamma,x_A:A}
+    \sdom{\Gamma, x^X:\basis{X}}\subseteq\FV{\vv{t}}[x/y]\subseteq\dom{\Gamma, x^X:\basis{X}}
     \]
 
-    Given $\sigma\in\sem{\Gamma,x_A:A}$, we observe that $\ansubst{\sigma}{}=\ansubst{\vv{v}/x}{A}\ansubst{\sigma_\Gamma}{}$ with $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{A}$. Since $\vv{v}\in\sem{A}$, we know that $\vv{t}[\vv v/z] =\vv{t}\ansubst{\vv{v}/z}{A}$ for any variable $z$. Then we have:
+    Given $\sigma\in\sem{\Gamma, x^X:\basis{X}}$, we observe that $\ansubst{\sigma}{}=\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}$ with $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{\basis{X}}$. Since $\vv{v}\in\sem{\basis{X}}$, we know that $\vv{t}[\vv v/z] =\vv{t}\ansubst{\vv{v}/z}{X}$ for any variable $z$. Then we have:
     \begin{align*}
-        \vv{t}[x/y]\ansubst{\sigma}{} &= \vv{t}[x/y]\ansubst{\vv{v}/x}{A}\ansubst{\sigma_\Gamma}{}\\
+        \vv{t}[x/y]\ansubst{\sigma}{} &= \vv{t}[x/y]\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}\\
         &=\vv{t}[x/y][\vv{v}/x]\ansubst{\sigma_\Gamma}{}\\
         &=\vv{t}[\vv{v}/y][\vv{v}/x]\ansubst{\sigma_\Gamma}{}\\
-        &=\vv{t}\ansubst{\vv{v}/y}{A}\ansubst{\vv{v}/x}{A}\ansubst{\sigma_\Gamma}{}    
+        &=\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}    
     \end{align*}
     
-    Since $\ansubst{\vv{v}/y}{A}\ansubst{\vv{v}/x}{A}\ansubst{\sigma}{}\in\sem{\Gamma,x_A:A,y_A:A}$, we get:
-    \[\vv{t}\ansubst{\vv{v}/y}{}\ansubst{\vv{v}/x}{A}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}\in\sem{B}\]
+    Since $\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma}{}\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, we get: $\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}\in\sem{B}$
     Then we can finally conclude that $\vv{t}[x/y]\ansubst{\sigma}{}\real B$.
+
+    \item[Weak] Given $\sigma\in\sem{\Gamma,x^X:\basis{X}}$, we observe that $\ansubst{\sigma}=\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{X}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{\basis{X}}$. Using the first hypothesis, we know that $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}$ where $\vv{w}\in\sem{B}$. Then we have:
+    \[
+    \vv{t}\ansubst{\sigma}{}=\vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{X}\eval e^{i\theta}\vv{w}\ansubst{\vv{v}/x}{X}
+    \]
+    Since $\vv{v}\in\sem{\basis{X}}$, $\vv{w}\ansubst{\vv{v}/x}{X}=\vv{w}[\vv{v}/x]=\vv{w}$ and $\vv{w}\in\sem{B}$, then we can finally conclude that $\vv{t}\ansubst{\sigma}{}\real B$.
+    
+    \item[Sub] Trivial since $\semr{A}\subseteq\semr{B}$. 
 
     \item[Equiv] It follows from definition and the fact that the reduction commutes with the congruence relation.
     
