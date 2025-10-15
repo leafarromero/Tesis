@@ -240,16 +240,19 @@
 \newcommand\trad[1]{\llparenthesis{#1}\rrparenthesis}
 \newcommand\B{\mathbb B}
 \newcommand\XB{\mathbb X}
-\newcommand\Hd{\mathbb{H}}
+\newcommand\Hd{\mathsf{H}}
 \newcommand\Q{\sharp\B}
 \newcommand{\True}{\mathbb{T}}
 \newcommand{\False}{\mathbb{F}}
 \newcommand{\Cx}{\mathbb{C}}
 \newcommand{\cnot}[2]{\mathsf{CNOT}\ #1\ #2}
+\newcommand{\tcnot}{\mathsf{CNOT}}
 \newcommand{\pauliX}[1]{\mathsf{NOT}\ #1}
 \newcommand{\pauliZXB}{\mathsf{Z}_{\XB}}
 \newcommand{\cnotXB}[2]{\mathsf{CNOT}_{\XB}\ #1\ #2}
+\newcommand{\tcnotXB}{\mathsf{CNOT}_{\XB}}
 \newcommand{\pauliXXB}[1]{\mathsf{NOT}_{\XB}\ #1}
+\newcommand{\tpauliXXB}{\mathsf{NOT}_{\XB}}
 \newcommand{\Bell}{\mathsf{Bell}}
 \newcommand{\lambdaB}{\lambda_B}
 %%% If construct
@@ -1564,101 +1567,148 @@ stated below.
   \qed
 \end{theorem}
 
-\hl{Voy por acá}
 \section{Examples}\label{sec:examples}
+\subsection{Deutsch's algorithm}\label{subsec:deutsch}
+We begin with \emph{Deutsch's algorithm}, a canonical example that highlights
+how basis types in the $\lambdaB$ calculus yield more informative typings for
+quantum programs.
 
-In this chapter we examine two use cases for the $\lambdaB$ calculus. First, taking advantage of the basis types defined in the type algebra, we are able to give a more expressive type to the term encoding Deutsch's algorithm. Second, we make use of the deferred measurement principle and pattern matching from the $\mathsf{case}$ constructor to write a descriptive term encoding the quantum teleportation protocol. 
+\paragraph{Problem statement.}
+We are given black-box access to an \emph{oracle}~$U_f$ that implements an
+unknown Boolean function $f:\{0,1\}\to\{0,1\}$.  
+The oracle can only be either \emph{constant} (both inputs map to the same
+output) or \emph{balanced} (the two outputs differ).  
+Classically, determining which case holds requires two queries to~$f$.  
+Deutsch's algorithm decides this with a single query by exploiting quantum
+superposition and interference.
 
-\subsection{Deutsch's algorithm}
+Operationally, the oracle~$U_f$ acts as
+\[
+  U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)},
+\]
+where $\oplus$ is addition modulo~2.  
+The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
+then applies a Hadamard on the first qubit before measuring it.  
+The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
 
-The Deutsch-Josza algorithm is a small example designed to showcase a problem which is solved exponentially faster by a quantum computer over a classical one. In it, we take as input a black box oracle which encodes a function $f:\{0,1\}^n\to\{0,1\}$. This function can be either \emph{constant} or \emph{balanced} (It outputs $0$ for exactly half the inputs and $1$ for the other half). The task to solve is to determine under which of the two classes the oracle falls.
-
-In this section we will focus on the case where $n=1$, the original formulation of Deutsch's algorithm. However, this results can be generalised to any arbitrary $n$. The quantum circuit implementing the algorithm is the following:
-
+\paragraph{A standard implementation in $\lambdaB$.}
+We first encode the usual gates we will use:
 \begin{align*}
-    \Qcircuit @C=1em @R=.7em {
-     \lstick{\ket{0}} & \qw & \gate{H} & \multigate{1}{U_f} & \qw & \gate{H} & \meter \\
-     \lstick{\ket{1}} & \qw & \gate{H} & \ghost{U_f} & \qw & \qw & \qw
-    }
+  \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
+  \mathsf{NOT} &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}},\\
+  \mathsf{CNOT} &:= \Lam{x}{\B}{\Lam{y}{\B}{
+    \case{x}{\ket{0}}{\ket{1}}
+      {\Pair{\ket{0}}{y}}
+      {\Pair{\ket{1}}{\pauliX{y}}}}}.
 \end{align*}
 
-For a detailed discussion on the logic and operation of the algorithm, see~\cite{Deutsch1992RapidSO}. We will do a comparison between Deutsch's algorithm written in different bases and see what information we can glean from the typing of the terms.
+We model the four possible oracles $U_f$ (two constant and two balanced):
+\begin{align*}
+  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},\\
+  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}},\\
+  O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
+  O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}.
+\end{align*}
 
-We first define the terms for the algorithm. The top level $\mathsf{Deutsch}$ abstraction, takes an oracle $U_f$  which inputs two qubits $\ket{x y}$ and outputs $\ket{x (y\oplus f(x))}$ where $\oplus$ denotes addition modulo 2. The circuit will output $\ket{0}$ on the first qubit if the function $f$ is balanced 
-% TODO: Incluir en el apéndice los juicios de tipado para los términos
-\begin{table}
-    \small
-    \begin{align*}
-        \mathsf{Deutsch} &:= 
-        (\Lam{{f}}{\AbsBasis}{
-                \LetP{x}{\B}{y}{\B}
-                {(f (\Hd \ket{0}) (\Hd \ket{1}))}
-                {\Pair{(\Hd x)}{y}}
-        })\\
-        \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}}
-    \end{align*}
-    \caption{Deutsch algorithm term}
-\end{table}
-
-On \Cref{tab:Oracles} we note the four possible oracles. $D_1$ and $D_4$ correspond to the oracles encoding the 0 and 1 constant functions and $D_2$, $D_3$ to the identity and bit-flip respectively.
-
-\begin{table}
-    \scriptsize
-    \begin{align*}
-        D_1 :=& \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}}\\
-        D_2 :=& \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}}\\
-        D_3 :=& \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}\\
-        D_4 :=& \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}}\\
-        \text{Where:} &\\
-        \cnot{}{} :=& \Lam{x}{\B}{\Lam{y}{\B}{
-        \case{x}
-        {\ket{0}}{\ket{1}}
-        {\Pair{\ket{0}}{y}}{\Pair{\ket{1}}{\pauliX{y}}}}}\\
-        \pauliX{} :=& \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}}
-    \end{align*}
-    
-    \caption{Oracles implementing the four possible functions $f:\{0,1\}\mapsto\{0,1\}$}
-    \label{tab:Oracles}
-\end{table}
-
-Each of these oracles can be typed as $\B\Arr\B\Arr(\B\times\B)$. But since we are passing $\ket{+}$ and $\ket{-}$ as arguments, the typing we would be able to assign is: $\sharp\B\Arr\sharp\B\Arr\sharp(\B\times\B)$. Which means that the final typing for $\mathsf{Deutsch}$ would be:
+The standard Deutsch term prepares~$\ket{+-}$, calls the oracle, then
+applies~$H$ on the first qubit and returns the (classical) first component:
 \[
-\TYP{}{\mathsf{Deutsch}}{(\sharp\B\Arr\sharp\B\Arr(\sharp\B\Arr\sharp\B))\Arr\sharp(\B\times\B)}
+  \mathsf{Deutsch}_{\mathrm{std}} :=
+  \Lam{f}{\AbsBasis}{
+    \LetP{x}{\B}{y}{\B}
+      {(f\,(\Hd\,\ket{0})\,(\Hd\,\ket{1}))}
+      {\Pair{\Hd\,x}{y}}
+  }.
 \]
-This would seem to suggest that the result of the computation is a superposition of pairs of booleans.
 
-However, this approach underutilizes the amount of information we have available. We know that the oracle will receive specifically the state $\ket{+-}$, and so we can rewrite the intervening terms taking this information into account. In \Cref{tab:DeutschShift} we restate the terms, but this time the abstractions and conditional cases are written in the basis $\XB=\{\ket{+},\ket{-}\}$.
+Each oracle above can be typed as
+\(
+  \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
+\),
+but since the arguments we pass are $\ket{+}$ and $\ket{-}$ (superpositions),
+the overall judgement we can derive for the application uses~$\sharp$:
+\[
+  \TYP{}{\mathsf{Deutsch}_{\mathrm{std}}}
+  {(\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
+   \Arr \sharp(\basis{\B}\times\basis{\B})}.
+\]
+This type is correct but coarse: it only guarantees that the result is a
+unitary distribution of pairs of booleans.  Operationally we know more: the
+first output is actually a basis bit ($\ket{0}$ or~$\ket{1}$) encoding whether
+$f$ is constant or balanced, and the second output can be ignored.
 
-\begin{table}
-    \footnotesize
-    \[
-    \begin{array}{r c l}
-        \mathsf{Deutsch}&:=~&(\Lam{{U_f}}{\AbsBasis}{
-                \LetP{x}{\XB}{y}{\XB}
-                {(U_f \ket{+} \ket{-})}
-                {\\ && \case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}})\\
-        D_1 &:= &\Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}}\\
-        D_2 &:= &\Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}}\\
-        D_3 &:= &\Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}\\
-        D_4 &:= &\Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}}\\
-        \multicolumn{3}{l}{\text{Where:}}\\
-        \cnotXB{}{} &:=& \Lam{x}{\XB}{\Lam{y}{\XB}{
-        \case{y}
-        {\\ && \ket{+}}{\\ && \ket{-}}
-        {\Pair{x}{\ket{+}}}{\Pair{\pauliZXB{x}}{\ket{-}} \\ &&}}}\\
-        \pauliZXB{} &:=& \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}}\\
-        \pauliXXB{} &:=& \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{(-1)\ket{-}}}\\
-    \end{array}
-    \]
-    \caption{Deutsch term and oracles in the shifted Hadamard basis.}
-    \label{tab:DeutschShift}
-\end{table}
+\paragraph{A basis-aware implementation with tighter typing.}
+The key observation is that the oracle is always called on the fixed state
+$\ket{+-}$.  
+Thus it is natural to write the program in the
+$\XB=\{\ket{+},\ket{-}\}$ basis, letting the types track that we remain in a
+basis state at the oracle boundary.
 
-In this case, for each of the oracles we can assign the type $\XB\Arr\XB\Arr\XB\times\XB$ and type the term $\mathsf{Deutsch}$ as $(\XB\Arr\XB\Arr\XB\times\XB)\Arr\B$. There is a key difference here, the type of the oracles ensure that the result will be in the basis state $\XB\times\XB$. In other words, the result will be a pair with either $\ket{+}$ or $\ket{-}$ in its components (up to a global phase). Since we know this fact, we can manipulate the result of $f$ as we would with classical bits, and discard the second component. 
+We define the same gates in the $\XB$ basis:
+\begin{align*}
+  %\pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
+  \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}},\\
+  \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
+    \case{y}{\ket{+}}{\ket{-}}
+      {\Pair{x}{\ket{+}}}
+      {\Pair{\pauliZXB{x}}{\ket{-}}}
+  }}.
+\end{align*}
 
-Both functions are equivalent on an operational point of view. But reframing it onto a different basis, allows us to give a more tight typing to the terms and more insight on how the algorithm works. If we analize the typing judgements, we observe that none of the variables has a $\sharp$ type. This has two consequences, first we can safely discard the second qubit and second, the Hadamard transform guarantees that the first qubit will yield a boolean. This correlates with the fact that Deutsch's algorithm is deterministic and we can statically ensure the result will be a basis vector.
+We then rewrite the program and the four oracles in~$\XB$:
+\begin{align*}
+  \mathsf{Deutsch} &:= \Lam{f}{\AbsBasis}{
+    \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
+      {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},\\
+  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}},\\
+  O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
+  O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}.
+\end{align*}
+
+\emph{Typing.}  
+Now every oracle has the tight type
+\[
+  \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}),
+\]
+and the program itself can be typed as
+\[
+  \TYP{}{\mathsf{Deutsch}}
+  {(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}}.
+\]
+Intuitively, the oracle---when fed with $\ket{+-}$---produces a pair of
+basis states in~$\XB$ (up to a global phase).  Hence we can treat its output
+classically: a single $\mathsf{case}$ on the first component suffices to return
+a classical bit in the computational basis, with no need for a $\sharp$-type on
+the result.
+
+\paragraph{Discussion.}
+Both implementations are operationally equivalent: they compute a bit that
+decides whether $f$ is constant or balanced.  The difference lies in the
+\emph{precision} of their typings.  The standard version, expressed in~$\B$
+with explicit Hadamards, forces $\sharp$ on the oracle's interface and thus
+yields a result in~$\sharp(\basis{\B}\times\basis{\B})$.  The basis-aware
+version states, via types, that the oracle is used on a fixed $\XB$-input and
+therefore returns an $\XB$-basis pair; this lets us deterministically extract a
+$\B$-basis bit.  In the typing derivation, no variable carries a $\sharp$-type:
+(i) we may safely ignore the second qubit, and (ii) the first qubit is
+guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
+algorithm.
+
+
+\hl{Voy por acá}
 
 \subsection{Quantum teleportation}\label{sec:teleportation}
+We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
+quantum information theory that exemplifies the manipulation of entangled
+states and the transmission of quantum data through classical communication.
+Within the $\lambdaB$ calculus, this protocol provides an elegant setting to
+combine pattern matching, linear handling of qubits, and the deferred-measurement
+principle.  
+By using the $\mathsf{case}$ constructor together with the expressive typing
+discipline introduced earlier, we can encode the entire teleportation process
+in a way that remains both syntactically compact and semantically faithful to
+its quantum-mechanical counterpart.
 
 The \emph{principle of deferred measurement} is a result which states that any quantum circuit can delay the measurements performed without modifying its outcome. More precisely, any gate controlled by the outcome of a measurement is equivalent to another gate whose control has not yet been measured. The calculus $\lambdaB$ does not implement a mechanism to measure states, but using the $\mathsf{case}$ constructor is possible to simulate these quantum controlled gates.
 
