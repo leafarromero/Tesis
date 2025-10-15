@@ -1696,75 +1696,151 @@ guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
 algorithm.
 
 
-\hl{Voy por acá}
-
 \subsection{Quantum teleportation}\label{sec:teleportation}
 We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
 quantum information theory that exemplifies the manipulation of entangled
 states and the transmission of quantum data through classical communication.
-Within the $\lambdaB$ calculus, this protocol provides an elegant setting to
-combine pattern matching, linear handling of qubits, and the deferred-measurement
-principle.  
-By using the $\mathsf{case}$ constructor together with the expressive typing
-discipline introduced earlier, we can encode the entire teleportation process
-in a way that remains both syntactically compact and semantically faithful to
-its quantum-mechanical counterpart.
+Within the $\lambdaB$ calculus, this protocol provides a natural setting to
+combine pattern matching, linear handling of qubits, and the
+\emph{deferred-measurement principle}.  
+Using the $\mathsf{case}$ constructor together with the expressive typing
+discipline introduced earlier, we can encode the teleportation process in a
+way that remains both syntactically compact and semantically faithful to its
+quantum-mechanical counterpart.
 
-The \emph{principle of deferred measurement} is a result which states that any quantum circuit can delay the measurements performed without modifying its outcome. More precisely, any gate controlled by the outcome of a measurement is equivalent to another gate whose control has not yet been measured. The calculus $\lambdaB$ does not implement a mechanism to measure states, but using the $\mathsf{case}$ constructor is possible to simulate these quantum controlled gates.
+\paragraph{Deferred measurement principle.}
+The deferred-measurement principle states that any quantum circuit can delay
+its measurements without altering the final outcome.  
+More precisely, any gate classically controlled by the result of a measurement
+is equivalent to another circuit where the control qubit remains unmeasured,
+acting coherently on all branches of the superposition.  
+Although the $\lambdaB$ calculus has no primitive operation for measurement,
+the $\mathsf{case}$ constructor allows us to simulate such classically
+controlled gates by branching on basis states.
 
-A notable example of an algorithm which makes use of classical controlled gates is the \emph{quantum teleportation}. In it, two agents (usually called Alice and Bob) share two parts of a Bell state and make use of the entanglement to move a quantum state from a qubit owned by Alice to a qubit owned by Bob. The quantum circuit representation of the algorithm is the following:
+\paragraph{Teleportation protocol.}
+A canonical example that exploits this principle is the
+\emph{quantum teleportation protocol}.  
+Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
+state.  
+Using this shared entanglement and two bits of classical information,
+Alice can transmit an unknown quantum state~$\ket{\psi}$ to Bob without
+physically sending the qubit itself.  
+The standard circuit implementing the protocol is shown below:
+\[
+  \Qcircuit @C=1em @R=.7em {
+    \lstick{\ket{\psi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
+    \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
+    \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \gate{Z} \cwx[-2] \qw & \rstick{\ket{\psi}} \qw
+  }
+\]
+The algorithm first creates the Bell state $\Phi^{+}$ between the second and
+third qubits, then performs a Bell-basis measurement on the first and second
+qubits.  
+Operationally, this measurement is implemented by applying a CNOT gate followed
+by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
+then measuring both qubits.  
+Depending on the pair of classical outcomes, a Pauli correction ($I$, $X$, $Z$,
+or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$.
 
+\paragraph{Encoding in $\lambdaB$.}
+We can simulate the behaviour of this circuit in the $\lambdaB$ calculus by
+defining a $\lambda$-term that, instead of performing measurements, explicitly
+describes the computation corresponding to each branch.  
+A possible encoding is:
 \begin{align*}
-    \Qcircuit @C=1em @R=.7em {
-     \lstick{\ket{\phi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
-     \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
-     \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \gate{Z} \cwx[-2] \qw & \rstick{\ket{\phi}} \qw
+  \mathsf{Teleport} :=
+  \Lam{x}{\B}{
+    \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
+      \mathsf{case}\;
+        \Pair{x}{y_1}\;
+        \mathsf{of}\;
+	\begin{aligned}[t]
+         \{ \Phi^{+} &\mapsto \Pair{\Phi^{+}}{y_2},\\
+          \Phi^{-} &\mapsto \Pair{\Phi^{-}}{Z\,y_2},\\
+          \Psi^{+} &\mapsto \Pair{\Psi^{+}}{X\,y_2},\\
+	\Psi^{-} &\mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
+        \end{aligned}
     }
+  }.
 \end{align*}
 
-The algorithm first encodes the Bell state $\Phi^+$ onto the second and third qubit and then performs a Bell basis measurement on the first and second qubit. In order to do this, it first decomposes applying a CNOT gate followed by a Hadamard gate on the first qubit (the adjoint of the Bell state generation). Then the first and second qubit are measured, which informs the correction needed for the third qubit to recover the state $\phi$.
+This term takes the input qubit~$\ket{\psi}$ and pairs it with one half of an
+entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
+qubits (the input and Alice's entangled qubit) against the Bell basis, and in
+each branch applies the appropriate correction to Bob's qubit to
+recover~$\ket{\psi}$.  The resulting term represents the same quantum
+transformation as the circuit above but expressed without any explicit
+measurement --- instead, each branch encodes the coherent superposition of
+possible measurement outcomes.
 
-We can simulate the operation of the algorithm, via a $\lambda$-term which instead of outright measuring, describes the steps to take in each of the possible outcomes. A possible implementation is:
-
-\begin{align*}
-    (\Lam{x}{\B}{\LetP{y_1}{\B}{y_2}{\B}{\Phi^+}{ ~\mathsf{case } \Pair{x}{y_1}  ~\mathsf{ of }~\{ &\Phi^+\mapsto \Pair{\Phi^+}{y_2}\\
-    &\Phi^-\mapsto \Pair{\Phi^-}{Z y_2}\\
-    &\Psi^+\mapsto \Pair{\Psi^+}{X y_2}\\
-    &\Psi^-\mapsto \Pair{\Psi^-}{ZX y_2}\\
-    &\}}})
-\end{align*}
-
-The $\lambda$-term takes the state $\ket{\phi}$ as an argument, then matches the first qubit of the Bell pair and the $\ket{\phi}$ qubit, with the vectors of the Bell basis. In each branch, corrects the third qubit to recover the original $\ket{\phi}$ state. This is akin to controlling the correction with each of the Bell basis vectors.
-
-The $\lambdaB$ calculus provides syntax which allows the abstraction of the steps encoding and decoding on the Bell basis. This technique makes full use of the deferred measurement principle and can be applied to measurements on arbitrary bases. The final type of the term is $\sharp\basis{\B}\Arr \sharp\basis{\Bell}\times \sharp\basis{\B}$.
+\paragraph{Typing and discussion.}
+The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
+steps in the Bell basis, exploiting the deferred-measurement principle in a
+type-safe way.  
+Each branch of the $\mathsf{case}$ corresponds to a unitary transformation
+preserving linearity and orthogonality, and the overall term has type
+\[
+  \TYP{}{\mathsf{Teleport}}
+  {\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}.
+\]
+This type reflects that the protocol operates on superpositions of basis
+states, producing a Bell-basis measurement outcome together with the recovered
+qubit.  
+In this way, the $\lambdaB$ calculus captures both the logical structure of
+teleportation and its deferred-measurement semantics within a single, uniform
+term language.
 
 \section{Conclusion}\label{sec:conclusion}
 
-% Introduction
-In this chapter we explore a quantum-data/quantum-control $\lambda$-calculus, with the additional feature of framing the abstraction in different bases besides the canonical one.
+In this paper we have explored a quantum-control $\lambda$-calculus equipped
+with the additional feature of allowing abstractions to be expressed relative
+to arbitrary bases, beyond the canonical one.  
 
-% Syntax & substitutions
-The mechanism needed to implement this idea is the decoration in $\lambda$-terms and $\mathsf{let}$ constructors. Along with a new substitution which dictates the decomposition of the value distribution onto different bases. These changes do not add expressive power to the original calculus it is based from, however they provide a different point of view when writing programs. 
+The central mechanism enabling this extension is the decoration of
+$\lambda$-ab\-strac\-tions and $\mathsf{let}$-constructors with basis annotations,
+together with a modified substitution operation that governs how value
+distributions decompose across different bases.  
+These additions do not increase the expressive power of the original calculus
+on which $\lambdaB$ builds, yet they offer a novel perspective for reasoning
+about quantum programs and their behaviour under basis changes.
 
-% Reduction system
-The reduction system itself orchestrates the computation and makes use of the syntax and substitution previously defined. The main point to note is that the evaluation commutes with the congruence relationship, ensuring that interpreting a vector in a different basis does not alter the result of the computation. And in turn, allows us to consider value distributions modulo this congruence.
+The reduction system coordinates computation through these extended syntactic
+constructs and substitutions.  
+A key property is that evaluation commutes with the congruence relation,
+ensuring that interpreting a value distribution in a different basis does not
+affect the computational result.  
+Consequently, it is meaningful to reason about terms modulo basis
+congruence.
 
-% Realizability model
-The previous work pays its dividends when considering the realizability model. The inclusion of the atomic types $\basis{X}$, is used to characterise the abstractions that represent unitary functions. This is the main result of the section and is a generalisation of the characterisation found in \cite{DiazcaroGuillermoMiquelValironLICS19}. Here, the use of basis types gives way to a simpler proof. 
+The benefit of this design becomes clear in the realizability model.
+The inclusion of atomic types~$\basis{X}$ enables a direct characterisation of
+abstractions representing unitary operators --- our main semantic result,
+generalising the characterisation from~\cite{DiazcaroGuillermoMiquelValironLICS19}.  
+Here, the use of basis types yields a simpler and more transparent proof.  
 
-% Typing system
-The other main result of the chapter is the validity of the several typing rules described in \Cref{tab:TypingRules}. Extracting them via the realizability technique, ensures their correctness and can later form the foundation of the type system for a programming language.
+The second major result is the validity of the typing rules presented in
+\Cref{tab:TypingRules}.  
+By deriving these rules from the realizability interpretation, we ensure their
+soundness and obtain a principled foundation for a typed programming language
+based on the calculus.
 
-% Examples
-Finally, we present two examples that showcase the advantage of the typing system and syntax. First Deutsch's algorithm, which exhibits a more expressive type and in turn, allows to treat the result classically. Second, the case for quantum teleportation, where we are able to simulate gates controlled by a Bell basis measurement as branches on a pattern matching $\mathsf{case}$. 
+Finally, we have illustrated the expressive advantages of the system through two
+canonical examples.  
+In the case of \emph{Deutsch's algorithm}, the use of basis-aware typing allows
+the result to be treated classically, reflecting the algorithm's determinism.  
+In the case of \emph{quantum teleportation}, we demonstrated how the
+$\mathsf{case}$ construct can simulate gates controlled by Bell-basis
+measurements, effectively capturing the deferred-measurement principle within
+the calculus.
 
-% Things left to do
-There are a few remaining lines of research that stem from this work. A natural progression would be to provide a categorical model to study the calculus through a different lens and relate it to other well studied systems. 
-
-As well, we could try to give a translation into an intermediate language like ZX alongside the lines of the second chapter. Proving that, despite the programs being detached from the circuitry, they can still be  implemented concretely.
-
-% En la parte de conclusiones/trabajo futuro, me gustaría meter otra noción de producto interno que juegue bien con las funciones. Con esta definición una función es ortogonal a su eta expansión. O (\x. t_1 + t_2) _|_ (\x. t_2 + t_1)
-
+Several lines of research naturally extend from this work.  
+A first direction is the development of a categorical semantics for $\lambdaB$,
+which would provide an abstract perspective connecting it to other well-studied
+quantum calculi, following the line of~\cite{DiazcaroCIE2025}.  
+Another promising path is to design a translation into an intermediate language,
+such as~ZX, following the approach of~\cite{BorgnaRomeroQPL22}, thereby relating
+abstract programs in~$\lambdaB$ to concrete circuit implementations.
 
 %\begin{credits}
 %\subsubsection{\ackname} 
