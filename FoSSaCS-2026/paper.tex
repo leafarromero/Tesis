@@ -812,12 +812,12 @@ and $\vv r'\equiv\vv r$.
 
 \begin{table}[t]
   \begin{align*}
-    \text{If }\vv{t}\ansubst{\vv v/x}{A}\text{ is defined,}\quad
-    (\Lam{x}{A}{\vv{t}})\vv{v}
+    \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined,}\quad
+    (\Lam{x}{X}{\vv{t}})\vv{v}
     &\lraneq \vv{t}\ansubst{\vv v/x}{A}\\
-    \text{If }\vv{t}\ansubst{\vv v/x}{B_1\otimes B_2}\text{ is defined,}\quad
-    \LetP{x}{B_1}{y}{B_2}{\vv v}{\vv{t}}
-    &\lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{B_1\otimes B_2}\\
+    \text{If }\vv{t}\ansubst{\vv v/x}{X\otimes Y}\text{ is defined,}\quad
+    \LetP{x}{X}{y}{Y}{\vv v}{\vv{t}}
+    &\lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{X\otimes Y}\\
     \gencase{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
     &\lraneq \sum_{i=1}^{n}\alpha_i \vv{t_i}
   \end{align*}
@@ -2411,13 +2411,74 @@ As well, we could try to give a translation into an intermediate language like Z
     \end{description}
 \end{proof}
 
+\begin{lemma}[Substitution]\label{lem:Substitution}
+  Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ a basis type.
+  If
+  \[
+    \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
+    \quad\text{and}\quad
+    \TYP{\Delta}{\vv{v}}{A},
+  \]
+  and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
+  then
+  \[
+    \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}.
+  \]
+\end{lemma}
+\begin{proof}
+  \hl{TO-DO}
+\end{proof}
+
 \begin{restatetheorem}[Restatement of \Cref{thm:SubjectReduction}]
   If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
   \Cref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
   $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
 \end{restatetheorem}
 \begin{proof}
-  {\color{red}TO-DO}
+  We proceed by induction on the derivation of the elementary reduction
+  $\lraneq$. The congruence closure to obtain $\lra$ is handled trivially via
+  the \textsc{Equiv} rule. We only give the basis cases as the inductive cases (the contextual cases) are straightforward.
+  \begin{itemize}
+    \item Let $(\Lam{x}{X}{\vv t})\vv v \lraneq \vv t\ansubst{\vv v/x}{X}$:
+      Assume $\TYP{\Gamma,\Delta}{(\Lam{x}{X}{\vv t})\,\vv v}{B}$. By
+      \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$ and
+      $\TYP{\Delta}{\vv v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$
+      and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vv t}{B}$. By
+      \Cref{lem:Substitution},
+      using $\TYP{\Delta}{\vv v}{A}$ and the fact that $\vv t\ansubst{\vv
+      v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vv t\ansubst{\vv
+      v/x}{X}}{B}$, as required.
+
+    \item Let $\LetP{x}{X}{y}{Y}{\vv v}{\vv t} \lraneq \vv t\ansubst{\vv
+      v/x\otimes y}{X\otimes Y}$: Assume
+      $\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vv v}{\vv t}}{C}$.  By
+      \textsc{LetPair} we have $\TYP{\Gamma}{\vv v}{A\times B}$ and
+      $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vv t}{C}$.  Decompose $\vv v$ (in
+      $X\otimes Y$) as required by the definition of $\ansubst{\vv v/x\otimes
+      y}{X\otimes Y}$; by \Cref{lem:Substitution}
+      applied twice
+      (first for $x$, then for $y$), we conclude $\TYP{\Gamma,\Delta}{\vv
+      t\ansubst{\vv v/x\otimes y}{X\otimes Y}}{C}$.
+
+    \item Let $\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
+      \lraneq \vv{t_k}$: Assume
+      $\TYP{\Gamma,\Delta}{\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
+      By \textsc{Case} we have $\TYP{\Gamma}{{\vv{v_k}}}{\basis{\{\vv
+      v_i\}_{i=1}^n}}$ and $\TYP{\Delta}{\vv t_i}{A}$ for all $i$.  Thus, we are
+      done.
+
+    \item Let
+      $\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
+      \lraneq \sum_{i=1}^n\alpha_i\vv{t_i}$: Assume
+      $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
+      By \textsc{UnitCase} we have $\TYP{\Gamma}{\vv t}{\sharp\basis{\{\vv
+      v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vv t_i}{\vv t_j}{A}$.
+      Then the reduct $\sum_{i=1}^{n}\alpha_i \vv{t_i}$ is typed by \textsc{Sum}
+      as $\sharp A$ (using the orthogonality premises and the normalisation
+      condition ensured by the semantics of $\sharp$), hence
+      $\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}$.
+      \qedhere
+  \end{itemize}
 \end{proof}
 
 \section{A Proofs for validity of LetT}
