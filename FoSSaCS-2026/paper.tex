@@ -1541,6 +1541,22 @@ case, the rules proven valid in \Cref{thm:TypingRulesValidity}
 suffice to guarantee subject reduction, as
 stated below.
 
+\begin{lemma}[Substitution]\label{lem:Substitution}
+  Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ a basis type.
+  If
+  \(
+    \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
+    \quad\text{and}\quad
+    \TYP{\Delta}{\vv{v}}{A}
+  \),
+  and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
+  then
+  \(
+    \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
+  \).
+  \qed
+\end{lemma}
+
 \begin{theorem}[Subject reduction]\label{thm:SubjectReduction}
   If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
   \Cref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
@@ -2135,9 +2151,10 @@ As well, we could try to give a translation into an intermediate language like Z
   Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
 \end{proof}
 
-\begin{restatelemma}[Restatement of \Cref{thm:TypingRulesValidity}]
+\begin{restatetheorem}[Restatement of \Cref{thm:TypingRulesValidity}]
+  \itshape
   All the typing rules in \Cref{tab:TypingRules} are valid.
-\end{restatelemma}
+\end{restatetheorem}
 \begin{proof}
     For each typing rule in \Cref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
     \begin{description}
@@ -2411,20 +2428,21 @@ As well, we could try to give a translation into an intermediate language like Z
     \end{description}
 \end{proof}
 
-\begin{lemma}[Substitution]\label{lem:Substitution}
+\begin{restatelemma}[Restatement of \Cref{lem:Substitution}]
+  \itshape
   Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ a basis type.
   If
-  \[
+  \(
     \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
     \quad\text{and}\quad
-    \TYP{\Delta}{\vv{v}}{A},
-  \]
+    \TYP{\Delta}{\vv{v}}{A}
+  \),
   and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
   then
-  \[
-    \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}.
-  \]
-\end{lemma}
+  \(
+    \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
+  \).
+\end{restatelemma}
 \begin{proof}
   \hl{TO-DO}
 \end{proof}
