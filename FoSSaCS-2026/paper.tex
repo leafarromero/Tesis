@@ -303,9 +303,22 @@
 \maketitle 
 
 \begin{abstract}
-  The abstract should briefly summarize the contents of the paper in 150--250 words.
+  We present $\lambdaB$, a quantum‐control $\lambda$‐calculus that refines
+  previous basis-sensitive systems by allowing abstractions to be expressed with
+  respect to arbitrary---possibly entangled---bases.  Each abstraction and
+  $\mathsf{let}$ construct is annotated with a basis, and a new basis-dependent
+  substitution governs the decomposition of value distributions.  These
+  extensions preserve the expressive power of earlier calculi while enabling
+  finer reasoning about programs under basis changes.  A realizability semantics
+  connects the reduction system with the type system, yielding a direct
+  characterisation of unitary operators and ensuring safety by construction.
+  From this semantics we derive a validated family of typing rules, forming the
+  foundation of a type-safe quantum programming language.  We illustrate the
+  expressive benefits of $\lambdaB$ through examples such as Deutsch’s algorithm
+  and quantum teleportation, where basis-aware typing captures classical
+  determinism and deferred-measurement behaviour within a uniform framework.
 
-  \keywords{First keyword  \and Second keyword \and Another keyword.}
+  \keywords{Quantum computing \and Realisability semantics\and $\lambda$-calculus.}
 \end{abstract}
 
 
@@ -353,8 +366,8 @@ proceeds as follows:
   \item Define a calculus with a deterministic evaluation strategy.
   \item Define types as sets of closed values in the language.
   \item Define the typing judgement so that asserting that a term has a given
-  type is, by definition, to state that the term reduces to a value of the
-  corresponding type.
+  type is, by definition, to state that the term reduces to a value of that
+  type.
 \end{enumerate}
 Each typing rule therefore corresponds to a provable theorem in this setting.
 Rather than building ad hoc typing rules, the system is derived from the
@@ -429,13 +442,19 @@ $\ket 0$ and $\ket 1$. A pair of values is also considered a value.  Terms
 include values, applications, pair constructors and destructors, and pattern
 matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
 Both term and value distributions are built as $\C$-linear combinations of
-terms and values, respectively. In \Cref{tab:PairsNotation}
-we also include notation for linear combinations of
-pairs. We stress that this notation for pairs does not appear in the syntax,
-but is rather useful to describe specific states.
-
+terms and values, respectively. 
 We use $v,u,w$ to denote values and $t,s,r$ for terms, writing $\vv{\cdot}$ when
 they are distributions.
+We also consider the following notation for linear combinations of
+pairs. We stress that this notation for pairs does not appear in the syntax,
+but is rather useful to describe specific states.
+  \[
+    \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
+    := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
+    \qquad\qquad
+    \Pair{r}{\alpha  t+\vv{t_1}} 
+    := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
+  \]
 
 \begin{table}[t]
   \begin{align*}
@@ -455,17 +474,6 @@ they are distributions.
   \label{tab:Syntax}
 \end{table}
 
-\begin{table}[t]
-  \[
-    \Pair{\alpha  v+\vv{v_1}}{\vv{v_2}} 
-    := \alpha\Pair{v}{\vv{v_2}} + \Pair{\vv{v_1}}{\vv{v_2}}
-    \qquad\qquad
-    \Pair{w}{\alpha  v+\vv{v_1}} 
-    := \alpha\Pair{w}{v} + \Pair{w}{\vv{v_1}}
-  \]
-  \caption{Notation for pair distributions}
-  \label{tab:PairsNotation}
-\end{table}
 
 The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
@@ -531,11 +539,11 @@ The key idea of the calculus is that arguments are decomposed over the bases
 associated with their corresponding abstractions.
 As in linear algebra, a vector can be rewritten as a linear combination of
 basis elements; for instance,
-\[
+\(
   (1,0)
   = \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}}
   + \tfrac{(1,-1)}{\sqrt{2}}\right)
-\]
+\)
 expresses $(1,0)$ in the basis
 $\{\tfrac{(1,1)}{\sqrt{2}}, \tfrac{(1,-1)}{\sqrt{2}}\}$.
 By identifying $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we see
@@ -725,12 +733,12 @@ combinations of terms.
   For term distributions $\vv{t_i}$, a value distribution $\vv{v}$, a
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
   $\ansubst{\vv v/x}{B}$ is defined:
-  \[
+  \(
     \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
     \equiv
-    \sum_i \alpha_i\vv{t_i} \ansubst{\vv v/x}{B}.
-    \tag*{\qed}
-  \]
+    \sum_i \alpha_i\vv{t_i} \ansubst{\vv v/x}{B}
+  \).
+  \qed
 \end{lemma}
 
 The next result states that substitution behaves consistently within each
@@ -785,16 +793,16 @@ regard $\sigma$ as a partial function from variables to pairs of closed value
 distributions and bases, and write $\dom{\sigma}$ for its domain. The operation
 extends naturally: for a term $\vv{t}$, substitution $\sigma$, a new variable
 $x\notin\dom{\sigma}$, value distribution $\vv{v}$, and basis $B$,
-\[
+\(
   \vv{t}\ansubst{\sigma}{}\ansubst{\vv{v}/x}{B}
-  = \vv{t}\ansubst{\sigma'}{},
-\]
+  = \vv{t}\ansubst{\sigma'}{}
+\),
 where $\sigma'$ extends $\sigma$ by mapping $x$ to $(\vv v,B)$. Likewise, two
 disjoint substitutions $\sigma_1$ and $\sigma_2$ can be merged:
-\[
+\(
   \vv{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}
-  = \vv{t}\ansubst{\sigma'}{},
-\]
+  = \vv{t}\ansubst{\sigma'}{}
+\),
 where $\dom{\sigma_1}\cap\dom{\sigma_2}=\emptyset$ and $\sigma'$ coincides with
 $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 
@@ -1029,11 +1037,11 @@ set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
 boolean type can be represented by a basis of size~2, yet we are not restricted
 to a single one, since there are infinitely many bases to choose from.
 
-Pairs are written using the same notation introduced earlier
-(see~\Cref{tab:PairsNotation}).  The type~$A\times B$ corresponds to the
-cartesian product of~$A$ and~$B$.  However, since the syntax admits pairs only
-of pure values, the semantic clause in~\Cref{tab:UnitaryTypes} should be read
-as an abbreviation for the following expanded form:
+Pairs are written using the notation introduced earlier.  The type~$A\times B$
+corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
+admits pairs only of pure values, the semantic clause
+in~\Cref{tab:UnitaryTypes} should be
+read as an abbreviation for the following expanded form:
 \[
   \sem{A\times B}
   := \bigl\{
@@ -2850,6 +2858,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
 
     \item[$\vv{t}=\alpha\vv{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vv{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vv{s}\ansubst{\vv{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{
     e^{i\theta}\vv{s}\ansubst{\vv{v}/X}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
+      \qedhere
   \end{description}
 \end{proof}
 
