@@ -1,10 +1,7 @@
 \documentclass[runningheads,orivec,envcountsame,envcountsect]{llncs}
 
-\usepackage{soul} % Borrar, es solo para highlights en el draft
-\usepackage[colorinlistoftodos,textsize=small]{todonotes} % Borrar, es solo para comentarios en el draft
-%\setlength{\marginparwidth}{2cm}
-\newcommand\Jano[1]{\todo[color=green!40]{Jano: #1}}
-
+\usepackage{enumitem}
+\setlist[itemize]{topsep=2pt, parsep=0pt, partopsep=0pt, itemsep=2pt}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -386,7 +383,7 @@ system to provide a more precise description of programs. Second, to take
 advantage of the extended syntax to express quantum algorithms in a flexible
 and compositional way, rather than merely translating circuits.
 
-\paragraph{Related work.}
+%\paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
 appeared in several forms across the literature.  Early work by
 Perdrix~\cite{Perdrix2008} proposed an abstract model for static entanglement
@@ -437,15 +434,15 @@ In contrast, $\lambdaB$ focuses on the syntactic integration of bases and
 superpositions within a unified quantum $\lambda$-calculus, providing a concrete
 proof-of-concept for basis-sensitive typing and higher-order quantum control.
 
-\paragraph{Contributions.}
+%\paragraph{Contributions.}
 The contributions of this paper can be summarised as follows.
 \begin{itemize}
   \item We introduce a \emph{basis-sensitive} quantum $\lambda$-calculus in the
   quantum-control paradigm, extending previous systems to a setting that is
   unit-norm, higher-order, and supports multiple-qubit entangled bases.
-  \item We provide a \emph{realizability-based semantics} that connects the
-  operational reduction system with the extracted type system, ensuring safety
-  by construction.
+\item We develop a \emph{realizability-based semantics} that connects
+  reduction and typing, enabling the systematic extraction of a sound
+  type system.
   \item We formalise a \emph{type algebra} capable of tracking basis
   information throughout programs, and derive typing rules corresponding to
   provable theorems in the realizability interpretation.
@@ -469,8 +466,24 @@ work in \Cref{sec:conclusion}.
 \section{Core language}\label{sec:calculus}
 \subsection{Syntax and congruence}
 This section presents the calculus on which our realizability model will be
-built. It is a $\lambda$-calculus extended with linear combinations of terms,
-forming a vector space. 
+built. It is a $\lambda$-calculus extended with linear combinations of terms.
+
+\begin{table}[t]
+  \begin{align*}
+    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
+    (\Val)\\
+    t &::= w \mid tt \mid (t,t) \mid
+    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
+    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
+    (\Lambda) \\
+    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
+    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
+    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
+  \end{align*}
+  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
+  \label{tab:Syntax}
+\end{table}
 
 The syntax of the calculus is described in
 \Cref{tab:Syntax}. The calculus is divided into four
@@ -488,31 +501,13 @@ they are distributions.
 We also consider the following notation for linear combinations of
 pairs. We stress that this notation for pairs does not appear in the syntax,
 but is rather useful to describe specific states.
-  \[
-    \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
-    := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
-    \qquad\qquad
-    \Pair{r}{\alpha  t+\vv{t_1}} 
-    := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
-  \]
-
-\begin{table}[t]
-  \begin{align*}
-    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
-    (\Val)\\
-    t &::= w \mid tt \mid (t,t) \mid
-    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
-    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
-    (\Lambda) \\
-    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\ValD) \\
-    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
-  \end{align*}
-  \caption{Syntax of the calculus, where $B, B_1, B_2$ are sets of value
-  distributions ($B, B_1, B_2 \subseteq \ValD$).}
-  \label{tab:Syntax}
-\end{table}
+\[
+  \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
+  := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
+  \qquad\qquad
+  \Pair{r}{\alpha  t+\vv{t_1}} 
+  := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
+\]
 
 
 The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
@@ -543,20 +538,19 @@ notation~$\sum$.
     (\vv{t}+\vv{s})\vv{r} &\equiv \vv{t}\vv{r}+\vv{s}\vv{r} &
     \vv{t}(\vv{s}+\vv{r}) &\equiv \vv{t}\vv{s}+\vv{t}\vv{r} &&
   \end{align*}
+  \vspace{-2\baselineskip}
   \begin{align*}
-    \LetP{x_1}{B_1}{x_2}{B_2}{(\alpha\vv{t})}{\vv{s}}
-    &\equiv \alpha(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{s}}) \\
-    \LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}+\vv{s}}{\vv{r}}
-    &
+    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vv{t})}{\vv{s}}
+    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{s}}) \\
+    &\LetP{x_1}{X}{x_2}{Y}{\vv{t}+\vv{s}}{\vv{r}}
     \equiv
-    \begin{aligned}[t]
-      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{r}})\\
-      &+(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{s}}{\vv{r}}) 
-    \end{aligned}\\
-    \gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}
-    &\equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}) \\
-    \gencase{(\vv{t}+\vv{s})}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
-    &\equiv\begin{aligned}[t]
+      (\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{r}})
+      +(\LetP{x_1}{X}{x_2}{Y}{\vv{s}}{\vv{r}}) 
+      \\
+    &\gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}
+    \equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}) \\
+    &\gencase{(\vv{t}+\vv{s})}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
+    \equiv\begin{aligned}[t]
       &\gencase{\vv{t}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}\\
       &+\gencase{\vv{s}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
     \end{aligned}
@@ -611,8 +605,8 @@ must first specify the kind of values they contain.
   $\vv{w_1}$ and $\vv{w_2}$ are $(n-1)$-dimensional qubits, and $\alpha$ and
   $\beta$ satisfy the same normalisation condition.
 \end{definition}
-We may use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
-similarly for longer tuples.
+We use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
+extend it to longer tuples by associating to the right.
 
 From now on, we call the value distributions, i.e. the elements of $\ValD$,
 \emph{vectors}. The vector space $\ValD$ is equipped with an inner
@@ -647,13 +641,12 @@ is restricted to sets $B$ forming $n$-dimensional
 orthonormal bases.
 
 
-Unlike the standard definition of an orthonormal basis, we also require that
-its elements be qubits—neither variables nor abstractions. Intuitively, these
-sets record the basis in which a term is expressed. A qubit belonging to such a
-set is treated under a call-by-value strategy, allowing its data to be handled
-classically. Any other qubit is first decomposed as a $\C$-linear combination
-of the basis elements, after which the function is applied linearly to each
-component. If an argument cannot be expressed in the decorating basis, the
+Unlike standard orthonormal bases, we require that their elements be qubits
+(rather than variables or abstractions).  
+These sets indicate the basis in which a term is expressed: qubits in the
+decorating basis are treated call-by-value, while others are decomposed as
+$\C$-linear combinations of basis elements, with the function applied linearly
+to each component.  If a term cannot be expressed in the decorating basis,
 evaluation becomes stuck.
 
 As in classical linear algebra, no non-trivial linear combination of basis
@@ -673,11 +666,12 @@ unique.
   \qed
 \end{corollary}
 
-From now on, we let $\B=\{\ket{0},\ket{1}\}$ denote the classical computational
-basis. Similarly, we define
-$\ket{+}:=\frac 1{\sqrt{2}}(\ket{0}+\ket{1})$ and
-$\ket{-}:=\frac 1{\sqrt{2}}(\ket{0}-\ket{1})$, and let
-$\XB=\{\ket{+},\ket{-}\}$.
+We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the diagonal
+basis by $\XB=\{\ket{+},\ket{-}\}$, where
+$\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.  
+The four Bell states are
+$\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
+$\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
 
 \subsection{Basis-dependent substitutions}
 Beta-reduction depends on the basis chosen for the abstraction, so we must
@@ -690,9 +684,7 @@ Alongside this substitution, we introduce a special basis, denoted
 $\AbsBasis$, which acts as the canonical basis for $\lambda$-abstractions. In
 this way, we restrict function distributions to a single admissible basis.
 
-Before introducing the basis-dependent substitution, let us recall the
-standard notation. For a term distribution $\vv t$, a variable $x$, and a
-value distribution $\vv v$, the expression $\vv t[\vv v/x]$ denotes the
+As usual, the expression $\vv t[\vv v/x]$ denotes the
 usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
 
 \begin{definition}[Basis-dependent substitution]
@@ -723,18 +715,19 @@ usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
   purely notational.
 \end{definition}
 
-\paragraph{Remark.}
+\begin{remark}
 The two cases in the definition capture distinct substitution modes.  
 In the first, substitution proceeds linearly using the decomposition of
 $\vv v$ over the explicit basis $B$.  
 In the second, when $B=\AbsBasis$, substitution proceeds linearly over the pure
 values that form $\vv v$.  
-This case recovers the substitution mechanism of earlier
-basis-sensitive calculi---such as the one in
+This case recovers the substitution mechanism of 
+non base-sensitive calculi---such as in
 \cite{DiazcaroGuillermoMiquelValironLICS19}---but generalises it by introducing
 basis-dependent behaviour.  
 This special case is also the only one applicable to
-$\lambda$-abstractions, since abstractions cannot belong to orthonormal bases.
+$\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
+\end{remark}
 
 
 \begin{example}
@@ -936,13 +929,14 @@ component can be treated independently. However, there are orthogonal bases
 that cannot be expressed as the product of smaller bases. In such cases, the
 general $\mathsf{case}$ allows us to match directly against those vectors. For
 example, using the \emph{Bell basis}:
-\begin{align*}
-  \mathsf{case}\;\vv{v}\;\mathsf{of}\;\{&
-  \tfrac{1}{\sqrt{2}}(\ket{00}+\ket{11}) \mapsto \vv{t_1}\ \mid\\
-  &\tfrac{1}{\sqrt{2}}(\ket{00}-\ket{11}) \mapsto \vv{t_2}\ \mid\\
-  &\tfrac{1}{\sqrt{2}}(\ket{01}+\ket{10}) \mapsto \vv{t_3}\ \mid\\
-  &\tfrac{1}{\sqrt{2}}(\ket{01}-\ket{10}) \mapsto \vv{t_4}\ \}
-\end{align*}
+\[
+  \mathsf{case}\;\vv{v}\;\mathsf{of}\;\{
+  \Phi^+ \mapsto \vv{t_1}\ \mid
+  \Phi^- \mapsto \vv{t_2}\ \mid
+  \Psi^+ \mapsto \vv{t_3}\ \mid
+  \Psi^- \mapsto \vv{t_4}\ \}
+\]
+
 This Bell basis is central in quantum communication. In
 \Cref{sec:teleportation}, we revisit the quantum teleportation protocol,
 which relies heavily on these states.
@@ -971,7 +965,7 @@ equivalence is preserved by reduction modulo~$\equiv$.
   $\vv{r_1}\equiv\vv{r_2}$.
   Diagrammatically:
   \[
-    \begin{tikzcd}[row sep=small,baseline=(current bounding box.south)]
+    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
       & \vv{t}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         &[-3em] \equiv
@@ -1109,12 +1103,12 @@ stated in the following proposition.
 \begin{theorem}\label{thm:SharpCharacterization}
   The interpretation of a type~$\sharp A$ contains precisely the
   norm-$1$ linear combinations of values in~$\sem{A}$:
-  \[
+  \(
     \sem{\sharp A}
     = (\sem{A}^\bot)^\bot
-    = \Span(\sem{A}) \cap \Sph.
-    \tag*{\qed}
-  \]
+    = \Span(\sem{A}) \cap \Sph
+  \).
+  \qed
 \end{theorem}
 
 
@@ -1353,9 +1347,9 @@ what it means for a typing rule to be valid.
   A \emph{context} (denoted by capital Greek letters $\Gamma$, $\Delta$) is a
   finite mapping $\Gamma:\Var\to\Type\times\BasisType$ assigning a type and a
   basis to each variable in its domain. We write
-  \[
+  \(
     \Gamma = {x_1}^{{X_1}}:A_1,\dotsb, {x_n}^{{X_n}}:A_n
-  \]
+  \)
   to indicate that $\Gamma(x_i)=(A_i,\basis{X_i})$ for each~$i$.
 \end{definition}
 
@@ -1405,11 +1399,11 @@ form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
 \begin{definition}
   The \emph{strict domain} of a context~$\Gamma$, denoted~$\sdom{\Gamma}$, is
   defined as
-  \[
+  \(
     \sdom{\Gamma} :=
     \{x \in \dom{\Gamma} \mid
-      \sem{\Gamma(x)} = \sem{\sharp(\Gamma(x))}\}.
-  \]
+    \sem{\Gamma(x)} = \sem{\sharp(\Gamma(x))}\}
+  \).
 \end{definition}
 
 Note that this definition relies on the idempotence of the~$\sharp$~operator
@@ -1430,18 +1424,14 @@ is faithfully captured by the type.  Formally:
 
 \begin{definition}[Typing judgement]
   A \emph{typing judgement} $\TYP{\Gamma}{\vv{t}}{A}$ is valid when:
-  \begin{itemize}
-    \item $\sdom{\Gamma}\subseteq\FV{\vv{t}}\subseteq\dom{\Gamma}$,
-    \item for all $\sigma\in\sem{\Gamma}$, 
+    $\sdom{\Gamma}\subseteq\FV{\vv{t}}\subseteq\dom{\Gamma}$
+    and
+    for all $\sigma\in\sem{\Gamma}$, 
           $\vv{t}\ansubst{\sigma}{}\real A$.
-  \end{itemize}
 \end{definition}
-
 
 We are also interested in \emph{orthogonal terms}, that is, terms that reduce
 to orthogonal values.  
-Naturally, unless these terms are closed, their orthogonality must be assessed
-relative to a context.  
 We therefore introduce the following notion.
 
 \begin{definition}
@@ -1460,12 +1450,11 @@ We therefore introduce the following notion.
       $\vv{s}\ansubst{\tau}{}\eval\vv{w}$,
       and $\vv{v}\perp\vv{w}$.
   \end{itemize}
+When both $\Delta_1$ and $\Delta_2$ are empty,
+we just write
+$\SORTH{\Gamma}{\vv{t}}{\vv{s}}{A}$.
 \end{definition}
 
-When both $\Delta_1$ and $\Delta_2$ are empty,
-we abbreviate the judgement as
-$\SORTH{\Gamma}{\vv{t}}{\vv{s}}{A}$.
-These will be the cases of primary interest.
 
 These two notions ---typing and orthogonality judgements--- provide the
 semantic foundation upon which the typing rules of the calculus are built.
@@ -1485,12 +1474,6 @@ semantic foundation upon which the typing rules of the calculus are built.
 %Intuitively, flat types correspond to bases whose elements are mutually
 %orthogonal, such as~$\basis{\B}$ or~$\basis{\XB}$.
 
-With these definitions in mind, we regard a typing rule as \emph{valid} when
-valid premises entail a valid conclusion.  
-In \Cref{tab:TypingRules} we enumerate several such rules.  
-Since each typing rule corresponds to a theorem, there exist infinitely many
-valid ones; here we restrict ourselves to a subset forming a reasonable core
-typing system for the calculus.
 
 
 \begin{table}[t]
@@ -1564,8 +1547,13 @@ typing system for the calculus.
   \label{tab:TypingRules}
 \end{table}
 
-The main result of this section is the validity of all the rules presented in
-\Cref{tab:TypingRules}.
+With these definitions in mind, a typing rule is \emph{valid} when valid
+premises entail a valid conclusion.  
+Although there are infinitely many valid rules (each corresponds to a theorem),
+\Cref{tab:TypingRules} lists a representative subset forming a reasonable core
+typing system for the calculus.  
+The main result of this section is that all rules in \Cref{tab:TypingRules} are
+valid.
 
 \begin{theorem}\label{thm:TypingRulesValidity}
   All the typing rules in \Cref{tab:TypingRules} are valid.
@@ -1581,7 +1569,6 @@ realizer (cf.~\Cref{def:Realizer}).
 \emph{Subject reduction} is also immediate: indeed, if
 $\TYP{\Gamma}{\vv{t}}{A}$ and $\vv{t}\to\vv{u}$, then
 $\TYP{\Gamma}{\vv{u}}{A}$ by definition.
-
 However, if we restrict ourselves to a subset of typing rules—such as those
 presented in \Cref{tab:TypingRules}—we must
 ensure that this restricted system still suffices to type all reducts of a
@@ -1590,21 +1577,6 @@ case, the rules proven valid in \Cref{thm:TypingRulesValidity}
 suffice to guarantee subject reduction, as
 stated below.
 
-\begin{lemma}[Substitution]\label{lem:Substitution}
-  Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ an orthonormal basis.
-  If
-  \(
-    \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
-    \quad\text{and}\quad
-    \TYP{\Delta}{\vv{v}}{A}
-  \) can be derived using the set of rules in \Cref{tab:TypingRules},
-  and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
-  then
-  \(
-    \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
-  \) can also be derived by the same set of rules.
-  \qed
-\end{lemma}
 
 \begin{theorem}[Subject reduction]\label{thm:SubjectReduction}
   If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
@@ -1618,8 +1590,7 @@ stated below.
 We begin with \emph{Deutsch's algorithm}, a canonical example that highlights
 how basis types in the $\lambdaB$ calculus yield more informative typings for
 quantum programs.
-
-\paragraph{Problem statement.}
+The algorithm is as follows.
 We are given black-box access to an \emph{oracle}~$U_f$ that implements an
 unknown Boolean function $f:\{0,1\}\to\{0,1\}$.  
 The oracle can only be either \emph{constant} (both inputs map to the same
@@ -1629,15 +1600,15 @@ Deutsch's algorithm decides this with a single query by exploiting quantum
 superposition and interference.
 
 Operationally, the oracle~$U_f$ acts as
-\[
-  U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)},
-\]
+\(
+  U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)}
+\),
 where $\oplus$ is addition modulo~2.  
 The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
 then applies a Hadamard on the first qubit before measuring it.  
 The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
 
-\paragraph{A standard implementation in $\lambdaB$.}
+We begin with a standard implementation of this algorithm in $\lambdaB$.
 We first encode the usual gates we will use:
 \begin{align*}
   \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
@@ -1650,10 +1621,10 @@ We first encode the usual gates we will use:
 
 We model the four possible oracles $U_f$ (two constant and two balanced):
 \begin{align*}
-  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},\\
-  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}},\\
-  O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
-  O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}.
+  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},
+  & O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
+  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}},
+  & O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}.
 \end{align*}
 
 The standard Deutsch term prepares~$\ket{+-}$, calls the oracle, then
@@ -1683,7 +1654,7 @@ unitary distribution of pairs of booleans.  Operationally we know more: the
 first output is actually a basis bit ($\ket{0}$ or~$\ket{1}$) encoding whether
 $f$ is constant or balanced, and the second output can be ignored.
 
-\paragraph{A basis-aware implementation with tighter typing.}
+Then, we can consider a basis-aware implementation with tighter typing.
 The key observation is that the oracle is always called on the fixed state
 $\ket{+-}$.  
 Thus it is natural to write the program in the
@@ -1703,20 +1674,20 @@ We define the same gates in the $\XB$ basis:
 
 We then rewrite the program and the four oracles in~$\XB$:
 \begin{align*}
-  \mathsf{Deutsch} &:= \Lam{f}{\AbsBasis}{
-    \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
-      {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
-  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},\\
-  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}},\\
-  O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
-  O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}.
+  \mathsf{Deutsch} &:= \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})} {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+\end{align*}
+\vspace{-2\baselineskip}
+\begin{align*}
+  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
+  &O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
+  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}},
+  &O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}.
 \end{align*}
 
-\emph{Typing.}  
 Now every oracle has the tight type
-\[
-  \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}),
-\]
+\(
+  \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB})
+\),
 and the program itself can be typed as
 \[
   \TYP{}{\mathsf{Deutsch}}
@@ -1728,7 +1699,6 @@ classically: a single $\mathsf{case}$ on the first component suffices to return
 a classical bit in the computational basis, with no need for a $\sharp$-type on
 the result.
 
-\paragraph{Discussion.}
 Both implementations are operationally equivalent: they compute a bit that
 decides whether $f$ is constant or balanced.  The difference lies in the
 \emph{precision} of their typings.  The standard version, expressed in~$\B$
@@ -1754,7 +1724,6 @@ discipline introduced earlier, we can encode the teleportation process in a
 way that remains both syntactically compact and semantically faithful to its
 quantum-mechanical counterpart.
 
-\paragraph{Deferred measurement principle.}
 The deferred-measurement principle states that any quantum circuit can delay
 its measurements without altering the final outcome.  
 More precisely, any gate classically controlled by the result of a measurement
@@ -1764,7 +1733,6 @@ Although the $\lambdaB$ calculus has no primitive operation for measurement,
 the $\mathsf{case}$ constructor allows us to simulate such classically
 controlled gates by branching on basis states.
 
-\paragraph{Teleportation protocol.}
 A canonical example that exploits this principle is the
 \emph{quantum teleportation protocol}.  
 Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
@@ -1774,7 +1742,7 @@ Alice can transmit an unknown quantum state~$\ket{\psi}$ to Bob without
 physically sending the qubit itself.  
 The standard circuit implementing the protocol is shown below:
 \[
-  \Qcircuit @C=1em @R=.7em {
+  \Qcircuit @C=1em @R=.5em {
     \lstick{\ket{\psi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
     \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
     \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \gate{Z} \cwx[-2] \qw & \rstick{\ket{\psi}} \qw
@@ -1789,24 +1757,21 @@ then measuring both qubits.
 Depending on the pair of classical outcomes, a Pauli correction ($I$, $X$, $Z$,
 or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$.
 
-\paragraph{Encoding in $\lambdaB$.}
 We can simulate the behaviour of this circuit in the $\lambdaB$ calculus by
-defining a $\lambda$-term that, instead of performing measurements, explicitly
+defining a term that, instead of performing measurements, explicitly
 describes the computation corresponding to each branch.  
 A possible encoding is:
 \begin{align*}
-  \mathsf{Teleport} :=
+  &\mathsf{Teleport} :=
   \Lam{x}{\B}{
     \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
       \mathsf{case}\;
         \Pair{x}{y_1}\;
-        \mathsf{of}\;
-	\begin{aligned}[t]
-         \{ \Phi^{+} &\mapsto \Pair{\Phi^{+}}{y_2},\\
-          \Phi^{-} &\mapsto \Pair{\Phi^{-}}{Z\,y_2},\\
-          \Psi^{+} &\mapsto \Pair{\Psi^{+}}{X\,y_2},\\
-	\Psi^{-} &\mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
-        \end{aligned}
+        \mathsf{of}\\
+         &\{ \Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
+          \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;
+	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
+	\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
     }
   }.
 \end{align*}
@@ -1820,7 +1785,6 @@ transformation as the circuit above but expressed without any explicit
 measurement --- instead, each branch encodes the coherent superposition of
 possible measurement outcomes.
 
-\paragraph{Typing and discussion.}
 The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
 steps in the Bell basis, exploiting the deferred-measurement principle in a
 type-safe way.  
@@ -2839,8 +2803,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
     \end{description}
 \end{proof}
 
-\begin{restatelemma}[Restatement of \Cref{lem:Substitution}]
-  \itshape
+\begin{lemma}[Substitution]\label{lem:Substitution}
   Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ an orthonormal basis.
   If
   \(
@@ -2853,8 +2816,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
   \(
     \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
   \) can also be derived by the same set of rules.
-
-\end{restatelemma}
+\end{lemma}
 \begin{proof}
   By induction on $\vv{t}$.
   \begin{description}
