@@ -56,7 +56,6 @@
 \Crefname{theorem}{Theorem}{Theorems}
 \Crefname{lemma}{Lemma}{Lemmas}
 \Crefname{definition}{Definition}{Definitions}
-\Crefname{proposition}{Proposition}{Propositions}
 
 
 % \qedhere compatible con llncs (sin amsthm)
@@ -1035,36 +1034,33 @@ set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
 boolean type can be represented by a basis of size~2, yet we are not restricted
 to a single one, since there are infinitely many bases to choose from.
 
-Pairs are written using the notation introduced earlier.  The type~$A\times B$
-corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
-admits pairs only of pure values, the semantic clause
-in~\Cref{tab:UnitaryTypes} should be
-read as an abbreviation for the following expanded form:
-\[
-  \sem{A\times B}
-  := \bigl\{
-       \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i,w_j)
-       \;\bigm|\;
-       \sum_{i=1}^{n}\alpha_i v_i\in\sem{A},~
-       \sum_{j=1}^{m}\beta_j w_j\in\sem{B}
-     \bigr\}.
-\]
-We stress this for rigour, but for readability we shall continue using the
-concise notation of pairs.
-
+Pairs are standard, and written using the notation introduced earlier.
+%The type~$A\times B$
+%corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
+%admits pairs only of pure values, the semantic clause
+%in~\Cref{tab:UnitaryTypes} should be
+%read as an abbreviation for the following expanded form:
+%\[
+%  \sem{A\times B}
+%  := \bigl\{
+%       \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i,w_j)
+%       \;\bigm|\;
+%       \sum_{i=1}^{n}\alpha_i v_i\in\sem{A},~
+%       \sum_{j=1}^{m}\beta_j w_j\in\sem{B}
+%     \bigr\}.
+%\]
+%We stress this for rigour, but for readability we shall continue using the
+%concise notation of pairs.
 The arrow type~$A\Arr B$ consists of distributions of $\lambda$-abstractions
 that map elements of~$\sem{A}$ to realizers of~$B$.  
 Finally, the type~$\sharp A$ denotes the double orthogonal complement of~$A$
 intersected with the unit sphere.
-
-The type grammar is otherwise standard, except for the constructor~$\sharp A$,
-which represents quantum data---linear resources that cannot be erased or
+It represents quantum data---linear resources that cannot be erased or
 duplicated.  
-
 Intuitively, applying the~$\sharp$ operator to a type~$A$ yields the span of the
 original interpretation (intersected with the unit sphere).  This captures the
 possible linear combinations of values in the unitary semantics of~$A$, as
-stated in the following proposition.
+stated in the following theorem.
 
 \begin{theorem}\label{thm:SharpCharacterization}
   The interpretation of a type~$\sharp A$ contains precisely the
@@ -1092,18 +1088,9 @@ application.
 \begin{remark}
   A basis type~$\basis{X}$ may consist of value distributions of pairs and can
   therefore be written as the product type of smaller bases. For example, if
-  $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\basis{X}=\basis{\B}\times\basis{\B}$.
+  $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\sem{\basis{X}}=\sem{\basis{\B}\times\basis{\B}}$.
   However, this is not possible for entangled bases. A clear example is the
-  Bell basis:
-  \[
-    \mathsf{Bell}
-    =\Bigl\{
-      \tfrac{1}{\sqrt{2}}(\ket{00}+\ket{11}),
-      \tfrac{1}{\sqrt{2}}(\ket{00}-\ket{11}),
-      \tfrac{1}{\sqrt{2}}(\ket{01}+\ket{10}),
-      \tfrac{1}{\sqrt{2}}(\ket{01}-\ket{10})
-    \Bigr\}.
-  \]
+  Bell basis.
 \end{remark}
 
 It remains to verify that our type algebra indeed captures the intended sets of
@@ -1117,8 +1104,7 @@ interpretation has norm~$1$.
 
 Defining types as sets of values naturally induces a semantic notion of
 subtyping. We say that a type~$A$ is a subtype of a type~$B$
-(written~$A\leq B$) when the set of realizers of~$A$ is included in that of~$B$,
-that is, $\{\real A\}\subseteq\{\real B\}$.
+(written~$A\leq B$) when the set of realizers of~$A$ is included in that of~$B$.
 If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
 (written~$A\cong B$).
 
@@ -1126,11 +1112,8 @@ If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
   For every type~$A$, we have $A\leq\sharp A$.
   For the base types $\basis{\B}$ and $\basis{\XB}$, however,
   neither inclusion holds:
-  \[
-    \basis{\B}\not\leq\basis{\XB}
-    \quad\text{and}\quad
-    \basis{\XB}\not\leq\basis{\B}.
-  \]
+    $\basis{\B}\not\leq\basis{\XB}$ and
+    $\basis{\XB}\not\leq\basis{\B}$.
   Nevertheless, their linear extensions coincide,
   since $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
 \end{example}
@@ -1179,21 +1162,19 @@ words, these abstractions preserve both norm and orthogonality.
   for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
   there exist value distributions
   $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
-  \[
-    \vv{t}[\vv{v_i}/x]\eval\vv{w_i}
-    \quad\text{and}\quad
-    \vv{t}[\vv{v_j}/x]\eval\vv{w_j},
-    \quad\text{with } 
-    \vv{w_i}\perp\vv{w_j}\text{ whenever }i\neq j.
-    \tag*{\qed}
-  \]
+    $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$
+    and
+    $\vv{t}[\vv{v_j}/x]\eval\vv{w_j}$,
+    with
+    $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
+    \qed
 \end{lemma}
 
 Terms such as $\ket{0}$ and $\ket{1}$ are syntactic objects of the
 calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
 terms on Hilbert spaces, we shall occasionally abuse notation and identify
 value distributions representing qubits with their corresponding canonical
-basis vectors in~$\C^n$. Of course, this identification applies only to those
+basis vectors in~$\C^n$. This identification applies only to those
 distributions that denote quantum data, not to general syntactic values such as
 $\lambda$-abstractions---in particular, to all elements of
 $\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
@@ -1230,13 +1211,9 @@ Formally:
     $F(\vv{v}) = \vv{w}$.
 \end{definition}
 
-In other words, a $\lambda$-term represents a function
-$F:\C^n\to\C^n$ precisely when it encodes the action of~$F$ on vectors.
-
-
-This definition, together with the previous lemma, allows us to build a
+This definition, together with \Cref{lem:BasesIso}, allows us to build a
 characterisation of unitary operators as values in
-$\sem{\sharp\basis{X}\Arr\sharp\basis{X}}$.
+$\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 
 \begin{theorem}[Characterisation of Unitary Operators]
   Let $X$ and $Y$ be orthonormal bases of size~$n$.
