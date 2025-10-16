@@ -858,7 +858,7 @@ and $\vv r'\equiv\vv r$.
   \begin{align*}
     \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined,}\quad
     (\Lam{x}{X}{\vv{t}})\vv{v}
-    &\lraneq \vv{t}\ansubst{\vv v/x}{A}\\
+    &\lraneq \vv{t}\ansubst{\vv v/x}{X}\\
     \text{If }\vv{t}\ansubst{\vv v/x}{X\otimes Y}\text{ is defined,}\quad
     \LetP{x}{X}{y}{Y}{\vv v}{\vv{t}}
     &\lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{X\otimes Y}\\
@@ -1058,7 +1058,7 @@ used in the semantics of the~$\sharp$~type:
       \forall\vv{w}\in\sem{A},\,
       (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{X}\real B
     \bigr\}\\
-    \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot
+    \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot\quad\text{Where: }A^\bot = \{\vec{v}\in\Sph\,\mid\,\scal{\vec{v}}{a} = 0, \forall a\in A\}
   \end{align*}
   \caption{Type notations and semantics}
   \label{tab:UnitaryTypes}
@@ -1661,7 +1661,7 @@ basis state at the oracle boundary.
 
 We define the same gates in the $\XB$ basis:
 \begin{align*}
-  %\pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
+  \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
   \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}},\\
   \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
     \case{y}{\ket{+}}{\ket{-}}
@@ -2508,13 +2508,13 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{
         &= \lambda\vv{w_{02}} + \alpha\vv{w_{12}} + 0\vv{w_{01}} + 0\vv{w_{11}} & (\text{from~\Cref{A9:it1}}, k =1)\\
         &= \lambda(\vv{w_{02}}+0\vv{w_{01}}) + \alpha(\vv{w_{12}}+0\vv{w_{11}})&\\
         &= \lambda(\mu\vv{w_{00}} + \beta\vv{w_{01}}) + \alpha(\mu\vv{w_{01}}+\beta\vv{w_{11}}) & (\text{from~\Cref{A9:it2}}, j=0,1)\\
-        &= \lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10} + \alpha\beta\vv{w_{11}}}
+        &= \lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10}} + \alpha\beta\vv{w_{11}}
     \end{align*}
     Therefore:
     \begin{align*}
         &\scal{\vv{w_1}}{\vv{w_2}} \\
         &= \scal{\vv{w_{11}}}{\vv{w_{22}} + 0 \vv{w_{12}} + 0 \vv{w_{01}} + 0 \vv{w_{11}}}\\
-        &= \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10} + \alpha\beta\vv{w_{11}}}}\\
+        &= \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10}} + \alpha\beta\vv{w_{11}}}\\
         &=\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}} + \scal{\vv{w_{11}}}{\lambda\beta\vv{w_{01}}} + \scal{\vv{w_{11}}}{\alpha\mu\vv{w_{10}}} + \scal{\vv{w_{11}}}{\alpha\beta\vv{w_{11}}}\\
         &=\lambda\mu\scal{\vv{w_{11}}}{\vv{w_{00}}} + \lambda\beta\scal{\vv{w_{11}}}{\vv{w_{01}}} + \alpha\mu\scal{\vv{w_{11}}}{\vv{w_{10}}} + \alpha\beta\scal{\vv{w_{11}}}{\vv{w_{11}}}\\
         &= 0 + 0 + 0 + \alpha\beta = \scal{\vv{u_1}}{\vv{u_2}}\scal{\vv{v_1}}{\vv{v_2}}
@@ -2784,7 +2784,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
         &=\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}    
     \end{align*}
     
-    Since $\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma}{}\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, we get: $\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}\in\sem{B}$
+    Since $\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma}{}\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, we get: $\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\\\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}\in\sem{B}$
     Then we can finally conclude that $\vv{t}[x/y]\ansubst{\sigma}{}\real B$.
 
     \item[Weak] Given $\sigma\in\sem{\Gamma,x^X:\basis{X}}$, we observe that $\ansubst{\sigma}=\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{X}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{\basis{X}}$. Using the first hypothesis, we know that $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}$ where $\vv{w}\in\sem{B}$. Then we have:
@@ -2854,8 +2854,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
 
     In case \ref{case:subs_sum_2}, by inductive hypothesis we have that for all $i\in\{0,\dotsb,n\}$, and $i\neq j$ $\SORTH{\Gamma,\Delta}{\vv{s_i}\ansubst{\vv{v}/x}{X}}{\vv{s_j}\ansubst{\vv{v}/x}{X}}{C}$. Since orthogonality is preserved by substitutions in $\sem{\Gamma,\Delta}$, this means we can derive $\TYP{\Gamma,\Delta}{\sum_{i=1}^n\alpha_i \vv{s_i}\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Sum}$.
 
-    \item[$\vv{t}=\alpha\vv{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vv{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vv{s}\ansubst{\vv{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{
-    e^{i\theta}\vv{s}\ansubst{\vv{v}/X}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
+    \item[$\vv{t}=\alpha\vv{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vv{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vv{s}\ansubst{\vv{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{e^{i\theta}\vv{s}\ansubst{\vv{v}/X}{X}}{\\B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
       \qedhere
   \end{description}
 \end{proof}
