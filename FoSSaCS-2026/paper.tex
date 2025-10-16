@@ -2,6 +2,7 @@
 
 \usepackage{enumitem}
 \setlist[itemize]{topsep=2pt, parsep=0pt, partopsep=0pt, itemsep=2pt}
+\setlist[enumerate]{topsep=2pt, parsep=0pt, partopsep=0pt, itemsep=2pt}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -323,9 +324,8 @@
 \section{Introduction}
 The no-cloning theorem \cite{WoottersZurek1982} and the no-deleting theorem
 \cite{PatiBraunstein2000} are two well-known results in quantum mechanics that
-state it is impossible to copy or delete an arbitrary qubit. This stands in
-stark contrast with classical information, where copying and deleting data are
-routine operations. There is, however, a subtlety: although arbitrary qubits
+state it is impossible to copy or delete an arbitrary qubit. 
+There is, however, a subtlety: although arbitrary qubits
 cannot be copied or deleted, this is possible for known---and, in the case of
 deletion, separable---qubits. This implies that qubits with known values behave
 as classical data and can be treated accordingly. Moreover, it suffices to know
@@ -385,13 +385,13 @@ and compositional way, rather than merely translating circuits.
 
 %\paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
-appeared in several forms across the literature.  Early work by
-Perdrix~\cite{Perdrix2008} proposed an abstract model for static entanglement
-analysis, where the basis of qubits is used to control duplication and track
-non-entanglement properties.  
-More recently, Monzón and Díaz-Caro~\cite{DiazcaroMonzonAPLAS25} introduced a
-typed $\lambda$-calculus that incorporates basis annotations into the type
-system, ensuring linear handling of quantum data while providing strong
+appeared in several forms across the literature.  
+The work in~\cite{Perdrix2008} proposed an abstract model for static
+entanglement analysis, where the basis of qubits is used to control duplication
+and track non-entanglement properties.  
+The approach in~\cite{DiazcaroMonzonAPLAS25} introduced a typed
+$\lambda$-calculus that incorporates basis annotations into the type system,
+ensuring linear handling of quantum data while providing strong
 meta-theoretical guarantees.  
 Our system generalises these ideas by allowing abstractions to range over
 arbitrary---possibly entangled---bases, extending basis awareness beyond the
@@ -407,10 +407,11 @@ superpositions of programs but within a diagrammatic semantics.
 By contrast, our approach operates directly within a typed term calculus,
 allowing basis transitions to be tracked syntactically.
 
-From a categorical standpoint, Heunen and Kaarsgaard~\cite{HeunenKaarsgaard2021}
-model measurement and decoherence through \emph{quantum information effects},
-capturing basis change as a semantic effect.  
-Similarly, Carette et al.~\cite{CaretteJeunenKaarsgaardSabry2024} introduce
+From a categorical standpoint, the framework
+in~\cite{HeunenKaarsgaard2021} models measurement and decoherence through
+\emph{quantum information effects}, capturing basis change as a semantic
+effect.  
+Similarly,~\cite{CaretteJeunenKaarsgaardSabry2024} introduces
 \textsc{Quantum}$\Pi$, a language combining two interpretations of a reversible
 classical calculus—one per basis—via an effect construction.  
 In both cases, basis sensitivity arises semantically.  
@@ -418,7 +419,7 @@ In contrast, $\lambdaB$ integrates it directly at the syntactic and typing
 levels, ensuring that basis transformations are explicit in program structure.
 
 Other languages aim to unify classical and quantum computation.
-Qunity~\cite{VoichickLiRandHicks2023}, for instance, generalises classical
+For instance,~\cite{VoichickLiRandHicks2023} generalises classical
 control constructs and interprets duplication and discarding semantically as
 entanglement and partial trace.  
 Our calculus follows the opposite philosophy: linearity and duplicability are
@@ -426,10 +427,9 @@ syntactically restricted by the basis-sensitive type system, guaranteeing
 coherent quantum control without relying on external semantic constraints.
 
 Finally, related efforts in semantic characterisation—such as the fully
-abstract model of Clairambault and de
-Visme~\cite{ClairambaultdeVisme2019} or the dual calculi of Choudhury and
-Gay~\cite{ChoudhuryGay2025}—approach the logical foundations of quantum
-computation from complementary angles.  
+abstract model of~\cite{ClairambaultdeVisme2019} or the dual calculi
+described in~\cite{ChoudhuryGay2025}—approach the logical foundations of
+quantum computation from complementary angles.  
 In contrast, $\lambdaB$ focuses on the syntactic distinction of bases and
 superpositions within a unified quantum $\lambda$-calculus, providing a concrete
 basis-sensitive typing and higher-order quantum control.
@@ -451,39 +451,20 @@ The contributions of this paper can be summarised as follows.
   it subsumes and extends previous single-basis approaches.
 \end{itemize}
 
-The structure of the paper is as follows.  In
-\Cref{sec:calculus}, we introduce the core
-language, its syntax, congruence rules, and basis-dependent substitution.
-\Cref{sec:reduction} details the
-operational semantics.  \Cref{sec:model}
-presents the realizability model, including
-unitary type semantics, the characterisation of unitary operators, and the
-typing rules.  \Cref{sec:examples} illustrates the
-calculus through representative programs.  All omitted proofs are deferred to
-the appendices.  Finally, we conclude with remarks and directions for future
-work in \Cref{sec:conclusion}.
+The paper is organised as follows.  
+\Cref{sec:calculus} introduces the core language, its syntax, congruence rules,
+and basis-dependent substitution.  
+\Cref{sec:reduction} defines the operational semantics, and
+\Cref{sec:model} presents the realizability model with unitary type semantics,
+the characterisation of unitary operators, and the typing rules.  
+\Cref{sec:examples} presents some representative examples.
+All omitted proofs appear in the appendices, and
+\Cref{sec:conclusion} concludes with final remarks and perspectives.
 
 \section{Core language}\label{sec:calculus}
-\subsection{Syntax and congruence}
+%\subsection{Syntax and congruence}
 This section presents the calculus on which our realizability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms.
-
-\begin{table}[t]
-  \begin{align*}
-    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
-    (\Val)\\
-    t &::= w \mid tt \mid (t,t) \mid
-    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
-    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
-    (\Lambda) \\
-    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\ValD) \\
-    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
-  \end{align*}
-  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
-  \label{tab:Syntax}
-\end{table}
 
 The syntax of the calculus is described in
 \Cref{tab:Syntax}. The calculus is divided into four
@@ -524,6 +505,22 @@ In particular, it enforces the commutativity and associativity of addition and
 the distributivity of scalar multiplication, thereby justifying summation
 notation~$\sum$.
 
+\begin{table}[t]
+  \begin{align*}
+    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
+    (\Val)\\
+    t &::= w \mid tt \mid (t,t) \mid
+    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
+    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
+    (\Lambda) \\
+    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
+    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
+    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
+  \end{align*}
+  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
+  \label{tab:Syntax}
+\end{table}
 \begin{table}[t]
   \begin{align*}
     0\vec t &\equiv \vv 0 & \vec t+\vv 0 &\equiv \vec t \\
@@ -673,7 +670,7 @@ The four Bell states are
 $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
 $\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
 
-\subsection{Basis-dependent substitutions}
+%\subsection{Basis-dependent substitutions}
 Beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
 operation substitutes variables with vectors expressed in the chosen basis; the
@@ -732,35 +729,21 @@ $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
 
 \begin{example}
   Let
-  \(
-    \vv v
-    = \tfrac{1}{\sqrt{2}}\Pair{\ket{0}}{\ket{1}}
-      - \tfrac{1}{\sqrt{2}}\Pair{\ket{1}}{\ket{0}}
-    \),
-  which, using the notation introduced after \Cref{def:Qubit}, can also be written as
   $\vv v = \tfrac{1}{\sqrt{2}}\ket{01}
            - \tfrac{1}{\sqrt{2}}\ket{10}$.
-  Then the substitution
-  $(y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}$ yields
+  Then 
   \begin{align*}
     (y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}
     &= \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{0}/x][\ket{1}/y]
        - \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{1}/x][\ket{0}/y] \\
-    &= \tfrac{1}{\sqrt{2}}\,(\ket{1},\ket{0})
-       - \tfrac{1}{\sqrt{2}}\,(\ket{0},\ket{1}),
-  \end{align*}
-  that is,
-  $\tfrac{1}{\sqrt{2}}\ket{10}
-   - \tfrac{1}{\sqrt{2}}\ket{01}$.
-  Thus, as expected, the substitution on $(y,x)$ effectively swaps the two
-  components of the pair.
+       &= 
+       \tfrac{1}{\sqrt{2}}\ket{10}
+       - \tfrac{1}{\sqrt{2}}\ket{01},
+     \end{align*}
 \end{example}
 
-With this new substitution in place, we can establish a few properties that
-will later be instrumental in proving the correctness of typing judgements.
-
-We first show that basis-dependent substitution distributes over linear
-combinations of terms.
+With this substitution in place, we can establish certain needed properties.
+First, basis-dependent substitution distributes over linear combinations.
 
 \begin{lemma}[Distributivity over linear combinations]\label{lem:distributiveSubstitution}
   For term distributions $\vv{t_i}$, a value distribution $\vv{v}$, a
