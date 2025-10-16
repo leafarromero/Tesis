@@ -994,11 +994,9 @@ realizers.
 \begin{definition}[Type realizer]\label{def:Realizer}
   Given a type~$A$ and a term distribution~$\vv t$, we say that~$\vv t$
   \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
-  distribution~$\vv v$ such that:
-  \begin{itemize}
-    \item $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
-    \item $\vv{v}\in\sem{A}$.
-  \end{itemize}
+  distribution~$\vv v\in\sem A$ such that
+  $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
+
   We denote the set of realizers of~$A$ by~$\{\real A\}$.
 \end{definition}
 
