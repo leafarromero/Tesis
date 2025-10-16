@@ -464,7 +464,7 @@ All omitted proofs appear in the appendices, and
 \section{Core language}\label{sec:calculus}
 %\subsection{Syntax and congruence}
 This section presents the calculus on which our realizability model will be
-built. It is a $\lambda$-calculus extended with linear combinations of terms.
+built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
 
 The syntax of the calculus is described in
 \Cref{tab:Syntax}. The calculus is divided into four
@@ -564,10 +564,10 @@ qualify as \emph{bases}, thereby justifying the decorations appearing in the
 syntax of \Cref{tab:Syntax}.
 
 
-Before proceeding further, let us briefly illustrate the intuition behind
-the congruence of \Cref{tab:Congruence}.
-The key idea of the calculus is that arguments are decomposed over the bases
-associated with their corresponding abstractions.
+Before proceeding further, let us briefly illustrate the intuition behind the
+congruence in \Cref{tab:Congruence}.  
+The key idea is that arguments are decomposed over the bases associated with
+their corresponding abstractions.  
 As in linear algebra, a vector can be rewritten as a linear combination of
 basis elements; for instance,
 \(
@@ -577,20 +577,12 @@ basis elements; for instance,
 \)
 expresses $(1,0)$ in the basis
 $\{\tfrac{(1,1)}{\sqrt{2}}, \tfrac{(1,-1)}{\sqrt{2}}\}$.
-By identifying $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we see
-that the calculus allows every vector (or value distribution)
-to be expressed as a superposition of elements of the basis attached to
-each abstraction.
-The congruence ensures that these linear combinations behave
-algebraically as in a complex vector space, supporting the standard
-rules of addition, scalar multiplication, and the zero vector.
-
-
-
-The core mechanism of the calculus lies in decorating variable bindings with
-sets of value distributions. Following linear algebra terminology, we refer to
-these sets as \emph{(orthonormal) bases}, as we will define later. These bases
-inform the reduction system on how to operate on their arguments.
+By identifying $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we see that
+the calculus allows every vector (or value distribution) to be expressed as a
+superposition of elements of the basis attached to each abstraction.
+The congruence ensures that these linear combinations behave algebraically as
+in a complex vector space, supporting the standard operations of addition,
+scalar multiplication, and the zero vector.
 
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
@@ -607,28 +599,29 @@ extend it to longer tuples by associating to the right.
 
 From now on, we call the value distributions, i.e. the elements of $\ValD$,
 \emph{vectors}. The vector space $\ValD$ is equipped with an inner
-product $\scal{\vv v}{\vv w}$ and an $\ell_2$-norm $\|\vv v\|$ defined as:
-\[
+product defined by,  
+\(
   \scal{\vv{v}}{\vv{w}} := \sum_{i=1}^n\sum_{j=1}^m
   \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},
-  \qquad\qquad
+\)
+and an $\ell_2$-norm 
+\(
   \|\vv{v}\| := \sqrt{\scal{\vv{v}}{\vv{v}}}
-  = \sqrt{\sum_{i=1}^n|\alpha_i|^2},
-\]
+  = \sqrt{\sum_{i=1}^n|\alpha_i|^2}
+\),
 where $\vv{v}=\sum_{i=1}^n\alpha_i v_i$ and
 $\vv{w}=\sum_{j=1}^m\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
 delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
 
 With this notion of inner product, we can complete the description of the
 calculus syntax. As expected, two values are \emph{orthogonal} when their inner
-product is equal to zero. Using this, we can now formally define the sets that
+product is equal to zero. We can now formally define the sets that
 decorate abstractions.
 \begin{definition}[Basis]\label{def:NthDimensionalBasis}
   A set of value distributions $B$ is an \emph{$n$-dimensional orthonormal
   basis} if it satisfies:
   \begin{enumerate}
     \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\Cref{def:Qubit})}.
-    \item Each element has norm $1$.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate}
 \end{definition}
@@ -666,12 +659,11 @@ unique.
 We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the diagonal
 basis by $\XB=\{\ket{+},\ket{-}\}$, where
 $\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.  
-The four Bell states are
-$\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
-$\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
 
 %\subsection{Basis-dependent substitutions}
-Beta-reduction depends on the basis chosen for the abstraction, so we must
+As usual, the expression $\vv t[\vv v/x]$ denotes the
+usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
+However, beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
 operation substitutes variables with vectors expressed in the chosen basis; the
 accompanying coefficients are those of the value distribution being
@@ -681,8 +673,6 @@ Alongside this substitution, we introduce a special basis, denoted
 $\AbsBasis$, which acts as the canonical basis for $\lambda$-abstractions. In
 this way, we restrict function distributions to a single admissible basis.
 
-As usual, the expression $\vv t[\vv v/x]$ denotes the
-usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
 
 \begin{definition}[Basis-dependent substitution]
   Let $\vv t$ be a term distribution, $\vv v$ a value distribution, $x$ a
@@ -712,19 +702,17 @@ usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
   purely notational.
 \end{definition}
 
-\begin{remark}
 The two cases in the definition capture distinct substitution modes.  
 In the first, substitution proceeds linearly using the decomposition of
 $\vv v$ over the explicit basis $B$.  
 In the second, when $B=\AbsBasis$, substitution proceeds linearly over the pure
 values that form $\vv v$.  
 This case recovers the substitution mechanism of 
-non base-sensitive calculi---such as in
-\cite{DiazcaroGuillermoMiquelValironLICS19}---but generalises it by introducing
+non base-sensitive calculi---as first defined in
+\cite{ArrighiDowekLMCS17}---but generalises it by introducing
 basis-dependent behaviour.  
 This special case is also the only one applicable to
 $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
-\end{remark}
 
 
 \begin{example}
@@ -770,8 +758,7 @@ equivalence class induced by the congruence $\equiv$.
   \qed
 \end{lemma}
 
-\begin{remark}[Non-invariance across bases]
-  The property in \Cref{lem:EquivSubstitutions} does not extend across
+Remark that the property in \Cref{lem:EquivSubstitutions} does not extend across
   different bases; that is,
   $\vv{t}\ansubst{\vv{v}/x}{A}\not\equiv\vv{t}\ansubst{\vv{v}/x}{B}$.
   For example,
@@ -793,7 +780,6 @@ equivalence class induced by the congruence $\equiv$.
   This distinction reflects a physical intuition: the former corresponds to a
   single experiment producing a superposition of outcomes, while the latter
   represents a superposition of distinct experiments.
-\end{remark}
 
 Finally, we introduce a convenient notation for generalised substitutions over
 a term by closed values. A substitution $\sigma$ can be seen as a finite set of
@@ -911,7 +897,11 @@ vectors simultaneously. For boolean tuples this makes no difference, as each
 component can be treated independently. However, there are orthogonal bases
 that cannot be expressed as the product of smaller bases. In such cases, the
 general $\mathsf{case}$ allows us to match directly against those vectors. For
-example, using the \emph{Bell basis}:
+example, using the \emph{Bell basis}\footnote{
+The four Bell states are
+$\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
+$\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
+}:
 \[
   \mathsf{case}\;\vv{v}\;\mathsf{of}\;\{
   \Phi^+ \mapsto \vv{t_1}\ \mid
