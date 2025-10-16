@@ -929,21 +929,22 @@ equivalence is preserved by reduction modulo~$\equiv$.
   then there exist term distributions $\vv{r_1}$ and $\vv{r_2}$ such that
   $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
   $\vv{r_1}\equiv\vv{r_2}$.
-  Diagrammatically:
-  \[
-    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
-      & \vv{t}
-        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
-        &[-3em] \equiv
-        &[-3em] \vv{s}
-        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
-        &\\
-      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
-      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
-      & \vv{r_1} & \equiv & \vv{r_2} & 
-    \end{tikzcd}
-    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
-  \]
+%  Diagrammatically:
+%  \[
+%    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
+%      & \vv{t}
+%        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+%        &[-3em] \equiv
+%        &[-3em] \vv{s}
+%        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+%        &\\
+%      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
+%      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
+%      & \vv{r_1} & \equiv & \vv{r_2} & 
+%    \end{tikzcd}
+%    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
+%  \]
+  \qed
 \end{theorem}
 
 \begin{remark}\label{rmk:determinism}
@@ -984,32 +985,21 @@ in a Hilbert space.
 \end{definition}
 
 
-We next move to type realizers. As our aim is to extract a quantum
-lambda calculus, we wish to identify terms differing only by a global phase at
-this level. Since the global phase of a quantum state has no physical
-significance, we assign the same type to a term~$\vv{t}$ and to
-$e^{i\theta}\vv{t}$. This idea will guide the definition of type
-realizers.
+We now turn to type realizers.  
+Since the global phase of a quantum state has no physical significance, terms
+that differ only by a phase should share the same type.  
+Thus, we assign identical types to $\vv t$ and $e^{i\theta}\vv t$, a principle
+that guides the definition of realizers.
 
 \begin{definition}[Type realizer]\label{def:Realizer}
   Given a type~$A$ and a term distribution~$\vv t$, we say that~$\vv t$
   \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
   distribution~$\vv v\in\sem A$ such that
   $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
-
-  We denote the set of realizers of~$A$ by~$\{\real A\}$.
+%
+  %We denote the set of realizers of~$A$ by~$\{\real A\}$.
 \end{definition}
 
-With the notions of unitary types and their realizers in place, we can now
-define a concrete approach for our language. We begin with the type grammar
-given in~\Cref{tab:UnitaryTypes} and build a simple algebra from the sets of
-values we aim to represent.
-
-Before that, we introduce the notion of orthogonal complement, which will be
-used in the semantics of the~$\sharp$~type:
-\[
-  \comp{A} = \{\, \vv{v}\in \Sph \mid \scal{\vv{v}}{a} = 0 \text{ for all } a\in A\,\}.
-\]
 \begin{table}[t]
   \[
     A := \basis{X} \mid A\Arr A \mid A\times A \mid \sharp A,
@@ -1029,6 +1019,16 @@ used in the semantics of the~$\sharp$~type:
   \caption{Type notations and semantics}
   \label{tab:UnitaryTypes}
 \end{table}
+
+With the notions of unitary types and their realizers in place, we can now
+define a concrete approach for our language. We begin with the type grammar
+given in~\Cref{tab:UnitaryTypes} and build a simple algebra from the sets of
+values we aim to represent.
+Before that, we introduce the notion of orthogonal complement, which will be
+used in the semantics of the~$\sharp$~type:
+\[
+  \comp{A} = \{\, \vv{v}\in \Sph \mid \scal{\vv{v}}{a} = 0 \text{ for all } a\in A\,\}.
+\]
 
 The types $\basis{X}$ serve as atomic types. Each of them represents a finite
 set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
