@@ -2810,23 +2810,47 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
 
 \end{restatelemma}
 \begin{proof}
-  We assume $\dom{\Gamma}\cap\dom{\Delta}=\emptyset$, otherwise we just perform variable renamings. If the hypothesis are valid, then:
-  \begin{itemize}
-  \item $\vv{t}\ansubst{\sigma}{}\real B$ for every $\sigma\in\sem{\Gamma,\,x^{X}\!:\!A}$
-  \item $\vv{v}\ansubst{\sigma}{}\real A$ for every $\sigma\in\sem{\Delta}$
-  \end{itemize}
+  By induction on $\vv{t}$.
+  \begin{description}
+    \item[$x\not\in\FV{\vv{t}}$:] Then $x\not\in\sdom{\Gamma,\,x^{X}\!:\!A}$. By a straightforward generation lemma we have that $\TYP{\Gamma}{\vv{t}}{B}$, and we can derive $\TYP{\Gamma,\Delta}{\vv{t}}{B}$ via the $\textsc{Weak}$ rule. Notice that if $x\not\in\FV{\vv{t}}$, every variable in $\Delta$ has a non-linear type and $\vv{t}\ansubst{\vv{v}/x}{X}=\vv{t}$.
+    
+    \item[$\vv{t}=x$:] Then every variable in $\Gamma$ has a non-linear type and $A\leq B$. This means we can derive $\TYP{\Gamma,\Delta}{\vv{v}}{B}$, by rules $\textsc{Weak}$ and $\textsc{Sub}$.
+    
+    \item[$\vv{t}=(\Lam{y}{Y}{\vv{s}})$:] Then $\TYP{\Gamma,\,y^{Y}\!:\!C,\,x^{X}\!:\!A}{\vv{s}}{D}$, with $C\Arr D\leq B$. By induction hypothesis, $\TYP{\Gamma,\,y^{Y}\!:\!C}{\vv{s}\ansubst{\vv{v}/x}{X}}{D}$. This means we can derive $\TYP{\Gamma,\Delta}{(\Lam{y}{Y}{\vv{s}})\ansubst{\vv{v}/X}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
+    
+    \item[$\vv{t}=\vv{s_1}\,\vv{s_2}$:] Then we have that $\TYP{\Gamma_1}{\vv{s_1}}{C\Arr D}$, and $\TYP{\Gamma_2}{\vv{s_2}}{C}$ with $D\leq B$ and $\Gamma_1,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\Delta}{\vv{s_1}\ansubst{\vv{v}/x}{X}}{C\Arr D}$. This means we can derive $\TYP{\Gamma_1',\Gamma_2,\Delta}{(\vv{s_1}\,\vv{s_2})\ansubst{\vv{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{App}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    
+    \item[$\vv{t}=\Pair{s_1}{s_2}$:] Then we have that $\TYP{\Gamma_1}{s_1}{C}$, and $\TYP{\Gamma_2}{s_2}{D}$ with $C\times D\leq B$ and $\Gamma_1,\,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1',\,\Delta}{s_1}{C}$. This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\,\Delta}{\Pair{s_1}{s_2}\ansubst{\vv{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Pair}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    
+    \item[$\vv{t}=\LetP{y}{Y}{z}{Z}{\vv{s_1}}{\vv{s_2}}$:] Then we have two possibilities:
+      \begin{enumerate}
+        \item\label{case:subs_letp_1} Either, $\TYP{\Gamma_1}{\vv{s_1}}{C\times D}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!C,\,z^{Z}\!:\!D}{\vv{s_2}}{E}$ with $E\leq B$.
+        \item\label{case:subs_letp_2} Or, $\TYP{\Gamma_1}{\vv{s_1}}{\sharp(C\times D)}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!\sharp{C},\,z^{Z}\!:\!\sharp{D}}{\vv{s_2}}{E}$ with $\sharp E\leq B$.
+      \end{enumerate}
+      In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vv{s_1}\ansubst{\vv{v}/x}{}}{C\times D}$ in case \ref{case:subs_letp_1} ($\sharp (C\times D)$ in case \ref{case:subs_letp_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\LetP{y}{Y}{z}{Z}{\vv{s_1}}{\vv{s_2}})\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{LetPair}$ (or, $\textsc{LetTens}$). The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
 
-  For every $\sigma\in\sem{\Gamma,\Delta}$ we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
-  \begin{align*}
-    \vv{t}\ansubst{\vv{v}/x}{X}\ansubst{\sigma}{} &= \vv{t}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-    &=\vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}\ansubst{\sigma_\Delta}{}/x}{X}\quad\text{since }\dom{\sigma_\Gamma}\cap\dom{\sigma_\Delta}=\emptyset\\
-    &\eval \vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{e^{i\theta_1}\vv{w}/x}{X}\quad \text{with } \vv{w}\in\sem{A} \text{ since } \TYP{\Delta}{\vv{v}}{A}
-  \end{align*}
-  Since the substitution $\ansubst{\sigma_\Gamma}{}\ansubst{e^{i\theta_1}\vv{w}/x}{X}\in\sem{\Gamma,\,x^{X}\!:\!A}$, we have that:
-  \[
-    \vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{e^{i\theta_1}\vv{w}/x}{X}\eval e^{i\theta_2}\vv{u} \qquad\text{with }\vv{u}\in\sem{B}
-  \]
-  Then we can finally conclude, $\TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}$.
+    \item[$\vv{t}=\gencase{\vv{s}}{\vv{w_1}}{\vv{w_n}}{\vv{r_1}}{\vv{r_n}}$:] Then we have two possibilities:
+    \begin{enumerate}
+      \item\label{case:subs_case_1} Either, $\TYP{\Gamma_1}{\vv{s_1}}{\basis{\{\vv{v_i}\}_{i=1}^n}}$, and for all $i\in\{0,\dotsb,n\}$, $\TYP{\Gamma_2}{\vv{s_i}}{C}$ with $C\leq B$.
+      \item\label{case:subs_case_2} Or, $\TYP{\Gamma_1}{\vv{s_1}}{\sharp\basis{\{\vv{v_i}\}_{i=1}^n}}$, and for all $i,j\in\{0,\dotsb,n\}$, with $i\neq j$ $\SORTH{\Gamma_2}{\vv{s_i}}{\vv{s_j}}{C}$ with $\sharp C\leq B$.
+    \end{enumerate}
+    In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vv{s_1}\ansubst{\vv{v}/x}{}}{\basis{\{\vv{v_i}\}_{i=1}^n}}$ in case \ref{case:subs_case_1} ($\sharp \basis{\{\vv{v_i}\}_{i=1}^n}$ in case \ref{case:subs_case_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\gencase{\vv{s}}{\vv{w_1}}{\vv{w_n}}{\vv{r_1}}{\vv{r_n}})\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Case}$ (or, $\textsc{UnitCase}$). Since orthogonality is preserved by substitutions in $\sem{\Gamma_2}$, the case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+
+    \item[$\vv{t}=\sum_{i=1}^{n}\alpha_i \vv{s_i}$:] Then we have two posibilities:
+    \begin{enumerate}
+      \item\label{case:subs_sum_1} For all $i\in\{0,\dotsb, n\}, \vv{s_i}=(\Lam{y}{Y}{\vv{r_i}})$, and:\\
+      $\TYP{\Gamma,\,x^{X}\!:\!A}{\sum_{i=1}^{n}\alpha_i(\Lam{y}{Y}{\vv{r_i}})}{C\Arr D}$ with $C\Arr D\leq B$.
+      \item\label{case:subs_sum_2} For all $i\in\{0,\dotsb, n\}$, with $i\neq j$, $\SORTH{\Gamma,\,x^{X}\!:\!A}{\vv{s_i}}{\vv{s_j}}{C}$, $\sum_{i=1}^{n}|\alpha_i|^2=1$, and $\sharp C\leq B$.
+    \end{enumerate}
+    
+    In case \ref{case:subs_sum_1}, by inductive hypothesis we have that:\\
+    $\TYP{\Gamma,\,\Delta,\,y^{Y}\!:\!C}{\sum_{i=1}^{n}\alpha_i \vv{r_i}\ansubst{\vv{v}/x}{X}}{D}$. This means we can derive \\$\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i (\Lam{y}{Y}{\vv{r_i}})\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
+
+    In case \ref{case:subs_sum_2}, by inductive hypothesis we have that for all $i\in\{0,\dotsb,n\}$, and $i\neq j$ $\SORTH{\Gamma,\Delta}{\vv{s_i}\ansubst{\vv{v}/x}{X}}{\vv{s_j}\ansubst{\vv{v}/x}{X}}{C}$. Since orthogonality is preserved by substitutions in $\sem{\Gamma,\Delta}$, this means we can derive $\TYP{\Gamma,\Delta}{\sum_{i=1}^n\alpha_i \vv{s_i}\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Sum}$.
+
+    \item[$\vv{t}=\alpha\vv{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vv{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vv{s}\ansubst{\vv{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{
+    e^{i\theta}\vv{s}\ansubst{\vv{v}/X}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
+  \end{description}
 \end{proof}
 
 \begin{restatetheorem}[Restatement of \Cref{thm:SubjectReduction}]
