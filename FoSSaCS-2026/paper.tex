@@ -523,7 +523,7 @@ notation~$\sum$.
 \end{table}
 \begin{table}[t]
   \begin{align*}
-    0\vec t &\equiv \vv 0 & \vec t+\vv 0 &\equiv \vec t \\
+    0\vv t &\equiv \vv 0 & \vv t+\vv 0 &\equiv \vv t \\
     1\vv{t} &\equiv \vv{t} &
     \alpha(\beta\vv{t}) &\equiv (\alpha\beta)\vv{t} \\
     \vv{t_1}+\vv{t_2} &\equiv \vv{t_2}+\vv{t_1} &
@@ -690,16 +690,6 @@ this way, we restrict function distributions to a single admissible basis.
       \text{undefined} & \text{otherwise.}
     \end{cases}
   \]
-  The definition also extends to pairs of values. If
-  $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$, then
-  \[
-    \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
-      \;=\; \sum_{i\in I}\alpha_i\,
-      \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
-  \]
-  where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
-  with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
-  purely notational.
 \end{definition}
 
 The two cases in the definition capture distinct substitution modes.  
@@ -714,20 +704,32 @@ basis-dependent behaviour.
 This special case is also the only one applicable to
 $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
 
+  The definition also extends to pairs of values. If
+  $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
+  with $\vv{v_i}\in\Span(B_1)$ and $\vv{w_i}\in\Span(B_2)$,
+  then
+  \[
+    \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
+      \;=\; \sum_{i\in I}\alpha_i\,
+      \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
+  \]
+  where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
+  with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
+  purely notational.
 
 \begin{example}
   Let
-  $\vv v = \tfrac{1}{\sqrt{2}}\ket{01}
-           - \tfrac{1}{\sqrt{2}}\ket{10}$.
+  $\vv v = \alpha\ket{01}
+           + \beta\ket{10}$.
   Then 
-  \begin{align*}
+  \[
     (y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}
-    &= \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{0}/x][\ket{1}/y]
-       - \tfrac{1}{\sqrt{2}}\,(y,x)[\ket{1}/x][\ket{0}/y] \\
-       &= 
-       \tfrac{1}{\sqrt{2}}\ket{10}
-       - \tfrac{1}{\sqrt{2}}\ket{01},
-     \end{align*}
+    = \alpha\,(y,x)[\ket{0}/x][\ket{1}/y]
+    + \beta\,(y,x)[\ket{1}/x][\ket{0}/y] 
+    = 
+    \alpha\ket{10}
+    + \beta\ket{01}
+  \]
 \end{example}
 
 With this substitution in place, we can establish certain needed properties.
@@ -811,17 +813,13 @@ $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 
 \section{Operational semantics}\label{sec:reduction}
 
-The reduction system implements a mechanism in which every vector in the space
-is interpreted with respect to the basis attached to each abstraction. An
-evaluation step is permitted only when the argument can be decomposed onto that
-basis. The reduction rules, presented in
-\Cref{tab:Reduction}, define the elementary
-reduction relation~$\lraneq$. Terms are considered modulo the congruence
-introduced in \Cref{tab:Congruence}, so the
-effective reduction used throughout the paper is the one
-\emph{modulo~$\equiv$}, written~$\lra$.  Formally, a step $\vv t\lra\vv r$
-abbreviates a reduction $\vv t'\lraneq\vv r'$ such that $\vv t\equiv\vv t'$
-and $\vv r'\equiv\vv r$.
+The reduction system interprets every vector relative to the basis attached to
+its abstraction, allowing a step only when the argument can be decomposed on
+that basis.  
+\Cref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
+considered modulo the congruence of \Cref{tab:Congruence}.  
+Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
+a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
 
 \begin{table}[t]
   \begin{align*}
@@ -840,7 +838,7 @@ and $\vv r'\equiv\vv r$.
       \qquad\qquad
       \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
       \qquad\qquad
-      \infer{\alpha t\lraneq \alpha \vec r}{t\lraneq\vec r & \alpha\neq 0}
+      \infer{\alpha t\lraneq \alpha \vv r}{t\lraneq\vv r & \alpha\neq 0}
       \qquad\qquad
       \infer{t+\vv s\lraneq\vv r+\vv s}{t\lraneq\vv r}
       \\[5pt]
@@ -855,50 +853,46 @@ and $\vv r'\equiv\vv r$.
   \label{tab:Reduction}
 \end{table}
 
-The side condition~$\alpha\neq0$ in the contextual rule for scalar
-multiplication prevents vacuous reductions such as $0t\lraneq 0r$, which would
-otherwise introduce spurious nondeterminism. This ensures that the reduction
-relation~$\lraneq$ remains deterministic.
+The side condition~$\alpha\neq0$ avoids vacuous steps such as
+$0t\lraneq0r$, preventing spurious nondeterminism and preserving the
+determinism of~$\lraneq$.
 
-The three main rules are the $\beta$-reduction, the $\mathsf{let}$ binding, and
-the $\mathsf{case}$ pattern matching. Both the $\lambda$ abstraction and the
-$\mathsf{let}$ binding attach an orthonormal basis to the variables they bind.
-These bases keep track of which vectors are considered classical data.  Any
-$\C$-linear combination of such vectors is treated as quantum data; that is, it
-reduces linearly using the congruence rules in
-\Cref{tab:Congruence}, thus making $t(\alpha\vec
-s+\beta\vv r)$ equivalent to $\alpha\,t\vv s+\beta\,t\vv r$.
+The main reduction rules are $\beta$-reduction, $\mathsf{let}$ binding, and
+$\mathsf{case}$ pattern matching.  
+Both $\lambda$ and $\mathsf{let}$ bind variables decorated with an orthonormal
+basis, indicating which vectors are treated as classical data.  Linear
+combinations of these vectors are handled as quantum data, reducing linearly by
+the congruence rules of \Cref{tab:Congruence}, so that
+$t(\alpha\vv s+\beta\vv r)$ is equivalent to
+$\alpha\,t\vv s+\beta\,t\vv r$.
 
-The only exception arises in higher-order reductions. Since no orthogonal bases
-are defined for abstractions, we introduce a special basis~$\AbsBasis$, which
-acts as the canonical basis for higher-order values. It can be regarded as consisting
-of all pure values. For example:
+The only exception occurs for higher-order terms: since no orthogonal bases are
+defined for abstractions, we introduce a special basis~$\AbsBasis$ acting as
+the canonical one for higher-order values—intuitively, the set of all pure
+values.  For instance,
 \[
-  (\Lam{x}{\AbsBasis}{\vv{t}})
+  (\Lam{x}{\AbsBasis}{\vv t})
   \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
   \lra
   \sum_{i=1}^n\alpha_i\vv t[\Lam{y}{X}{\vv{s_i}}/x].
 \]
 
-The $\mathsf{case}$ pattern matching controls program flow. It generalises the
-$\mathsf{if}$--$\mathsf{then}$--$\mathsf{else}$ branching, but we do not fix
-the booleans $\mathsf{true}$ and $\mathsf{false}$. Instead, each operator keeps
-track of a set of orthogonal values and tests whether the argument equals each
-vector, selecting the matching branch. If the argument is a linear combination
-of several vectors, the result is the corresponding linear combination of the
-branches. For example:
+The $\mathsf{case}$ pattern matching controls program flow.  
+Each operator keeps track of a set of orthogonal values and tests whether the
+argument equals each vector, selecting the matching branch.  
+If the argument is a linear combination of several vectors, the result is the
+corresponding linear combination of the branches.  For example:
 \[
   \case{\ket{-}}{\ket{0}}{\ket{1}}{\vv{t_1}}{\vv{t_2}} \lra
   \tfrac{1}{\sqrt{2}}\,\vv{t_1} - \tfrac{1}{\sqrt{2}}\,\vv{t_2}.
 \]
 
-The advantage over a binary conditional is the ability to match against several
-vectors simultaneously. For boolean tuples this makes no difference, as each
-component can be treated independently. However, there are orthogonal bases
-that cannot be expressed as the product of smaller bases. In such cases, the
-general $\mathsf{case}$ allows us to match directly against those vectors. For
-example, using the \emph{Bell basis}\footnote{
-The four Bell states are
+The advantage over a conditional branching is the ability to match against
+several vectors simultaneously.  For boolean tuples this makes no difference,
+as each component can be treated independently.  However, some orthogonal bases
+cannot be expressed as products of smaller ones.  This general
+$\mathsf{case}$ allows us to match directly against those vectors.  For
+example, using the \emph{Bell basis}\footnote{ The four Bell states are
 $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
 $\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
 }:
@@ -907,7 +901,7 @@ $\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
   \Phi^+ \mapsto \vv{t_1}\ \mid
   \Phi^- \mapsto \vv{t_2}\ \mid
   \Psi^+ \mapsto \vv{t_3}\ \mid
-  \Psi^- \mapsto \vv{t_4}\ \}
+  \Psi^- \mapsto \vv{t_4}\ \}.
 \]
 
 This Bell basis is central in quantum communication. In
@@ -922,8 +916,7 @@ call-by-basis fixes a single computational basis for evaluation, our variant,
 which we call \emph{call-by-arbitrary-basis}, allows each abstraction to attach
 its own orthonormal basis to its argument. Evaluation remains weak: no
 reduction takes place under $\lambda$, pairs, $\mathsf{let}$, or
-$\mathsf{case}$ constructors. This avoids unnecessary work by preventing the
-reduction of subterms that might never be used.
+$\mathsf{case}$ constructors.
 
 The congruence relation on terms gives rise to different redexes. We write
 $\eval$ for the reflexive–transitive closure of $\lra$. We can show that the
