@@ -386,16 +386,56 @@ system to provide a more precise description of programs. Second, to take
 advantage of the extended syntax to express quantum algorithms in a flexible
 and compositional way, rather than merely translating circuits.
 
-The idea of tracking non-computational bases has been explored before, notably
-in \cite{Perdrix2008,DiazcaroMonzonAPLAS25}. In \cite{Perdrix2008}, Perdrix
-introduces an abstract model that tracks the basis of qubits to perform static
-entanglement analysis. In \cite{DiazcaroMonzonAPLAS25}, Monzon and Díaz-Caro
-present a $\lambda$-calculus integrating basis information into the type system,
-proving meta-theoretic and safety results that make it a solid proof of concept
-for basis-aware typing. We build upon these ideas, extending them beyond
-single-qubit bases to encompass multi-qubit entangled bases, and recovering
-higher-order computation to approach the expressive power of modern functional
-languages.
+\paragraph{Related work.}
+The idea of tracking basis information within quantum programming languages has
+appeared in several forms across the literature.  Early work by
+Perdrix~\cite{Perdrix2008} proposed an abstract model for static entanglement
+analysis, where the basis of qubits is used to control duplication and track
+non-entanglement properties.  
+More recently, Monzón and Díaz-Caro~\cite{DiazcaroMonzonAPLAS25} introduced a
+typed $\lambda$-calculus that incorporates basis annotations into the type
+system, ensuring linear handling of quantum data while providing strong
+meta-theoretical guarantees.  
+Our system generalises these ideas by allowing abstractions to range over
+arbitrary---possibly entangled---bases, extending basis awareness beyond the
+single-qubit setting and recovering higher-order computation.
+
+A number of other frameworks support reasoning about multiple bases through
+different paradigms.  
+The ZX-calculus~\cite{CoeckeRossICALP08} provides a graphical language where
+spiders correspond to computations relative to the computational and diagonal
+bases, while the Many-Worlds
+Calculus~\cite{ChardonnetdeVismeValironVilmartLMCS25} also accommodates
+superpositions of programs but within a diagrammatic semantics.  
+By contrast, our approach operates directly within a typed term calculus,
+allowing basis transitions to be tracked syntactically.
+
+From a categorical standpoint, Heunen and Kaarsgaard~\cite{HeunenKaarsgaard2021}
+model measurement and decoherence through \emph{quantum information effects},
+capturing basis change as a semantic effect.  
+Similarly, Carette et al.~\cite{CaretteJeunenKaarsgaardSabry2024} introduce
+\textsc{Quantum}$\Pi$, a language combining two interpretations of a reversible
+classical calculus—one per basis—via an effect construction.  
+In both cases, basis sensitivity arises semantically.  
+In contrast, $\lambdaB$ integrates it directly at the syntactic and typing
+levels, ensuring that basis transformations are explicit in program structure.
+
+Other languages aim to unify classical and quantum computation.
+Qunity~\cite{VoichickLiRandHicks2023}, for instance, generalises classical
+control constructs and interprets duplication and discarding semantically as
+entanglement and partial trace.  
+Our calculus follows the opposite philosophy: linearity and duplicability are
+syntactically restricted by the basis-sensitive type system, guaranteeing
+coherent quantum control without relying on external semantic constraints.
+
+Finally, related efforts in semantic characterisation—such as the fully
+abstract model of Clairambault and de
+Visme~\cite{ClairambaultdeVisme2019} or the dual calculi of Choudhury and
+Gay~\cite{ChoudhuryGay2025}—approach the logical foundations of quantum
+computation from complementary angles.  
+In contrast, $\lambdaB$ focuses on the syntactic integration of bases and
+superpositions within a unified quantum $\lambda$-calculus, providing a concrete
+proof-of-concept for basis-sensitive typing and higher-order quantum control.
 
 \paragraph{Contributions.}
 The contributions of this paper can be summarised as follows.
