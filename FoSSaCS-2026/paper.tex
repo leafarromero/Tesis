@@ -306,7 +306,7 @@
   $\mathsf{let}$ construct is annotated with a basis, and a new basis-dependent
   substitution governs the decomposition of value distributions.  These
   extensions preserve the expressive power of earlier calculi while enabling
-  finer reasoning about programs under basis changes.  A realizability semantics
+  finer reasoning about programs under basis changes.  A realisability semantics
   connects the reduction system with the type system, yielding a direct
   characterisation of unitary operators and ensuring safety by construction.
   From this semantics we derive a validated family of typing rules, forming the
@@ -350,9 +350,9 @@ maps. More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25}
 generalised Lambda-S to arbitrary non-entangled single-qubit bases, albeit
 through a purely syntactic framework restricted to first order. The calculus we
 present here extends these ideas to a unit-norm, higher-order setting over
-multiple-qubit bases, grounded in a realizability semantics.
+multiple-qubit bases, grounded in a realisability semantics.
 
-The realizability methodology, originating with Kleene's work on Heyting
+The realisability methodology, originating with Kleene's work on Heyting
 arithmetic \cite{KleeneJSL45}, provides a constructive framework that connects
 operational semantics with type systems. In our context, it allows the
 extraction of a sound type system directly from the reduction semantics of the
@@ -439,12 +439,12 @@ The contributions of this paper can be summarised as follows.
   \item We introduce a \emph{basis-sensitive} quantum $\lambda$-calculus in the
   quantum-control paradigm, extending previous systems to a setting that is
   unit-norm, higher-order, and supports multiple-qubit entangled bases.
-\item We develop a \emph{realizability-based semantics} that connects
+\item We develop a \emph{realisability-based semantics} that connects
   reduction and typing, enabling the systematic extraction of a sound
   type system.
   \item We formalise a \emph{type algebra} capable of tracking basis
   information throughout programs, and derive typing rules corresponding to
-  provable theorems in the realizability interpretation.
+  provable theorems in the realisability interpretation.
   \item We illustrate the expressive power of the calculus through examples
   involving basis-dependent operations and multi-qubit structures, showing how
   it subsumes and extends previous single-basis approaches.
@@ -454,7 +454,7 @@ The paper is organised as follows.
 \Cref{sec:calculus} introduces the core language, its syntax, congruence rules,
 and basis-dependent substitution.  
 \Cref{sec:reduction} defines the operational semantics, and
-\Cref{sec:model} presents the realizability model with unitary type semantics,
+\Cref{sec:model} presents the realisability model with unitary type semantics,
 the characterisation of unitary operators, and the typing rules.  
 \Cref{sec:examples} presents some representative examples.
 All omitted proofs appear in the appendices, and
@@ -462,7 +462,7 @@ All omitted proofs appear in the appendices, and
 
 \section{Core language}\label{sec:calculus}
 %\subsection{Syntax and congruence}
-This section presents the calculus on which our realizability model will be
+This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
 
 The syntax of the calculus is described in
@@ -1307,7 +1307,7 @@ type. For instance, consider the following substitutions:
 \end{align*}
 These terms are not syntactically identical, yet they are computationally
 equivalent. 
-Since typing via realizability captures computational behaviour,
+Since typing via realisability captures computational behaviour,
 their types coincide. Nevertheless, we retain basis information in contexts, as
 it will simplify the forthcoming proofs.
 
@@ -1491,7 +1491,7 @@ $\TYP{\Gamma}{\vv{u}}{A}$ by definition.
 However, if we restrict ourselves to a subset of typing rules—such as those
 presented in \Cref{tab:TypingRules}—we must
 ensure that this restricted system still suffices to type all reducts of a
-term, once the underlying realizability semantics is abstracted away.  In our
+term, once the underlying realisability semantics is abstracted away.  In our
 case, the rules proven valid in \Cref{thm:TypingRulesValidity}
 suffice to guarantee subject reduction, as
 stated below.
@@ -1742,7 +1742,7 @@ affect the computational result.
 Consequently, it is meaningful to reason about terms modulo basis
 congruence.
 
-The benefit of this design becomes clear in the realizability model.
+The benefit of this design becomes clear in the realisability model.
 The inclusion of atomic types~$\basis{X}$ enables a direct characterisation of
 abstractions representing unitary operators---our main semantic result,
 generalising the characterisation from~\cite{DiazcaroGuillermoMiquelValironLICS19}.  
@@ -1750,7 +1750,7 @@ Here, the use of basis types yields a simpler and more transparent proof.
 
 The second major result is the validity of the typing rules presented in
 \Cref{tab:TypingRules}.  
-By deriving these rules from the realizability interpretation, we ensure their
+By deriving these rules from the realisability interpretation, we ensure their
 soundness and obtain a principled foundation for a typed programming language
 based on the calculus.
 
