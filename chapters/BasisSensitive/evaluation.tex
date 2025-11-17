@@ -76,34 +76,163 @@ Defining the system in this way determines a strategy in the \textit{call-by-val
 The congruence relation on terms gives rise to different redexes. However, we can show that the relation $\equiv$ commutes with the reflexive-transitive closure of the reduction $\evalone$ (We shall note $\eval$ as this reflexive-transitive closure). In other words, equivalence is preserved by the reduction $\eval$.
 
 \begin{theorem}[Reduction preserves equivalence]
-  Let $\vec{t}$ and $\vec{s}$ be closed term distributions such that $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{v}$, and $\vec{s}\evalone\vec{w}$, where $\vec{v},\vec{w}$ are value distributions. Then $\vec{v}\equiv\vec{w}$. Diagrammatically:
-
-\[
-  \begin{tikzcd}
-   \vec{t} \arrow[d,twoheadrightarrow]&[-2.5em] \equiv &[-2.5em] \vec{s}\arrow[d,twoheadrightarrow]\\
-   \vec{v}& \equiv & \vec{w}
-  \end{tikzcd}
-\]
+  Let $\vec{t}$ and $\vec{s}$ be closed term distributions with $\vec{t}\equiv\vec{s}$. If $\vec{t}\evalone\vec{t'}$ and $\vec{s}\evalone\vec{s'}$,  then there exist term distributions $\vec{r_1}$ and $\vec{r_2}$ such that $\vec{t'}\eval\vec{r_1}$, $\vec{s'}\eval\vec{r_2}$, and $\vec{r_1}\equiv\vec{r_2}$. Diagrammatically:
+  \[
+    \begin{tikzcd}
+      & \vec{t}
+        \arrow[ld,decorate,decoration={amplitude=0.8, segment length=6pt}, ->]
+        &[-2.5em] \equiv
+        &[-2.5em] \vec{s}
+        \arrow[rd,decorate,decoration={amplitude=0.8, segment length=6pt}, ->]
+        &\\
+      \vec{t'}\arrow[dr,"*",pos=0.9] & & & &
+      \vec{s'}\arrow[ld,"*"',pos=0.9] \\
+      & \vec{r_1} & \equiv & \vec{r_2} &
+    \end{tikzcd}
+  \]
 \end{theorem}
 
 \begin{proof}
-  Proof by induction of the length of the chain:
-  \[
-  \vec{t}\equiv\vec{q_1}\equiv\dotsb\equiv\vec{q_n}\equiv\vec{s}
-  \]
-  
+  We do a case-by-case analysis over the relation $\vec{t}\equiv\vec{s}$.
   \begin{description}
-    \item[$n=0$:] Then, $\vec{t} = \vec{s}$. The vectors are not only equivalent, they are syntactically equal. In which case, $\vec{v}=\vec{w}$.
+    \item[$\vec{t_1} + 0\vec{t_2}\equiv\vec{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond} since the reductions can only be performed in $\vec{t_1}$.
+    
+    \item[$0\vec{t}\equiv\vec{0}$:] The term distributions cannot reduce on either side of the equivalence.
+    
+    \item[$1\vec{t}\equiv\vec{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\alpha(\beta \vec{t})\equiv\delta\vec{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\vec{t_1}+\vec{t_2}\equiv\vec{t_2}+\vec{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    
+    \item[$\vec{t_1}+(\vec{t_2}+\vec{t_3})\equiv(\vec{t_1}+\vec{t_2})+\vec{t_3}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    
+    \item[$(\alpha+\beta)\vec{t}\equiv\vec{t}$:] We start analyzing the coefficients. If $\alpha+\beta = 0$, then there cannot be a reduction on the left hand-side. If $(\alpha + \beta)\neq 0$ and either $\alpha=0$ or $\beta=0$, then we are on a particular case of $\vec{t_1} + 0\vec{t_2}\equiv\vec{t_1}$ with $\vec{t_1}=\vec{t_2}$. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\alpha(\vec{t_1}+\vec{t_2})\equiv\alpha\vec{t_1}+\alpha\vec{t_2}$:] If $\alpha=0$, then the term distributions cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\vec{t} (\alpha\vec{s})\equiv\alpha(\vec{t}\vec{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vec{s}$ or $\vec{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    If $\vec{t} = (\Lam{x}{B}{\vec{t_1}})$ and $\vec{s}=\vec{v}$ and $\vec{t_1}\ansubst{\vec{v}/x}{B}$, is defined then (we consider the case $B\neq\AbsBasis$):
+    \begin{align*}
+      (\Lam{x}{B}{\vec{t_i}}) (\alpha\vec{v}) &\evalone \vec{t_1}\ansubst{\alpha\vec{v}/x}{B}\\
+      &= \sum_{i=1}^{n} \alpha\beta_i \vec{t_1}[\vec{b_i}/x]\quad \text{with }\vec{v}\equiv\sum_{i=1}^{n} \beta_i \vec{b_i} \text{ with } \vec{b_i}\in B\\
+    \end{align*}
+    On the other side:
+    \begin{align*}
+      \alpha ((\Lam{x}{B}{\vec{t_1}}) \vec{v}) &\evalone \alpha(\vec{t_1}\ansubst{\vec{v}}{B})\\
+      &=\alpha(\sum_{i=1}^{n} \beta_i \vec{t_1}[\vec{b_i}/x])\quad \text{with }\vec{v}\equiv\sum_{i=1}^{n} \beta_i \vec{b_i} \text{ with } \vec{b_i}\in B\\
+    \end{align*}
 
-    \item[$n>0$:] Then, there exists $\vec{q_i}$ such that $\vec{t}\equiv\dotsb\equiv\vec{q_i}\equiv\dotsb\equiv\vec{s}$. By inductive hypothesis:
-    \[
-    \begin{tikzcd}
-      \vec{t}\arrow[dd, twoheadrightarrow] &[-2.5em]\equiv\dotsb\equiv &[-2.5em]\vec{q_i}\arrow[dd, twoheadrightarrow]&[-2.5em] \equiv\dotsb\equiv &[-2.5em] \vec{s}\arrow[dd]\\[-1em]
-      & \text{HI} & & \text{HI} &\\
-      \vec{v} &\equiv& \vec{u} &\equiv& \vec{w}\\[-1em]
-    \end{tikzcd}
-    \]\qedhere
-    \end{description}
+    And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
+
+    \item[$(\alpha\vec{t})\vec{s}\equiv\alpha(\vec{t}\vec{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vec{s}$ or $\vec{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a pure value to reduce on the left hand-side.
+    
+    \item[$(\vec{t}+\vec{s})\vec{r}\equiv \vec{t}\vec{s} + \vec{t}\vec{r}$:] If there is an internal reduction on either $\vec{t}$,$\vec{s}$ or $\vec{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a pure value to reduce on the left hand-side.
+    
+    \item[$\vec{t}(\vec{s}+\vec{r})\equiv\vec{t}\vec{s} + \vec{t}\vec{r}$:] If there is an internal reduction on either $\vec{t}$, $\vec{s}$ or $\vec{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    If $\vec{t} = (\Lam{x}{B}{\vec{t_1}})$, $\vec{s}=\vec{v}$, and $\vec{r}=\vec{w}$ with
+    $\vec{t_1}\ansubst{\vec{v}/x}{B}$ and $\vec{t_1}\ansubst{\vec{w}/x}{B}$ defined then (we consider the case where $B\neq\AbsBasis$):
+    \begin{align*}
+      (\Lam{x}{B}{\vec{t_1}}) (\vec{v}+\vec{w}) &\evalone \vec{t_1}\ansubst{\vec{v}+\vec{w}/x}{B}\\
+      &=\sum_{i=1}^{n}(\alpha_i+\beta_i)\vec{t_1}[\vec{b_i}/x]\\
+      &\quad\text{where }\vec{v}\equiv\sum_{i=1}^{n}\alpha_i\vec{b_i},\vec{w}\equiv\sum_{i=1}^{n}\beta_i\vec{b_i}\text{ with }\vec{b_i}\in B 
+    \end{align*}
+
+    On the other side:
+    \begin{align*}
+      (\Lam{x}{B}{\vec{t_1}}) \vec{v} + (\Lam{x}{B}{\vec{t_1}}) \vec{w} &\evalone \vec{t_1}\ansubst{\vec{v}/x}{B} + (\Lam{x}{B}{\vec{t_1}}) \vec{w}\\
+      &\evalone \vec{t_1}\ansubst{\vec{v}/x}{B} + \vec{t_1}\ansubst{\vec{w}/x}{B}\\
+      &=\sum_{i=1}^{n}(\alpha_i)\vec{t_1}[\vec{b_i}/x] + =\sum_{i=1}^{n}(\alpha_i)\vec{t_1}[\vec{b_i}/x]\\
+      &\quad\text{where }\vec{v}\equiv\sum_{i=1}^{n}\alpha_i\vec{b_i},\vec{w}\equiv\sum_{i=1}^{n}\beta_i\vec{b_i}\text{ with }\vec{b_i}\in B 
+    \end{align*}
+
+    And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
+
+    \item[$\LetP{x_1}{B_1}{x_2}{B_2}{(\alpha \vec{t})}{\vec{s}}\equiv\alpha(\LetP{x_1}{A}{x_2}{B}{\vec{t}}{\vec{s}})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vec{s}$ or $\vec{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    If $\vec{t}=\vec{v}$ and $\vec{s}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}$ is defined, then (we consider $B_1,B_2\neq\AbsBasis$):
+    \begin{align*}
+    \LetP{x_1}{B_1}{x_2}{B_2}{(\alpha \vec{v})}{&\vec{s}}\evalone \vec{s}\ansubst{\alpha\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}\\
+    &=\sum_{i=1}^{n}\alpha\beta_i \vec{s}[\vec{v_i}/x_1][\vec{w_i}/x_2]\\ 
+    &\text{where: }\vec{v}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v_i}}{\vec{w_i}} \text{ with } \vec{v_i}\in B_1, \vec{w_i}\in B_2
+    \end{align*}
+    On the other side;
+    \begin{align*}
+    \alpha(\LetP{x_1}{B_1}{x_2}{B_2}{\vec{v}}{&\vec{s}})\evalone \alpha(\vec{s}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2})\\
+    &=\alpha\sum_{i=1}^{n}\beta_i \vec{s}[\vec{v_i}/x_1][\vec{w_i}/x_2]\\ 
+    &\text{where: } \vec{v}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v_i}}{\vec{w_i}} \text{ with } \vec{v_i}\in B_1, \vec{w_i}\in B_2
+    \end{align*}
+
+    And we have that both terms are equivalent. The case for $B_1,B_2=\AbsBasis$ are similar.
+
+    \item[\parbox{.75\linewidth}{\begin{align*}
+      &\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}+\vec{s}}{\vec{r}}\equiv\\
+      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}}{\vec{r}}) +
+      (\LetP{x_1}{B_2}{x_2}{B_2}{\vec{s}}{\vec{r}})
+      \end{align*}}:]\hfill\\
+      If there is an internal reduction on either $\vec{t}, \vec{s}$ or $\vec{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+
+      If $\vec{t}=\vec{v}$ and $\vec{s}=\vec{w}$ with $\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}$ and $\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}$ defined, then (we consider $B_1,B_2\neq\AbsBasis$):
+      \begin{align*}
+      \LetP{x_1}{B_1}{x_2}{B_2}{\vec{v}+\vec{w}}{\vec{r}}&\evalone\vec{r}\ansubst{\vec{v}+\vec{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
+      &=\sum_{i=1}^n (\alpha_i+\beta_i) \vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2]\\
+      &\text{where: }\vec{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vec{v_i}}{\vec{w_i}} \text{ with } \vec{v_i}\in B_1, \vec{w_i}\in B_2\\
+      &\text{and: }\vec{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v_i}}{\vec{w_i}} \text{ with } \vec{v_i}\in B_1, \vec{w_i}\in B_2\\
+      \end{align*}
+
+      On the other side:
+      \begin{align*}
+      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}}{\vec{r}}) + (\LetP{x_1}{B_2}{x_2}{B_2}{\vec{s}}{\vec{r}})\\
+      &\evalone\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2} + (\LetP{x_1}{B_2}{x_2}{B_2}{\vec{s}}{\vec{r}})\\
+      &\evalone\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2} + \vec{r}\ansubst{\vec{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
+      &=\sum_{i=1}^n\alpha_i\vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2] + \sum_{i=1}^n \beta_i \vec{r}[\vec{v_i}/x_1][\vec{w_i}/x_2]\\
+      &\text{where: }\vec{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vec{v_i}}{\vec{w_i}} \text{ with } \vec{v_i}\in B_1, \vec{w_i}\in B_2\\
+      &\text{and: }\vec{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v_i}}{\vec{w_i}} \text{ with } \vec{v_i}\in B_1, \vec{w_i}\in B_2\\
+      \end{align*}
+        
+      And we have that both terms are equivalent. The case for $B_1,B_2=\AbsBasis$ are similar.
+
+    \item[\parbox{.55\linewidth}{\begin{align*}
+      &\gencase{\alpha \vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}}\equiv\\
+      &\alpha(\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}})
+    \end{align*}}:] \hfill\\
+    
+    If $\alpha=0$, then there is no reduction possible on the right hand-side. If there are internal reductions on $\vec{t}$, then we match on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    If $\vec{t}=\vec{v}\equiv\sum_{i=1}^n\beta_i \vec{v_i}$. Then:
+    \begin{align*}
+      \gencase{\alpha \vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}}\evalone \sum_{i=1}^n\alpha\beta_i \vec{s_i}
+    \end{align*}
+    On the other side:
+    \begin{align*}
+      \alpha(\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{s_1}}{\vec{s_n}})\evalone \alpha\sum_{i=1}^n\beta_i \vec{s_i}
+    \end{align*}
+    And we have that both terms are equivalent.
+
+    \item[\parbox{.55\linewidth}{\begin{align*}
+      &\gencase{(\vec{t}+\vec{s})}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}\equiv\\ 
+      &\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}+\\
+      &\gencase{\vec{s}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}  
+    \end{align*}}:]\hfill\\
+
+    If there is an internal reduction on either $\vec{t}$ or $\vec{s}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+
+    If $\vec{t}=\vec{v}\equiv\sum_{i=1}^n\alpha_i \vec{v_i}$, and $\vec{s}=\vec{w}\equiv\sum_{i=1}^n\beta_i \vec{v_i}$. Then:
+    \begin{align*}
+      \gencase{(\vec{t}+\vec{s})}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}\evalone \sum_{i=1}^n (\alpha_i+\beta_i) \vec{r_i}
+    \end{align*}
+    On the other side:
+    \begin{align*}
+      &\gencase{\vec{t}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}+\gencase{\vec{s}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}\\
+      &\evalone \sum_{i=1}^n \alpha_i+ \vec{r_i} + \gencase{\vec{s}}{\vec{v_1}}{\vec{v_n}}{\vec{r_1}}{\vec{r_n}}\\
+      &\evalone \sum_{i=1}^n \alpha_i \vec{r_i} + \sum_{i=1}^n \beta_i \vec{r_i}\\
+    \end{align*}
+
+    And we have that both terms are equivalent.
+  \end{description}
+  
 \end{proof}
 
 \begin{convention}
