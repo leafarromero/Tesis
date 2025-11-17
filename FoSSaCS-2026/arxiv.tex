@@ -253,7 +253,6 @@
 \newcommand{\Bell}{\mathsf{Bell}}
 \newcommand{\lambdaB}{\lambda_B}
 %%% If construct
-%\newcommand\basis[1]{\ensuremath{\mathsf{B}_{#1}}}
 \newcommand\basis[1]{\ensuremath{\flat_{#1}}}
 \newcommand\genbasis[3]{\ensuremath{\basis{\{#1\}_{#2}^{#3}}}}
 
@@ -269,33 +268,25 @@
 
 \title{Basis-Sensitive Quantum Typing via Realisability}
 
-%\titlerunning{Abbreviated paper title}
-% If the paper title is too long for the running head, you can set
-% an abbreviated paper title here
-\author{Anonymous Author(s) for submission}
+\author{
+  Alejandro Díaz-Caro\inst{1,2} %\orcidID{0000-0002-5175-6882}
+  \and
+  Octavio Malherbe\inst{3} %\orcidID{0009-0004-0624-9285}
+  \and
+  Rafael Romero\inst{2,4} %\orcidID{?}
+}
 
-%\author{
-%  Alejandro Díaz-Caro\inst{1,2} %\orcidID{0000-0002-5175-6882}
-%  \and
-%  Octavio Malherbe\inst{3} %\orcidID{0009-0004-0624-9285}
-%  \and
-%  Rafael Romero\inst{2,4} %\orcidID{?}
-%}
-%
-%\authorrunning{A. Díaz-Caro, O. Malherbe, and R. Romero}
-%
-%\institute{
-%  Université de Lorraine, CNRS, Inria, LORIA, France
-%  %\\\email{alejandro.diaz-caro@inria.fr}
-%  \and
-%  Universidad Nacional de Quilmes, Argentina
-%  \and
-%  Universidad de la República, Facultad de Ingeniería, IMERL, Uruguay
-%  %\email{malherbe@fing.edu.uy}
-%  \and
-%  ICC, CONICET-Universidad de Buenos Aires, Argentina\\
-%  %\email{lromero@dc.uba.ar}
-%}
+\authorrunning{A. Díaz-Caro, O. Malherbe, and R. Romero}
+
+\institute{
+  Université de Lorraine, CNRS, Inria, LORIA, France
+  \and
+  Universidad Nacional de Quilmes, Argentina
+  \and
+  Universidad de la República, Facultad de Ingeniería, IMERL, Uruguay
+  \and
+  ICC, CONICET-Universidad de Buenos Aires, Argentina\\
+}
 
 \maketitle 
 
@@ -508,7 +499,7 @@ notation~$\sum$.
   \begin{align*}
     v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
     (\Val)\\
-    t &::= v \mid tt \mid (t,t) \mid
+    t &::= w \mid tt \mid (t,t) \mid
     \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
     \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
     (\Lambda) \\
@@ -928,22 +919,21 @@ equivalence is preserved by reduction modulo~$\equiv$.
   then there exist term distributions $\vv{r_1}$ and $\vv{r_2}$ such that
   $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
   $\vv{r_1}\equiv\vv{r_2}$.
-%  Diagrammatically:
-%  \[
-%    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
-%      & \vv{t}
-%        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
-%        &[-3em] \equiv
-%        &[-3em] \vv{s}
-%        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
-%        &\\
-%      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
-%      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
-%      & \vv{r_1} & \equiv & \vv{r_2} & 
-%    \end{tikzcd}
-%    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
-%  \]
-  \qed
+  Diagrammatically:
+  \[
+    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
+      & \vv{t}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        &[-3em] \equiv
+        &[-3em] \vv{s}
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        &\\
+      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
+      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
+      & \vv{r_1} & \equiv & \vv{r_2} & 
+    \end{tikzcd}
+    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
+  \]
 \end{theorem}
 
 \begin{remark}\label{rmk:determinism}
@@ -995,8 +985,6 @@ that guides the definition of realizers.
   \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
   distribution~$\vv v\in\sem A$ such that
   $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
-%
-  %We denote the set of realizers of~$A$ by~$\{\real A\}$.
 \end{definition}
 
 \begin{table}[t]
@@ -1035,22 +1023,6 @@ boolean type can be represented by a basis of size~2, yet we are not restricted
 to a single one, since there are infinitely many bases to choose from.
 
 Pairs are standard, and written using the notation introduced earlier.
-%The type~$A\times B$
-%corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
-%admits pairs only of pure values, the semantic clause
-%in~\Cref{tab:UnitaryTypes} should be
-%read as an abbreviation for the following expanded form:
-%\[
-%  \sem{A\times B}
-%  := \bigl\{
-%       \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i,w_j)
-%       \;\bigm|\;
-%       \sum_{i=1}^{n}\alpha_i v_i\in\sem{A},~
-%       \sum_{j=1}^{m}\beta_j w_j\in\sem{B}
-%     \bigr\}.
-%\]
-%We stress this for rigour, but for readability we shall continue using the
-%concise notation of pairs.
 The arrow type~$A\Arr B$ consists of distributions of $\lambda$-abstractions
 that map elements of~$\sem{A}$ to realizers of~$B$.  
 Finally, the type~$\sharp A$ denotes the double orthogonal complement of~$A$
@@ -1446,7 +1418,7 @@ core typing system for the calculus, whose validity is stated below.
       }\\
       \noalign{\medskip}
       \infer[\snam{Sum}]
-      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}}
+      {\TYP{\Gamma}{\sum_{i=1}^{n} \vv{t_i}}{\sharp A}}
       {\forall i\neq j,\, \SORTH{\Gamma}{\vv{t_i}}{\vv{t_j}}{A} &
       \sum_{i=1}^{n}|\alpha_i|^2 = 1}
       \\
@@ -1763,16 +1735,16 @@ $\mathsf{case}$ construct can simulate gates controlled by Bell-basis
 measurements, effectively capturing the deferred-measurement principle within
 the calculus.
 
-%\begin{credits}
-%\subsubsection{\ackname} 
-%Supported by the European Union through the MSCA SE project QCOMICAL (Grant Agreement ID: 101182521) 
-%the Plan France 2030 through the PEPR integrated project EPiQ (ANR-21-PETQ-0007),
-%and by the Uruguayan CSIC grant 22520220100073UD.
-%
+\begin{credits}
+\subsubsection{\ackname} 
+Supported by the European Union through the MSCA SE project QCOMICAL (Grant Agreement ID: 101182521) 
+the Plan France 2030 through the PEPR integrated project EPiQ (ANR-21-PETQ-0007),
+and by the Uruguayan CSIC grant 22520220100073UD.
+
 %\subsubsection{\discintname}
 %The authors have no competing interests to declare that are
 %relevant to the content of this article.
-%\end{credits}
+\end{credits}
 %
 % ---- Bibliography ----
 %
@@ -2218,7 +2190,7 @@ Before proving the soundness of the typing rules (\Cref{thm:TypingRulesValidity}
 
 \end{theorem}
 
-\begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
+\begin{lemma}\label{lem:VecRewrite}
 Given a type $A$, two vectors $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vv{u_0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
 \[
 \vv{u_1} + \alpha\vv{u_2} = \lambda \vv{u_0} 
