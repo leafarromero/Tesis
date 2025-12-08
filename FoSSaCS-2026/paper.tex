@@ -508,7 +508,7 @@ notation~$\sum$.
   \begin{align*}
     v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
     (\Val)\\
-    t &::= w \mid tt \mid (t,t) \mid
+    t &::= v \mid tt \mid (t,t) \mid
     \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
     \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
     (\Lambda) \\
@@ -1446,7 +1446,7 @@ core typing system for the calculus, whose validity is stated below.
       }\\
       \noalign{\medskip}
       \infer[\snam{Sum}]
-      {\TYP{\Gamma}{\sum_{i=1}^{n} \vv{t_i}}{\sharp A}}
+      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}}
       {\forall i\neq j,\, \SORTH{\Gamma}{\vv{t_i}}{\vv{t_j}}{A} &
       \sum_{i=1}^{n}|\alpha_i|^2 = 1}
       \\

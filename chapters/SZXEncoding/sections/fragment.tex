@@ -11,79 +11,35 @@ We first define a base language from which to build our translation. In this sec
         & \ifz{L}{M}{N} \;|\; \Qfor{k^P}{M}{N}
 \end{align*}
 
-Where $C$ is a set of implicit bounded recursive primitives used for operating
-with vectors and iterating functions. $n\in\mathbb{N}$, $\square\in\{+, -,
-\times, / , \wedge\}$ and $\ifz{L}{M}{N}$ is the conditional that tests for
-zero.
+Where $C$ is a set of implicit bounded recursive primitives used for operating with vectors and iterating functions. $n\in\mathbb{N}$, $\square\in\{+, -, \times, / , \wedge\}$ and $\ifz{L}{M}{N}$ is the conditional that tests for zero.
 
-Here $\U$ denotes a set of unitary operations and $\R$ is a phase shift gate
-with a parametrized angle. In this article we fix the former to the CNOT and
-Hadamard (H) gates, and the latter to the arbitrary rotation gates
-$R_{z(\alpha)}$ and $R_{x(\alpha)}$.
+Here $\U$ denotes a set of unitary operations and $\R$ is a phase shift gate with a parametrized angle. In this article we fix the former to the CNOT and Hadamard (H) gates, and the latter to the arbitrary rotation gates $R_{z(\alpha)}$ and $R_{x(\alpha)}$.
 
-For the remaining constants, $0$ and $1$ represent bits, $\new$ is used to
-create a qubit, and $\meas$ to measure it. $\star$ is the inhabitant of the
-$\unit$ type, and the sequence $M;N$ is used to discard it. Qubits can be
-combined via the tensor product $M\otimes N$ with $\Qlet{x^{S_1} \otimes
-y^{S_2}}{M}{N}$ as its corresponding destructor.
+For the remaining constants, $0$ and $1$ represent bits, $\new$ is used to create a qubit, and $\meas$ to measure it. $\star$ is the inhabitant of the $\unit$ type, and the sequence $M;N$ is used to discard it. Qubits can be combined via the tensor product $M\otimes N$ with $\Qlet{x^{S_1} \otimes y^{S_2}}{M}{N}$ as its corresponding destructor.
  
-The system supports lists; $\vnil^A$ represents the empty list, $M::N$ the
-constructor and $\Qlet{x^S :: y^{\typeVec S n}}{M}{N}$ acts as the destructor. 
-Finally, the term $\Qfor{k^P}{M}{N}$ allows iterating over parameter lists.
+The system supports lists; $\vnil^A$ represents the empty list, $M::N$ the constructor and $\Qlet{x^S :: y^{\typeVec S n}}{M}{N}$ acts as the destructor. Finally, the term $\Qfor{k^P}{M}{N}$ allows iterating over parameter lists. The typing system is defined in Figure~\ref {fig:linear-fragment-typing}. We write $|\Phi|$ for the list of variables in a typing context $\Phi$. The type $\typeVec{A}{n}$ represents a vector of known length $n$ of elements of type $A$.
 
-The typing system is defined in Figure~\ref {fig:linear-fragment-typing}. We
-write $|\Phi|$ for the list of variables in a typing context $\Phi$. The type
-$\typeVec{A}{n}$ represents a vector of known length $n$ of elements of type $A$.
+We differentiate between \textit{state contexts} (Noted with $\Gamma$ and $\Delta$) and \textit{parameter contexts} (Noted with $\Phi$). For our case of study, parameter contexts consist only of pairs $x:\nat$ or $x:\typeVec{\nat}{(n:\nat)}$, since they are the only non-linear types of variables that we manage. Every other variable falls under the state context. The terms $\lambda x^S. M$ and $MN$ correspond to the abstraction and application which will be used for state-typed terms. The analogous constructions for parameter-typed terms are $\lambda' x^P. M$ and $M@N$.
 
-We differentiate between \textit{state contexts} (Noted with $\Gamma$ and
-$\Delta$) and \textit{parameter contexts} (Noted with $\Phi$). For our case of
-study, parameter contexts consist only of pairs $x:\nat$ or
-$x:\typeVec{\nat}{(n:\nat)}$, since they are the only non-linear types of variables
-that we manage. Every other variable falls under the state context. The terms
-$\lambda x^S. M$ and $MN$ correspond to the abstraction and application which
-will be used for state-typed terms. The analogous constructions for
-parameter-typed terms are $\lambda' x^P. M$ and $M@N$.
+In this sense we deviate from the original Proto-Quipper-D type system, which supports a single context decorated with indices. Instead, we use a linear and non-linear approach similar to the work of Cervesato and Pfenning\cite{Cervesato1996ALL}.
 
-In this sense we deviate from the original Proto-Quipper-D type system, which
-supports a single context decorated with indices. Instead, we use a linear and
-non-linear approach similar to the work of Cervesato and
-Pfenning\cite{Cervesato1996ALL}.
 
-A key difference between Quipper (and, by extension, Proto-Quipper-D) and
-$\lambdaD$ is the approach to defining circuits. In Quipper, circuits are an
-intrinsic part of the language and can be operated upon. In our case, the
-translation into SZX diagrams will be mediated with a function defined outside
-the language.
 
-\begin{figure}[hpt]
-\begin{mdframed}
+\begin{table*}
+    \begin{align*}
+        A &:= S \;|\; P \;|\; (n: \nat) \to A[n]\\
+        S &:= \bit \;|\; \qubit \;|\;\unit \;|\; S_1 \otimes S_2 \;|\; S_1 \multimap S_2 \;|\; \typeVec{S}{(n: \nat)}\\
+        P &:= \nat \;|\; \typeVec{\nat}{(n: \nat)}
+    \end{align*}
+    {\color{red} poner en algun lado que T son tipos, S tipos de estado y P tipos de parametro}
+    \caption{Type Grammar}
+\end{table*}
 
-    Types:
-\(
-    A := S \;|\; P \;|\; (n: \nat) \to A[n]
-\)
+{\color{red} Parrafo: Vamos a tener dos contextos distintos: estados (lineales) y parámetros (no-lineales). Los de estados notamos $\Gamma,\Delta$ y los de parametros $\Phi$.}
 
-State types:
-\(
-    S := \bit \;|\; \qubit \;|\;
-        \unit \;|\; S_1 \otimes S_2 \;|\; S_1 \multimap S_2 \;|\; \typeVec{S}{(n: \nat)}
-\)
-
-Parameter types:
-\(
-    P := \nat \;|\; \typeVec{\nat}{(n: \nat)}
-\)
-
-State contexts:
-\(
-    \Gamma,\Delta := \cdot \;|\; x : S, \Gamma
-\)
-
-Parameter contexts:
-\(
-    \Phi := \cdot \;|\; x : P, \Phi
-\)
-
+\iffalse
+\begin{table}
+    \small
     \[
         \infer[\mathsf{ax}]{\Phi, x:A\vdash x:A}{} \qquad
         \infer[\mathsf{ax_0}]{\Phi \vdash 0:\bit}{} \qquad
@@ -96,15 +52,15 @@ Parameter contexts:
     \]
     \[
         \infer[\mathsf{meas}]{\Phi \vdash \meas:\qubit\multimap\bit}{} \qquad
-        \infer[\mathsf{new}]{\Phi \vdash \new:\bit\multimap\qubit}{} \qquad
-        \infer[\mathsf{ax_\unit}]{\Phi\vdash \star: \unit}{}
+        \infer[\mathsf{new}]{\Phi \vdash \new:\bit\multimap\qubit}{}
+        
     \]
     \[
-        \infer[\mathsf{u}]{\Phi\vdash \U:\qubit^{\otimes n}\multimap\qubit^{\otimes n}}
-        {}
-        \qquad
-        \infer[\mathsf{r}]{\Phi\vdash \R:(n:\nat)\to\qubit^{\otimes n}\multimap\qubit^{\otimes n}}
-        {}
+        \infer[\mathsf{ax_{\unit}}]{\Phi\vdash \star: \unit}{}\qquad
+        \infer[\mathsf{u}]{\Phi\vdash \U:\qubit^{\otimes n}\multimap\qubit^{\otimes n}}{}
+    \]
+    \[
+        \infer[\mathsf{r}]{\Phi\vdash \R:(n:\nat)\to\qubit^{\otimes n}\multimap\qubit^{\otimes n}}{}
     \]
     \[
         \infer[\multimap_i]{\Phi,\Gamma\vdash\lambda x.M:A\multimap B}{\Phi,\Gamma,x:A\vdash M:B}
@@ -142,40 +98,27 @@ Parameter contexts:
     \]
     \caption{Type system.}%
     \label{fig:linear-fragment-typing}
-\end{mdframed}
-\end{figure}
+\end{table}
+\fi
 
-Types are divided into two kinds; parameter and state types. Both of these can
-depend on terms of type $\nat$. For the scope of this work, this dependence may
-only influence the size of vectors types.
+Types are divided into two kinds; parameter and state types. Both of these can depend on terms of type $\nat$. For the scope of this work, this dependence may only influence the size of vectors types.
 
-Parameter types represent non-linear variable types which are known at the time
-of generation of the concrete quantum operations. In the translation into SZX
-diagrams, these variables may dictate the labels of the wires and spiders.
-Vectors of $\nat$ terms represent their cartesian product.
+Parameter types represent non-linear variable types which are known at the time of generation of the concrete quantum operations. In the translation into SZX diagrams, these variables may dictate the labels of the wires and spiders. Vectors of $\nat$ terms represent their cartesian product.
 %
-On the other hand, state types correspond to the quantum operations and states
-to be computed. In the translation, these terms inform the shape and composition
-of the diagrams. Vectors of state type terms represent their tensor product.
+On the other hand, state types correspond to the quantum operations and states to be computed. In the translation, these terms inform the shape and composition of the diagrams. Vectors of state type terms represent their tensor product.
 
-In lieu of unbounded and implicit recursion, we define a series of primitive
-functions for performing explicit vector manipulation. These primitives can be
-defined in the original language, with the advantage of them being strongly
-normalizing. The first four primitives are used to manage state vectors, while
-the last one is used for generating parameters. For ease of translation some
-terms are decorated with type annotations, however we will omit these for
-clarity when the type is apparent.
+In lieu of unbounded and implicit recursion, we define a series of primitive functions for performing explicit vector manipulation. These primitives can be defined in the original language, with the advantage of them being strongly normalizing. The first four primitives are used to manage state vectors, while the last one is used for generating parameters. For ease of translation some terms are decorated with type annotations, however we will omit these for clarity when the type is apparent.
 
 \begin{center}
 $
 \begin{array}{l}
     \Phi\vdash \Qaccumap_{A,B,C} : (n:\nat) \to \typeVec A n \;\\
-    \multicolumn{1}{r}{\multimap\typeVec{(A \multimap C \multimap B \otimes C)}{n} \multimap C \multimap (\typeVec B n) \otimes C} \\
+    \multicolumn{1}{r}{\multimap\typeVec{(A \multimap C \multimap B \otimes C)}{n} \multimap C \multimap (\typeVec B n) \otimes C} \\[5pt]
     \Phi\vdash \Qsplit_A : (n:\nat) \to (m:\nat) \to \typeVec{A}{(n+m)} \\
-    \multicolumn{1}{r}{\multimap \typeVec A n \otimes \typeVec A m}\\
+    \multicolumn{1}{r}{\multimap \typeVec A n \otimes \typeVec A m}\\[5 pt]
     \Phi\vdash \Qappend_A : (n:\nat) \to (m:\nat) \to \typeVec{A}{n} \multimap \typeVec A m \\
-    \multicolumn{1}{r}{\qquad\multimap \typeVec{A}{(n+m)}}\\
-    \Phi\vdash \Qdrop : (n:\nat) \to \typeVec{\unit}{n} \multimap\; \unit \\
+    \multicolumn{1}{r}{\qquad\multimap \typeVec{A}{(n+m)}}\\[5pt]
+    \Phi\vdash \Qdrop : (n:\nat) \to \typeVec{\unit}{n} \multimap\; \unit \\[5pt]
     \Phi\vdash \Qrange : (n:\nat)\to (m:\nat)\to \typeVec{\nat}{(m-n)} \\
 \end{array}
 $
@@ -195,16 +138,17 @@ We additionally define the following helpful terms based on the previous
 primitives to aid in the manipulation of vectors.
 Cf. Appendix~\ref{sec:op-semantics} for their definition as \lambdaD-terms.
 \begin{center}
+\noindent\resizebox{\textwidth}{!}{
 $
 \begin{array}{l}
     \Phi\vdash \Qmap_{A,B} : (n:\nat) \to \typeVec A n \multimap\; \typeVec{(A \multimap B)}{n} \multimap \typeVec B n \\
-    \Phi\vdash \Qfold_{A,C} : (n:\nat) \to \typeVec A n \multimap\; \typeVec{(A \multimap C \multimap C)}{n} \multimap C \\
-    \multicolumn{1}{r}{\multimap C }\\
+    \Phi\vdash \Qfold_{A,C} : (n:\nat) \to \typeVec A n \multimap\; \typeVec{(A \multimap C \multimap C)}{n} \multimap C \multimap C \\
     \Phi\vdash \Qcompose_{A} : (n:\nat) \to \typeVec{(A \multimap A)}{n} \multimap A \multimap A \\
 \end{array}
 $
+}
 \end{center}
 
 The distinction between primitives that deal with state and parameters highlights the inclusion of the $\mathtt{for}$ as a construction into the language instead of a primitive. Since it acts over both parameter and state types, its function is effectively to bridge the gap between the two of them. This operation closely corresponds to the list instantiation procedure presented in the Section~\ref{sec:szx}.
 
-For example, if we take $ns$ to be a vector of natural numbers, and $xs$ a vector of abstractions $R @k (new 0)$. The term $\Qfor{k}{ns}{xs}$ generates a vector of quantum maps by instantiating the abstractions for each individual parameter in $ns$.
+For example, if we take $ns$ to be a vector of natural numbers, and $xs$ a vector of abstractions $R @k (\new\; 0)$. The term $\Qfor{k}{ns}{xs}$ generates a vector of quantum maps by instantiating the abstractions for each individual parameter in $ns$.
