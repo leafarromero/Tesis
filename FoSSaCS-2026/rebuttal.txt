@@ -1,0 +1,54 @@
+We thank the reviewers for their careful reading of our paper and for their constructive comments. Below are our answers to each comment.
+
+With respect to Definition 2.2 and the lack of requirement for the cardinality of B, we agree with the comment, it was an unintended omission, and we will add the missing point to the definition. In the same way, we inadvertently omitted the orthogonality requirement in Table 3, which we will also add.
+
+About the determinism of the reduction relation, we agree that the system is not deterministic as it stands, we should have implemented a way such that sums reduce in certain order, for example, taking a lexicographical order of terms in the sum and reducing the first available redex. We will modify the reduction rules accordingly to ensure determinism.  This modification only affects the presentation of the reduction system, not the technical development nor the main results, which already assume a deterministic evaluation strategy.
+
+We also address the minor remarks:
+
+> p3. Contributions. Maybe mention here that the semantics is toward unitary
+> operators and not, for example, CPTP maps.
+
+We agree.
+
+> p4. Table 1. "t ::= w", why "w" and not "v"?
+
+It was a typo. We will fix it.
+
+> p4. The term "pure value" is somewhat ambiguous, as it is generally used to
+> refer to all quantum superpositions -- so "value distributions" in that paper
+> -- by opposition to mixed values which are fully absent from this language.
+> Unless this is already a well-established terminology in your line of works,
+> I would suggest adopting another name as to avoid ambiguity in future works.
+
+We have followed paper [9] (Díaz-Caro, et al. LICS 2019), however, we agree that it can be confusing, so we will change the terminology to "basis value".
+
+> p4. The definition of (vec(t1),vec(t2)) is technically incomplete. Indeed,
+> (alpha t1,t2) is not covered by this definition, only (alpha t1 + vec(0),t2)
+> is defined. And congruence has yet to be defined at this point of the paper.
+
+Indeed, it should have been defined the other way around, we will fix this.
+
+> p6. The paragraph saying "we introduce a special basis, denoted A" is quite
+> unclear. And A is never explicitly defined.
+
+We will clarify this paragraph. A should be defined as a just symbol extending the set of basis, not as a "special basis". It is a syntactic device to deal with abstractions.
+
+> p7. Lemma 2.8. It seems to me that the = at the end of the lemma is a typo
+> and should be a congruence instead.
+
+It is not a typo. Since the terms v and w are equivalent and must be expressed with respect to the same basis B, the corresponding expressions of v and w are syntactically identical. Thus, t<v/x>_B is equal to t<w/x>_B.
+
+> p14. Table 5. (Sum) rule. On the bottom half of the rule, the alpha_i are
+> missing.
+
+We agree, it was a typo.
+
+> p15. Before Theorem 4.19. It might be worth mentioning that when abstracting
+> away the realizability semantics, the first half of validity (about #
+> variables being used at least once) must still be checked. Considering Table
+> 5 without that restriction leads to some incompatibility with the operational
+> semantics.
+
+In fact, the restriction is preserved by the typing rules. We agree that a remark or a lemma should be added here to clarify this point.
+
