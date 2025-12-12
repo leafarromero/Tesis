@@ -1,0 +1,20 @@
+We also thank the third reviewer for their very careful reading, and reply below to his three questions.
+
+> Can you provide typing derivations for the Deutsch and Teleportation
+> examples using the rules in Table 5? If not, what additional valid typing
+> rules are needed to derive these judgements?
+
+Yes, we can provide typing derivations for both examples, but they are quite long to fit on the rebuttal response.  If the reviewers think it is necessary to include them, we will need a little more time since the review asking for it arrived on the last day of the rebuttal period. In any case, we are checking the derivations again to make sure they are correct.
+
+> Regarding the Teleportation example: you claim the type ♯♭_B ⇒ (♯♭_Bell ×
+> ♯♭_B) captures certain properties about the protocol. Can you clarify what
+> specifically, in light of the comments in the review above?
+
+We agree with your comment and thank you for spotting the mistake in the discourse. From that type, we can only know that the third qubit is separable. This is due to the lack of measurement on the system, whose addition is a work in progress.
+
+> The terms NOT and NOT_X represent the same unitary in different bases. Can
+> the calculus support systematic basis conversion, or does each unitary
+> need to be rewritten manually for each basis?
+
+This is something we have not thought of, and it is an interesting point. A priori, we have to rewrite the unitary in each basis if we want to keep certain information in the type; for example, applying NOT_X to |0> is valid, but the result will have a less informative type than applying NOT to |0>. Transforming NOT_X to NOT or vice versa may be possible, but we have not explored this direction yet.
+
