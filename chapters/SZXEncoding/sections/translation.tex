@@ -28,29 +28,34 @@ The translation of an evaluable type, $\natEval{A}$, is defined recursively as f
 Given a type judgement $\Phi \vdash L : P$ where $P$ is an evaluable type,
 we define $\natEval{L}_\Phi$ as the evaluation of the term into a function from parameters into products of natural numbers.
 Since the typing is syntax directed, the evaluation is defined directly over the terms as follows:
+\[
+    \natEval{x}_{x:\nat, \Phi} = x, |\Phi| \mapsto x \quad \natEval{n}_\Phi = |\Phi| \mapsto n \\[7pt]
+\]
 
 $
-\begin{array}{c c}
-\natEval{x}_{x:\nat, \Phi} = x, |\Phi| \mapsto x & \natEval{n}_\Phi = |\Phi| \mapsto n \\[7pt]
-\multicolumn{2}{c}{\natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)}\\[7pt]
-\multicolumn{2}{c}{\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)}\\[7pt]
-\natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto [\,] & \natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)\\[7pt]
-\multicolumn{2}{c}{\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)}\\[7pt]
-\multicolumn{2}{c}{\natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto 
+\begin{array}{c}
+\natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\\[7pt]
+\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)\\[7pt]
+\natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto [\,]\\
+\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\\[7pt]
+\natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)\\[7pt]
+\natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto 
 \begin{cases}
     \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{L}_\Phi(|\Phi|) = 0 \\
     \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
-\end{cases}}\\[10pt]
-\multicolumn{2}{c}{\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes\limits_{i=n}^{m-1} i }\\[10pt]
-\multicolumn{2}{c}{\natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)}
+\end{cases}\\[10pt]
+\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes\limits_{i=n}^{m-1} i \\[10pt]
+\natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)
 \end{array}
 $
 
+
 \begin{align*}
-    &\natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi = \\
-    &\qquad|\Phi|\mapsto \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\\
-    &\qquad{\text{ where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)}
+    \natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi &= \\
+    |\Phi|\mapsto \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}&(y_1,[y_2,\dots,y_n],|\Phi|)\\
+    \text{where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)&
 \end{align*}
+
 
 \begin{lemma}%
     \label{lem:eval-type}
@@ -217,16 +222,23 @@ Where $\tau_{n,A,B,C}$ is a permutation that rearranges the vectors of functions
 vectors for each parameter and return value.
 That is, $\tau_{n,A,B,C}$ reorders a sequence of registers $(A,C,B,C)\dots(A,C,B,C)$
 into the sequence $(A\dots A)(C\dots C)(B\dots B)(C\dots C)$.
-It is defined as follows,
-\[
+It is defined as follows:
+
+\noindent
+\(
     \tau_{n,A,B,C}(i) = \begin{cases}
-        \imod{i}{k} + a * (\idiv{i}{k}) & \text{if } \imod{i}{k} < a \\
-        \imod{i}{k} + c * (\idiv{i}{k}) + a*(n-1) & \text{if } a \leq \imod{i}{k} < (a+c) \\
-        \imod{i}{k} + b * (\idiv{i}{k}) + (a+c)*(n-1) & \text{if } (a+c) \leq \imod{i}{k} < (a+c+b) \\
-        \imod{i}{k} + c * (\idiv{i}{k}) + (a+c+b)*(n-1) & \text{if } (a+c+b) \leq \imod{i}{k} \\
+        \imod{i}{k} + a * (\idiv{i}{k})\\
+            \qquad\qquad\text{if } \imod{i}{k} < a \\[10pt]
+        \imod{i}{k} + c * (\idiv{i}{k}) + a*(n-1)\\
+            \qquad\qquad\text{if } a \leq \imod{i}{k} < (a+c) \\[10pt]
+        \imod{i}{k} + b * (\idiv{i}{k}) + (a+c)*(n-1)\\
+            \qquad\qquad\text{if } (a+c) \leq \imod{i}{k} < (a+c+b)\\[10pt]
+        \imod{i}{k} + c * (\idiv{i}{k}) + (a+c+b)*(n-1)\\
+            \qquad\qquad\text{if } (a+c+b) \leq \imod{i}{k}\\[10pt]
     \end{cases}
-\]
-for $i \in [0,(a+c+b+c)*n)$,
+\)
+
+For $i \in [0,(a+c+b+c)*n)$,
 where mod and div are the integer modulo and division operators,
 $a = \trans{A}$, $b = \trans{B}$, $c = \trans{C}$,
 and $k = a+c+b+c$.

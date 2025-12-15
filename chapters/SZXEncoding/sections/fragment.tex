@@ -27,9 +27,10 @@ In this sense we deviate from the original Proto-Quipper-D type system, which su
 
 \begin{table*}
     \begin{align*}
-        A &:= S \;|\; P \;|\; (n: \nat) \to A[n]\\
-        S &:= \bit \;|\; \qubit \;|\;\unit \;|\; S_1 \otimes S_2 \;|\; S_1 \multimap S_2 \;|\; \typeVec{S}{(n: \nat)}\\
-        P &:= \nat \;|\; \typeVec{\nat}{(n: \nat)}
+        A &:= S \;|\; P \;|\; (n: \nat) \to A[n]&\\
+        S &:= \bit \;|\; \qubit \;|\;\unit \;|\; S_1 \otimes S_2 \;|\; S_1 \multimap S_2 \;|&\\
+        & \qquad\typeVec{S}{(n: \nat)}&\\
+        P &:= \nat \;|\; \typeVec{\nat}{(n: \nat)}&
     \end{align*}
     {\color{red} poner en algun lado que T son tipos, S tipos de estado y P tipos de parametro}
     \caption{Type Grammar}

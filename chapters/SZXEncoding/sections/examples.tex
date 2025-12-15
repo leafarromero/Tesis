@@ -16,50 +16,41 @@ by applying a Hadamard gate to the first one and then using it as target
 of successive \textit{crot} applications using the rest of the qubits as controls.
 Finally, \textit{qft} repeats \textit{apply\_crot} for all values of $k$.
 In the terms, we use $n\dots m$ as a shorthand for $\Qrange\ @n\ @m$.
-\\
 
 {
-   \setlength{\parindent}{0pt}
-
-   \(
-      \text{crot}: (n:\nat)\to (\qubit\otimes\qubit)\multimap (\qubit\otimes\qubit)
-   \)\\
-   \(
-     \text{crot}:= \lambda' n^{\nat}.\lambda qs^{\qubit \otimes \qubit}.
-       \Qlet{c^\qubit \otimes q^\qubit}{qs}{}
-       \Qlet{c^\qubit \otimes q^\qubit}{\mathtt{CNOT}\ c\ (\mathtt{Rz}\ @2^n\ q)}{}
-       \mathtt{CNOT}\ c\ (\mathtt{Rz^{-1}}\ @2^n\ q)
-   \)\\
-
-   \(
-      \text{apply\_crot}: (n:\nat) \to (k:\nat) \to \typeVec{\qubit}{n} \multimap \typeVec{\qubit}{n}
-   \)%
-   %\vspace*{-1em}
-   \begin{flalign*}
-      \text{apply\_crot}:=\ & \lambda' n^\nat.\ \lambda' k^\nat.\ \lambda qs^{\typeVec{\qubit}{n}}. & \\
-      & \ifz{(n-k)}{qs}{}\\
-      & \Qlet{h^{\typeVec{\qubit}{k}}\otimes qs'^{\ \typeVec{\qubit}{n-k}}}
-         {\Qsplit\ @k\ @(n-k)\ qs}{}\\
-      & \Qlet{q^\qubit \otimes cs^{\typeVec{\qubit}{n-k-1}}}
-         {qs'}{}\\
-      & \Qlet{fs^{\typeVec{(\qubit\otimes\qubit\multimap\qubit\otimes\qubit)}{(n-k-1)}}}
-         {\Qfor{m^\nat}{2..(n-k+1)}{\text{crot }@m}}{\!\!}\\
-      & \Qlet{cs'^{\ (\typeVec{\qubit}{n-k-1})}\otimes q'^{\ \qubit}}
-         {\Qaccumap\ fs\ (H\ q)\ cs}{}\\
-      & \text{concat } h\ (q': cs')
-   \end{flalign*}
-
-   \(
-      \text{qft}: (n:\nat) \to \typeVec{\qubit}{n}\multimap\typeVec{\qubit}{n}
-   \) %
-   %\vspace*{-1em}
-   \begin{flalign*}
-      \text{qft} :=\ & \lambda' n^\nat.\lambda qs^{\typeVec{\qubit}{n}}.
-         \Qcompose & \\
-         & (\Qfor{k^\nat}{\text{reverse\_vec } @(0..n)}
-         {\lambda qs'^{\ \typeVec{\qubit}{n}}.\text{apply\_crot } @n\ @k\ qs'})\ qs
-   \end{flalign*}
+\begin{flalign*}
+   \intertext{crot: $(n:\nat)\to (\qubit\otimes\qubit)\multimap (\qubit\otimes\qubit)$}
+   \text{crot}:= &\lambda' n^{\nat}.\,\lambda qs^{\qubit \otimes \qubit}.\hfill\\
+   &\Qlet{c^\qubit \otimes q^\qubit}{qs}{}\\
+   &\Qlet{c^\qubit \otimes q^\qubit}{\mathtt{CNOT}\ c\ (\mathtt{Rz}\ @2^n\ q)}{}\\
+   &\qquad\mathtt{CNOT}\ c\ (\mathtt{Rz^{-1}}\ @2^n\ q)\\ 
+\end{flalign*}
 }
+\begin{flalign*}
+   \intertext{apply\_crot: $(n:\nat) \to (k:\nat) \to \typeVec{\qubit}{n} \multimap \typeVec{\qubit}{n}$}\\
+   \text{apply\_crot}:=\ & \lambda' n^\nat.\ \lambda' k^\nat.\ \lambda qs^{\typeVec{\qubit}{n}}. & \\
+   & \ifz{(n-k)}{qs}{}\\
+   & \Qlet{h^{\typeVec{\qubit}{k}}\otimes qs'^{\ \typeVec{\qubit}{n-k}}}
+      {\Qsplit\ @k\ @(n-k)\ qs}{}\\
+   & \Qlet{q^\qubit \otimes cs^{\typeVec{\qubit}{n-k-1}}}
+      {qs'}{}\\
+   & \Qlet{fs^{\typeVec{(\qubit\otimes\qubit\multimap\qubit\otimes\qubit)}{(n-k-1)}}}
+      {\Qfor{m^\nat}{2..(n-k+1)}{\text{crot }@m}}{\!\!}\\
+   & \Qlet{cs'^{\ (\typeVec{\qubit}{n-k-1})}\otimes q'^{\ \qubit}}
+      {\Qaccumap\ fs\ (H\ q)\ cs}{}\\
+   & \text{concat } h\ (q': cs')
+\end{flalign*}
+
+\(
+   \text{qft}: (n:\nat) \to \typeVec{\qubit}{n}\multimap\typeVec{\qubit}{n}
+\) %
+%\vspace*{-1em}
+\begin{flalign*}
+   \text{qft} :=\ & \lambda' n^\nat.\lambda qs^{\typeVec{\qubit}{n}}.
+      \Qcompose & \\
+      & (\Qfor{k^\nat}{\text{reverse\_vec } @(0..n)}
+      {\lambda qs'^{\ \typeVec{\qubit}{n}}.\text{apply\_crot } @n\ @k\ qs'})\ qs
+\end{flalign*}
 
 The translation of each term into a family of diagrams is shown below.
 We omit the wire connecting the function inputs to the right side
