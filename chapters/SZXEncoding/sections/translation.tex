@@ -194,13 +194,8 @@ The following table shows the encoding of the operators used in this paper.
     \par
 }
 
-The primitives $\Qsplit$, $\Qappend$, $\Qdrop$ and $\Qaccumap$ are translated below. 
-Since vectors are isomorphic to products in the wire encoding,
-the first three primitives do not perform any operation.
-For the accumulating map we utilize the construction presented in Lemma~\ref{lem:accumap},
-replacing the function box with a function vector input.
-In the latter we omit the wires and gathers connecting the inputs and outputs of the function
-to a single wire on the right of the diagram for clarity.
+The primitives $\Qsplit$, $\Qappend$, $\Qdrop$ and $\Qaccumap$ are translated below. Since vectors are isomorphic to products in the wire encoding, the first three primitives do not perform any operation. We present the translation for these primitives first.
+
 \[
 \begin{array}{l}
     \trans{\Qsplit_A}_\Phi = n, m, |\Phi| \mapsto \tikzfig{judgements/primitives/split} \\
@@ -209,7 +204,7 @@ to a single wire on the right of the diagram for clarity.
 \end{array}
 \]
 
-{\color{red} PARRAFO EXPLICANDO EL ACCUMAP QUE ES MEDIO COMPLICADO}
+For the accumulating map we utilize the construction presented in Lemma~\ref{lem:accumap}, replacing the function box with a function vector input. In the latter we omit the wires and gathers connecting the inputs and outputs of the function to a single wire on the right of the diagram for clarity.
 
 \[
 \begin{array}{l}
@@ -218,11 +213,7 @@ to a single wire on the right of the diagram for clarity.
 \end{array}
 \]
 
-Where $\tau_{n,A,B,C}$ is a permutation that rearranges the vectors of functions into tensors of
-vectors for each parameter and return value.
-That is, $\tau_{n,A,B,C}$ reorders a sequence of registers $(A,C,B,C)\dots(A,C,B,C)$
-into the sequence $(A\dots A)(C\dots C)(B\dots B)(C\dots C)$.
-It is defined as follows:
+Where $\tau_{n,A,B,C}$ is a permutation that rearranges the vectors of functions into tensors of vectors for each parameter and return value. That is, $\tau_{n,A,B,C}$ reorders a sequence of registers $(A,C,B,C)\dots(A,C,B,C)$ into the sequence $(A\dots A)(C\dots C)(B\dots B)(C\dots C)$. It is defined as follows:
 
 \noindent
 \(

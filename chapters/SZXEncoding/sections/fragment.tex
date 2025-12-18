@@ -35,9 +35,6 @@ In this sense we deviate from the original Proto-Quipper-D type system, which su
     {\color{red} poner en algun lado que T son tipos, S tipos de estado y P tipos de parametro}
     \caption{Type Grammar}
 \end{table*}
-
-{\color{red} Parrafo: Vamos a tener dos contextos distintos: estados (lineales) y parámetros (no-lineales). Los de estados notamos $\Gamma,\Delta$ y los de parametros $\Phi$.}
-
 \iffalse
 \begin{table}
     \small
@@ -101,7 +98,6 @@ In this sense we deviate from the original Proto-Quipper-D type system, which su
     \label{fig:linear-fragment-typing}
 \end{table}
 \fi
-
 Types are divided into two kinds; parameter and state types. Both of these can depend on terms of type $\nat$. For the scope of this work, this dependence may only influence the size of vectors types.
 
 Parameter types represent non-linear variable types which are known at the time of generation of the concrete quantum operations. In the translation into SZX diagrams, these variables may dictate the labels of the wires and spiders. Vectors of $\nat$ terms represent their cartesian product.
@@ -128,8 +124,7 @@ $
 Since every diagram represents a linear map between qubits there is no
 representation equivalent to non-terminating terms, even for weakly normalizing
 programs. This is the main reason behind the design choice of the primitives
-set. {\color{red}TODO: (Explicar bien que de esta forma, tenemos programas fuertemente normalizantes.)}
-%
+set.
 
 We include the operational semantics of the calculus and primitives in Appendix~
 \ref{sec:op-semantics}. The encoding of the primitives as Proto-Quipper-D functions
