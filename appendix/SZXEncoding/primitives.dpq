@@ -24,14 +24,17 @@ cons n m vn vm =
 
 accuMap : ! forall a b c (n : Nat)
   -> Vec a n -> Vec (a -> c -> (b,c)) n -> c -> (Vec b n, c)
-accuMap n v fs z =
-  case v of 
+accuMap n xs fs z =
+  case xs of 
     VNil -> (VNil, z)
-    VCons x v' ->
-      case n of
-        S n' ->
-          let (y, z') = f x z
-          in (VCons y accuMap n' v' f z', z')
+    VCons x xs' ->
+      case fs of
+        VCons f fs' ->    
+          case n of
+            S n' ->
+              let (y, z') = f x z in
+              let (ys, z'') = accuMap n' xs' fs' z' in
+              (VCons y ys, z'')
 
 mapp : ! forall a b (n : Nat) -> Vec a n -> Vec (a -> b) n -> Vec b n
 mapp n v f =
