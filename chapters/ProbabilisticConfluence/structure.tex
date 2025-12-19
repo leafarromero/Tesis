@@ -34,20 +34,33 @@ If we denote by $[(p_1,t_1),\dots,(p_n,t_n)]$ the probability distribution where
 \begin{figure}[t]
   \centering
   \begin{tikzcd}[column sep=small]
-    {[({\frac 12}, (\lambda x.\lambda y.yxx)0), ({\frac 12}, (\lambda x.\lambda y.yxx)1)]}\ar[d] & (\lambda x.\lambda y.yxx)\coin \ar[l]\ar[r]&  {[(1, \lambda y.y\coin\coin)]}\ar[d,"*",pos=1]\\
-    {[({\frac 12}, \lambda y.y00), ({\frac 12}, \lambda y.y11)]} 
+    & (\lambda x.\lambda y.yxx)\coin \ar[dl]\ar[dr] & \\
+    \left[\begin{array}{c}
+      ({\frac 12}, (\lambda x.\lambda y.yxx)0),\\[5pt]
+      ({\frac 12}, (\lambda x.\lambda y.yxx)1)
+      \end{array}\right]\ar[d] 
+    & &  
+    {[(1, \lambda y.y\coin\coin)]}\ar[d,"*",pos=1]\\
+    \left[\begin{array}{c}
+      ({\frac 12}, \lambda y.y00),\\ [5pt]
+      ({\frac 12}, \lambda y.y11)
+    \end{array}\right]
     &&\hspace{-50pt}
-    {[({\frac 14}, \lambda y.y00),({\frac 14}, \lambda y.y01),({\frac 14}, \lambda y.y10),({\frac 14}, \lambda y.y11)]} 
+    \left[\begin{array}{c}
+      ({\frac 14}, \lambda y.y00),\\[5pt]
+      ({\frac 14}, \lambda y.y01),\\[5pt]
+      ({\frac 14}, \lambda y.y10),\\[5pt]
+      ({\frac 14}, \lambda y.y11)
+    \end{array}\right]
   \end{tikzcd}
   \caption{Counterexample of confluence}
   \label{fig:noconfl}
 \end{figure}
 
-In this short paper we consider a simply typed lambda calculus extended with 
-a coin, and show different possibilities for achieving some sort of confluence, without giving preference to any of them.
+In this chapter we consider a simply typed lambda calculus extended with a coin, and show different possibilities for achieving some sort of confluence, without giving preference to any of them. This analysis will be helpful to set up the design choices of later chapters, since quantum measurement is an inherent probabilistic operation.
 
-In Section~\ref{sec:calculus} we introduce the calculus to be studied, without any restrictions either in the rewriting rules, or in the typing rules. As we argued above, this naive definition is not confluent (cf.~Figure~\ref{fig:noconfl}), unless a strategy is defined (in which case it becomes trivially probabilistically confluent, as will be discussed in Section~\ref{sec:strategy}).
-In Section~\ref{sec:circulito} we show that we can achieve confluence by internalising the probabilistic reductions in the terms. In Section~\ref{sec:affine} we show that we can achieve probabilistic confluence by taking an affine-linear type system. Then, in Section~\ref{sec:subaffine}, we show that we can relax the type system in an if-then-else branching, obtaining a probabilistic confluence result modulo a computational equivalence.
+In Section~\ref{sec:calculus} we introduce the calculus to be studied, without any restrictions either in the rewriting rules, nor in the typing rules. As we argued above, this naive definition is not confluent (cf.~Figure~\ref{fig:noconfl}), unless a strategy is defined (in which case it becomes trivially probabilistically confluent, as will be discussed in Section~\ref{sec:strategy}).
+In Section~\ref{sec:circulito} we show that we can achieve confluence by internalizing the probabilistic reductions in the terms. In Section~\ref{sec:affine} we show that we can achieve probabilistic confluence by taking an affine-linear type system. Then, in Section~\ref{sec:subaffine}, we show that we can relax the type system in an if-then-else branching, obtaining a probabilistic confluence result modulo a computational equivalence.
 
 \section{The \texorpdfstring{$\lambprot$}{lambda coin} calculus}~\label{sec:calculus}
 In this section we present 
@@ -80,18 +93,12 @@ The reduction rules are intentionally as permissive as possible (even the branch
   \]
   \smallskip
   \[
-    \infer{\lambda x.t\topr[p]\lambda x.r}{t\topr[p] r}
-    \qquad
-    \infer{ts\topr[p] rs}{t\topr[p] r}
-    \qquad
-    \infer{st\topr[p] sr}{t\topr[p] r}
-    \qquad
-    \infer{\ite t u v\topr[p]\ite r u v}{t\topr[p] r}
-  \]
-  \[
-    \infer{\ite t u v\topr[p]\ite t r v}{u\topr[p] r}
-    \qquad
-    \infer{\ite t u v\topr[p]\ite t u r}{v\topr[p] r}
+  \begin{array}{c c c}
+    \infer{\lambda x.t\topr[p]\lambda x.r}{t\topr[p] r} & \infer{ts\topr[p] rs}{t\topr[p] r} & \infer{st\topr[p] sr}{t\topr[p] r}\\[5pt]
+    \multicolumn{3}{c}{\infer{\ite{t}{s_1}{s_2}\topr[p]\ite{r}{s_1}{s_2}}{t\topr[p] r}}\\[5pt]
+    \multicolumn{3}{c}{\infer{\ite{t}{s_1}{s_2}\topr[p]\ite{t}{r_1}{s_2}}{s_1\topr[p] r_1}}\\[5pt]
+    \multicolumn{3}{c}{\infer{\ite{t}{s_1}{s_2}\topr[p]\ite{t}{r_1}{r_2}}{s_2\topr[p] r_2}}
+  \end{array}
   \]
   \caption{Rewrite system for $\lambprot$.}
   \label{tab:TRS}
@@ -104,20 +111,21 @@ The reduction rules are intentionally as permissive as possible (even the branch
   \[
     \infer[\mathsf{ax}]{\Gamma,x:A\vdash x:A}{} 
     \qquad
+    \infer[\mathsf{ax}_1]{\Gamma\vdash 1:\mathbb{B}}{}
+    \qquad
+    \infer[\mathsf{ax}_0]{\Gamma\vdash 0:\mathbb{B}}{}
+  \]
+  \[
     \infer[\rightarrow_i]{\Gamma\vdash\lambda x.t:A\rightarrow B}
     	{\Gamma,x:A\vdash t:B}
-	\qquad 
+	  \qquad 
     \infer[\rightarrow_e]{\Gamma\vdash tr:B}
     	{\Gamma\vdash t:A\rightarrow B & \Gamma\vdash r:A}
   \]
   \[
-    \infer[\mathsf{ax}_1]{\Gamma\vdash 1:\mathbb{B}}{}
-    \qquad
-    \infer[\mathsf{ax}_0]{\Gamma\vdash 0:\mathbb{B}}{}
+    \infer[\mathsf{ax}_{\coin}]{\Gamma\vdash \coin:\mathbb{B}}{} 
     \qquad
     \infer[\mathsf{if}]{\Gamma\vdash\ite t u v:A}{\Gamma\vdash t:\mathbb{B}& \Gamma\vdash u:A & \Gamma\vdash v:A}
-    \qquad
-    \infer[\mathsf{ax}_{\coin}]{\Gamma\vdash \coin:\mathbb{B}}{} 
   \]
   \caption{Type system for $\lambprot$.}
   \label{tab:TS}
@@ -128,20 +136,22 @@ Strong normalization for this calculus follows trivially from Tait's proof for t
 Clearly, $\lambprot$ is not confluent, as already seen in the introduction (see Figure~\ref{fig:noconfl}). It is easy to see that these distributions represent different results.
 
 The divergence stems from three characteristics of the calculus:
-  (1) Lack of a reduction strategy.
-  (2) Probabilistic reductions.
-  (3) Duplication of variables.
-
+\begin{enumerate}
+  \item Lack of a reduction strategy.
+  \item Probabilistic reductions.
+  \item Duplication of variables.
+\end{enumerate}
+  
 Removing just one of these elements renders the system confluent, however each modification comes with its own trade-off. We will examine each case, one by one, in the following section.
 
 \section{Removing the divergence sources}
 \subsection{Defining a strategy}\label{sec:strategy}
 The definition of a strategy is the easiest modification. Choosing a reduction strategy makes all critical pairs disappear, since there is only one possible reduction rule to be applied for each term distribution. For example, in Figure~\ref{fig:noconfl} a \textit{call-by-name} strategy would take the right path, where \textit{call-by-value} would take the left one. 
 
-Ultimately the choice lies in how to interpret the duplication of variables. Reducing via call-by-name means that the probabilistic event is duplicated. Whereas, a call-by-value strategy duplicates the outcome of said event (see~\cite{Dallago} for a discussion on this choice, and even an alternative combining both).
+Ultimately the choice lies in how to interpret the duplication of variables. Reducing via call-by-name means that the probabilistic event is duplicated. Whereas, a call-by-value strategy duplicates the outcome of said event (see~\cite{Dallago} for a discussion on this choice, and even an alternative combining both approaches).
 
 \subsection{Internalising the probabilities}\label{sec:circulito}
-Following~\cite{lambdarho}, we can modify the reduction on $\lambprot$ to internalise the entire distribution of a term. In this particular case, every reduction has probability $1$, and the coin toss deterministically reduces to its probability distribution.
+Following~\cite{lambdarho}, we can modify the reduction on $\lambprot$ to internalize the entire distribution of a term. In this particular case, every reduction has probability $1$, and the coin toss deterministically reduces to its probability distribution.
 We write $t\oplus_{p}r$ for the probability distribution $[(p,t),(1-p,r)]$, $(t\oplus_p r)\oplus_q s$ for the probability distribution $[(qp,t),(q(1-p)r),(1-q,s)]$, etc. Then, we can consider the rewrite rule
 \(
   \coin\to 0 \oplus_{\frac 12} 1
@@ -163,20 +173,21 @@ The last reasonable solution is to restrict duplication. One way to do this is b
   \[
     \infer[\mathsf{ax}]{\Gamma,x:A\vdash x:A}{} 
     \qquad
+    \infer[\mathsf{ax}_1]{\Gamma\vdash 1:\mathbb{B}}{}
+    \qquad
+    \infer[\mathsf{ax}_0]{\Gamma\vdash 0:\mathbb{B}}{}
+  \]
+  \[
     \infer[\rightarrow_i]{\Gamma\vdash\lambda x.t:A\rightarrow B}
     	{\Gamma,x:A\vdash t:B}
-	\qquad 
+	  \qquad 
     \infer[\rightarrow_e]{\Gamma,\Delta\vdash tr:B}
     	{\Gamma\vdash t:A\rightarrow B & \Delta\vdash r:A}
   \]
   \[
-    \infer[\mathsf{ax}_1]{\Gamma\vdash 1:\mathbb{B}}{}
-    \qquad
-    \infer[\mathsf{ax}_0]{\Gamma\vdash 0:\mathbb{B}}{}
-    \qquad
-    \infer[\mathsf{if}]{\Gamma,\Delta_1,\Delta_2\vdash\ite t u v:A}{\Gamma\vdash t:\mathbb{B}& \Delta_1\vdash u:A & \Delta_2\vdash v:A}
-    \qquad
     \infer[\mathsf{ax}_{\coin}]{\Gamma\vdash \coin:\mathbb{B}}{} 
+    \qquad
+    \infer[\mathsf{if}]{\Gamma,\Delta_1,\Delta_2\vdash\ite t u v:A}{\Gamma\vdash t:\mathbb{B}& \Delta_1\vdash u:A & \Delta_2\vdash v:A}    
   \]
   \caption{Affine type system for $\lambprot$
   (different contexts are considered to be disjoint).
@@ -190,9 +201,7 @@ This type system solves the counterexample from Figure~\ref{fig:noconfl}, since 
 \end{lem}
 Notice that this property is not true in the unrestricted $\lambprot$. For example, while $\coin\topr[\frac 12]1$, we have $(\lambda y.yxx)[\coin/x]=\lambda y.y\coin\coin\topr[\frac 14]^*\lambda y.y11$.
 
-The drawback in this approach is clear, there is a loss in expressivity. 
-Of course, in some cases, this restriction is a desirable quality. For example, in quantum computing it may serve 
-to avoid cloning qubits, a forbidden operation in quantum mechanics.
+The drawback in this approach is clear, there is a loss in expressivity. Of course, in some cases, this restriction is a desirable quality. For example, in quantum computing it may serve to avoid cloning qubits, a forbidden operation in quantum mechanics.
 
 \section{Computational confluence with a sub-affine type system}\label{sec:subaffine}
 The solution considered in Section~\ref{sec:affine} seems quite extreme. In particular, using the same variable in different branches of an if-then-else construction does not actually duplicate it, since only one of those branches will remain. However, changing the rule $\mathsf{if}$ from Table~\ref{tab:AffineTS} to $\mathsf{if}_s$ given by
@@ -226,7 +235,7 @@ Consider the following example. Let $\mathsf{not}=\lambda x.\ite x01$, then
  \right] & &
  \left[	
    \begin{array}[c]{l}
-  	(\nicefrac 14, \lambda y. \ite y 00);\\
+  (\nicefrac 14, \lambda y. \ite y 00);\\
  	(\nicefrac 14, \lambda y. \ite y 01);\\
  	(\nicefrac 14, \lambda y. \ite y 10);\\
  	(\nicefrac 14, \lambda y. \ite y 11)
@@ -362,5 +371,5 @@ If $x\notin\FV{t}$, then
 \end{proof}
 
 \section{Conclusion}
-In this paper we have analysed the different possibilities to transform a simple probabilistic calculus into a (probabilistically / computationally) confluent calculus. The main contribution on this note is Theorem~\ref{thm:confmodulo}, which proves that we can relax the affinity restriction on ``non-interfering'' paths. This technique has been considered in the first author master's thesis~\cite{Romero20} to prove the computational confluence of the quantum lambda calculus $\lambda_\rho$~\cite{lambdarho}.
+In this paper we have analyzed the different possibilities to transform a simple probabilistic calculus into a (probabilistically / computationally) confluent calculus. The main contribution on this note is Theorem~\ref{thm:confmodulo}, which proves that we can relax the affinity restriction on ``non-interfering'' paths. This technique has been considered in the first author master's thesis~\cite{Romero20} to prove the computational confluence of the quantum lambda calculus $\lambda_\rho$~\cite{lambdarho}.
 
