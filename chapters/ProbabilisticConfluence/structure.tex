@@ -42,14 +42,14 @@ If we denote by $[(p_1,t_1),\dots,(p_n,t_n)]$ the probability distribution where
     & &  
     {[(1, \lambda y.y\coin\coin)]}\ar[d,"*",pos=1]\\
     \left[\begin{array}{c}
-      ({\frac 12}, \lambda y.y00),\\ [5pt]
+      ({\frac 12}, \lambda y.y00),\\[5pt]
       ({\frac 12}, \lambda y.y11)
     \end{array}\right]
     &&\hspace{-50pt}
     \left[\begin{array}{c}
-      ({\frac 14}, \lambda y.y00),\\[5pt]
+      ({\frac 14}, \lambda y.y00), 
       ({\frac 14}, \lambda y.y01),\\[5pt]
-      ({\frac 14}, \lambda y.y10),\\[5pt]
+      ({\frac 14}, \lambda y.y10), 
       ({\frac 14}, \lambda y.y11)
     \end{array}\right]
   \end{tikzcd}
@@ -371,5 +371,6 @@ If $x\notin\FV{t}$, then
 \end{proof}
 
 \section{Conclusion}
-In this paper we have analyzed the different possibilities to transform a simple probabilistic calculus into a (probabilistically / computationally) confluent calculus. The main contribution on this note is Theorem~\ref{thm:confmodulo}, which proves that we can relax the affinity restriction on ``non-interfering'' paths. This technique has been considered in the first author master's thesis~\cite{Romero20} to prove the computational confluence of the quantum lambda calculus $\lambda_\rho$~\cite{lambdarho}.
+In this chapter we have analyzed the different possibilities to transform a simple probabilistic calculus into a (probabilistically / computationally) confluent calculus. The main result is Theorem~\ref{thm:confmodulo}, which proves that we can relax the affinity restriction on ``non-interfering'' paths. This technique has been considered in the first author master's thesis~\cite{Romero20} to prove the computational confluence of the quantum lambda calculus $\lambda_\rho$~\cite{lambdarho}.
 
+For the following two chapters, we will focus on deterministic quantum lambda calculi which do not perform measurement. This is a deliberate choice, since the inclusion of measurement operations also add the need to account for probabilistic evolutions. We will study different characteristics of these calculi, but model them with insights from this chapter to make a future incorporation of measurement as seamlessly as possible.
