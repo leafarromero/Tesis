@@ -668,9 +668,10 @@ operation substitutes variables with vectors expressed in the chosen basis; the
 accompanying coefficients are those of the value distribution being
 substituted.
 
-Alongside this substitution, we introduce a special basis, denoted
-$\AbsBasis$, which acts as the canonical basis for $\lambda$-abstractions. In
-this way, we restrict function distributions to a single admissible basis.
+Alongside this substitution, we expand the set of orthogonal basis with a 
+special symbol, denoted $\AbsBasis$. This symbol changes the modality of the lambda
+abstraction, allowing it to take other abstractions as arguments. This is the only
+instance of higher-order functions in the calculus.
 
 
 \begin{definition}[Basis-dependent substitution]
@@ -866,9 +867,9 @@ $t(\alpha\vv s+\beta\vv r)$ is equivalent to
 $\alpha\,t\vv s+\beta\,t\vv r$.
 
 The only exception occurs for higher-order terms: since no orthogonal bases are
-defined for abstractions, we introduce a special basis~$\AbsBasis$ acting as
-the canonical one for higher-order values—intuitively, the set of all pure
-values.  For instance,
+defined for abstractions, we introduce a special modality~$\AbsBasis$ reducing
+linearly over the basis values of a distribution. For instance,
+
 \[
   (\Lam{x}{\AbsBasis}{\vv t})
   \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
