@@ -704,18 +704,20 @@ basis-dependent behaviour.
 This special case is also the only one applicable to
 $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
 
-  The definition also extends to pairs of values. If
-  $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
-  with $\vv{v_i}\in\Span(B_1)$ and $\vv{w_i}\in\Span(B_2)$,
-  then
-  \[
-    \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
-      \;=\; \sum_{i\in I}\alpha_i\,
-      \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
-  \]
-  where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
-  with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
-  purely notational.
+%Explicar que es un device puramente sintáctico.
+
+The definition also extends to pairs of values. If
+$\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
+with $\vv{v_i}\in\Span(B_1)$ and $\vv{w_i}\in\Span(B_2)$,
+then
+\[
+  \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
+    \;=\; \sum_{i\in I}\alpha_i\,
+    \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
+\]
+where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
+with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
+purely notational.
 
 \begin{example}
   Let
