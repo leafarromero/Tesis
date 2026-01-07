@@ -132,7 +132,7 @@
 \def\Pow{\mathfrak{P}}        % powerset
 \def\Powfin{\Pow_{\text{fin}}}  % set of finite subsets
 \def\X{\mathcal{X}}           % set of variables
-\def\Val{\mathrm{V}}          % set of pure values
+\def\Val{\mathrm{V}}          % set of basic values
 \def\pto{\rightharpoonup}     % set of partial functions
 \def\Cone{\mathrm{cone}}      % cone of a set of vectors
 \def\Sph{\mathcal{S}_1}       % unit sphere
@@ -467,7 +467,7 @@ built. It is a $\lambda$-calculus extended with linear combinations of terms, in
 
 The syntax of the calculus is described in
 \Cref{tab:Syntax}. The calculus is divided into four
-distinct syntactic categories: \emph{pure values} ($\Val$), \emph{pure terms}
+distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
 ($\Lambda$), \emph{value distributions} ($\ValD$), and \emph{term
 distributions} ($\vec\Lambda$). Values are composed of variables, decorated
 lambda abstractions, and two basis values representing orthogonal vectors,
@@ -671,7 +671,8 @@ substituted.
 Alongside this substitution, we expand the set of orthogonal basis with a 
 special symbol, denoted $\AbsBasis$. This symbol changes the modality of the lambda
 abstraction, allowing it to take other abstractions as arguments. This is the only
-instance of higher-order functions in the calculus.
+instance of higher-order functions in the calculus. The $\AbsBasis$, is a purely
+syntactical device, intuitively it can be thought as the canonical basis.
 
 
 \begin{definition}[Basis-dependent substitution]
@@ -695,7 +696,7 @@ instance of higher-order functions in the calculus.
 The two cases in the definition capture distinct substitution modes.  
 In the first, substitution proceeds linearly using the decomposition of
 $\vv v$ over the explicit basis $B$.  
-In the second, when $B=\AbsBasis$, substitution proceeds linearly over the pure
+In the second, when $B=\AbsBasis$, substitution proceeds linearly over the basic
 values that form $\vv v$.  
 This case recovers the substitution mechanism of 
 non base-sensitive calculi---as first defined in
@@ -703,8 +704,6 @@ non base-sensitive calculi---as first defined in
 basis-dependent behaviour.  
 This special case is also the only one applicable to
 $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
-
-%Explicar que es un device puramente sintáctico.
 
 The definition also extends to pairs of values. If
 $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
@@ -763,27 +762,27 @@ equivalence class induced by the congruence $\equiv$.
 \end{lemma}
 
 Remark that the property in \Cref{lem:EquivSubstitutions} does not extend across
-  different bases; that is,
-  $\vv{t}\ansubst{\vv{v}/x}{A}\not\equiv\vv{t}\ansubst{\vv{v}/x}{B}$.
-  For example,
-  \[
-    (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB}
-    = \Lam{x}{C}{\ket{+}} 
-    \not\equiv
-    \tfrac{1}{\sqrt{2}}\big((\Lam{x}{C}{\ket{0}})
-    + (\Lam{x}{C}{\ket{1}})\big)
-    = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}.
-  \]
-  This difference arises because the relation $\equiv$ does not commute with
-  lambda abstraction, nor with the case construct. Although the two terms are
-  operationally equivalent, the calculus distinguishes between the
-  superposition of results,
-  $\Lam{x}{B}{\alpha\vv{v_1} + \beta\vv{v_2}}$,
-  and the superposition of functions,
-  $\alpha(\Lam{x}{B}{\vv{v_1}}) + \beta(\Lam{x}{B}{\vv{v_2}})$.
-  This distinction reflects a physical intuition: the former corresponds to a
-  single experiment producing a superposition of outcomes, while the latter
-  represents a superposition of distinct experiments.
+different bases; that is,
+$\vv{t}\ansubst{\vv{v}/x}{A}\not\equiv\vv{t}\ansubst{\vv{v}/x}{B}$.
+For example,
+\[
+  (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB}
+  = \Lam{x}{C}{\ket{+}} 
+  \not\equiv
+  \tfrac{1}{\sqrt{2}}\big((\Lam{x}{C}{\ket{0}})
+  + (\Lam{x}{C}{\ket{1}})\big)
+  = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}.
+\]
+This difference arises because the relation $\equiv$ does not commute with
+lambda abstraction, nor with the case construct. Although the two terms are
+operationally equivalent, the calculus distinguishes between the
+superposition of results,
+$\Lam{x}{B}{\alpha\vv{v_1} + \beta\vv{v_2}}$,
+and the superposition of functions,
+$\alpha(\Lam{x}{B}{\vv{v_1}}) + \beta(\Lam{x}{B}{\vv{v_2}})$.
+This distinction reflects a physical intuition: the former corresponds to a
+single experiment producing a superposition of outcomes, while the latter
+represents a superposition of distinct experiments.
 
 Finally, we introduce a convenient notation for generalised substitutions over
 a term by closed values. A substitution $\sigma$ can be seen as a finite set of
@@ -1040,7 +1039,7 @@ to a single one, since there are infinitely many bases to choose from.
 Pairs are standard, and written using the notation introduced earlier.
 %The type~$A\times B$
 %corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
-%admits pairs only of pure values, the semantic clause
+%admits pairs only of basic values, the semantic clause
 %in~\Cref{tab:UnitaryTypes} should be
 %read as an abbreviation for the following expanded form:
 %\[
@@ -1892,7 +1891,7 @@ the calculus.
 \end{lemma}
 
 \begin{proof}
-  The proof follows from the fact that the $\lraneq$ reduction is deterministic over pure values. And, in case of term distributions, we only need to match the reduction on the corresponding sub-terms. Let $\vv{t}=\sum\limits_{i=1}^n \alpha_i \vv{t_i}$, $\vv{s_1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}$, and $\vv{s_2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i}+\alpha_k\vv{s_k}$. Where $\vv{t_j}\lraneq\vv{s_j}$ and $\vv{t_k}\lraneq\vv{s_k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
+  The proof follows from the fact that the $\lraneq$ reduction is deterministic over basic values. And, in case of term distributions, we only need to match the reduction on the corresponding sub-terms. Let $\vv{t}=\sum\limits_{i=1}^n \alpha_i \vv{t_i}$, $\vv{s_1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}$, and $\vv{s_2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i}+\alpha_k\vv{s_k}$. Where $\vv{t_j}\lraneq\vv{s_j}$ and $\vv{t_k}\lraneq\vv{s_k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
   \[
     \begin{tikzcd}
       &[-1em] \sum\limits_{i=1}^n \alpha_i \vv{t_i}
@@ -1964,9 +1963,9 @@ the calculus.
 
     And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
 
-    \item[$(\alpha\vv{t})\vv{s}\equiv\alpha(\vv{t}\vv{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a pure value to reduce on the left hand-side.
+    \item[$(\alpha\vv{t})\vv{s}\equiv\alpha(\vv{t}\vv{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a basic value to reduce on the left hand-side.
     
-    \item[$(\vv{t}+\vv{s})\vv{r}\equiv \vv{t}\vv{s} + \vv{t}\vv{r}$:] If there is an internal reduction on either $\vv{t}$,$\vv{s}$ or $\vv{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a pure value to reduce on the left hand-side.
+    \item[$(\vv{t}+\vv{s})\vv{r}\equiv \vv{t}\vv{s} + \vv{t}\vv{r}$:] If there is an internal reduction on either $\vv{t}$,$\vv{s}$ or $\vv{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a basic value to reduce on the left hand-side.
     
     \item[$\vv{t}(\vv{s}+\vv{r})\equiv\vv{t}\vv{s} + \vv{t}\vv{r}$:] If there is an internal reduction on either $\vv{t}$, $\vv{s}$ or $\vv{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
