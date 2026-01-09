@@ -478,17 +478,6 @@ Both term and value distributions are built as $\C$-linear combinations of
 terms and values, respectively. 
 We use $v,u,w$ to denote values and $t,s,r$ for terms, writing $\vv{\cdot}$ when
 they are distributions.
-We also consider the following notation for linear combinations of
-pairs. We stress that this notation for pairs does not appear in the syntax,
-but is rather useful to describe specific states.
-\[
-  \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
-  := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
-  \qquad\qquad
-  \Pair{r}{\alpha  t+\vv{t_1}} 
-  := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
-\]
-
 
 The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
@@ -561,6 +550,18 @@ of basis in this calculus builds on this algebraic foundation. Once the vector
 structure is established, we can define which subsets $B\subseteq \ValD$
 qualify as \emph{bases}, thereby justifying the decorations appearing in the
 syntax of \Cref{tab:Syntax}.
+
+We will also consider the following notation for linear combinations of
+pairs. We stress that this notation for pairs does not appear in the syntax,
+but is rather useful to describe specific states.
+\[
+  \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
+  := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
+  \qquad\qquad
+  \Pair{r}{\alpha  t+\vv{t_1}} 
+  := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
+\]
+
 
 
 Before proceeding further, let us briefly illustrate the intuition behind the
