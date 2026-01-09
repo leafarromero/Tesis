@@ -72,7 +72,7 @@ Terms are inductively defined by
   t := x\mid \lambda x.t \mid tt \mid 1\mid 0\mid \ite ttt\mid \coin
 \]
 
-The rewrite system is given in Table~\ref{tab:TRS}. The rules $t\topr[p]r$ mean that $t$ reduces with probability $p$ in one step to $r$, where the sum of probabilities of reducing one redex is $1$. In particular, every non-contextual rule has probability $1$, since there is only one rule per redex, except for the coin, which reduces with probability $\frac 12$ to $0$ and probability $\frac 12$ to $1$. If $t\topr[p_1]r_1\dots\topr[p_n]r_n$ we may write $t\topr[\prod_{i=1}^np_i]^*r_n$.
+The rewrite system is given in Table~\ref{tab:TRS}. The rules $t\topr[p]r$ mean that $t$ reduces with probability $p$ in one step to $r$, where the sum of probabilities of reducing one redex is $1$. In particular, every non-contextual rule has probability $1$, since there is only one rule per redex, except for the coin, which reduces with probability $\frac 12$ to $0$ and probability $\frac 12$ to $1$. If $t\topr[p_1]r_1\dots\topr[p_n]r_n$ we may write $t\topr^*r_n$, where $p=\prod_{i=1}^np_i$.
 
 The reduction rules are intentionally as permissive as possible (even the branches of an if-then-else can be reduced) in order to analyse its (lack of) confluence. The type system is given in Table~\ref{tab:TS}.
 
