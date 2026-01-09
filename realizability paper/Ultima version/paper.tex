@@ -762,9 +762,11 @@ equivalence class induced by the congruence $\equiv$.
   \qed
 \end{lemma}
 
-Remark that the property in \Cref{lem:EquivSubstitutions} does not extend across
-different bases; that is,
-$\vv{t}\ansubst{\vv{v}/x}{A}\not\equiv\vv{t}\ansubst{\vv{v}/x}{B}$.
+We remark that the result in the previous lemma uses $=$ instead of $\equiv$
+since $\vv{t}\ansubst{\vv{v}/x}{B}$ and $\vv{t}\ansubst{\vv{w}/x}{B}$
+are both substitution with the exact same outcome. Note that this property
+does not extend across different bases; that is, $\vv{t}\ansubst{\vv{v}/x}{A}
+\not\equiv\vv{t}\ansubst{\vv{v}/x}{B}$.
 For example,
 \[
   (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB}
