@@ -843,9 +843,9 @@ a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
       \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
       \qquad\qquad
       \infer{\alpha t\lraneq \alpha \vv r}{t\lraneq\vv r & \alpha\neq 0}
-      \qquad\qquad
-      \infer{t+\vv s\lraneq\vv r+\vv s}{t\lraneq\vv r}
       \\[5pt]
+      \infer{(\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j t_j + (\sum\limits_{i=j+1}^{n} \alpha_i \vv t_i) \lraneq (\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j r_j + (\sum\limits_{i=j+1}^{n} \alpha_i \vv t_i) }{t_j\lraneq\vv r_j & \text{With } \vv v_i \text{ values and } t_j < t_i \text{ in the lexicographical order}}
+      \\[12pt]
       \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
       \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
       \\[5pt]
@@ -858,8 +858,9 @@ a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
 \end{table}
 
 The side condition~$\alpha\neq0$ avoids vacuous steps such as
-$0t\lraneq0r$, preventing spurious nondeterminism and preserving the
-determinism of~$\lraneq$.
+$0t\lraneq0r$, preventing spurious nondeterminism. On that note,
+the condition on the contextual rule of the sum, imposes a strategy
+preserving the determinism of~$\lraneq$.
 
 The main reduction rules are $\beta$-reduction, $\mathsf{let}$ binding, and
 $\mathsf{case}$ pattern matching.  
@@ -1960,7 +1961,7 @@ the calculus.
     \end{align*}
     On the other side:
     \begin{align*}
-      \alpha ((\Lam{x}{B}{\vv{t_1}}) \vv{v}) &\lraneq \alpha(\vv{t_1}\ansubst{\vv{v}}{B})\\
+      \alpha ((\Lam{x}{B}{\vv{t_1}}) \vv{v}) &\lraneq \alpha(\vv{t_1}\ansubst{\vv{v}/x}{B})\\
       &=\alpha(\sum_{i=1}^{n} \beta_i \vv{t_1}[\vv{b_i}/x])\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B\\
     \end{align*}
 
