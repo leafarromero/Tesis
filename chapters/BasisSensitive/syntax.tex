@@ -187,9 +187,7 @@ unique.
   \qed
 \end{theorem}
 \begin{proof}
-  Let $\vv{b_i}$, the basis vectors of $B$. And $\sum_i^n\alpha_i \vv{b_i}$, $\sum_{i=1}^n \beta_i \vv{b_i}$ two decompositions of $\vv{v}$ onto $B$. Then we have:
-  \[\vv{v} - \vv{v} = 0 \; \vv{v} = \sum_{i=1}^{n} (\alpha_i - \beta_i) \vv{b_i}\]
-  Since the basis is linearly independent, $\alpha_i = \beta_i$.
+  {\color{red} TRAER DEL PAPER}
 \end{proof}
 
 
@@ -199,7 +197,7 @@ unique.
   \qed
 \end{corollary}
 \begin{proof}
-  Since $\vv{v} - \vv{w} \equiv \vv{v} - \vv{v} \equiv \vv{w} - \vv{w}$, we can use the same reasoning as proposition \ref{prop:UniqueDecomposition} to conclude that both have the same decomposition.
+  {\color{red} TRAER DEL PAPER}
 \end{proof}
 
 We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the diagonal
@@ -296,13 +294,7 @@ First, basis-dependent substitution distributes over linear combinations.
 \end{lemma}
 
 \begin{proof}
-  Let $B\neq\AbsBasis$ and $\vv{v}\equiv\sum\limits_{j=0}^n \beta_j \vv{b_j}$ with each $\vv{b_j}\in B$
-  \begin{align*}
-    (\sum_i \alpha_i\vv t)\ansubst{\vv v/x}{B} &= \sum_{j=1}^m \beta_j(\sum_{i=1}^{n} \alpha_i t_i)[\vv b_j/x]\\
-    &\equiv \sum_{i=1}^{n} \alpha_i (\sum_{j=1}^m \beta_j t_i [\vv b_j/x])\\
-    &= \sum_{i=1}^{n} \alpha_i \vv{t_i}\ansubst{\vv v/x}{B}
-  \end{align*}
-  The case where $B=\AbsBasis$ is similar.
+  {\color{red} TRAER DEL PAPER}
 \end{proof}
 
 The next result states that substitution behaves consistently within each
@@ -319,14 +311,7 @@ equivalence class induced by the congruence $\equiv$.
 \end{lemma}
 
 \begin{proof}
-  Since $\vv{v}\equiv\vv{w}$, by Corollary \ref{cor:EquivalentDecomposition}, we have that both $\vv{v}$ and $\vv{w}$ can be written as:
-  \[
-  \vv{v} \equiv \vv{w} \equiv \sum_{i=1}^{n} \alpha_i \vv{b_i}\qquad\text{Where }\vv{b_i}\in B
-  \]
-  Then:
-  \[
-  \vv{t}\ansubst{\vv{v}/x}{B} = \sum_{i=1}^{n} \alpha_i \vv{t}\ [\vv{b_i}/x] = \vv{t}\ansubst{\vv{w}/x}{B}
-  \]
+  {\color{red} TRAER DEL PAPER}
 \end{proof}
 
 We remark that the result in the previous lemma uses $=$ instead of $\equiv$
