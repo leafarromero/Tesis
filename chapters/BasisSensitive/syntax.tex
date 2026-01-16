@@ -4,7 +4,7 @@ This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
 
 The syntax of the calculus is described in
-\Cref{tab:Syntax}. The calculus is divided into four
+\ref{tab:Syntax}. The calculus is divided into four
 distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
 ($\Lambda$), \emph{value distributions} ($\ValD$), and \emph{term
 distributions} ($\vv\Lambda$). Values are composed of variables, decorated
@@ -23,7 +23,7 @@ expressed; their precise nature is made explicit below.
 Before formally defining the notion of bases, we first establish the
 algebraic structure underlying the space of value distributions.
 This is achieved by introducing the congruence relation defined in
-\Cref{tab:Congruence}.
+\ref{tab:Congruence}.
 The congruence captures the intended behaviour of addition and scalar
 multiplication, allowing us to treat linear combinations of terms and values
 as genuine algebraic entities rather than mere syntactic constructions.
@@ -82,12 +82,12 @@ notation~$\vv\sum$.
   \label{tab:Congruence}
 \end{table}
 
-The rules in \Cref{tab:Congruence} ensure that the
+The rules in \ref{tab:Congruence} ensure that the
 set of value distributions satisfies the axioms of a vector space.  The notion
 of basis in this calculus builds on this algebraic foundation. Once the vector
 structure is established, we can define which subsets $B\subseteq \ValD$
 qualify as \emph{bases}, thereby justifying the decorations appearing in the
-syntax of \Cref{tab:Syntax}.
+syntax of \ref{tab:Syntax}.
 
 We will also consider the following notation for linear combinations of
 pairs. We stress that this notation for pairs does not appear in the syntax,
@@ -102,7 +102,7 @@ but is rather useful to describe specific states.
 
 
 Before proceeding further, let us briefly illustrate the intuition behind the
-congruence in \Cref{tab:Congruence}.  
+congruence in \ref{tab:Congruence}.  
 The key idea is that arguments are decomposed over the bases associated with
 their corresponding abstractions.  
 As in linear algebra, a vector can be rewritten as a linear combination of
@@ -158,12 +158,12 @@ decorate abstractions.
   A set of value distributions $B$ is an \emph{$n$-dimensional orthonormal
   basis} if it satisfies:
   \begin{enumerate}
-    \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\Cref{def:Qubit})}.
+    \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\ref{def:Qubit})}.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate}
 \end{definition}
 
-From now on, the syntax introduced in \Cref{tab:Syntax}
+From now on, the syntax introduced in \ref{tab:Syntax}
 is restricted to sets $B$ forming $n$-dimensional
 orthonormal bases.
 
