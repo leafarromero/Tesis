@@ -235,7 +235,7 @@
 \newcommand{\tif}[3]{\mathsf{if}\left(#1\right)\left(#2\right)\left(#3\right)}
 \newcommand{\pif}[2]{\ensuremath{\mathtt{if}\left(#1\right)\left(#2\right)}}
 \newcommand\trad[1]{\llparenthesis{#1}\rrparenthesis}
-\newcommand\B{\mathbb B}
+\newcommand\B{\mathbb Z}
 \newcommand\XB{\mathbb X}
 \newcommand\Hd{\mathsf{H}}
 \newcommand\Q{\sharp\B}
@@ -328,7 +328,7 @@ There is, however, a subtlety: although arbitrary qubits
 cannot be copied or deleted, this is possible for known---and, in the case of
 deletion, separable---qubits. This implies that qubits with known values behave
 as classical data and can be treated accordingly. Moreover, it suffices to know
-the basis to which a qubit belongs in order to copy and, to some extent, delete it.
+the basis to which a qubit belongs in order to copy and delete it.
 
 In most quantum programming languages, qubits are defined with respect to a
 canonical basis—often referred to as the computational basis. In this setting,
@@ -399,7 +399,7 @@ single-qubit setting and recovering higher-order computation.
 A number of other frameworks support reasoning about multiple bases through
 different paradigms.  
 The ZX-calculus~\cite{CoeckeRossICALP08} provides a graphical language where
-spiders correspond to computations relative to the computational and diagonal
+spiders correspond to computations relative to the computational and Hadamard
 bases, while the Many-Worlds
 Calculus~\cite{ChardonnetdeVismeValironVilmartLMCS25} also accommodates
 superpositions of programs but within a diagrammatic semantics.  
@@ -621,6 +621,7 @@ decorate abstractions.
   A set of value distributions $B$ is an \emph{$n$-dimensional orthonormal
   basis} if it satisfies:
   \begin{enumerate}
+    \item $B$ has cardinality $n$.
     \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\Cref{def:Qubit})}.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate}
@@ -630,9 +631,6 @@ From now on, the syntax introduced in \Cref{tab:Syntax}
 is restricted to sets $B$ forming $n$-dimensional
 orthonormal bases.
 
-
-Unlike standard orthonormal bases, we require that their elements be qubits
-(rather than variables or abstractions).  
 These sets indicate the basis in which a term is expressed: qubits in the
 decorating basis are treated call-by-value, while others are decomposed as
 $\C$-linear combinations of basis elements, with the function applied linearly
@@ -656,7 +654,7 @@ unique.
   \qed
 \end{corollary}
 
-We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the diagonal
+We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the Hadamard
 basis by $\XB=\{\ket{+},\ket{-}\}$, where
 $\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.  
 
@@ -673,7 +671,8 @@ Alongside this substitution, we expand the set of orthogonal basis with a
 special symbol, denoted $\AbsBasis$. This symbol changes the modality of the lambda
 abstraction, allowing it to take other abstractions as arguments. This is the only
 instance of higher-order functions in the calculus. The $\AbsBasis$, is a purely
-syntactical device, intuitively it can be thought as the canonical basis.
+syntactical device, intuitively it can be thought as the canonical basis. It 
+distributes the application over every basic value as defined in the syntax.
 
 
 \begin{definition}[Basis-dependent substitution]
@@ -708,8 +707,8 @@ $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
 
 The definition also extends to pairs of values. If
 $\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
-with $\vv{v_i}\in\Span(B_1)$ and $\vv{w_i}\in\Span(B_2)$,
-then
+with $\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}$
+defined for every $i$, then:
 \[
   \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
     \;=\; \sum_{i\in I}\alpha_i\,
@@ -827,14 +826,12 @@ a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
 
 \begin{table}[t]
   \begin{align*}
-    \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined,}\quad
-    (\Lam{x}{X}{\vv{t}})\vv{v}
-    &\lraneq \vv{t}\ansubst{\vv v/x}{X}\\
-    \text{If }\vv{t}\ansubst{\vv v/x}{X\otimes Y}\text{ is defined,}\quad
-    \LetP{x}{X}{y}{Y}{\vv v}{\vv{t}}
-    &\lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{X\otimes Y}\\
-    \gencase{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-    &\lraneq \sum_{i=1}^{n}\alpha_i \vv{t_i}
+    \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined}:\quad&
+    (\Lam{x}{X}{\vv{t}})\vv{v} \lraneq \vv{t}\ansubst{\vv v/x}{X}\\
+    \text{If }\vv{t}\ansubst{\vv v/x}{X\otimes Y}\text{ is defined}:\quad&
+    \LetP{x}{X}{y}{Y}{\vv v}{\vv{t}} \lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{X\otimes Y}\\
+    \text{If for all } i\neq j\ \vv{v_i}\perp\vv{v_j}:\quad&
+    \gencase{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}} \lraneq \sum_{i=1}^{n}\alpha_i \vv{t_i}
   \end{align*}
   \[
     \begin{array}{c}
@@ -844,12 +841,14 @@ a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
       \qquad\qquad
       \infer{\alpha t\lraneq \alpha \vv r}{t\lraneq\vv r & \alpha\neq 0}
       \\[5pt]
-      \infer{(\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j t_j + (\sum\limits_{i=j+1}^{n} \alpha_i \vv t_i) \lraneq (\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j r_j + (\sum\limits_{i=j+1}^{n} \alpha_i \vv t_i) }{t_j\lraneq\vv r_j & \text{With } \vv v_i \text{ values and } t_j < t_i \text{ in the lexicographical order}}
+      \infer{(\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j t_j + (\sum\limits_{i=j+1}^{n} \alpha_i t_i) 
+      \lraneq (\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j \vv r_j + (\sum\limits_{i=j+1}^{n} \alpha_i t_i) }
+      {t_j\lraneq \vv r_j & \text{With } \vv v_i \text{ values and } t_j < t_i \text{ in the lexicographical order}}
       \\[12pt]
       \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
       \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
       \\[5pt]
-      \infer{\gencase{\vv t}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}\lraneq
+      \infer{\gencase{t}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}\lraneq
       \gencase{\vv r}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}}{t\lraneq \vv r}
     \end{array}
   \]
@@ -892,15 +891,13 @@ corresponding linear combination of the branches.  For example:
   \tfrac{1}{\sqrt{2}}\,\vv{t_1} - \tfrac{1}{\sqrt{2}}\,\vv{t_2}.
 \]
 
-The advantage over a conditional branching is the ability to match against
-several vectors simultaneously.  For boolean tuples this makes no difference,
-as each component can be treated independently.  However, some orthogonal bases
-cannot be expressed as products of smaller ones.  This general
-$\mathsf{case}$ allows us to match directly against those vectors.  For
-example, using the \emph{Bell basis}\footnote{ The four Bell states are
-$\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
-$\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
-}:
+The advantage over a binary conditional branching is the ability to match against
+several vectors simultaneously. This characteristic comes into play when dealing
+with vectors from entangled bases, in other words, bases which cannot be expressed
+as products of smaller ones.  This general $\mathsf{case}$ allows us to match directly
+against those vectors.  For example, using the \emph{Bell basis}\footnote{ The four 
+Bell states are $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and $\Psi^{\pm}=
+\sqrthalf(\ket{01}\pm\ket{10})$.}:
 \[
   \mathsf{case}\;\vv{v}\;\mathsf{of}\;\{
   \Phi^+ \mapsto \vv{t_1}\ \mid
@@ -909,7 +906,7 @@ $\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
   \Psi^- \mapsto \vv{t_4}\ \}.
 \]
 
-This Bell basis is central in quantum communication. In
+The Bell basis is central in quantum communication. In
 \Cref{sec:teleportation}, we revisit the quantum teleportation protocol,
 which relies heavily on these states.
 
