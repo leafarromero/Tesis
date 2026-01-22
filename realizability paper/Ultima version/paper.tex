@@ -532,12 +532,12 @@ notation~$\sum$.
       (\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{r}})
       +(\LetP{x_1}{X}{x_2}{Y}{\vv{s}}{\vv{r}}) 
       \\
-    &\gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}
-    \equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}) \\
-    &\gencase{(\vv{t}+\vv{s})}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
+    &\gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_k}}{\vv{s_1}}{\vv{s_k}}
+    \equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_k}}{\vv{s_1}}{\vv{s_k}}) \\
+    &\gencase{(\vv{t}+\vv{s})}{\vv{v_1}}{\vv{v_k}}{\vv{r_1}}{\vv{r_k}}
     \equiv\begin{aligned}[t]
-      &\gencase{\vv{t}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}\\
-      &+\gencase{\vv{s}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
+      &\gencase{\vv{t}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_k}}\\
+      &+\gencase{\vv{s}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_k}}
     \end{aligned}
   \end{align*}
   \caption{Term congruence}
@@ -561,7 +561,6 @@ but is rather useful to describe specific states.
   \Pair{r}{\alpha  t+\vv{t_1}} 
   := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
 \]
-
 
 
 Before proceeding further, let us briefly illustrate the intuition behind the
@@ -601,16 +600,16 @@ From now on, we call the value distributions, i.e. the elements of $\ValD$,
 \emph{vectors}. The vector space $\ValD$ is equipped with an inner
 product defined by,  
 \(
-  \scal{\vv{v}}{\vv{w}} := \sum_{i=1}^n\sum_{j=1}^m
+  \scal{\vv{v}}{\vv{w}} := \sum_{i=1}^k\sum_{j=1}^k
   \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},
 \)
 and an $\ell_2$-norm 
 \(
   \|\vv{v}\| := \sqrt{\scal{\vv{v}}{\vv{v}}}
-  = \sqrt{\sum_{i=1}^n|\alpha_i|^2}
+  = \sqrt{\sum_{i=1}^k|\alpha_i|^2}
 \),
-where $\vv{v}=\sum_{i=1}^n\alpha_i v_i$ and
-$\vv{w}=\sum_{j=1}^m\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
+where $\vv{v}=\sum_{i=1}^k\alpha_i v_i$ and
+$\vv{w}=\sum_{j=1}^k\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
 delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
 
 With this notion of inner product, we can complete the description of the
@@ -618,18 +617,19 @@ calculus syntax. As expected, two values are \emph{orthogonal} when their inner
 product is equal to zero. We can now formally define the sets that
 decorate abstractions.
 \begin{definition}[Basis]\label{def:NthDimensionalBasis}
-  A set of value distributions $B$ is an \emph{$n$-dimensional orthonormal
+  A set of value distributions $B$ is a \emph{$2^n$-dimensional orthonormal
   basis} if it satisfies:
   \begin{enumerate}
-    \item $B$ has cardinality $n$.
+    \item $B$ has cardinality $2^n$.
     \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\Cref{def:Qubit})}.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate}
 \end{definition}
 
 From now on, the syntax introduced in \Cref{tab:Syntax}
-is restricted to sets $B$ forming $n$-dimensional
+is restricted to sets $B$ forming $2^n$-dimensional
 orthonormal bases.
+
 
 These sets indicate the basis in which a term is expressed: qubits in the
 decorating basis are treated call-by-value, while others are decomposed as
@@ -643,7 +643,7 @@ pairwise orthogonality. Consequently, each decomposition over a basis is
 unique.
 
 \begin{theorem}[Unique decomposition]\label{thm:UniqueDecomposition}
-  If $B$ is an $n$-dimensional basis, then every $n$-dimensional qubit has a
+  If $B$ is a $2^n$-dimensional basis, then every $n$-dimensional qubit has a
   unique decomposition over $B$.
   \qed
 \end{theorem}
@@ -848,8 +848,8 @@ a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
       \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
       \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
       \\[5pt]
-      \infer{\gencase{t}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}\lraneq
-      \gencase{\vv r}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}}{t\lraneq \vv r}
+      \infer{\gencase{t}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}\lraneq
+      \gencase{\vv r}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}{t\lraneq \vv r}
     \end{array}
   \]
   \caption{Reduction system}
@@ -1145,9 +1145,8 @@ One of the main results of~\cite{DiazcaroGuillermoMiquelValironLICS19}
 is the characterisation of $\C^2\to\C^2$ unitary operators using values in
 $\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
 In this subsection we extend this result. Our goal is to prove that abstractions
-of type $\sharp\basis{X}\Arr\sharp\basis{Y}$, where both bases have size~$n$,
-represent unitary operators
-$\C^n\to\C^n$.
+of type $\sharp\basis{X}\Arr\sharp\basis{Y}$, where both bases have size~$2^n$,
+represent unitary operators $\C^{2^n}\to\C^{2^n}$.
 
 Unitary operators are isomorphisms between Hilbert spaces, as they preserve the
 structure of the space. With this in mind, the first step is to show that the
@@ -1175,24 +1174,24 @@ Terms such as $\ket{0}$ and $\ket{1}$ are syntactic objects of the
 calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
 terms on Hilbert spaces, we shall occasionally abuse notation and identify
 value distributions representing qubits with their corresponding canonical
-basis vectors in~$\C^n$. This identification applies only to those
+basis vectors in~$\C^{2^n}$. This identification applies only to those
 distributions that denote quantum data, not to general syntactic values such as
 $\lambda$-abstractions---in particular, to all elements of
 $\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
 be made precise as follows.
 
 \begin{definition}
-  Let $X$ be an orthonormal basis of size~$n$. For every $\vv{v}\in X$, we can
+  Let $X$ be an orthonormal basis of size~$2^n$. For every $\vv{v}\in X$, we can
   write
   \(
-    \vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i}
+    \vv{v}\equiv \sum\limits_{i=1}^{2^n}\alpha_i\ket{i}
   \),
   where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
   corresponding to the binary representation of~$i$, and
-  $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
-  $\ket{0011}$. We then define $\pi_n:X\to\C^n$ by
+  $\sum\limits_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
+  $\ket{0011}$. We then define $\pi_n:X\to\C^{2^n}$ by
   \(
-    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_n)
+    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_{2^n})
   \).
 \end{definition}
 
@@ -1200,13 +1199,13 @@ To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vv v$
 directly.
 
 We now establish a correspondence between $\lambda$-abstractions and operators
-on~$\C^n$. Intuitively, an abstraction represents a linear operator when its
+on~$\C^{2^n}$. Intuitively, an abstraction represents a linear operator when its
 operational behaviour coincides with the action of that operator on vectors.
 Formally:
 
 \begin{definition}
   A $\lambda$-abstraction $\Lam{x}{{X}}{\vv{t}}$ is said to \emph{represent}
-  an operator $F:\C^n\to\C^n$ if
+  an operator $F:\C^{2^n}\to\C^{2^n}$ if
     $(\Lam{x}{{X}}{\vv{t}})\vv{v} \eval \vv{w}$
     if and only if
     $F(\vv{v}) = \vv{w}$.
@@ -1217,11 +1216,11 @@ characterisation of unitary operators as values in
 $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 
 \begin{theorem}[Characterisation of Unitary Operators]
-  Let $X$ and $Y$ be orthonormal bases of size~$n$.
+  Let $X$ and $Y$ be orthonormal bases of size~$2^n$.
   A closed $\lambda$-abstraction
   $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if it represents a unitary operator
-  $F:\C^n\to\C^n$.
+  $F:\C^{2^n}\to\C^{2^n}$.
 \end{theorem}
 
 \begin{proof}
@@ -1232,20 +1231,20 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
   $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
   $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
-  Let $F:\C^n\to\C^n$ be the operator defined by
+  Let $F:\C^{2^n}\to\C^{2^n}$ be the operator defined by
   $F(\vv{v_i})=\vv{w_i}$.
   By linearity over~$X$, it follows that
   $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
   Moreover, $F$ is unitary since
-  $\|\vv{w_i}\|_{\C^n}=\|\vv{w_j}\|_{\C^n}=1$ and
-  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^n}=0$.
+  $\|\vv{w_i}\|_{\C^{2^n}}=\|\vv{w_j}\|_{\C^{2^n}}=1$ and
+  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^{2^n}}=0$.
 
   \smallskip
   \textit{Sufficiency.}
   Conversely, suppose that $\Lam{x}{{X}}{\vv{t}}$ represents a
-  unitary operator $F:\C^n\to\C^n$.
+  unitary operator $F:\C^{2^n}\to\C^{2^n}$.
   Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
-  $\vv{w_i}\in\sem{\basis{Y}}$ such that
+  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
   $F(\vv{v_i}) = \vv{w_i}$ and
   $(\Lam{x}{{X}}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
   Hence,
@@ -1257,15 +1256,14 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
     \eval \vv{w_i}
     \in \sem{\sharp\basis{Y}}
   \),
-  since $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$.
-  From \Cref{lem:BasesIso}, it follows that
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$,
-  and moreover
+  as $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$. Finally, since
   \(
     \scal{\vv{w_i}}{\vv{w_j}}
     = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
-    = 0.
-  \)
+    = 0
+  \),
+  from \Cref{lem:BasesIso} it follows that
+  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   \qedhere
 \end{proof}
 
@@ -1354,7 +1352,7 @@ conditions.  First, every free variable of~$\vv{t}$ must belong to the domain
 of~$\Gamma$, and every variable in the strict domain~$\sdom{\Gamma}$ must occur
 in~$\vv{t}$.  This ensures that no information is erased and that all variables
 are properly accounted for.  The linear treatment of quantum data is thus
-enforced by substitution.
+enforced by the substitution operation.
 
 Second, for every substitution in the unitary semantics of~$\Gamma$, applying
 it to~$\vv{t}$ must yield a term that reduces to a realizer of type~$A$.  This
@@ -1713,13 +1711,15 @@ preserving linearity and orthogonality, and the overall term has type
 \[
   \TYP{}{\mathsf{Teleport}}
   {\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}.
-\]
-This type reflects that the protocol operates on superpositions of basis
-states, producing a Bell-basis measurement outcome together with the recovered
-qubit.  
-In this way, the $\lambdaB$ calculus captures both the logical structure of
-teleportation and its deferred-measurement semantics within a single, uniform
-term language.
+\]\footnote{In order to build this type derivation there are two subtyping rules
+needed. Namely, $\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
+$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}
+
+This $\lambda$-term describes the quantum teleportation protocol, as 
+corrections on the third qubit based on the result of a Bell basis measurement.
+It captures the logical structure, without relying on the circuit representation.
+Moreover, the repeated corrections can be abstracted and get a representation more
+compact. Making full use of the quantum control in the language.
 
 \section{Conclusion}\label{sec:conclusion}
 
