@@ -586,11 +586,11 @@ scalar multiplication, and the zero vector.
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
 \begin{definition}[Qubits]\label{def:Qubit}
-  A \emph{one-dimensional qubit} is a value distribution of the form
+  A \emph{one-qubit state} is a value distribution of the form
   $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
-  \emph{$n$-dimensional qubit} is a value distribution of the form
+  \emph{$n$-qubit state} is a value distribution of the form
   $\alpha\Pair{\ket{0}}{\vv{w_1}} + \beta\Pair{\ket{1}}{\vv{w_2}}$, where
-  $\vv{w_1}$ and $\vv{w_2}$ are $(n-1)$-dimensional qubits, and $\alpha$ and
+  $\vv{w_1}$ and $\vv{w_2}$ are $(n-1)$-qubit states, and $\alpha$ and
   $\beta$ satisfy the same normalisation condition.
 \end{definition}
 We use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
@@ -621,7 +621,7 @@ decorate abstractions.
   basis} if it satisfies:
   \begin{enumerate}
     \item $B$ has cardinality $2^n$.
-    \item Each element of $B$ is an $n$-dimensional qubit \emph{(cf.~\Cref{def:Qubit})}.
+    \item Each element of $B$ is an $n$-qubit state \emph{(cf.~\Cref{def:Qubit})}.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate}
 \end{definition}
@@ -643,7 +643,7 @@ pairwise orthogonality. Consequently, each decomposition over a basis is
 unique.
 
 \begin{theorem}[Unique decomposition]\label{thm:UniqueDecomposition}
-  If $B$ is a $2^n$-dimensional basis, then every $n$-dimensional qubit has a
+  If $B$ is a $2^n$-dimensional basis, then every $n$-qubit state has a
   unique decomposition over $B$.
   \qed
 \end{theorem}
@@ -1794,15 +1794,15 @@ the calculus.
 
 \begin{restatetheorem}[Restatement of \Cref{thm:UniqueDecomposition}]
   \itshape
-  If $B$ is an $n$-dimensional basis, then every $n$-dimensional qubit has
+  If $B$ is an $2^n$-dimensional basis, then every $n$-qubit state has
   a unique decomposition over $B$.
 \end{restatetheorem}
 \begin{proof}
   Let $\vv{b_i}$ be the basis vectors of $B$. Suppose
-  $\sum_{i=1}^n \alpha_i \vv{b_i}$ and $\sum_{i=1}^n \beta_i \vv{b_i}$
+  $\sum_{i=1}^{2^n} \alpha_i \vv{b_i}$ and $\sum_{i=1}^{2^n} \beta_i \vv{b_i}$
   are two decompositions of $\vv{v}$ over $B$. Then
   \[
-    0=\vv{v}-\vv{v}=\sum_{i=1}^{n}(\alpha_i-\beta_i)\vv{b_i}.
+    0=\vv{v}-\vv{v}=\sum_{i=1}^{2^n}(\alpha_i-\beta_i)\vv{b_i}.
   \]
   By linear independence, $\alpha_i=\beta_i$ for all $i$.
 \end{proof}
