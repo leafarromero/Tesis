@@ -1550,12 +1550,11 @@ Each oracle above can be typed as
   \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
 \),
 but since the arguments we pass are $\ket{+}$ and $\ket{-}$ (superpositions),
-the overall judgement we can derive for the application uses~$\sharp$:
-\[
-  \TYP{}{\mathsf{Deutsch}_{\mathrm{std}}}
-  {(\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
-   \Arr \sharp(\basis{\B}\times\basis{\B})}.
-\]
+the overall judgement we can derive for the application is:
+\(
+  (\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
+   \Arr \sharp(\basis{\B}\times\basis{\B})
+\).
 This type is correct but coarse: it only guarantees that the result is a
 unitary distribution of pairs of booleans.  Operationally we know more: the
 first output is actually a basis bit ($\ket{0}$ or~$\ket{1}$) encoding whether
@@ -1583,7 +1582,7 @@ We then rewrite the program and the four oracles in~$\XB$:
 \begin{align*}
   \mathsf{Deutsch} &:= \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})} {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
 \end{align*}
-\vspace{-2\baselineskip}
+\vspace{-3\baselineskip}
 \begin{align*}
   O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
   &O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
@@ -1595,11 +1594,10 @@ Now every oracle has the tight type
 \(
   \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB})
 \),
-and the program itself can be typed as
-\[
-  \TYP{}{\mathsf{Deutsch}}
-  {(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}}.
-\]
+and the program itself can be typed with
+\(
+(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}.
+\)
 Intuitively, the oracle---when fed with $\ket{+-}$---produces a pair of
 basis states in~$\XB$ (up to a global phase).  Hence we can treat its output
 classically: a single $\mathsf{case}$ on the first component suffices to return
@@ -1707,20 +1705,20 @@ $\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}.
 \section{Conclusion}\label{sec:conclusion}
 
 In this paper we have explored a quantum-control $\lambda$-calculus equipped
-with the additional feature of allowing abstractions to be expressed relative
+with the feature of allowing abstractions to be expressed relative
 to arbitrary bases, beyond the canonical one.  
 
 The central mechanism enabling this extension is the decoration of
 $\lambda$-ab\-strac\-tions and $\mathsf{let}$-constructors with basis annotations,
-together with a modified substitution operation that governs how value
-distributions decompose across different bases.  
-These additions do not increase the expressive power of the original calculus
+Alongside a modified substitution operation that governs how value
+distributions decompose onto different bases.  
+These additions do not increase the expressivity of the original calculus
 on which $\lambdaB$ builds, yet they offer a novel perspective for reasoning
 about quantum programs and their behaviour under basis changes.
 
 The reduction system coordinates computation through these extended syntactic
 constructs and substitutions.  
-A key property is that evaluation commutes with the congruence relation,
+A key property is that evaluation commutes with the $\equiv$-relation,
 ensuring that interpreting a value distribution in a different basis does not
 affect the computational result.  
 Consequently, it is meaningful to reason about terms modulo basis
@@ -1742,7 +1740,7 @@ Finally, we have illustrated the expressive advantages of the system through two
 canonical examples.  
 In the case of \emph{Deutsch's algorithm}, the use of basis-aware typing allows
 the result to be treated classically, reflecting the algorithm's determinism.  
-In the case of \emph{quantum teleportation}, we demonstrated how the
+In the case of \emph{quantum teleportation}, we show how the
 $\mathsf{case}$ construct can simulate gates controlled by Bell-basis
 measurements, effectively capturing the deferred-measurement principle within
 the calculus.
