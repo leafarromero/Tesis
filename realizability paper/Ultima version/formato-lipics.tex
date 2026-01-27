@@ -292,6 +292,11 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
 
 \begin{document}
 
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{3pt}
+\setlength{\belowdisplayshortskip}{3pt}
+
 \maketitle
 
 %TODO mandatory: add short abstract of the document
@@ -854,14 +859,13 @@ $\mathsf{case}$ pattern matching.
 Both $\lambda$ and $\mathsf{let}$ bind variables decorated with an orthonormal
 basis, indicating which vectors are treated as classical data.  Linear
 combinations of these vectors are handled as quantum data, reducing linearly by
-the congruence rules of \Cref{tab:Congruence}, so that
+the congruence rules, so that
 $t(\alpha\vv s+\beta\vv r)$ is equivalent to
 $\alpha\,t\vv s+\beta\,t\vv r$.
 
 The only exception occurs for higher-order terms: since no orthogonal bases are
 defined for abstractions, we introduce a special modality~$\AbsBasis$ reducing
 linearly over the basis values of a distribution. For instance,
-
 \[
   (\Lam{x}{\AbsBasis}{\vv t})
   \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
@@ -882,7 +886,7 @@ corresponding linear combination of the branches.  For example:
 The advantage over a binary conditional branching is the ability to match against
 several vectors simultaneously. This characteristic comes into play when dealing
 with vectors from entangled bases, in other words, bases which cannot be expressed
-as products of smaller ones.  This general $\mathsf{case}$ allows us to match directly
+as products of smaller ones.  This general $\mathsf{case}$ matches directly
 against those vectors.  For example, using the \emph{Bell basis}\footnote{ The four 
 Bell states are $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and $\Psi^{\pm}=
 \sqrthalf(\ket{01}\pm\ket{10})$.}:
@@ -901,8 +905,8 @@ which relies heavily on these states.
 Defining the system in this way yields a strategy within the
 \emph{call-by-value} family, namely a generalisation of the
 \emph{call-by-basis} strategy introduced in~\cite{ArrighiDowekLMCS17} and
-further analysed in~\cite{AssafDiazcaroPerdrixTassonValironLMCS14}. Whereas
-call-by-basis fixes a single computational basis for evaluation, our variant,
+further analysed in~\cite{AssafDiazcaroPerdrixTassonValironLMCS14}. While
+call-by-basis fixes the canonical basis for evaluation, our variant,
 which we call \emph{call-by-arbitrary-basis}, allows each abstraction to attach
 its own orthonormal basis to its argument. Evaluation remains weak: no
 reduction takes place under $\lambda$, pairs, $\mathsf{let}$, or
@@ -958,8 +962,8 @@ characterise its types. To achieve this, we first need to identify the notion
 of a type.
 
 Our aim is to define types exclusively inhabited by values of norm~1. The
-vectors we wish to study all belong to the \emph{unit sphere}. We write $\Sph$
-for the set $\Sph := \{\vv v \in \vv{\Val} \mid \|\vv v\| = 1\}$, which
+vectors we wish to study belong to the \emph{unit sphere}. We denote $\Sph 
+:= \{\vv v \in \vv{\Val} \mid \|\vv v\| = 1\}$, which
 corresponds to the mathematical representation of quantum data as unit vectors
 in a Hilbert space.
 
@@ -993,9 +997,12 @@ that guides the definition of realizers.
     A := \basis{X} \mid A\Arr A \mid A\times A \mid \sharp A,
     \qquad\text{where $X$ is any orthonormal basis.}
   \]
+  \[
+    \sem{\basis{X}}:= X\qquad
+    \sem{A\times B}:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
+  \]
+  \vspace{-1.5\baselineskip}
   \begin{align*}
-    \sem{\basis{X}}&:= X\\
-    \sem{A\times B}&:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
     \sem{A\Arr B}&:=
     \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{X}{\vv{t_i}})\in\Sph
       \;\bigm|\;
@@ -1082,7 +1089,7 @@ application.
   Bell basis.
 \end{remark}
 
-It remains to verify that our type algebra indeed captures the intended sets of
+It remains to verify that our type algebra captures the intended sets of
 value distributions. The following theorem shows that every member of a type
 interpretation has norm~$1$.
 
@@ -1113,10 +1120,10 @@ For example, consider the distribution
 $\tfrac{1}{\sqrt{2}}(\ket{0} + \ket{00})$.
 Another example is a linear combination of abstractions defined over different
 bases. For instance, the term
-\[
+\(
   \tfrac{1}{\sqrt{2}}(\Lam{x}{{\B}}{\pauliX{x}})
   + \tfrac{1}{\sqrt{2}}(\Lam{x}{{\XB}}{x})
-\]
+\)
 is not a member of an arrow type, since the bases decorating each abstraction
 do not match. However, it is computationally equivalent to the abstraction
 $(\Lam{x}{{\B}}{\ket{+}})$, which in turn belongs to the set
@@ -1328,12 +1335,10 @@ form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
     \sdom{\Gamma} :=
     \{x \in \dom{\Gamma} \mid
     \sem{\Gamma(x)} = \sem{\sharp(\Gamma(x))}\}
-  \).
+  \).\footnote{This definition relies on the idempotence of the~$\sharp$~operator
+  (\Cref{thm:IdempotentSharp}).
+  }
 \end{definition}
-
-This definition relies on the idempotence of the~$\sharp$~operator
-(\Cref{thm:IdempotentSharp}).
-
 
 A typing judgement $\Gamma\vdash \vv{t}:A$ is valid if it satisfies two
 conditions.  First, every free variable of~$\vv{t}$ must belong to the domain
@@ -1513,9 +1518,8 @@ where $\oplus$ is addition modulo~2.
 The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
 then applies a Hadamard on the first qubit before measuring it.  
 The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
-
-We begin with a standard implementation of this algorithm in $\lambdaB$.
-We first encode the usual gates we will use:
+To implement this algorithm in $\lambdaB$, we first encode the gates 
+we will use:
 \begin{align*}
   \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
   \mathsf{NOT} &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}},\\
@@ -1564,9 +1568,7 @@ The key observation is that the oracle is always called on the fixed state
 $\ket{+-}$.  
 Thus it is natural to write the program in the
 $\XB=\{\ket{+},\ket{-}\}$ basis, letting the types track that we remain in a
-basis state at the oracle boundary.
-
-We define the same gates in the $\XB$ basis:
+basis state at the oracle boundary. We first define the same gates in the $\XB$ basis:
 \begin{align*}
   \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
   \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}},\\
@@ -1576,12 +1578,10 @@ We define the same gates in the $\XB$ basis:
       {\Pair{\pauliZXB{x}}{\ket{-}}}
   }}.
 \end{align*}
-
 We then rewrite the program and the four oracles in~$\XB$:
-\begin{align*}
-  \mathsf{Deutsch} &:= \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})} {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
-\end{align*}
-\vspace{-3\baselineskip}
+\[
+\mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})} {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+\]
 \begin{align*}
   O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
   &O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
