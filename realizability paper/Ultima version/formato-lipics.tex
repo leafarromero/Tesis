@@ -9,7 +9,6 @@
 \usepackage{proof}
 \usepackage[only=llparenthesis,rrparenthesis,llbracket,rrbracket]{stmaryrd}
 \SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
-\usepackage{qcircuit}
 \usepackage{tikz}
 \usetikzlibrary{cd,positioning,decorations.text,decorations.pathmorphing}
 \tikzcdset{scale cd/.style={every label/.append style={scale=#1},cells={nodes={scale=#1}}}}
@@ -366,10 +365,10 @@ represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
 linear handling for unknown qubits.
 
-The objective of this work is twofold. First, to employ the extracted type
-system to provide a more precise description of programs. Second, to take
-advantage of the extended syntax to express quantum algorithms in a flexible
-and compositional way, rather than merely translating circuits.
+This work pursues two goals. To employ the extracted type
+system to provide a more exact description of programs. And, to take
+advantage of the extended syntax to express quantum algorithms in a compositional manner,
+rather than merely translating circuits.
 
 %\paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
@@ -424,7 +423,7 @@ basis-sensitive typing and higher-order quantum control.
 
 %\paragraph{Contributions.}
 The contributions of this paper can be summarised as follows.
-\begin{itemize}
+\begin{itemize}[nosep]
   \item We introduce a \emph{basis-sensitive} quantum $\lambda$-calculus in the
   quantum-control paradigm, extending previous systems to a setting that is
   unit-norm, higher-order, and supports multiple-qubit entangled bases.
@@ -541,7 +540,7 @@ qualify as \emph{bases}, thereby justifying the decorations appearing in the
 syntax of \Cref{tab:Syntax}.
 
 We will also consider the following notation for linear combinations of
-pairs. We stress that this notation for pairs does not appear in the syntax,
+pairs. This notation does not appear in the syntax,
 but is rather useful to describe specific states.
 \[
   \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
@@ -1224,7 +1223,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   $F(\vv{v_i})=\vv{w_i}$.
   By linearity over~$X$, it follows that
   $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
-  Moreover, $F$ is unitary since
+  Then, $F$ is unitary since
   $\|\vv{w_i}\|_{\C^{2^n}}=\|\vv{w_j}\|_{\C^{2^n}}=1$ and
   $\scal{\vv{w_i}}{\vv{w_j}}_{\C^{2^n}}=0$.
 
@@ -1245,7 +1244,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
     \eval \vv{w_i}
     \in \sem{\sharp\basis{Y}}
   \),
-  as $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$. Finally, since
+  as $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$. Since
   \(
     \scal{\vv{w_i}}{\vv{w_j}}
     = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
@@ -1341,7 +1340,7 @@ conditions.  First, every free variable of~$\vv{t}$ must belong to the domain
 of~$\Gamma$, and every variable in the strict domain~$\sdom{\Gamma}$ must occur
 in~$\vv{t}$.  This ensures that no information is erased and that all variables
 are properly accounted for.  The linear treatment of quantum data is thus
-enforced by the substitution operation.
+enforced by the substitution.
 
 Second, for every substitution in the unitary semantics of~$\Gamma$, applying
 it to~$\vv{t}$ must yield a term that reduces to a realizer of type~$A$.  This
@@ -1364,7 +1363,7 @@ We therefore introduce the following notion.
   An \emph{orthogonality judgement}
   $\ORTH{\Gamma}{\Delta_1}{\vv{t}}{\Delta_2}{\vv{s}}{A}$
   is said to be \emph{valid} when
-  \begin{itemize}
+  \begin{itemize}[nosep]
     \item 
   the judgements
       $\TYP{\Gamma,\Delta_1}{\vv{t}}{A}$ and
@@ -1645,14 +1644,7 @@ state.
 Using this shared entanglement and two bits of classical information,
 Alice can transmit an unknown quantum state~$\ket{\psi}$ to Bob without
 physically sending the qubit itself.  
-The standard circuit implementing the protocol is shown below:
-\[
-  \Qcircuit @C=1em @R=.5em {
-    \lstick{\ket{\psi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
-    \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
-    \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \gate{Z} \cwx[-2] \qw & \rstick{\ket{\psi}} \qw
-  }
-\]
+
 The algorithm first creates the Bell state $\Phi^{+}$ between the second and
 third qubits, then performs a Bell-basis measurement on the first and second
 qubits.  
@@ -1660,9 +1652,10 @@ Operationally, this measurement is implemented by applying a CNOT gate followed
 by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
 then measuring both qubits.  
 Depending on the pair of classical outcomes, a Pauli correction ($I$, $X$, $Z$,
-or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$.
+or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
+(for a more thorough analysis of the algorithm, see \cite{PhysRevLett.70.1895}).
 
-We can simulate the behaviour of this circuit in the $\lambdaB$ calculus by
+We can simulate the behaviour of this protocol in the $\lambdaB$ calculus by
 defining a term that, instead of performing measurements, explicitly
 describes the computation corresponding to each branch.  
 A possible encoding is:
@@ -1683,14 +1676,14 @@ A possible encoding is:
 
 This term describes the quantum teleportation protocol in terms of
 corrections on the third qubit based on the result of a Bell basis measurement.
-It takes the input qubit~$\ket{\psi}$ and pairs it with one half of an
+It takes the input~$\ket{\psi}$ and pairs it with one half of an
 entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
 qubits (the input and Alice's entangled qubit) against the Bell basis, and in
 each branch applies the appropriate correction to Bob's qubit to
 recover~$\ket{\psi}$.  The resulting term represents the same quantum
-transformation as the circuit above but expressed without any explicit
+transformation but expressed without any explicit
 measurement---instead, each branch encodes the coherent superposition of
-possible measurement outcomes.
+possible outcomes.
 
 The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
 steps in the Bell basis, exploiting the deferred-measurement principle in a
