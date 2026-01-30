@@ -14,6 +14,9 @@
 *.vtc
 .*.lb
 
+## Vim temp file
+.*.swp
+
 ## Intermediate documents:
 *.dvi
 *.xdv
