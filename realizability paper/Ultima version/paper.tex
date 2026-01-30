@@ -1,4 +1,4 @@
-\documentclass[a4paper,UKenglish,numberwithinsect,cleveref,pdfa]{lipics-v2021}
+\documentclass[a4paper,UKenglish,numberwithinsect,pdfa]{lipics-v2021}
 
 %\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
 %\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
@@ -345,9 +345,54 @@ approach by restricting to unit-norm vectors, introducing higher-order
 abstractions, and ensuring that terms of type qubit-to-qubit denote unitary
 maps. More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25}
 generalised Lambda-S to arbitrary non-entangled single-qubit bases, albeit
-through a purely syntactic framework restricted to first order. The calculus we
+through a purely syntactic framework restricted to first order. The calculus $\lambdaB$ that we
 present here extends these ideas to a unit-norm, higher-order setting over
 multiple-qubit bases, grounded in a realisability semantics.
+You can see a comparison of the papers in this line, in Table~\ref{tab:related}.
+
+\newcommand\cmark{X}
+\begin{table}
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|}\hline
+    & Lambda-S \cite{DiazcaroDowekRinaldiBIO19} 
+    & Lambda-SX \cite{DiazcaroMonzonAPLAS25} 
+    & Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} 
+    & $\lambdaB$ 
+    \\\hline\hline
+    Canonical basis 
+    & \cmark 
+    & \cmark 
+    & \cmark 
+    & \cmark 
+    \\\hline
+    Unit-norm 
+    &  
+    &  
+    & \cmark 
+    & \cmark 
+    \\\hline
+    Realisability semantics 
+    &  
+    &  
+    & \cmark 
+    & \cmark 
+    \\\hline
+    Higher-order 
+    &  
+    &  
+    & \cmark (in the model)
+    & \cmark 
+    \\\hline
+    Multi-qubit bases 
+    &  
+    & \cmark 
+    &  
+    & \cmark 
+    \\\hline
+  \end{tabular}
+  \caption{Comparison of basis-sensitive quantum $\lambda$-calculi.}
+  \label{tab:related}
+\end{table}
 
 The realisability methodology, originating with Kleene's work on Heyting
 arithmetic \cite{KleeneJSL45}, provides a constructive framework that connects
@@ -444,14 +489,14 @@ The contributions of this paper can be summarised as follows.
 \end{itemize}
 
 The paper is organised as follows.  
-\Cref{sec:calculus} introduces the core language, its syntax, congruence rules,
+Section~\ref{sec:calculus} introduces the core language, its syntax, congruence rules,
 and basis-dependent substitution.  
-\Cref{sec:reduction} defines the operational semantics, and
-\Cref{sec:model} presents the realisability model with unitary type semantics,
+Section~\ref{sec:reduction} defines the operational semantics, and
+Section~\ref{sec:model} presents the realisability model with unitary type semantics,
 the characterisation of unitary operators, and the typing rules.  
-\Cref{sec:examples} presents some representative examples.
+Section~\ref{sec:examples} presents some representative examples.
 All omitted proofs appear in the appendices, and
-\Cref{sec:conclusion} concludes with final remarks and perspectives.
+Section~\ref{sec:conclusion} concludes with final remarks and perspectives.
 
 \section{Core language}\label{sec:calculus}
 %\subsection{Syntax and congruence}
@@ -459,7 +504,7 @@ This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
 
 The syntax of the calculus is described in
-\Cref{tab:Syntax}. The calculus is divided into four
+Table~\ref{tab:Syntax}. The calculus is divided into four
 distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
 ($\Lambda$), \emph{value distributions} ($\ValD$), and \emph{term
 distributions} ($\vec\Lambda$). Values are composed of variables, decorated
@@ -472,13 +517,13 @@ terms and values, respectively.
 We use $v,u,w$ to denote values and $t,s,r$ for terms, writing $\vv{\cdot}$ when
 they are distributions.
 
-The subsets $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
+The symbols $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
 expressed; their precise nature is made explicit below.
 Before formally defining the notion of bases, we first establish the
 algebraic structure underlying the space of value distributions.
 This is achieved by introducing the congruence relation defined in
-\Cref{tab:Congruence}.
+Table~\ref{tab:Congruence}.
 The congruence captures the intended behaviour of addition and scalar
 multiplication, allowing us to treat linear combinations of terms and values
 as genuine algebraic entities rather than mere syntactic constructions.
@@ -537,12 +582,12 @@ notation~$\sum$.
   \label{tab:Congruence}
 \end{table}
 
-The rules in \Cref{tab:Congruence} ensure that the
+The rules in Table~\ref{tab:Congruence} ensure that the
 set of value distributions satisfies the axioms of a vector space.  The notion
 of basis in this calculus builds on this algebraic foundation. Once the vector
 structure is established, we can define which subsets $B\subseteq \ValD$
 qualify as \emph{bases}, thereby justifying the decorations appearing in the
-syntax of \Cref{tab:Syntax}.
+syntax of Table~\ref{tab:Syntax}.
 
 We will also consider the following notation for linear combinations of
 pairs. This notation does not appear in the syntax,
@@ -557,7 +602,7 @@ but is rather useful to describe specific states.
 
 
 Before proceeding further, let us briefly illustrate the intuition behind the
-congruence in \Cref{tab:Congruence}.  
+congruence in Table~\ref{tab:Congruence}.  
 The key idea is that arguments are decomposed over the bases associated with
 their corresponding abstractions.  
 As in linear algebra, a vector can be rewritten as a linear combination of
@@ -614,16 +659,16 @@ decorate abstractions.
   basis} if it satisfies:
   \begin{enumerate*}
     \item $B$ has cardinality $2^n$.
-    \item Each element of $B$ is an $n$-qubit state \emph{(cf.~\Cref{def:Qubit})}.
+    \item Each element of $B$ is an $n$-qubit state \emph{(cf.~Definition~\ref{def:Qubit})}.
     \item Distinct elements of $B$ are pairwise orthogonal.
   \end{enumerate*}
 \end{definition}
 
-From now on, the syntax introduced in \Cref{tab:Syntax}
-is restricted to sets $B$ forming $2^n$-dimensional
+As a first step, the syntax introduced in Table~\ref{tab:Syntax}
+can be restricted to sets $B$ forming $2^n$-dimensional
 orthonormal bases.
 These sets indicate the basis in which a term is expressed: qubits in the
-decorating basis are treated call-by-value, while others are decomposed as
+decorating basis are treated in call-by-value, while others are decomposed as
 $\C$-linear combinations of basis elements, with the function applied linearly
 to each component.  If a term cannot be expressed in the decorating basis,
 evaluation becomes stuck.
@@ -651,7 +696,7 @@ $\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.
 
 %\subsection{Basis-dependent substitutions}
 As usual, the expression $\vv t[\vv v/x]$ denotes the
-usual capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
+capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
 However, beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
 operation substitutes variables with vectors expressed in the chosen basis; the
@@ -659,11 +704,12 @@ accompanying coefficients are those of the value distribution being
 substituted.
 
 Alongside this substitution, we expand the set of orthogonal basis with a 
-special symbol, denoted $\AbsBasis$. This symbol changes the modality of the lambda
+special symbol, denoted $\AbsBasis$. This symbol changes the nature of the lambda
 abstraction, allowing it to take other abstractions as arguments. This is the only
-instance of higher-order functions in the calculus. The $\AbsBasis$, is a purely
+instance of higher-order functions in the calculus. The symbol $\AbsBasis$, is a purely
 syntactical device, intuitively it can be thought as the canonical basis. It 
 distributes the application over every basic value as defined in the syntax.
+So, from now on, the symbols $B, B_1, B_2$ in Table~\ref{tab:Syntax} are either $2^n$-dimensional orthonormal basis, or the special symbol $\AbsBasis$.
 
 
 \begin{definition}[Basis-dependent substitution]
@@ -697,13 +743,13 @@ This special case is also the only one applicable to
 $\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
 
 The definition also extends to pairs of values. If
-$\vv v=\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
-with $\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}$
-defined for every $i$, then:
+$\vv v\equiv\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
+then:
 \[
   \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
     \;=\; \sum_{i\in I}\alpha_i\,
     \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
+    \text{ if defined},
 \]
 where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
 with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
@@ -810,8 +856,8 @@ $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 The reduction system interprets every vector relative to the basis attached to
 its abstraction, allowing a step only when the argument can be decomposed on
 that basis.  
-\Cref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
-considered modulo the congruence of \Cref{tab:Congruence}.  
+Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
+considered modulo the congruence of Table~\ref{tab:Congruence}.  
 Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
 a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
 
@@ -864,7 +910,7 @@ $t(\alpha\vv s+\beta\vv r)$ is equivalent to
 $\alpha\,t\vv s+\beta\,t\vv r$.
 
 The only exception occurs for higher-order terms: since no orthogonal bases are
-defined for abstractions, we introduce a special modality~$\AbsBasis$ reducing
+defined for abstractions, we introduced the symbol $\AbsBasis$ to 
 linearly over the basis values of a distribution. For instance,
 \[
   (\Lam{x}{\AbsBasis}{\vv t})
@@ -899,7 +945,7 @@ Bell states are $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and $\Psi^{\pm}=
 \]
 
 The Bell basis is central in quantum communication. In
-\Cref{sec:teleportation}, we revisit the quantum teleportation protocol,
+Section~\ref{sec:teleportation}, we revisit the quantum teleportation protocol,
 which relies heavily on these states.
 
 Defining the system in this way yields a strategy within the
@@ -956,7 +1002,7 @@ equivalence is preserved by reduction modulo~$\equiv$.
 
 \subsection{Unitary type semantics}
 Given the deterministic machine presented in the previous section
-(see~\Cref{rmk:determinism}), the next
+(see~Remark~\ref{rmk:determinism}), the next
 step towards extracting a typing system is to define the sets of values that
 characterise its types. To achieve this, we first need to identify the notion
 of a type.
@@ -1017,7 +1063,7 @@ that guides the definition of realizers.
 
 With the notions of unitary types and their realizers in place, we can now
 define a concrete approach for our language. We begin with the type grammar
-given in~\Cref{tab:UnitaryTypes} and build a simple algebra from the sets of
+given in~Table~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
 values we aim to represent.
 Before that, we introduce the notion of orthogonal complement, which will be
 used in the semantics of the~$\sharp$~type:
@@ -1034,7 +1080,7 @@ Pairs are standard, and written using the notation introduced earlier.
 %The type~$A\times B$
 %corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
 %admits pairs only of basic values, the semantic clause
-%in~\Cref{tab:UnitaryTypes} should be
+%in~Table~\ref{tab:UnitaryTypes} should be
 %read as an abbreviation for the following expanded form:
 %\[
 %  \sem{A\times B}
@@ -1206,7 +1252,7 @@ Formally:
     $F(\vv{v}) = \vv{w}$.
 \end{definition}
 
-This definition, together with \Cref{lem:BasesIso}, allows us to build a
+This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
 characterisation of unitary operators as values in
 $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 
@@ -1221,7 +1267,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 \begin{proof}
   \textit{Necessity.}
   Suppose that $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
-  Then, by \Cref{lem:BasesIso}, for every
+  Then, by Lemma~\ref{lem:BasesIso}, for every
   $\vv{v_i}\in\sem{\basis{X}}$ there exists
   $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
   $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
@@ -1257,7 +1303,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
     = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
     = 0
   \),
-  from \Cref{lem:BasesIso} it follows that
+  from Lemma~\ref{lem:BasesIso} it follows that
   $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   \qedhere
 \end{proof}
@@ -1336,7 +1382,7 @@ form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
     \{x \in \dom{\Gamma} \mid
     \sem{\Gamma(x)} = \sem{\sharp(\Gamma(x))}\}
   \).\footnote{This definition relies on the idempotence of the~$\sharp$~operator
-  (\Cref{thm:IdempotentSharp}).
+  (Theorem~\ref{thm:IdempotentSharp}).
   }
 \end{definition}
 
@@ -1392,7 +1438,7 @@ $\SORTH{\Gamma}{\vv{t}}{\vv{s}}{A}$.
 With these definitions in mind, a typing rule is \emph{valid} when valid
 premises entail a valid conclusion.  
 Although there are infinitely many valid rules (each corresponding to a theorem),
-\Cref{tab:TypingRules} presents a representative subset forming a reasonable
+Table~\ref{tab:TypingRules} presents a representative subset forming a reasonable
 core typing system for the calculus, whose validity is stated below.
 
 \begin{table}[t]
@@ -1467,31 +1513,31 @@ core typing system for the calculus, whose validity is stated below.
 \end{table}
 
 \begin{theorem}\label{thm:TypingRulesValidity}
-  All the typing rules in \Cref{tab:TypingRules} are valid.
+  All the typing rules in Table~\ref{tab:TypingRules} are valid.
   \qed
 \end{theorem}
 
 
 The usual safety properties follow straightforwardly in this framework.
 \emph{Confluence} is an immediate consequence of the reduction being
-deterministic (cf.~\Cref{rmk:determinism}).  
+deterministic (cf.~Remark~\ref{rmk:determinism}).  
 \emph{Strong normalisation} follows directly from the definition of a
-realizer (cf.~\Cref{def:Realizer}).  
+realizer (cf.~Definition~\ref{def:Realizer}).  
 \emph{Subject reduction} is also immediate: indeed, if
 $\TYP{\Gamma}{\vv{t}}{A}$ and $\vv{t}\to\vv{u}$, then
 $\TYP{\Gamma}{\vv{u}}{A}$ by definition.
 However, if we restrict ourselves to a subset of typing rules—such as those
-presented in \Cref{tab:TypingRules}—we must
+presented in Table~\ref{tab:TypingRules}—we must
 ensure that this restricted system still suffices to type all reducts of a
 term, once the underlying realisability semantics is abstracted away.  In our
-case, the rules proven valid in \Cref{thm:TypingRulesValidity}
+case, the rules proven valid in Theorem~\ref{thm:TypingRulesValidity}
 suffice to guarantee subject reduction, as
 stated below.
 
 
 \begin{theorem}[Subject reduction]\label{thm:SubjectReduction}
   If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
-  \Cref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
+  Table~\ref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
   $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
   \qed
 \end{theorem}
@@ -1724,7 +1770,7 @@ generalising the characterisation from~\cite{DiazcaroGuillermoMiquelValironLICS1
 Here, the use of basis types yields a simpler and more transparent proof.  
 
 The second major result is the validity of the typing rules presented in
-\Cref{tab:TypingRules}.  
+Table~\ref{tab:TypingRules}.  
 By deriving these rules from the realisability interpretation, we ensure their
 soundness and obtain a principled foundation for a typed programming language
 based on the calculus.
@@ -1744,7 +1790,7 @@ the calculus.
 
 \section{Omitted proofs from Section~\ref{sec:calculus}}\label{sec:appendixA}
 
-\begin{restatetheorem}[Restatement of \Cref{thm:UniqueDecomposition}]
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:UniqueDecomposition}]
   \itshape
   If $B$ is an $2^n$-dimensional basis, then every $n$-qubit state has
   a unique decomposition over $B$.
@@ -1759,18 +1805,18 @@ the calculus.
   By linear independence, $\alpha_i=\beta_i$ for all $i$.
 \end{proof}
 
-\begin{restatecorollary}[Restatement of \Cref{cor:EquivalentDecomposition}]
+\begin{restatecorollary}[Restatement of Corollary~\ref{cor:EquivalentDecomposition}]
   \itshape
   If $\vv{v}\equiv\vv{w}$, then they share the same decomposition over any
   basis $B$.
 \end{restatecorollary}
 \begin{proof}
   Since $\vv{v}-\vv{w}\equiv\vv{v}-\vv{v}\equiv\vv{w}-\vv{w}$, the same
-  argument as in \Cref{thm:UniqueDecomposition} shows that $\vv{v}$ and $\vv{w}$ have the
+  argument as in Theorem~\ref{thm:UniqueDecomposition} shows that $\vv{v}$ and $\vv{w}$ have the
   same decomposition over $B$.
 \end{proof}
 
-\begin{restatelemma}[Restatement of \Cref{lem:distributiveSubstitution}]
+\begin{restatelemma}[Restatement of Lemma~\ref{lem:distributiveSubstitution}]
   \itshape
   For term distributions $\vv{t_i}$, a value distribution $\vv{v}$, a
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
@@ -1794,7 +1840,7 @@ the calculus.
   The case $B=\AbsBasis$ is analogous.
 \end{proof}
 
-\begin{restatelemma}[Restatement of \Cref{lem:EquivSubstitutions}]
+\begin{restatelemma}[Restatement of Lemma~\ref{lem:EquivSubstitutions}]
   \itshape
   For value distributions $\vv{v},\vv{w}$, a term distribution $\vv{t}$, and
   an orthonormal basis $B$ such that both
@@ -1805,7 +1851,7 @@ the calculus.
 \end{restatelemma}
 \begin{proof}
   Since $\vv{v}\equiv\vv{w}$, by
-  \Cref{cor:EquivalentDecomposition},
+  Corollary~\ref{cor:EquivalentDecomposition},
   both can be written as
   $\vv{v}\equiv\vv{w}\equiv\sum_{i=1}^{n}\alpha_i\vv{b_i}$ with
   $\vv{b_i}\in B$. Hence
@@ -1858,7 +1904,7 @@ the calculus.
   \]
 \end{proof}
 
-\begin{restatetheorem}[Restatement of \Cref{thm:confluence}]
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:confluence}]
   \itshape
   Let $\vv{t}$ and $\vv{s}$ be closed term distributions with
   $\vv{t}\equiv\vv{s}$. If $\vv{t}\lraneq\vv{t'}$ and $\vv{s}\lraneq\vv{s'}$,
@@ -2026,7 +2072,7 @@ the calculus.
 
 \section{Omitted proofs from Section~\ref{sec:model}}\label{sec:appendixC}
 
-\begin{restatetheorem}[Restatement of \Cref{thm:SharpCharacterization}]
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:SharpCharacterization}]
   \itshape
   The interpretation of a type~$\sharp A$ contains precisely the
   norm-$1$ linear combinations of values in~$\sem{A}$:
@@ -2056,7 +2102,7 @@ the calculus.
   \end{description}
 \end{proof}
 
-\begin{restatetheorem}[Restatement of \Cref{thm:IdempotentSharp}]
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:IdempotentSharp}]
   \itshape
   The~$\sharp$ operator is idempotent; that is,
   $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
@@ -2073,7 +2119,7 @@ the calculus.
   With these two inclusions we have that $\comp{A}=\comp[3]{A}$. So we conclude that: $\sem{\sharp(\sharp A)} = \comp[4]{A} = \comp[2]{A} = \sem{\sharp A}$ \qedhere
 \end{proof}
 
-\begin{restatetheorem}[Restatement of \Cref{prop:UnitaryTypes}]
+\begin{restatetheorem}[Restatement of Theorem~\ref{prop:UnitaryTypes}]
   \itshape
   For every type~$A$, $\sem{A}\subseteq\Sph$.
 \end{restatetheorem}
@@ -2092,7 +2138,7 @@ the calculus.
   \qed
 \end{proof}
 
-\begin{restatelemma}[Restatement of \Cref{lem:BasesIso}]
+\begin{restatelemma}[Restatement of Lemma~\ref{lem:BasesIso}]
   Let $X$ and $Y$ be orthonormal bases of the same finite
   dimension, and let $\Lam{x}{{X}}{\vv t}$ be a closed $\lambda$-abstraction.
   Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
@@ -2146,10 +2192,10 @@ the calculus.
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by \Cref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
+  Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Theorem~\ref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
 \end{proof}
 
-Before proving the soundness of the typing rules (\Cref{thm:TypingRulesValidity}), we need the following results.
+Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesValidity}), we need the following results.
 
 \begin{theorem}\label{prop:InnerProdPairs} For all value distributions $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
 \[
@@ -2218,7 +2264,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
 \end{lemma}
 
 \begin{proof}
-    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying \Cref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
     
     \begin{align*}
         \vv{u_1} + \vv{u_2} = \lambda_1 \vv{u_{01}} & \vv{u_1} + i \vv{u_2} = \lambda_3 \vv{u_{03}} \\
@@ -2232,7 +2278,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
         \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} \\
     \end{align*}
 
-    Using the polarization identity (\Cref{prop:Polarization}), we conclude that:
+    Using the polarization identity (Theorem~\ref{prop:Polarization}), we conclude that:
 
     \begin{align*}
         &\scal{\vv{w_1}}{\vv{w_2}}\\
@@ -2257,7 +2303,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
 \end{lemma}
 
 \begin{proof}
-    From \Cref{lem:VecRewrite} we know that there are $\vv{u_0}\in\sem{\sharp A}, \vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    From Lemma~\ref{lem:VecRewrite} we know that there are $\vv{u_0}\in\sem{\sharp A}, \vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
     \[
     \vv{u_2} + (-1) \vv{u_1} = \lambda\vv{u_0}\quad\text{and}\quad\vv{v_2} + (-1) \vv{v_1} = \mu \vv{v_0}
     \]
@@ -2285,24 +2331,24 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
         \end{array}
         \]
         
-        \item\label{A8:it3} $\scal{\vv{u_1}}{\vv{u_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
+        \item\label{A8:it3} $\scal{\vv{u_1}}{\vv{u_2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
         
-        \item\label{A8:it4} $\scal{\vv{v_1}}{\vv{v_2}}=0$, so that from \Cref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
+        \item\label{A8:it4} $\scal{\vv{v_1}}{\vv{v_2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
     \end{enumerate}
 
     From the above, we get:
     \begin{align*}
         \scal{\vv{w_1}}{\vv{w_2}} &= \scal{\vv{w_{11}}}{\vv{w_{22}}} = \scal{\vv{w_{11}}}{\vv{w_{22}}+0\vv{w_{12}}} & \\
-        &=\scal{\vv{w_{11}}}{\vv{w_{12}}+ \lambda\vv{w_{02}}} & (\text{from \Cref{A8:it1}, } k=2)\\
+        &=\scal{\vv{w_{11}}}{\vv{w_{12}}+ \lambda\vv{w_{02}}} & (\text{from Item~\ref{A8:it1}, } k=2)\\
         &=\scal{\vv{w_{11}}}{\vv{w_{12}}} + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} &\\
-        &= 0 + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} & (\text{from \Cref{A8:it4}, } j=1)\\
+        &= 0 + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} & (\text{from Item~\ref{A8:it4}, } j=1)\\
         &= \lambda \scal{\vv{w_{11}} + 0\vv{w_{21}}}{\vv{w_{02}}} & \\
-        &= \lambda \scal{\vv{w_{21}} + (-\lambda)\vv{w_{01}}}{\vv{w_{02}}} & (\text{from \Cref{A8:it1}, } k=1)\\
+        &= \lambda \scal{\vv{w_{21}} + (-\lambda)\vv{w_{01}}}{\vv{w_{02}}} & (\text{from Item~\ref{A8:it1}, } k=1)\\
         &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - |\lambda|^2 \scal{\vv{w_{01}}}{\vv{w_{02}}} & \\
-        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - 0 & (\text{from \Cref{A8:it4}, } j=0)\\
+        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - 0 & (\text{from Item~\ref{A8:it4}, } j=0)\\
         &=\scal{\vv{w_{21}}}{\vv{w_{22}}- \vv{w_{12}}} & \\
         &=\scal{\vv{w_{21}}}{\vv{22}} - \scal{\vv{w_{21}}}{\vv{w_12}} & \\
-        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from \Cref{A8:it4}, } j=2)\\
+        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from Item~\ref{A8:it4}, } j=2)\\
     \end{align*}
     Hence $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
     \[
@@ -2331,7 +2377,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{
     \[
     \scal{\vv{u_1}}{\vv{u_2}+(-\alpha)\vv{u_1}} = \scal{\vv{u_1}}{\vv{u_2}} - \alpha \scal{\vv{u_1}}{\vv{u_1}} = \alpha - \alpha = 0
     \]
-    And similarly that, $\scal{\vv{v_1}}{\vv{v_2}+ (-\beta) \vv{v_1}} = 0$. From \Cref{lem:VecRewrite}, we know that there are $\vv{u_0}\in\sem{\sharp A}$, $\vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    And similarly that, $\scal{\vv{v_1}}{\vv{v_2}+ (-\beta) \vv{v_1}} = 0$. From Lemma~\ref{lem:VecRewrite}, we know that there are $\vv{u_0}\in\sem{\sharp A}$, $\vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
     \begin{align*}
         \vv{u_2} +(-\alpha)\vv{u_1} = \lambda\vv{u_0}& \text{ and } & \vv{v_2} + (-\beta)\vv{v_1} = \mu\vv{v_0} 
     \end{align*}
@@ -2351,29 +2397,29 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{
         \mu\vv{w_{j0}} + \beta \vv{w_{j1}} = \vv{w_{j2}} + 0 \vv{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
         \]
         
-        \item\label{A9:it3} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{u_1}}{\vv{u_2}+(- \alpha)\vv{u_1}}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
+        \item\label{A9:it3} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{u_1}}{\vv{u_2}+(- \alpha)\vv{u_1}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
         \[
         \scal{\vv{w_{1k}}}{\lambda\vv{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
         \]
         
-        \item\label{A9:it4} $\scal{\vv{v_1}}{\mu\vv{v_0}}=\scal{\vv{v_1}}{\vv{v_2} + (-\beta)}\vv{v_1}=0$, so that from \Cref{lem:InnerProdSingleVar} we get:
+        \item\label{A9:it4} $\scal{\vv{v_1}}{\mu\vv{v_0}}=\scal{\vv{v_1}}{\vv{v_2} + (-\beta)}\vv{v_1}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
         \[
         \scal{\vv{w_{j1}}}{\mu\vv{w_{j0}}}=0
         \]
                 
-        \item\label{A9:it5} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{v_1}}{\mu\vv{v_0}}=0$ so that from \Cref{lem:OrthogonalSubstitution} we get:
+        \item\label{A9:it5} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{v_1}}{\mu\vv{v_0}}=0$ so that from Lemma~\ref{lem:OrthogonalSubstitution} we get:
         \[
         \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}=0
         \]
-        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vv{u_1}}{\vv{u_0}}=\scal{\vv{v_1}}{\vv{v_0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by \Cref{lem:OrthogonalSubstitution})
+        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vv{u_1}}{\vv{u_0}}=\scal{\vv{v_1}}{\vv{v_0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by Lemma~\ref{lem:OrthogonalSubstitution})
     \end{enumerate}
 
     From above, we get:
     \begin{align*}
         \vv{w_{22}} + 0\vv{w_{12}} + &0\vv{w_{01}} + 0\vv{w_{11}} \\
-        &= \lambda\vv{w_{02}} + \alpha\vv{w_{12}} + 0\vv{w_{01}} + 0\vv{w_{11}} & (\text{from~\Cref{A9:it1}}, k =1)\\
+        &= \lambda\vv{w_{02}} + \alpha\vv{w_{12}} + 0\vv{w_{01}} + 0\vv{w_{11}} & (\text{from Item~\ref{A9:it1}}, k =1)\\
         &= \lambda(\vv{w_{02}}+0\vv{w_{01}}) + \alpha(\vv{w_{12}}+0\vv{w_{11}})&\\
-        &= \lambda(\mu\vv{w_{00}} + \beta\vv{w_{01}}) + \alpha(\mu\vv{w_{01}}+\beta\vv{w_{11}}) & (\text{from~\Cref{A9:it2}}, j=0,1)\\
+        &= \lambda(\mu\vv{w_{00}} + \beta\vv{w_{01}}) + \alpha(\mu\vv{w_{01}}+\beta\vv{w_{11}}) & (\text{from Item~\ref{A9:it2}}, j=0,1)\\
         &= \lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10}} + \alpha\beta\vv{w_{11}}
     \end{align*}
     Therefore:
@@ -2385,17 +2431,17 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{
         &=\lambda\mu\scal{\vv{w_{11}}}{\vv{w_{00}}} + \lambda\beta\scal{\vv{w_{11}}}{\vv{w_{01}}} + \alpha\mu\scal{\vv{w_{11}}}{\vv{w_{10}}} + \alpha\beta\scal{\vv{w_{11}}}{\vv{w_{11}}}\\
         &= 0 + 0 + 0 + \alpha\beta = \scal{\vv{u_1}}{\vv{u_2}}\scal{\vv{v_1}}{\vv{v_2}}
     \end{align*}
-    From~\Cref{A9:it5,A9:it3,A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
+  From Items~\ref{A9:it5}, \ref{A9:it3}, \ref{A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
 \end{proof}
 \end{lemma}
 
-Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
-\begin{restatetheorem}[Restatement of \Cref{thm:TypingRulesValidity}]
+Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:TypingRulesValidity}]
   \itshape
-  All the typing rules in \Cref{tab:TypingRules} are valid.
+  All the typing rules in Table~\ref{tab:TypingRules} are valid.
 \end{restatetheorem}
 \begin{proof}
-    For each typing rule in \Cref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
+    For each typing rule in Table~\ref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
     \begin{description}
     \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x^B:A}$, we have $\sigma=\ansubst{\vv v/x}{B}$ for some $\vv{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vv v}{B}=\vv{v}\real A$.
     
@@ -2406,7 +2452,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
         &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{X}{\vv{t_i}[\sigma_j]}))\vv v\\
         &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vv{t_i}[\sigma_j]\ansubst{\vv v/x}{X}\\
         &=\sum_{i=1}^{n}\alpha_i \vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\\
-        &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\qquad{\text{By \Cref{lem:distributiveSubstitution}}}
+        &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\qquad{\text{By Lemma~\ref{lem:distributiveSubstitution}}}
     \end{align*}
     
     Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})\in\sem{A\Arr B}$.
@@ -2500,7 +2546,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
         \item $\FV{\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from \Cref{thm:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from Theorem~\ref{thm:SharpCharacterization} we have that:
     
     \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vv{v_k}}{\vv{u_k}})\] 
     
@@ -2529,8 +2575,8 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
         \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\| \\
         &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vv{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vv{w_{k'}}}\\
         &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vv{w_k}}{\vv{w_{k'}}}\\
-        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vv{v_k}}{\vv{v_{k'}}}\scal{\vv{u_k}}{\vv{u_{k'}}}\quad(\text{from \Cref{lem:UnitPreserTens}})\\
-        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vv{u_k}}{\vv{v_k}}}{\Pair{\vv{u_{k'}}}{\vv{v_{k'}}}}\quad(\text{from \Cref{prop:InnerProdPairs}})\\
+        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vv{v_k}}{\vv{v_{k'}}}\scal{\vv{u_k}}{\vv{u_{k'}}}\quad(\text{from Lemma~\ref{lem:UnitPreserTens}})\\
+        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vv{u_k}}{\vv{v_k}}}{\Pair{\vv{u_{k'}}}{\vv{v_{k'}}}}\quad(\text{from Theorem~\ref{prop:InnerProdPairs}})\\
         &=\sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_k}}{\vv{u_k}}} \\
         & \quad + \sum_{k,k'=1; k\neq k'}^n \overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_{k'}}}{\vv{u_{k'}}}}\\
         &= \sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} + 0 \\
@@ -2674,7 +2720,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
     \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
     \quad\text{and}\quad
     \TYP{\Delta}{\vv{v}}{A}
-  \) can be derived using the set of rules in \Cref{tab:TypingRules},
+  \) can be derived using the set of rules in Table~\ref{tab:TypingRules},
   and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
   then
   \(
@@ -2725,9 +2771,9 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
   \end{description}
 \end{proof}
 
-\begin{restatetheorem}[Restatement of \Cref{thm:SubjectReduction}]
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:SubjectReduction}]
   If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
-  \Cref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
+  Table~\ref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
   $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
 \end{restatetheorem}
 \begin{proof}
@@ -2740,7 +2786,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
       \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$ and
       $\TYP{\Delta}{\vv v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$
       and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vv t}{B}$. By
-      \Cref{lem:Substitution},
+      Lemma~\ref{lem:Substitution},
       using $\TYP{\Delta}{\vv v}{A}$ and the fact that $\vv t\ansubst{\vv
       v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vv t\ansubst{\vv
       v/x}{X}}{B}$, as required.
@@ -2751,7 +2797,7 @@ Now, we can restate and prove \Cref{thm:TypingRulesValidity}.
       \textsc{LetPair} we have $\TYP{\Gamma}{\vv v}{A\times B}$ and
       $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vv t}{C}$.  Decompose $\vv v$ (in
       $X\otimes Y$) as required by the definition of $\ansubst{\vv v/x\otimes
-      y}{X\otimes Y}$; by \Cref{lem:Substitution}
+      y}{X\otimes Y}$; by Lemma~\ref{lem:Substitution}
       applied twice
       (first for $x$, then for $y$), we conclude $\TYP{\Gamma,\Delta}{\vv
       t\ansubst{\vv v/x\otimes y}{X\otimes Y}}{C}$.
