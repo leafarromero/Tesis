@@ -304,7 +304,7 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
   We present $\lambdaB$, a quantum‐control $\lambda$‐calculus that refines
   previous basis-sensitive systems by allowing abstractions to be expressed with
   respect to arbitrary---possibly entangled---bases.  Each abstraction and
-  $\mathsf{let}$ construct is annotated with a basis, and a new basis-dependent
+  $\mathsf{let}$-construct is annotated with a basis, and a new basis-dependent
   substitution governs the decomposition of value distributions.  These
   extensions preserve the expressive power of earlier calculi while enabling
   finer reasoning about programs under basis changes.  A realisability semantics
@@ -333,7 +333,7 @@ classical bits correspond to the basis vectors, whereas qubits are unit-norm
 linear combinations of them. Classical bits can be copied and deleted freely,
 while such operations on arbitrary qubits are restricted.
 
-In this paper we introduce a quantum $\lambda$-calculus within the
+In this paper, we introduce a quantum $\lambda$-calculus within the
 quantum-control paradigm—by contrast with the classical-control one, where the
 control flow is classical and cannot be superposed. Our approach is inspired by
 a line of work on basis-sensitive quantum typing. The earliest system,
@@ -415,8 +415,8 @@ represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
 linear handling for unknown qubits.
 
-This work pursues two goals. To employ the extracted type
-system to provide a more exact description of programs. And, to take
+This work pursues two goals: first to employ the extracted type
+system to provide a more exact description of programs, and second, to take
 advantage of the extended syntax to express quantum algorithms in a compositional manner,
 rather than merely translating circuits.
 
@@ -504,7 +504,7 @@ This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
 
 The syntax of the calculus is described in
-Table~\ref{tab:Syntax}. The calculus is divided into four
+Table~\ref{tab:Syntax}; it is divided into four
 distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
 ($\Lambda$), \emph{value distributions} ($\ValD$), and \emph{term
 distributions} ($\vec\Lambda$). Values are composed of variables, decorated
@@ -673,7 +673,7 @@ $\C$-linear combinations of basis elements, with the function applied linearly
 to each component.  If a term cannot be expressed in the decorating basis,
 evaluation becomes stuck.
 
-As in classical linear algebra, no non-trivial linear combination of basis
+As expected, no non-trivial linear combination of basis
 elements yields the null vector; otherwise, some basis vector would violate
 pairwise orthogonality. Consequently, each decomposition over a basis is
 unique.
