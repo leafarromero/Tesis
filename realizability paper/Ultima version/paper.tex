@@ -99,6 +99,7 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
 \newcommand{\lambdaSh}{\ensuremath{\text{Lambda-}{\sharp}}}
 \newcommand{\lambdaSI}{\ensuremath{\text{Lambda-}\mathcal S_1}}
 
+\newcommand\cmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
 
 \newcommand\braces[1]{\left\{#1\right\}}
 \newcommand\So{\ensuremath{{\mathcal S}_1}}
@@ -333,7 +334,7 @@ classical bits correspond to the basis vectors, whereas qubits are unit-norm
 linear combinations of them. Classical bits can be copied and deleted freely,
 while such operations on arbitrary qubits are restricted.
 
-In this paper, we introduce a quantum $\lambda$-calculus within the
+In this paper, we introduce a quantum $\lambda$-calculus in the
 quantum-control paradigm—by contrast with the classical-control one, where the
 control flow is classical and cannot be superposed. Our approach is inspired by
 a line of work on basis-sensitive quantum typing. The earliest system,
@@ -344,13 +345,11 @@ case. Later, Lambda-S$_1$
 approach by restricting to unit-norm vectors, introducing higher-order
 abstractions, and ensuring that terms of type qubit-to-qubit denote unitary
 maps. More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25}
-generalised Lambda-S to arbitrary non-entangled single-qubit bases, albeit
-through a purely syntactic framework restricted to first order. The calculus $\lambdaB$ that we
-present here extends these ideas to a unit-norm, higher-order setting over
-multiple-qubit bases, grounded in a realisability semantics.
-You can see a comparison of the papers in this line, in Table~\ref{tab:related}.
-
-\newcommand\cmark{X}
+generalised Lambda-S to arbitrary non-entangled single-qubit bases, to first order.
+The $\lambda_B$ calculus 
+presented here extends these ideas to a unit-norm, higher-order setting over
+multiple-qubit bases, grounded in a realisability semantics;
+a comparison with previous systems is provided in Table~\ref{tab:related}.
 \begin{table}
   \centering
   \begin{tabular}{|l|c|c|c|c|c|}\hline
@@ -415,10 +414,7 @@ represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
 linear handling for unknown qubits.
 
-This work pursues two goals: first to employ the extracted type
-system to provide a more exact description of programs, and second, to take
-advantage of the extended syntax to express quantum algorithms in a compositional manner,
-rather than merely translating circuits.
+This work pursues two goals: first, to provide a more exact program description via the extracted type system; and second, to express quantum algorithms compositionally, rather than as mere circuit translations.
 
 %\paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
@@ -495,14 +491,30 @@ Section~\ref{sec:reduction} defines the operational semantics, and
 Section~\ref{sec:model} presents the realisability model with unitary type semantics,
 the characterisation of unitary operators, and the typing rules.  
 Section~\ref{sec:examples} presents some representative examples.
-All omitted proofs appear in the appendices, and
-Section~\ref{sec:conclusion} concludes with final remarks and perspectives.
+Section~\ref{sec:conclusion} concludes.
+All omitted proofs appear in the appendices.
 
 \section{Core language}\label{sec:calculus}
 %\subsection{Syntax and congruence}
 This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
 
+\begin{table}[t]
+  \begin{align*}
+    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
+    (\Val)\\
+    t &::= v \mid tt \mid (t,t) \mid
+    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
+    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
+    (\Lambda) \\
+    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
+    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
+    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
+  \end{align*}
+  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
+  \label{tab:Syntax}
+\end{table}
 The syntax of the calculus is described in
 Table~\ref{tab:Syntax}; it is divided into four
 distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
@@ -530,23 +542,6 @@ as genuine algebraic entities rather than mere syntactic constructions.
 In particular, it enforces the commutativity and associativity of addition and
 the distributivity of scalar multiplication, thereby justifying summation
 notation~$\sum$.
-
-\begin{table}[t]
-  \begin{align*}
-    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
-    (\Val)\\
-    t &::= v \mid tt \mid (t,t) \mid
-    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
-    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
-    (\Lambda) \\
-    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\ValD) \\
-    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
-  \end{align*}
-  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
-  \label{tab:Syntax}
-\end{table}
 \begin{table}[t]
   \begin{align*}
     0\vv t &\equiv \vv 0 & \vv t+\vv 0 &\equiv \vv t \\
@@ -852,15 +847,6 @@ $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 
 
 \section{Operational semantics}\label{sec:reduction}
-
-The reduction system interprets every vector relative to the basis attached to
-its abstraction, allowing a step only when the argument can be decomposed on
-that basis.  
-Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
-considered modulo the congruence of Table~\ref{tab:Congruence}.  
-Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
-a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
-
 \begin{table}[t]
   \begin{align*}
     \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined}:\quad&
@@ -894,6 +880,13 @@ a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
   \caption{Reduction system.}
   \label{tab:Reduction}
 \end{table}
+The reduction system interprets every vector relative to the basis attached to
+its abstraction, allowing a step only when the argument can be decomposed on
+that basis.  
+Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
+considered modulo the congruence of Table~\ref{tab:Congruence}.  
+Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
+a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
 
 The side condition~$\alpha\neq0$ avoids vacuous steps such as
 $0t\lraneq0r$, preventing spurious nondeterminism. On that note,
@@ -1060,7 +1053,6 @@ that guides the definition of realizers.
   \caption{Type notations and semantics}
   \label{tab:UnitaryTypes}
 \end{table}
-
 With the notions of unitary types and their realizers in place, we can now
 define a concrete approach for our language. We begin with the type grammar
 given in~Table~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
@@ -1073,35 +1065,17 @@ used in the semantics of the~$\sharp$~type:
 
 The types $\basis{X}$ serve as atomic types. Each of them represents a finite
 set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
-boolean type can be represented by a basis of size~2, yet we are not restricted
-to a single one, since there are infinitely many bases to choose from.
+boolean type can be represented by a basis of size 2, yet we are not restricted
+to a single one, as infinitely many bases exist.
 
 Pairs are standard, and written using the notation introduced earlier.
-%The type~$A\times B$
-%corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
-%admits pairs only of basic values, the semantic clause
-%in~Table~\ref{tab:UnitaryTypes} should be
-%read as an abbreviation for the following expanded form:
-%\[
-%  \sem{A\times B}
-%  := \bigl\{
-%       \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i,w_j)
-%       \;\bigm|\;
-%       \sum_{i=1}^{n}\alpha_i v_i\in\sem{A},~
-%       \sum_{j=1}^{m}\beta_j w_j\in\sem{B}
-%     \bigr\}.
-%\]
-%We stress this for rigour, but for readability we shall continue using the
-%concise notation of pairs.
 The arrow type~$A\Arr B$ consists of distributions of $\lambda$-abstractions
-that map elements of~$\sem{A}$ to realizers of~$B$.  
-Finally, the type~$\sharp A$ denotes the double orthogonal complement of~$A$
-intersected with the unit sphere.
-It represents quantum data---linear resources that cannot be erased or
-duplicated.  
-Intuitively, applying the~$\sharp$ operator to a type~$A$ yields the span of the
-original interpretation (intersected with the unit sphere).  This captures the
-possible linear combinations of values in the unitary semantics of~$A$, as
+mapping elements of~$\sem{A}$ to realizers of~$B$.  
+Finally, $\sharp A$ denotes the double orthogonal complement of~$A$ (within the unit sphere),
+representing quantum data. Since these are linear resources, they cannot be erased or
+duplicated.
+Intuitively, applying the operator $\sharp$ captures the
+linear combinations of values in the unitary semantics of $A$, as 
 stated in the following theorem.
 
 \begin{theorem}\label{thm:SharpCharacterization}
@@ -1115,12 +1089,7 @@ stated in the following theorem.
   \qed
 \end{theorem}
 
-
-
-The following theorem shows that, as expected for a span, multiple
-applications of the~$\sharp$ operator have no further effect beyond the first
-application.
-
+As expected for a span, the $\sharp$ operator is idempotent.
 \begin{theorem}\label{thm:IdempotentSharp}
   The~$\sharp$ operator is idempotent; that is,
   $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
@@ -1131,11 +1100,10 @@ application.
   A basis type~$\basis{X}$ may consist of value distributions of pairs and can
   therefore be written as the product type of smaller bases. For example, if
   $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\sem{\basis{X}}=\sem{\basis{\B}\times\basis{\B}}$.
-  However, this is not possible for entangled bases. A clear example is the
-  Bell basis.
+  However, entangled bases, such as the Bell basis, do not allow this.
 \end{remark}
 
-It remains to verify that our type algebra captures the intended sets of
+Our type algebra captures the intended sets of
 value distributions. The following theorem shows that every member of a type
 interpretation has norm~$1$.
 
@@ -1215,7 +1183,7 @@ calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
 terms on Hilbert spaces, we shall occasionally abuse notation and identify
 value distributions representing qubits with their corresponding canonical
 basis vectors in~$\C^{2^n}$. This identification applies only to those
-distributions that denote quantum data, not to general syntactic values such as
+distributions denoting quantum data, not to general values such as
 $\lambda$-abstractions---in particular, to all elements of
 $\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
 be made precise as follows.
