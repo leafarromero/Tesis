@@ -1330,8 +1330,8 @@ what it means for a typing rule to be valid.
   to indicate that $\Gamma(x_i)=(A_i,\basis{X_i})$ for each~$i$.
 \end{definition}
 
-As in standard typing judgements, the context records the types of a term's
-free variables. However, since substitution in our calculus depends on a basis,
+As with standard typing judgements, the context records the types of the free
+variables in a term. However, since substitution in our calculus depends on a basis,
 we also wish to record that information. This is not strictly necessary, as the
 basis with respect to which a variable is interpreted should not affect its
 type. For instance, consider the following substitutions:
@@ -1439,6 +1439,7 @@ premises entail a valid conclusion.
 Although there are infinitely many valid rules (each corresponding to a theorem),
 Table~\ref{tab:TypingRules} presents a representative subset forming a reasonable
 core typing system for the calculus, whose validity is stated below.
+This is the main result of the paper, as the validity of these rules ensures all the safety properties established in the realisability model.
 
 \begin{table}[t]
   \[
