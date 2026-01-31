@@ -1562,20 +1562,20 @@ applies~$H$ on the first qubit and returns the (classical) first component:
   }.
 \]
 
-Each oracle above can be typed as
+The oracles can be typed as 
 \(
   \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
-\),
-but since the arguments we pass are $\ket{+}$ and $\ket{-}$ (superpositions),
-the overall judgement we can derive for the application is:
+\).
+However, since we apply them to $\ket{+}$ and $\ket{-}$, 
+the derived judgement is
 \(
   (\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
    \Arr \sharp(\basis{\B}\times\basis{\B})
 \).
-This type is correct but coarse: it only guarantees that the result is a
-unitary distribution of pairs of booleans.  Operationally we know more: the
-first output is actually a basis bit ($\ket{0}$ or~$\ket{1}$) encoding whether
-$f$ is constant or balanced, and the second output can be ignored.
+This type is correct but coarse: it only ensures the result is a
+unitary distribution of boolean pairs. Operationally, the
+first output is a basis state ($\ket{0}$ or~$\ket{1}$) indicating if
+$f$ is constant or balanced, while the second may be ignored.
 
 Then, we can consider a basis-aware implementation with tighter typing.
 The key observation is that the oracle is always called on the fixed state
