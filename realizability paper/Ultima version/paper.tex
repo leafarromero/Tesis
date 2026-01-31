@@ -1146,18 +1146,17 @@ interpretation has norm~$1$.
 
 Defining types as sets of values naturally induces a semantic notion of
 subtyping. We say that a type~$A$ is a subtype of a type~$B$
-(written~$A\leq B$) when the set of realizers of~$A$ is included in that of~$B$.
+(written~$A\leq B$) when $\sem A\subseteq\sem B$. 
 If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
 (written~$A\cong B$).
 
 \begin{example}
   For every type~$A$, we have $A\leq\sharp A$.
-  For the base types $\basis{\B}$ and $\basis{\XB}$, however,
+  For the base types $\basis{\B}$ and $\basis{\XB}$, 
   neither inclusion holds:
-    $\basis{\B}\not\leq\basis{\XB}$ and
-    $\basis{\XB}\not\leq\basis{\B}$.
-  Nevertheless, their linear extensions coincide,
-  since $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
+  $\basis{\B}\not\leq\basis{\XB}$ and
+  $\basis{\XB}\not\leq\basis{\B}$. However, if they have the same dimension,
+  $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
 \end{example}
 
 Although every type is defined by norm-1 value distributions, not every
