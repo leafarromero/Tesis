@@ -30,6 +30,8 @@
 \newtheorem*{restatelemma}{}
 \makeatother
 
+\allowdisplaybreaks
+
 \bibliographystyle{plainurl}% the mandatory bibstyle
 
 \title{Basis-Sensitive Quantum Typing via Realisability}
@@ -1827,6 +1829,7 @@ the calculus.
     \vv{t}\ansubst{\vv{v}/x}{B}
     = \sum_{i=1}^{n}\alpha_i\vv{t}[\vv{b_i}/x]
     = \vv{t}\ansubst{\vv{w}/x}{B}.
+    \tag*{\qedhere}
   \]
 \end{proof}
 
@@ -1918,12 +1921,12 @@ the calculus.
     If $\vv{t} = (\Lam{x}{B}{\vv{t_1}})$ and $\vv{s}=\vv{v}$ and $\vv{t_1}\ansubst{\vv{v}/x}{B}$, is defined then (we consider the case $B\neq\AbsBasis$):
     \begin{align*}
       (\Lam{x}{B}{\vv{t_i}}) (\alpha\vv{v}) &\lraneq \vv{t_1}\ansubst{\alpha\vv{v}/x}{B}\\
-      &= \sum_{i=1}^{n} \alpha\beta_i \vv{t_1}[\vv{b_i}/x]\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B\\
+      &= \sum_{i=1}^{n} \alpha\beta_i \vv{t_1}[\vv{b_i}/x]\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B
     \end{align*}
     On the other side:
     \begin{align*}
       \alpha ((\Lam{x}{B}{\vv{t_1}}) \vv{v}) &\lraneq \alpha(\vv{t_1}\ansubst{\vv{v}/x}{B})\\
-      &=\alpha(\sum_{i=1}^{n} \beta_i \vv{t_1}[\vv{b_i}/x])\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B\\
+      &=\alpha(\sum_{i=1}^{n} \beta_i \vv{t_1}[\vv{b_i}/x])\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B
     \end{align*}
 
     And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
@@ -1981,7 +1984,7 @@ the calculus.
       \LetP{x_1}{B_1}{x_2}{B_2}{\vv{v}+\vv{w}}{\vv{r}}&\lraneq\vv{r}\ansubst{\vv{v}+\vv{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
       &=\sum_{i=1}^n (\alpha_i+\beta_i) \vv{r}[\vv{v_i}/x_1][\vv{w_i}/x_2]\\
       &\text{where: }\vv{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2\\
-      &\text{and: }\vv{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2\\
+      &\text{and: }\vv{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2
       \end{align*}
 
       On the other side:
@@ -1991,7 +1994,7 @@ the calculus.
       &\lraneq\vv{r}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2} + \vv{r}\ansubst{\vv{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
       &=\sum_{i=1}^n\alpha_i\vv{r}[\vv{v_i}/x_1][\vv{w_i}/x_2] + \sum_{i=1}^n \beta_i \vv{r}[\vv{v_i}/x_1][\vv{w_i}/x_2]\\
       &\text{where: }\vv{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2\\
-      &\text{and: }\vv{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2\\
+      &\text{and: }\vv{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2
       \end{align*}
         
       And we have that both terms are equivalent. The case for $B_1,B_2=\AbsBasis$ are similar.
@@ -2029,12 +2032,12 @@ the calculus.
     \begin{align*}
       &\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}+\gencase{\vv{s}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}\\
       &\lraneq \sum_{i=1}^n \alpha_i+ \vv{r_i} + \gencase{\vv{s}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}\\
-      &\lraneq \sum_{i=1}^n \alpha_i \vv{r_i} + \sum_{i=1}^n \beta_i \vv{r_i}\\
+      &\lraneq \sum_{i=1}^n \alpha_i \vv{r_i} + \sum_{i=1}^n \beta_i \vv{r_i}
     \end{align*}
 
     And we have that both terms are equivalent.
+    \qedhere
   \end{description}
-  
 \end{proof}
 
 
@@ -2054,7 +2057,6 @@ the calculus.
   Proof by double inclusion.
   \begin{description}
     \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vv{v}\in\Span(\sem{A})\cap\Sph$. Then $\vv{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vv{v_i}$ with $\vv{v_i}\in\sem{A}$. Taking $\vv{w}\in\sem{A}^\bot$, we examine the inner product:
-    
     \begin{align*}
     \scal{\vv{v}}{\vv{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{w}}\\
     &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vv{v_i}}{\vv{w}}=0
@@ -2103,7 +2105,7 @@ the calculus.
   \[\|\Pair{\vv v}{\vv w}\| = \sqrt{\sum_{i=1}^n\sum_{j=1}^{m} |\alpha_i\beta_j|^2} = \sqrt{\sum_{i=1}^n |\alpha_i|^2 \sum_{j=1}^{m} |\beta_j|^2}\]
 
   Since both $\vv v\in\sem{A}$ and $\vv w\in\sem{B}$, by inductive hypothesis, we have that $\|\vv v\| = \| \vv w \| = 1$. Which is to say $\sum_{i=1}^{n} |\alpha_i|^2 = \sum_{j=1}^{m} |\beta_j| = 1$. So we conclude $\|\Pair{\vv{v}}{\vv{w}}\| = 1$.
-  \qed
+  \qedhere
 \end{proof}
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:BasesIso}]
@@ -2152,7 +2154,6 @@ the calculus.
   \]
 
   We have that for each $i$, $\vv{w_i}\in\sem{\sharp\basis{Y}}$. In order to show that $(\Lam{x}{A}{\vv t})\vv u\real\sharp\basis{Y}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vv{w_i}\| = 1$
-
   \begin{align*}
     \|\sum_{i=1}^n \alpha_i \vv{w_i}\|^2 &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
     &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}\\
@@ -2179,7 +2180,8 @@ Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesVa
         &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{v_{i_1}}{v_{i_2}}\Kron{w_{j_1}}{w_{j_2}}\\
         &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Kron{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Kron{w_{j_1}}{w_{j_2}})\\
         &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Pair{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Pair{w_{j_1}}{w_{j_2}})\\
-        &=\scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}\\
+        &=\scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}
+	\tag*{\qedhere}
     \end{align*}
 \end{proof}  
 
@@ -2208,6 +2210,7 @@ Given a type $A$, two vectors $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and a scalar 
     Hence $\lambda' := \|\vv{u_1}+(-\alpha)\vv{u_2}\|>0$. Taking $\vv{u_0}:= \frac{1}{\lambda'}(\vv{u_1}+ (-\alpha)\vv{u_2})\in\sem{\sharp A}$, we easily see that:
     \[
     \vv{u_1}+\alpha\vv{u_2} = 0\vv{u_1} + 0\vv{u_2} = 0(\frac{1}{\lambda'} (\vv{u_1} + (-\alpha) \vv{u_2})) = \lambda \vv{u_0}
+    \tag*{\qedhere}
     \]
 \end{proof}
 
@@ -2224,7 +2227,7 @@ Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vv{s}}{C}
 \[
 \begin{array}{c}
     \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
+    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}
 \end{array}
 \]
 
@@ -2233,21 +2236,18 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
 
 \begin{proof}
     From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
-    
     \begin{align*}
         \vv{u_1} + \vv{u_2} = \lambda_1 \vv{u_{01}} & \vv{u_1} + i \vv{u_2} = \lambda_3 \vv{u_{03}} \\
-        \vv{u_1} + (-1) \vv{u_2} = \lambda_2 \vv{u_{02}} & \vv{u_1} + (-i) \vv{u_2} = \lambda_4 \vv{u_{04}} \\
+        \vv{u_1} + (-1) \vv{u_2} = \lambda_2 \vv{u_{02}} & \vv{u_1} + (-i) \vv{u_2} = \lambda_4 \vv{u_{04}} 
     \end{align*}
 
     From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, we also know that there are value distributions $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
-
     \begin{align*}
         \vv{w_1} + \vv{w_2} = \lambda_1 \vv{w_{01}} & \vv{w_1} + i \vv{w_2} = \lambda_3 \vv{w_{03}} \\
-        \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} \\
+        \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} 
     \end{align*}
 
     Using the polarization identity (Theorem~\ref{prop:Polarization}), we conclude that:
-
     \begin{align*}
         &\scal{\vv{w_1}}{\vv{w_2}}\\
         &= \frac{1}{4}(\|\vv{w_1}+\vv{w_2}\| - \|\vv{w_1} + (-1)\vv{w_2}\| - i \|\vv{v_1} + i \vv{v_2}\| + i \|\vv{v_1} + (-i) \vv{v_2}\|)\\
@@ -2255,8 +2255,8 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
         &= \frac{1}{4}((\lambda_1)^2\|\vv{u_{01}}\| - (\lambda_2)^2\|\vv{u_{02}}\| - i (\lambda_)^2 \|\vv{u_{03}}\| + i (\lambda_)^2\|\vv{u_{04}}\|)\\
         &= \frac{1}{4}(\|\vv{u_1}+\vv{u_2}\| - \|\vv{u_1} + (-1)\vv{u_2}\| - i \|\vv{u_1} + i \vv{u_2}\| + i \|\vv{u_1} + (-i) \vv{u_2}\|)\\
         &=\scal{u_1}{u_2}
+	\tag*{\qedhere}
     \end{align*}
-
 \end{proof}
 
 \begin{lemma}\label{lem:OrthogonalSubstitution} %A8
@@ -2316,8 +2316,9 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
         &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - 0 & (\text{from Item~\ref{A8:it4}, } j=0)\\
         &=\scal{\vv{w_{21}}}{\vv{w_{22}}- \vv{w_{12}}} & \\
         &=\scal{\vv{w_{21}}}{\vv{22}} - \scal{\vv{w_{21}}}{\vv{w_12}} & \\
-        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from Item~\ref{A8:it4}, } j=2)\\
+        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from Item~\ref{A8:it4}, } j=2)
     \end{align*}
+
     Hence $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
     \[
     \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\scal{\vv{w_{12}}}{\vv{w_{21}}}
@@ -2414,7 +2415,6 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
     \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x^B:A}$, we have $\sigma=\ansubst{\vv v/x}{B}$ for some $\vv{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vv v}{B}=\vv{v}\real A$.
     
     \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^X:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x^X:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
-    
     \begin{align*}
         (\sum_{i=1}^{n} \alpha_i(\Lam{x}{X}{\vv{t_i}}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{X}{\vv{t_i}}) [\sigma_i])) \vv{v} \\
         &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{X}{\vv{t_i}[\sigma_j]}))\vv v\\
@@ -2432,7 +2432,6 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
     \end{itemize}
     
     From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{\vv s \vv t}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
-    
     \begin{align*}
         (\vv{t}\vv{s})\ansubst{\sigma}{} &= (\vv{t}\vv{s})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
         &=(\sum_{i=i}^{n}\alpha_i (\vv{t}\vv{s})[\sigma_{\Gamma i}])\ansubst{\sigma_\Delta}{}\\
@@ -2456,7 +2455,6 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
     \end{itemize}
     
     From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{(\vv s, \vv t)}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some  $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
-
     \begin{align*}
         \Pair{\vv{t}}{\vv{s}}\ansubst{\sigma}{} &= \Pair{\vv{t}}{\vv{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
         &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i \Pair{\vv{t}}{\vv{s}}[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
@@ -2535,7 +2533,7 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
         &\eval(\LetP{x}{X}{y}{Y}{e^{i\theta_1}\vv{u}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
         &\lra e^{i\theta_1}(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{u}/x\otimes y}{X\otimes Y})\\
         &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{X}\ansubst{\vv{u_k}/y}{Y})\\
-        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\quad\text{where: }\vv{w_k}\in\sem{C}\\
+        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\quad\text{where: }\vv{w_k}\in\sem{C}
     \end{align*}
 
     It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\|=1$. For that, we observe:
@@ -2678,6 +2676,7 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
     \item[Equiv] It follows from definition and the fact that the reduction commutes with the congruence relation.
     
     \item[Phase] It follows from the definition of type realizers.
+      \qedhere
     \end{description}
 \end{proof}
 
@@ -2779,7 +2778,7 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
 
     \item Let
       $\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-      \lraneq \sum_{i=1}^n\alpha_i\vv{t_i}$: Assume
+      \lraneq \sum_{i=1}^n\alpha_i\vv{t_i}$: \\ Assume 
       $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
       By \textsc{UnitCase} we have $\TYP{\Gamma}{\vv t}{\sharp\basis{\{\vv
       v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vv t_i}{\vv t_j}{A}$.
