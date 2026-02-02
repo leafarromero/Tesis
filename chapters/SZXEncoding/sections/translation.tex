@@ -27,35 +27,29 @@ The translation of an evaluable type, $\natEval{A}$, is defined recursively as f
 
 Given a type judgement $\Phi \vdash L : P$ where $P$ is an evaluable type,
 we define $\natEval{L}_\Phi$ as the evaluation of the term into a function from parameters into products of natural numbers.
-Since the typing is syntax directed, the evaluation is defined directly over the terms as follows:
-\[
-    \natEval{x}_{x:\nat, \Phi} = x, |\Phi| \mapsto x \quad \natEval{n}_\Phi = |\Phi| \mapsto n \\[7pt]
-\]
-
-$
-\begin{array}{c}
-\natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\\[7pt]
-\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)\\[7pt]
-\natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto [\,]\\
-\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\\[7pt]
-\natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)\\[7pt]
-\natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto 
-\begin{cases}
-    \natEval{M}_\Phi(|\Phi|) \text{ if } \natEval{L}_\Phi(|\Phi|) = 0 \\
-    \natEval{N}_\Phi(|\Phi|) \text{ otherwise}
-\end{cases}\\[10pt]
-\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes\limits_{i=n}^{m-1} i \\[10pt]
-\natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)
-\end{array}
-$
-
-
-\begin{align*}
-    \natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi &= \\
-    |\Phi|\mapsto \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}&(y_1,[y_2,\dots,y_n],|\Phi|)\\
-    \text{where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)&
-\end{align*}
-
+Since the typing is syntax directed, the evaluation is defined directly over the terms in Table~\ref{tab:ParameterEval}.
+\begin{table}
+    \[
+    \begin{array}{c}
+        \natEval{x}_{x:\nat, \Phi} = x, |\Phi| \mapsto x \qquad \natEval{n}_\Phi = |\Phi| \mapsto n \\[5pt]
+        \natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\\[5pt]
+        \natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|) \quad \natEval{\vnil^\nat}_{\Phi} = |\Phi| \mapsto [\,]\\[5pt]
+        \natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\quad \natEval{M @ N}_\Phi = \natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)\\[5pt]
+        \natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto 
+        \begin{cases}
+            \natEval{M}_\Phi(|\Phi|)\quad \text{If } \natEval{L}_\Phi(|\Phi|) = 0 \\
+            \natEval{N}_\Phi(|\Phi|)\quad \text{Otherwise}
+        \end{cases}\\[10pt]
+        \natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes\limits_{i=n}^{m-1} i \\[10pt]
+        \natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{V}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)\\[10pt]
+        \multicolumn{1}{l}{\natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi = }\\[5pt]
+        \multicolumn{1}{r}{|\Phi|\mapsto \natEval{N}_{x:P, y:\typeVec{P}{n}, \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)}\\[5pt]
+        \multicolumn{1}{r}{\text{Where } [y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)}
+    \end{array}
+    \]
+    \caption{Parameter evaluation}
+    \label{tab:ParameterEval}
+\end{table}
 
 \begin{lemma}%
     \label{lem:eval-type}
@@ -100,31 +94,34 @@ we can encode it as a family of SZX diagrams
   n_1, \dots, n_k, |\Phi| \mapsto \tikzfig{judgement-trans}
 \].
 
-We will omit the brackets in our diagrams for clarity. In a similar manner to the evaluation, we define the translation $\trans{M}_{\Phi,\Gamma}$ recursively on the terms as follows: 
+We will omit the brackets in our diagrams for clarity. In a similar manner to the evaluation, we define the translation $\trans{M}_{\Phi,\Gamma}$ recursively on the terms in Table~\ref{tab:TermTrans}: 
 
 {\color{red} ARREGLAR ESTA PARTE QUE ESTÁ ILEGIBLE}
 
-\resizebox{.93\linewidth}{!}{\noindent
-$
-\begin{array}{c c}
-    \trans{x}_{\Phi,x:A} = |\Phi|\mapsto \tikzfig{judgements/linear/ax}
-    &
-    \trans{0}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/zero}
-    \\[10pt]
-    \trans{1}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/one}
-    &
-    \trans{\meas}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/meas}
-    \\[12pt]
-    \trans{\new}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/new}
-    &
-    \trans{U}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/unitary}
-    \\[12pt]
-    \trans{\star}_\Phi = |\Phi|\mapsto\tikzfig{judgements/linear/skip}
-    &
-    \trans{\vnil}_\Phi = |\Phi|\mapsto\tikzfig{judgements/linear/skip}
-\end{array}
-$
-}
+\begin{table}
+    \[
+    \begin{array}{c c}
+        \trans{x}_{\Phi,x:A} = |\Phi|\mapsto \tikzfig{judgements/linear/ax}
+        &
+        \trans{0}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/zero}
+        \\[10pt]
+        \trans{1}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/one}
+        &
+        \trans{\meas}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/meas}
+        \\[12pt]
+        \trans{\new}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/new}
+        &
+        \trans{U}_{\Phi} = |\Phi|\mapsto\tikzfig{judgements/linear/unitary}
+        \\[12pt]
+        \trans{\star}_\Phi = |\Phi|\mapsto\tikzfig{judgements/linear/skip}
+        &
+        \trans{\vnil}_\Phi = |\Phi|\mapsto\tikzfig{judgements/linear/skip}
+    \end{array}
+    \]
+    \caption{State translation}
+    \label{tab:TermTrans}
+\end{table}
+
 
 $
 \begin{array}{c}
