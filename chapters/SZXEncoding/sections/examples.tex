@@ -16,8 +16,6 @@ by applying a Hadamard gate to the first one and then using it as target
 of successive \textit{crot} applications using the rest of the qubits as controls.
 Finally, \textit{qft} repeats \textit{apply\_crot} for all values of $k$.
 In the terms, we use $n\dots m$ as a shorthand for $\Qrange\ @n\ @m$.
-
-{
 \begin{flalign*}
    \intertext{crot: $(n:\nat)\to (\qubit\otimes\qubit)\multimap (\qubit\otimes\qubit)$}
    \text{crot}:= &\lambda' n^{\nat}.\,\lambda qs^{\qubit \otimes \qubit}.\hfill\\
@@ -25,7 +23,6 @@ In the terms, we use $n\dots m$ as a shorthand for $\Qrange\ @n\ @m$.
    &\Qlet{c^\qubit \otimes q^\qubit}{\mathtt{CNOT}\ c\ (\mathtt{Rz}\ @2^n\ q)}{}\\
    &\qquad\mathtt{CNOT}\ c\ (\mathtt{Rz^{-1}}\ @2^n\ q)\\ 
 \end{flalign*}
-}
 \begin{flalign*}
    \intertext{apply\_crot: $(n:\nat) \to (k:\nat) \to \typeVec{\qubit}{n} \multimap \typeVec{\qubit}{n}$}\\
    \text{apply\_crot}:=\ & \lambda' n^\nat.\ \lambda' k^\nat.\ \lambda qs^{\typeVec{\qubit}{n}}. & \\
@@ -40,30 +37,26 @@ In the terms, we use $n\dots m$ as a shorthand for $\Qrange\ @n\ @m$.
       {\Qaccumap\ fs\ (H\ q)\ cs}{}\\
    & \text{concat } h\ (q': cs')
 \end{flalign*}
-
 \(
    \text{qft}: (n:\nat) \to \typeVec{\qubit}{n}\multimap\typeVec{\qubit}{n}
-\) %
-%\vspace*{-1em}
+\) 
 \begin{flalign*}
    \text{qft} :=\ & \lambda' n^\nat.\lambda qs^{\typeVec{\qubit}{n}}.
       \Qcompose & \\
       & (\Qfor{k^\nat}{\text{reverse\_vec } @(0..n)}
       {\lambda qs'^{\ \typeVec{\qubit}{n}}.\text{apply\_crot } @n\ @k\ qs'})\ qs
 \end{flalign*}
-
 The translation of each term into a family of diagrams is shown below.
 We omit the wire connecting the function inputs to the right side
 of the graphs for clarity and eliminate superfluous gathers and splitters
 using rules $\mathbf{(sg)}$ and $\mathbf{(gs)}$.
 Notice that, in contrast to a quantum circuit encoding,
 the resulting diagram's size does not depend on the number of qubits $n$.
-
 \[
    \trans{\text{crot}}=\ n \mapsto \tikzfig{examples/qft-crot}
 \]
 \[
-   \trans{\text{apply\_crot}}=\ n,k \mapsto \tikzfig{examples/qft-applycrot}
+   \trans{\text{apply\_crot}}=\ n,k \mapsto \scalebox{0.75}{\tikzfig{examples/qft-applycrot}}
 \]
 \[
    \trans{\text{qft}}=\ n \mapsto \tikzfig{examples/qft-main}

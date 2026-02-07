@@ -34,69 +34,82 @@ In this sense we deviate from the original Proto-Quipper-D type system, which su
     \end{align*}
     \caption{Type Grammar}
 \end{table*}
-\iffalse
+
 \begin{table}
     \small
     \[
-        \infer[\mathsf{ax}]{\Phi, x:A\vdash x:A}{} \qquad
-        \infer[\mathsf{ax_0}]{\Phi \vdash 0:\bit}{} \qquad
-        \infer[\mathsf{ax_1}]{\Phi \vdash 1:\bit}{} \qquad
+        \infer[\mathsf{ax}]{\TYP{\Phi, x:A}{x}{A}}{} \qquad
+        \infer[\mathsf{ax_0}]{\TYP{\Phi}{0}{\bit}}{} \qquad
+        \infer[\mathsf{ax_1}]{\TYP{\Phi}{1}{\bit}}{} \qquad
     \]
+    
     \[
-        \infer[\mathsf{ax}_n]{\Phi\vdash n:\nat}{n\in\mathbb{N}}\qquad
-        \infer[\square]{\Phi\vdash M\square N:\nat}
-        {\Phi\vdash M:\nat & \Phi\vdash N:\nat}
+        \infer[\mathsf{ax}_n]{\TYP{\Phi}{n}{\nat}}{n\in\mathbb{N}} \qquad
+        \infer[\square]{\TYP{\Phi}{M\square N}{\nat}}
+        {\TYP{\Phi}{M}{\nat} & \TYP{\Phi}{N}{\nat}}
     \]
+    
     \[
-        \infer[\mathsf{meas}]{\Phi \vdash \meas:\qubit\multimap\bit}{} \qquad
-        \infer[\mathsf{new}]{\Phi \vdash \new:\bit\multimap\qubit}{}
-        
+        \infer[\mathsf{meas}]{\TYP{\Phi}{\meas}{\qubit\multimap\bit}}{} \qquad
+        \infer[\mathsf{new}]{\TYP{\Phi}{\new}{\bit\multimap\qubit}}{}
     \]
+    
     \[
         \infer[\mathsf{ax_{\unit}}]{\Phi\vdash \star: \unit}{}\qquad
         \infer[\mathsf{u}]{\Phi\vdash \U:\qubit^{\otimes n}\multimap\qubit^{\otimes n}}{}
     \]
+    
     \[
         \infer[\mathsf{r}]{\Phi\vdash \R:(n:\nat)\to\qubit^{\otimes n}\multimap\qubit^{\otimes n}}{}
     \]
+    
     \[
         \infer[\multimap_i]{\Phi,\Gamma\vdash\lambda x.M:A\multimap B}{\Phi,\Gamma,x:A\vdash M:B}
-        \qquad
-        \infer[\rightarrow_i]{\Phi,\Gamma\vdash\lambda' x.M:(n:\nat)\to B}{\Phi,x:\nat,\Gamma\vdash M:B[x]}
-    \]
-    \[
+        \quad
         \infer[\multimap_e]{\Phi,\Gamma,\Delta\vdash MN:B}{\Phi,\Gamma\vdash M:A\multimap B & \Phi,\Delta\vdash N:A}
-        \qquad
+    \]
+    
+    \[
+        \infer[\rightarrow_i]{\Phi,\Gamma\vdash\lambda' x.M:(n:\nat)\to B}{\Phi,x:\nat,\Gamma\vdash M:B[x]}
+        \quad
         \infer[\rightarrow_e]{\Phi,\Gamma\vdash M @ N:B[n/N]}{\Phi,\Gamma\vdash M:(n:\nat)\to B & \Phi\vdash N:\nat}
     \]
+    
     \[
         \infer[;]{\Phi,\Gamma,\Delta\vdash M;N :B}{\Phi,\Gamma\vdash M:\unit & \Phi,\Delta\vdash N:B}
-        \qquad
+        \quad
         \infer[;_{vec}]{\Phi,\Gamma,\Delta\vdash M;_vN :B}{\Phi,\Gamma\vdash M:\typeVec{A}{0} & \Phi,\Delta\vdash N:B}
     \]
+    
     \[
         \infer[\otimes]{\Phi,\Gamma,\Delta\vdash M\otimes N:A \otimes B}{\Phi,\Gamma\vdash M:A & \Phi,\Delta\vdash N:B}
-        \qquad
+    \]
+    
+    \[
         \infer[let_\otimes]{\Phi,\Gamma,\Delta\vdash \Qlet{x^A \otimes y^B}{M}{N}:C}{\Phi,\Gamma\vdash M:A\otimes B & \Phi,\Delta,x:A,y:B\vdash N: C}
     \]
+    
     \[
         \infer[\vnil]{\Phi\vdash \vnil^A:\typeVec A 0}{}
         \qquad
         \infer[\typeVec{}{}]{\Phi,\Gamma,\Delta\vdash M\!::\!N\ :\typeVec{A}{(n+1)}}{\Phi,\Gamma\vdash M:A & \Phi,\Delta\vdash N: \typeVec A n}
     \]
+    
     \[
         \infer[let_{vec}]{\Phi,\Gamma,\Delta\vdash \Qlet{x^A : y^{\typeVec A n}}{M}{N}:C}{\Phi,\Gamma\vdash M:\typeVec{A}{(n+1)} & \Phi,\Delta,x:A,y:\typeVec A n\vdash N: C}
     \]
+    
     \[
         \infer[for]{\Phi, \Gamma^n \vdash \Qfor{k}{V}{M} : \typeVec {A[k]} n}{n:\nat & \Phi\vdash V:\typeVec \nat n & k:\nat,\Phi,\Gamma \vdash M:A[k]}
     \]
+    
     \[
         \infer[ifz]{\Phi, \Gamma \vdash \ifz{L}{M}{N} : A}{\Phi \vdash L:\nat & \Phi,\Gamma\vdash M:A & \Phi,\Gamma\vdash N: A}
     \]
-    \caption{Type system.}%
+    \caption{Type system.}
     \label{fig:linear-fragment-typing}
 \end{table}
-\fi
+
 Types are divided into two kinds; parameter and state types. Both of these can depend on terms of type $\nat$. For the scope of this work, this dependence may only influence the size of vectors types.
 
 Parameter types represent non-linear variable types which are known at the time of generation of the concrete quantum operations. In the translation into SZX diagrams, these variables may dictate the labels of the wires and spiders. Vectors of $\nat$ terms represent their cartesian product.
@@ -132,17 +145,14 @@ is shown in Appendix~\ref{sec:primitive-trans}.
 We additionally define the following helpful terms based on the previous
 primitives to aid in the manipulation of vectors.
 Cf. Appendix~\ref{sec:op-semantics} for their definition as \lambdaD-terms.
-\begin{center}
-\noindent\resizebox{\textwidth}{!}{
-$
+
+\[
 \begin{array}{l}
     \Phi\vdash \Qmap_{A,B} : (n:\nat) \to \typeVec A n \multimap\; \typeVec{(A \multimap B)}{n} \multimap \typeVec B n \\
     \Phi\vdash \Qfold_{A,C} : (n:\nat) \to \typeVec A n \multimap\; \typeVec{(A \multimap C \multimap C)}{n} \multimap C \multimap C \\
     \Phi\vdash \Qcompose_{A} : (n:\nat) \to \typeVec{(A \multimap A)}{n} \multimap A \multimap A \\
 \end{array}
-$
-}
-\end{center}
+\]
 
 The distinction between primitives that deal with state and parameters highlights the inclusion of the $\mathtt{for}$ as a construction into the language instead of a primitive. Since it acts over both parameter and state types, its function is effectively to bridge the gap between the two of them. This operation closely corresponds to the list instantiation procedure presented in the Section~\ref{sec:szx}.
 
