@@ -373,7 +373,7 @@
     \eval \sum_{i=1}^n \alpha_i \vv{w_i}
   \end{align*}
 
-  But since $\sum_{i=1}^n \alpha_i \vv{v_i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vv{w_i}\|=1$. Therefore:
+  But since $\sum_{i=1}^n \alpha_i \vv{v_i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp B}$ too. Which then implies $\|\sum_{i=1}^n \alpha_i \vv{w_i}\|=1$. Therefore:
   \begin{align*}
     1 = \|\sum_{i=1}^n \alpha_i \vv{w_i}\| &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
     &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}\\
@@ -993,43 +993,19 @@ Now, we can restate and prove \ref{thm:TypingRulesValidity}.
   the \textsc{Equiv} rule. We only give the basis cases as the inductive cases (the contextual cases) are straightforward.
   \begin{itemize}
     \item Let $(\Lam{x}{X}{\vv t})\vv v \lraneq \vv t\ansubst{\vv v/x}{X}$:
-      Assume $\TYP{\Gamma,\Delta}{(\Lam{x}{X}{\vv t})\,\vv v}{B}$. By
-      \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$ and
-      $\TYP{\Delta}{\vv v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$
-      and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vv t}{B}$. By
-      \ref{lem:Substitution},
-      using $\TYP{\Delta}{\vv v}{A}$ and the fact that $\vv t\ansubst{\vv
-      v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vv t\ansubst{\vv
-      v/x}{X}}{B}$, as required.
+    
+    Assume $\TYP{\Gamma,\Delta}{(\Lam{x}{X}{\vv t})\,\vv v}{B}$. By \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$ and $\TYP{\Delta}{\vv v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$ and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vv t}{B}$. By \ref{lem:Substitution}, using $\TYP{\Delta}{\vv v}{A}$ and the fact that $\vv t\ansubst{\vv v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vv t\ansubst{\vv v/x}{X}}{B}$, as required.
 
-    \item Let $\LetP{x}{X}{y}{Y}{\vv v}{\vv t} \lraneq \vv t\ansubst{\vv
-      v/x\otimes y}{X\otimes Y}$: Assume
-      $\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vv v}{\vv t}}{C}$.  By
-      \textsc{LetPair} we have $\TYP{\Gamma}{\vv v}{A\times B}$ and
-      $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vv t}{C}$.  Decompose $\vv v$ (in
-      $X\otimes Y$) as required by the definition of $\ansubst{\vv v/x\otimes
-      y}{X\otimes Y}$; by \ref{lem:Substitution}
-      applied twice
-      (first for $x$, then for $y$), we conclude $\TYP{\Gamma,\Delta}{\vv
-      t\ansubst{\vv v/x\otimes y}{X\otimes Y}}{C}$.
+    \item Let $\LetP{x}{X}{y}{Y}{\vv v}{\vv t} \lraneq \vv t\ansubst{\vv v/x\otimes y}{X\otimes Y}$: 
+    
+    Assume $\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vv v}{\vv t}}{C}$.  By \textsc{LetPair} we have $\TYP{\Gamma}{\vv v}{A\times B}$ and $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vv t}{C}$.  Decompose $\vv v$ (in $X\otimes Y$) as required by the definition of $\ansubst{\vv v/x\otimes y}{X\otimes Y}$; by \ref{lem:Substitution} applied twice(first for $x$, then for $y$), we conclude $\TYP{\Gamma,\Delta}{\vv t\ansubst{\vv v/x\otimes y}{X\otimes Y}}{C}$.
 
-    \item Let $\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-      \lraneq \vv{t_k}$: Assume
-      $\TYP{\Gamma,\Delta}{\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
-      By \textsc{Case} we have $\TYP{\Gamma}{{\vv{v_k}}}{\basis{\{\vv
-      v_i\}_{i=1}^n}}$ and $\TYP{\Delta}{\vv t_i}{A}$ for all $i$.  Thus, we are
-      done.
+    \item Let $\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}\lraneq \vv{t_k}$: 
+    
+    Assume $\TYP{\Gamma,\Delta}{\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$. By \textsc{Case} we have $\TYP{\Gamma}{{\vv{v_k}}}{\basis{\{\vv v_i\}_{i=1}^n}}$ and $\TYP{\Delta}{\vv t_i}{A}$ for all $i$.  Thus, we are done.
 
-    \item Let
-      $\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-      \lraneq \sum_{i=1}^n\alpha_i\vv{t_i}$: Assume
-      $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
-      By \textsc{UnitCase} we have $\TYP{\Gamma}{\vv t}{\sharp\basis{\{\vv
-      v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vv t_i}{\vv t_j}{A}$.
-      Then the reduct $\sum_{i=1}^{n}\alpha_i \vv{t_i}$ is typed by \textsc{Sum}
-      as $\sharp A$ (using the orthogonality premises and the normalisation
-      condition ensured by the semantics of $\sharp$), hence
-      $\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}$.
-      \qedhere
+    \item Let $\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}\lraneq \sum_{i=1}^n\alpha_i\vv{t_i}$:
+    
+    Assume $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$. By \textsc{UnitCase} we have $\TYP{\Gamma}{\vv t}{\sharp\basis{\{\vv      v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vv t_i}{\vv t_j}{A}$. Then the reduct $\sum_{i=1}^{n}\alpha_i \vv{t_i}$ is typed by \textsc{Sum} as $\sharp A$ (using the orthogonality premises and the normalisation condition ensured by the semantics of $\sharp$), hence $\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}$.\qedhere
   \end{itemize}
 \end{proof}
