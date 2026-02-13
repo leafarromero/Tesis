@@ -25,12 +25,14 @@
         \tikzfig{proof/accumap-b-10}
         \;\overset{\scriptstyle{def}}{=}\;
         \tikzfig{proof/accumap-b-20}
-        \;\overset{\scriptstyle{\bf{(gs)}}}{=}\;
-        \tikzfig{proof/accumap-b-30}
     \]
     \[
+        \;\overset{\scriptstyle{\bf{(gs)}}}{=}\;
+        \tikzfig{proof/accumap-b-30}
         \;=\;
         \tikzfig{proof/accumap-b-40}
+    \]
+    \[
         \;\overset{\scriptstyle{HI}}{=}\;
         \tikzfig{proof/accumap-b-50}
     \]
@@ -51,6 +53,8 @@
         \item If $\diag$ is a gather, 
         \[
             \tikzfig{proof/list-i-gather-10}
+        \]
+        \[
             \;\overset{\scriptstyle{\bf{(p)}}}{=}\;
             \tikzfig{proof/list-i-gather-20}
         \]
@@ -96,7 +100,7 @@
 
 \begin{lemma}%
     \label{lem:eval-substitution}
-    Given type judgements $\Phi, x:A \vdash M : B$, and $\Phi\vdash N : A$. $\natEval{M}_{x:A,\Phi} (\natEval{N}_{\Phi},|\Phi|)= \natEval{M[N/x]}_\Phi($ $|\Phi|$ $)$.
+    Given type judgements $\Phi, x:A \vdash M : B$, and $\Phi\vdash N : A$. Then, $\natEval{M}_{x:A,\Phi} (\natEval{N}_{\Phi},|\Phi|)= \natEval{M[N/x]}_\Phi($ $|\Phi|$ $)$.
 \end{lemma}
 
 \begin{proof}
@@ -105,27 +109,27 @@ Proof by straightforward induction on $M$.
 
 \begin{lemma}{\!\textbf{(\ref{lem:eval-type})}}
     Given an evaluable type $A$ and a type judgement $\Phi \vdash M : A$,
-    $\natEval{M}_\Phi \in \bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
+    $\natEval{M}_\Phi \in \bigtimes\limits_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
 \end{lemma}
 
 \begin{proof}
     By induction on the typing judgement $\Phi \vdash M : A$:
     \begin{itemize}
-        \item If $\Phi\vdash n:\nat$, then $\natEval{n}_\Phi = |\Phi| \mapsto n \in  \bigtimes_{x:P \in \Phi} \natEval{P} \to \N$.
+        \item If $\Phi\vdash n:\nat$, then $\natEval{n}_\Phi = |\Phi| \mapsto n \in  \bigtimes\limits_{x:P \in \Phi} \natEval{P} \to \N$.
 
-        \item If $\Phi, x:A\vdash x:A$, then $\natEval{x}_{x:A, \Phi} = x,|\Phi| \mapsto x \in \bigtimes_{y:P \in x:A,\Phi} \natEval{P} \to \natEval{A}$.
+        \item If $\Phi, x:A\vdash x:A$, then $\natEval{x}_{x:A, \Phi} = x,|\Phi| \mapsto x \in \bigtimes\limits_{y:P \in x:A,\Phi} \natEval{P} \to \natEval{A}$.
 
         \item If $\Phi\vdash M\square N:\nat\Phi,\Gamma,\Delta\vdash M\!::\!N\ :\typeVec{A}{(n+1)}$, then $\natEval{M \square N}_\Phi = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square$
         $\natEval{N}_\Phi($ $|\Phi|$ $)$. By inductive hypothesis, $\natEval{M}_\Phi(|\Phi|), \natEval{M}_\Phi(|\Phi|)\in \N$. Then,
-        $|\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\in \bigtimes_{x:P \in \Phi} \natEval{P} \to \N$.
+        $|\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \square \natEval{N}_\Phi(|\Phi|)\in \bigtimes\limits_{x:P \in \Phi} \natEval{P} \to \N$.
         
-        \item If $\Phi\vdash\lambda' x.M:(x:P)\to B$ then $\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)$. By inductive hypothesis, $\natEval{M}_\Phi(x,|\Phi|)\in \natEval{B}$. Then, $|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\in \bigtimes_{y:P \in x:P\Phi} \natEval{P} \to \natEval{B}$.
+        \item If $\Phi\vdash\lambda' x.M:(x:P)\to B$ then $\natEval{\lambda' x^P.M}_\Phi = x,|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)$. By inductive hypothesis, $\natEval{M}_\Phi(x,|\Phi|)\in \natEval{B}$. Then, $|\Phi| \mapsto \natEval{M}_\Phi(x,|\Phi|)\in \bigtimes\limits_{y:P \in x:P\Phi} \natEval{P} \to \natEval{B}$.
 
-        \item If $\Phi,\Gamma\vdash M @ N:B[x/r]$, then $\natEval{M @ N}_\Phi = |\Phi| \mapsto\natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)$. By inductive hypothesis, $\natEval{N}_\Phi(|\Phi|)\in \N$ and $x\mapsto\natEval{M}_\Phi(x, \Phi)\in \natEval{x:\nat\to B[x]}$. Then, $|\Phi|\mapsto\natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi) \in \bigtimes_{y:P \in \Phi} \natEval{P} \to \natEval{B[A/x]}$.
+        \item If $\Phi,\Gamma\vdash M @ N:B[x/r]$, then $\natEval{M @ N}_\Phi = |\Phi| \mapsto\natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi)$. By inductive hypothesis, $\natEval{N}_\Phi(|\Phi|)\in \N$ and $x\mapsto\natEval{M}_\Phi(x, \Phi)\in \natEval{x:\nat\to B[x]}$. Then, $|\Phi|\mapsto\natEval{M}_\Phi(\natEval{N}_\Phi(|\Phi|), \Phi) \in \bigtimes\limits_{y:P \in \Phi} \natEval{P} \to \natEval{B[A/x]}$.
 
-        \item If $\Phi\vdash \vnil^A:\typeVec A 0$, then $\natEval{\vnil^P}_{\Phi} = |\Phi| \mapsto []\in \bigtimes_{x:P \in \Phi} \natEval{P} \to \N^0$.
+        \item If $\Phi\vdash \vnil^A:\typeVec A 0$, then $\natEval{\vnil^P}_{\Phi} = |\Phi| \mapsto []\in \bigtimes\limits_{x:P \in \Phi} \natEval{P} \to \N^0$.
 
-        \item If $\Phi,\Gamma,\Delta\vdash M\!::\!N\ :\typeVec{A}{(n+1)}$, then $\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)$. By inductive hypothesis ${M}_\Phi(|\Phi|)\in\natEval{A}$ and $\natEval{N}_\Phi(|\Phi|)\in\natEval{A}^n$. Then, $|\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)\in\bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}^{n+1}$.
+        \item If $\Phi,\Gamma,\Delta\vdash M\!::\!N\ :\typeVec{A}{(n+1)}$, then $\natEval{M\ ::\ N}_{\Phi} = |\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)$. By inductive hypothesis ${M}_\Phi(|\Phi|)\in\natEval{A}$ and $\natEval{N}_\Phi(|\Phi|)\in\natEval{A}^n$. Then, $|\Phi| \mapsto \natEval{M}_\Phi(|\Phi|) \times \natEval{N}_\Phi(|\Phi|)\in\bigtimes\limits_{x:P \in \Phi} \natEval{P} \to \natEval{A}^{n+1}$.
 
         \item If $\Phi, \Gamma \vdash \ifz{L}{M}{N} : A$, then \\
         $\natEval{\ifz{L}{M}{N}}_\Phi = |\Phi| \mapsto \begin{cases}
@@ -134,30 +138,32 @@ Proof by straightforward induction on $M$.
         \end{cases}.$
 
         By inductive hypothesis $\natEval{m}_\Phi(|\Phi|),\natEval{N}_\Phi(|\Phi|)\in\natEval{A}$ and $\natEval{L}_\Phi(|\Phi|)\in\N$. \\
-        Then $\natEval{\ifz{L}{M}{N}}_\Phi\in\bigtimes_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
+        Then $\natEval{\ifz{L}{M}{N}}_\Phi\in\bigtimes\limits_{x:P \in \Phi} \natEval{P} \to \natEval{A}$.
 
         \item If $\Phi\vdash \Qfor{k}{N}{M} : \typeVec A n$, then
-        $\natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes_{k\in
-        \natEval{N}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k,$ $|\Phi|)$.
+        
+        \[
+        \natEval{\Qfor{k}{V}{M}}_\Phi = |\Phi| \mapsto \bigtimes\limits_{k\in
+        \natEval{N}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k, |\Phi|)
+        \]
+
         By induction hypothesis, $\natEval{N}_\Phi(|\Phi|)\in \nat^n$ and
         $x\mapsto\natEval{M}_\Phi(x, \Phi)\in \natEval{k:\nat\to A[k]}$. Then $|\Phi|
-        \mapsto \bigtimes_{k\in \natEval{N}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k,
-        |\Phi|)\in\bigtimes_{x:P \in \Phi} \natEval{P} \to\natEval{A[k/N]}^n$.
+        \mapsto \bigtimes\limits_{k\in \natEval{N}_\Phi(|\Phi|)} \natEval{M}_{k:\nat\Phi}(k,
+        |\Phi|)\in\bigtimes\limits_{x:P \in \Phi} \natEval{P} \to\natEval{A[k/N]}^n$.
 
         \item If $\Phi\vdash \Qlet{x^B : y^{\typeVec B n}}{M}{N}:A$, then
         $\natEval{\Qlet{x^P :: y^{\typeVec{P}{n}}}{M}{N}}_\Phi =$\allowbreak
-        $|\Phi|\mapsto$ \\
-        $ \natEval{N}_{x:P, y:\typeVec{P}{n}\Phi}(y_1,[y_2,\dots,y_n],|\Phi|)$
-        where $[y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)$.
+        $|\Phi|\mapsto \natEval{N}_{x:P, y:\typeVec{P}{n}\Phi}(y_1,[y_2,\dots,y_n],|\Phi|)$ where $[y_1,\dots,y_n] = \natEval{M}_\Phi(|\Phi|)$.
         
         By inductive hypothesis
         $\natEval{M}_\Phi(|\Phi|)\in \natEval{B}^n$ and $\natEval{N}_{x:P, y:\typeVec{P}{n}
         \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\in\natEval{A}$. Then $|\Phi|\mapsto
         \natEval{N}_{x:P, y:\typeVec{P}{n}
-        \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\in\bigtimes_{x:P \in \Phi} \natEval{P}
+        \Phi}(y_1,[y_2,\dots,y_n],|\Phi|)\in\bigtimes\limits_{x:P \in \Phi} \natEval{P}
         \to \natEval{A}$.
 
-        \item If $\Phi\vdash \Qrange : (n:\nat)\to (m:\nat)\to \typeVec{\nat}{(m-n)}$, then $\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes_{i=n}^{m-1} i\in \bigtimes_{z:P \in x:\nat,y:\nat,\Phi} \natEval{P} \to \N^{m-n}$
+        \item If $\Phi\vdash \Qrange : (n:\nat)\to (m:\nat)\to \typeVec{\nat}{(m-n)}$, then $\natEval{\Qrange}_\Phi = n,m,|\Phi| \mapsto \bigtimes\limits_{i=n}^{m-1} i\in \bigtimes\limits_{z:P \in x:\nat,y:\nat,\Phi} \natEval{P} \to \N^{m-n}$
     \end{itemize}
 \end{proof}
 
@@ -256,24 +262,25 @@ Proof by straightforward induction on $M$.
         \begin{itemize}
             \item If $M\to \Qfor{k}{N}{R}$ with $M'\to N$, then: 
             \begin{align*}
-                \natEval{\Qfor{k}{M'}{R}}_\Phi &= |\Phi| \mapsto \bigtimes_{k\in \natEval{M'}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
-                &= |\Phi| \mapsto \bigtimes_{k\in \natEval{N}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                \natEval{\Qfor{k}{M'}{R}}_\Phi &= |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{M'}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{N}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
                 &= \natEval{\Qfor{k}{N}{R}}_\Phi
             \end{align*}
 
-            \item If $M\to R[k/M_1]\ : \Qfor{k}{M_2}{R}$ with $M' = V::L$, then: 
+            \item If $M\to R[k/M_1]\ :: \Qfor{k}{M_2}{R}$ with $M' = V::L$, then: 
             \begin{align*}
-                \natEval{\Qfor{k}{M_1\ ::\ M_2}{R}}_\Phi &= |\Phi| \mapsto \bigtimes_{k\in \natEval{M_1\ ::\ M_2}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
-                &= |\Phi| \mapsto \bigtimes_{k\in \natEval{M_1}_\Phi(|\Phi|) \times \natEval{M_2}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
-                &= |\Phi| \mapsto \natEval{R}_{k,\Phi}(\natEval{M_1}_\Phi(|\Phi|), |\Phi|) \times \bigtimes_{k\in \natEval{M_2}_\Phi(|\Phi|} \natEval{R}_{k,\Phi}(k, |\Phi|)\\
+                &\hspace*{-25pt}\natEval{\Qfor{k}{M_1\ ::\ M_2}{R}}_\Phi \\
+                &= |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{M_1\ ::\ M_2}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{M_1}_\Phi(|\Phi|) \times \natEval{M_2}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \natEval{R}_{k,\Phi}(\natEval{M_1}_\Phi(|\Phi|), |\Phi|) \times \bigtimes\limits_{k\in \natEval{M_2}_\Phi(|\Phi|} \natEval{R}_{k,\Phi}(k, |\Phi|)\\
                 &= \natEval{R[M_1/k]}_{\Phi} \times \natEval{\Qfor{k}{M_2}{R}}_\Phi\\
                 &= \natEval{R[M_1/k]\ ::\ \Qfor{k}{M_2}{R}}_\Phi\\
             \end{align*}
 
             \item If $M\to \vnil$ with $M' = \vnil^\nat$, then: 
             \begin{align*}
-                \natEval{\Qfor{k}{\vnil^\nat}{R}}_\Phi &= |\Phi| \mapsto \bigtimes_{k\in \natEval{\vnil^\nat}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
-                &= |\Phi| \mapsto \bigtimes_{k\in []} \natEval{R}_\Phi(k, |\Phi|)\\
+                \natEval{\Qfor{k}{\vnil^\nat}{R}}_\Phi &= |\Phi| \mapsto \bigtimes\limits_{k\in \natEval{\vnil^\nat}_\Phi(|\Phi|)} \natEval{R}_\Phi(k, |\Phi|)\\
+                &= |\Phi| \mapsto \bigtimes\limits_{k\in []} \natEval{R}_\Phi(k, |\Phi|)\\
                 &= |\Phi| \mapsto []\\
                 &= \natEval{\vnil^\nat}_\Phi
             \end{align*}
@@ -283,7 +290,8 @@ Proof by straightforward induction on $M$.
         \begin{itemize}
             \item If $M\to \Qlet{x::y}{N}{M_2}$ with $M_1\to N$, then: 
             \begin{align*}
-            \natEval{\Qlet{x::y}{M_1}{M_2}}_\Phi &= |\Phi|\mapsto \natEval{M_2}_\Phi(y_1,[y_2,\dots,y_n],|\Phi|){\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{M_1}_\Phi(|\Phi|)}}\\
+            &\hspace*{-25pt}\natEval{\Qlet{x::y}{M_1}{M_2}}_\Phi\\
+            &= |\Phi|\mapsto \natEval{M_2}_\Phi(y_1,[y_2,\dots,y_n],|\Phi|){\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{M_1}_\Phi(|\Phi|)}}\\
             &= |\Phi|\mapsto 
             \natEval{M_2}_\Phi(y_1,[y_2,\dots,y_n],|\Phi|)
         {\scriptstyle{\text{ where } [y_1,\dots,y_n] = \natEval{N}_\Phi(|\Phi|)}}\\
@@ -302,10 +310,10 @@ Proof by straightforward induction on $M$.
 
         \item If $M= \Qrange\ @n\ @M_2$ then:
         \begin{align*}
-            \natEval{\Qrange @n @m}_\Phi &= |\Phi| \mapsto \bigtimes_{i=n}^{m-1} i\\
+            \natEval{\Qrange @n @m}_\Phi &= |\Phi| \mapsto \bigtimes\limits_{i=n}^{m-1} i\\
             &=|\Phi| \mapsto \begin{cases}
                 [] \text{ if } n-m = 0 \\
-                n\times \bigtimes_{i=n+1}^{m-1} i \text{ otherwise}
+                n\times \bigtimes\limits_{i=n+1}^{m-1} i \text{ otherwise}
             \end{cases}\\
             &=|\Phi| \mapsto \begin{cases}
                 [] \text{ if } \natEval{n-m}_\Phi = 0 \\
@@ -352,6 +360,8 @@ Proof by straightforward induction on $M$.
         \item If $M = \Qlet{x^A\otimes y^B}{V_1 \otimes V_2}{M'}$ and $N=M'[V_1/x][V_2/y]$,
             \[
                 \trans{\Qlet{x^A\otimes y^B}{V_1 \otimes V_2}{M'}}_{\Phi,\Gamma,\Delta,\Lambda}
+            \]
+            \[
                 =
                 |\Phi|\mapsto\tikzfig{proof/trans-reduct-let-10}
             \]
@@ -364,6 +374,8 @@ Proof by straightforward induction on $M$.
         \item If $M = \Qlet{x^A :: y^{\typeVec{A}{n}}}{V_1 :: V_2}{M'}$ and $N=M'[V_1/x][V_2/y]$,
             \[
                 \trans{\Qlet{x^A :: y^{\typeVec{A}{n}}}{V_1 :: V_2}{M'}}_{\Phi,\Gamma,\Delta,\Lambda}
+            \]
+            \[
                 =
                 |\Phi|\mapsto\tikzfig{proof/trans-reduct-letVec-10}
             \]
@@ -384,6 +396,8 @@ Proof by straightforward induction on $M$.
                     \[
                         \;\overset{\scriptstyle{Lemma~\ref{lem:list-init-zero}}}{=}\;
                         |\Phi|\mapsto\tikzfig{proof/trans-reduct-ifz-20}
+                    \]
+                    \[
                         \;\overset{\scriptstyle{\bf{(\emptyset 4)}}}{=}\;
                         |\Phi|\mapsto\tikzfig{proof/trans-reduct-ifz-30}
                         =
@@ -416,6 +430,8 @@ Proof by straightforward induction on $M$.
             \[
                 \;\overset{\scriptstyle{\text{Lemma~\ref{lem:list-instantiation}}}}{=}\;
                 |\Phi|\mapsto\tikzfig{proof/trans-reduct-for-20}
+            \]
+            \[
                 =
                 \trans{N'[k/V]::\Qfor{k}{M'}{N'}}_{\Phi,\Gamma^{\otimes n}}
             \]
@@ -444,6 +460,8 @@ Proof by straightforward induction on $M$.
             Notice that, by definition of $\tau_{n,A,B,C}$,
             \[
                 \tikzfig{proof/tau-n}
+            \]
+            \[
                 \;\overset{\scriptstyle{{\bf(p)}}}{=}\;
                 \tikzfig{proof/tau-n1}
             \]
@@ -451,26 +469,23 @@ Proof by straightforward induction on $M$.
             Therefore,
 
             \(
-                \trans{\Qaccumap_{A,B,C}\ N'\ M_{xs}\ M_{fs}\ M_{z}}_{\Phi,\Gamma,\Delta,\Pi}
+                \trans{\Qaccumap_{A,B,C}\ N'\ M_{xs}\ M_{fs}\ M_{z}}_{\Phi,\Gamma,\Delta,\Pi} = |\Phi|\mapsto
             \)
             \[
-                =
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-accumap-10}
+                \scalebox{0.8}{\tikzfig{proof/trans-reduct-accumap-10}}
             \]
-            \[
-                \;\overset{\scriptstyle{{\bf(p,gs,sg)}}}{=}\;
-                |\Phi|\mapsto\scalebox{0.95}{\tikzfig{proof/trans-reduct-accumap-20}}
-            \]
-            \(
-                =
-                \llbracket
-                    \ifz{N'}{xs\ ;_v\ fs\ ;_v\ \vnil\otimes M_z}{}
-                    \Qlet{x :: xs'}{M_{xs}}{} \Qlet{f :: fs'}{M_{fs}}{}
-                    \mathtt{let\ } y\otimes z' = f\ x\ z \mathtt{\ in\ }
-                    \Qlet{ys \otimes z''}{\Qaccumap\ @(N'-1)\ xs'\ fs'\ z'}{}
-                    (y :: ys) \otimes z''
-                \rrbracket_{\Phi,\Gamma,\Delta,\Pi}
-            \)
+            \begin{gather*}
+                \;\overset{\scriptstyle{{\bf(p,gs,sg)}}}{=}|\Phi|\mapsto\\
+                \scalebox{0.8}{\tikzfig{proof/trans-reduct-accumap-20}}
+            \end{gather*}
+            \begin{align*}
+                =\llbracket & \ifz{N'}{xs\ ;_v\ fs\ ;_v\ \vnil\otimes M_z}{}\\
+                    &\qquad\Qlet{x :: xs'}{M_{xs}}{} \\
+                    &\qquad\Qlet{f :: fs'}{M_{fs}}{} \\
+                    &\qquad\Qlet{y\otimes z'}{f\ x\ z}{} \\
+                    &\qquad\Qlet{ys \otimes z''}{\Qaccumap\ @(N'-1)\ xs'\ fs'\ z'}{} \\
+                    &\qquad(y :: ys) \otimes z''\rrbracket_{\Phi,\Gamma,\Delta,\Pi}
+            \end{align*}
 
         \item If $M = \Qsplit_A\ @n\ @m\ xs$ and \(N=
             \ifz{n}{\vnil\otimes xs}{}

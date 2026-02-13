@@ -34,13 +34,13 @@ notation~$\vv\sum$.
 \begin{table}[t]
   \begin{align*}
     v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
-    (\Val)\\
+    (\Val)\\[5pt]
     t &::= v \mid tt \mid (t,t) \mid
-    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
-    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
-    (\Lambda) \\
+    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}} & \\[5pt]
+    & \qquad\gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
+    (\Lambda) \\[5pt]
     \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+    \qquad\hfill(\alpha\in\C) & (\ValD) \\[5pt]
     \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
     \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
   \end{align*}
