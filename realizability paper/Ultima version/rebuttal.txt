@@ -52,4 +52,4 @@ A linear combination of lambda abstractions has an arrow type only when it behav
 
 In contrast, the examples given by the reviewer (v1 and v2) are typable via rule (Sum) as ♯ of an arrow type, rather than as arrow types themselves. In other words, they are treated as vectors in a vector space, not as functions.
 
-From this perspective, it is expected that v1 − v1 has norm 0, v1 + v1 has norm 2, etc. which is consistent with their interpretation as vectors rather than functions.
+From this perspective, it is expected that v1 − v1 has norm 0, v1 + v1 has norm 2, etc., which is consistent with their interpretation as vectors rather than functions.
