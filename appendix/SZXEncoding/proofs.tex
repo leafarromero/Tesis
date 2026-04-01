@@ -493,77 +493,58 @@ Proof by straightforward induction on $M$.
             \mathtt{let\ } ys_1\otimes ys_2 = \Qsplit @(n-1)\ @m\ xs' \mathtt{\ in\ }
             (y :: ys_1)\otimes ys_2
             \). Let $n = \natEval{N_1}_\Phi(|\Phi|)$ and $m = \natEval{N_2}_\Phi(|\Phi|)$.
-            \[
-                \trans{\Qsplit_A\ @n\ @m\ xs}_{\Phi,\Gamma}
-                =
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-10}
-                \;\overset{\scriptstyle{{\bf(sg,gs)}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-20}
-            \]
-            \[
-                \;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-30}
-            \]
-            \[
-                \;\overset{\scriptstyle{{\bf(sg,gs,\emptyset 4)}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-40}
-            \]
-            \(
-                =
-                \llbracket
-                    \ifz{n}{\vnil\otimes xs}{}
-                    \Qlet{y :: xs'}{xs}{}
-                    \Qlet{ys_1\otimes ys_2}{\Qsplit @(n-1)\ @m\ xs'}{}
+            \begin{align*}
+                &\trans{\Qsplit_A\ @n\ @m\ xs}_{\Phi,\Gamma}
+                = |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-10}\\
+                &\overset{\scriptstyle{{\bf(sg,gs)}}}{=}\;|\Phi|\mapsto\tikzfig{proof/trans-reduct-split-20}\\
+                &\;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-30}\\
+                &\;\overset{\scriptstyle{{\bf(sg,gs,\emptyset 4)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-split-40}\\
+                &= \left\llbracket\begin{array}{l}
+                    \ifz{n}{\vnil\otimes xs}{}\\
+                    \Qlet{y :: xs'}{xs}{} \\
+                    \Qlet{ys_1\otimes ys_2}{\Qsplit @(n-1)\ @m\ xs'}{}\\
                     (y :: ys_1)\otimes ys_2
-                \rrbracket_{\Phi,\Gamma}
-            \)
+                \end{array}\right\rrbracket_{\Phi,\Gamma}
+            \end{align*}
+            
         \item If $M = \Qappend_A\ @N_1\ @N_2\ M_1\ M_2$ and \(N=
             \ifz{N_1}{M_1\ ;_v\ M_2}{}
             \Qlet{x :: xs'}{M_1}{}
             x :: (\Qappend\ @(N_1-1)\ @N_2\ M_1\ M_2)
             \). Let $n = \natEval{N_1}_\Phi(|\Phi|)$ and $m = \natEval{N_2}_\Phi(|\Phi|)$.
-            \[
-                \trans{\Qappend_A\ @N_1\ @N_2\ M_1\ M_2}_{\Phi,\Gamma,\Delta}
-                =
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-10}
-            \]
-            \[
-                \;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-20}
-            \]
-            \[
-                \;\overset{\scriptstyle{{\bf(sg,gs)}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-30}
-            \]
-            \[
-                \;\overset{\scriptstyle{{\bf(i1, \emptyset 1, \emptyset 4, sg, gs)}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-40}
-            \]
-            \(
-                =
-                \left\llbracket\ifz{N_1}{M_1\ ;_v\ M_2}{}
-                    \Qlet{x :: xs'}{M_1}{}
-                    x :: (\Qappend\ @(N_1-1)\ @N_2\ M_1\ M_2\right
-                \rrbracket_{\Phi,\Gamma,\Delta}
-            \)
+            \begin{align*}
+                &\trans{\Qappend_A\ @N_1\ @N_2\ M_1\ M_2}_{\Phi,\Gamma,\Delta} =
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-10}\\
+                &\;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-20}\\
+                &\;\overset{\scriptstyle{{\bf(sg,gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-30}\\
+                &\;\overset{\scriptstyle{{\bf(i1, \emptyset 1, \emptyset 4, sg, gs)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-append-40}\\
+                &=
+                \left\llbracket\begin{array}{l}
+                \ifz{N_1}{M_1\ ;_v\ M_2}{}\\
+                \Qlet{x :: xs'}{M_1}{}\\
+                x :: (\Qappend\ @(N_1-1)\ @N_2\ M_1\ M_2)
+                \end{array}\right\rrbracket_{\Phi,\Gamma,\Delta}
+            \end{align*}
+            
         \item If $M = \Qdrop\ @N'\ M'$ and \(N=
             \ifz{N'}{M'\ ;\ \star}{} \Qlet{x :: xs'}{M'}{} x\ ;\ \Qdrop\ @(N'-1)\ xs'
             \). Let $l = \natEval{N'}_\Phi(|\Phi|)$,
-            \[
-                \trans{\Qdrop\ @N'\ M'}_{\Phi,\Gamma}
+            \begin{align*}
+                &\trans{\Qdrop\ @N'\ M'}_{\Phi,\Gamma}
                 =
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-10}
-                \;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-20}
-            \]
-            \[
-                \;\overset{\scriptstyle{{\bf(z3,\emptyset 4)}}}{=}\;
-                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-30}
-            \]
-            \[
-                =
-                \trans{\ifz{N'}{M'\ ;\ \star}{\Qlet{x :: xs'}{M'}{x\ ;\ \Qdrop\ @(N'-1)\ xs'}}}_{\Phi,\Gamma}
-            \]
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-10}\\
+                &\;\overset{\scriptstyle{{\bf(\emptyset 4)},Lemma~\ref{lem:list-init-zero}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-20}\\
+                &\;\overset{\scriptstyle{{\bf(z3,\emptyset 4)}}}{=}\;
+                |\Phi|\mapsto\tikzfig{proof/trans-reduct-drop-30}\\
+                &= \trans{\ifz{N'}{M'\ ;\ \star}{\Qlet{x :: xs'}{M'}{x\ ;\ \Qdrop\ @(N'-1)\ xs'}}}_{\Phi,\Gamma}
+            \end{align*}
+
         \item If $M \to N$ is an internal reduction of a translatable term,
             then the diagrams result equivalent via the inductive hypothesis.
         \item If $M \to N$ is an internal reduction of an evaluable term,
