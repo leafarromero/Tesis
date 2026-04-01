@@ -1,0 +1,35 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (-4.25, -1.5) {};
+		\node [style=none] (2) at (-4, -1) {$\scriptstyle \Lambda$};
+		\node [style=box] (3) at (4.5, 0) {$N(|\Phi|)$};
+		\node [style=gather, rotate=180] (4) at (2, 0.5) {};
+		\node [style=none] (8) at (2.75, -0.25) {$\scriptstyle{B}$};
+		\node [style=none] (15) at (1.25, -1.5) {};
+		\node [style=none] (16) at (3, 1) {$\scriptstyle{A}$};
+		\node [style=none] (17) at (6.5, 0) {};
+		\node [style=none] (18) at (6.25, 0.5) {$\scriptstyle{C}$};
+		\node [style=none] (19) at (-4.25, -0.25) {};
+		\node [style=none] (21) at (-4, 0.25) {$\scriptstyle \Delta$};
+		\node [style=box] (22) at (-2.25, -0.25) {$N(|\Phi|)$};
+		\node [style=none] (23) at (-0.5, 1.5) {$\scriptstyle{A}$};
+		\node [style=none] (24) at (-4, 1.75) {$\scriptstyle{\Gamma}$};
+		\node [style=box] (25) at (-2.25, 1.25) {$M(|\Phi|)$};
+		\node [style=none] (26) at (-4.25, 1.25) {};
+		\node [style=gather] (27) at (0, 0.5) {};
+		\node [style=none] (28) at (-0.5, -0.5) {$\scriptstyle{B}$};
+		\node [style=none] (29) at (1, 1) {$\scriptstyle{A \otimes B}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=165, out=15] (4.center) to (3);
+		\draw [style=bold edge, in=180, out=-30] (4.center) to (3);
+		\draw [style=bold edge, in=-165, out=0, looseness=0.75] (15.center) to (3);
+		\draw [style=bold edge] (0.center) to (15.center);
+		\draw [style=bold edge] (3) to (17.center);
+		\draw [style=bold edge] (19.center) to (22);
+		\draw [style=bold edge] (26.center) to (25);
+		\draw [style=bold edge, in=150, out=0, looseness=1.25] (25) to (27.center);
+		\draw [style=bold edge, in=210, out=0, looseness=1.25] (22) to (27.center);
+		\draw [style=bold edge] (27.center) to (4.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

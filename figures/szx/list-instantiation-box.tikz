@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (1) at (2.5, 0) {};
+		\node [style=none] (15) at (-2.5, 0) {};
+		\node [style=box] (16) at (0, 0) {$D(n)$};
+		\node [style=bang box, minimum width=4em] (17) at (0, 0) {};
+		\node [style=none] (18) at (-.5, -1.5) {$n\in N$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (15.center) to (16);
+		\draw [style=bold edge] (16) to (1.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

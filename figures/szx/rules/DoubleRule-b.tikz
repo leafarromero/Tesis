@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=ground, rotate=-90] (gnd) at (0, 0) {\ground};
+		\node [style=Z dot] (2) at (1.5, 0) {};
+		\node [style=none] (3) at (2.5, 0) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [out=0,in=180,looseness=1.50] (gnd.center) to (2);
+		\draw [out=0,in=180,looseness=1.50] (2) to (3.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

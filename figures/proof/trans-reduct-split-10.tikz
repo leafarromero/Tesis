@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (43) at (-4.5, 0) {};
+		\node [style=none] (45) at (-4.25, 0.5) {$\scriptstyle{\Gamma}$};
+		\node [style=box] (49) at (-1.75, 0) {$M'(|\Phi|)$};
+		\node [style=none] (50) at (0, 0) {};
+		\node [style=gather] (60) at (-0.75, -1.75) {};
+		\node [style=split] (61) at (0.25, -1.75) {};
+		\node [style=none] (62) at (-1.5, -1.75) {};
+		\node [style=none] (63) at (2.5, -2) {};
+		\node [style=none] (64) at (1.5, -1) {};
+		\node [style=none] (65) at (2, -1.5) {$\scriptstyle{(n+m)A}$};
+		\node [style=none] (66) at (-1.5, -1) {$\scriptstyle{(n+m)A}$};
+		\node [style=none] (68) at (-2.75, 0) {};
+		\node [style=none] (69) at (1.25, 0.5) {$\scriptstyle{(n+m)A}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (49) to (50.center);
+		\draw [style=bold edge, in=30, out=-135] (64.center) to (61.center);
+		\draw [style=bold edge] (60.center) to (61.center);
+		\draw [style=bold edge, in=90, out=150, looseness=1.50] (60.center) to (62.center);
+		\draw [style=bold edge, in=-150, out=-90, looseness=1.75] (62.center) to (60.center);
+		\draw [style=bold edge, in=180, out=-15] (61.center) to (63.center);
+		\draw [style=bold edge] (43.center) to (68.center);
+		\draw [in=60, out=0] (50.center) to (64.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

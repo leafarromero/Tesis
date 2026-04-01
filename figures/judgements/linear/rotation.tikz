@@ -1,0 +1,19 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (-0.25, 0.75) {};
+		\node [style=none] (1) at (1.5, 0) {};
+		\node [style=gather] (12) at (0.25, 0) {};
+		\node [style=none] (14) at (1, 0.5) {$\scriptstyle{\qubit \multimap \qubit}$};
+		\node [style=none] (17) at (-0.25, -0.5) {};
+		\node [style=box] (18) at (-1.25, -0.5) {$R(n)$};
+		\node [style=none] (19) at (-2, 0.75) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (12.center) to (1.center);
+		\draw [style=bold edge, in=210, out=0, looseness=0.50] (17.center) to (12.center);
+		\draw [style=bold edge, in=150, out=0, looseness=0.50] (0.center) to (12.center);
+		\draw [style=bold edge] (17.center) to (18);
+		\draw [style=bold edge, in=-180, out=-180, looseness=1.75] (18) to (19.center);
+		\draw [style=bold edge] (19.center) to (0.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

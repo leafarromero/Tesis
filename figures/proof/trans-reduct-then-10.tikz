@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (-2.5, -0.75) {};
+		\node [style=none] (1) at (2.5, -0.75) {};
+		\node [style=none] (2) at (-2, -0.25) {$\scriptstyle \Gamma$};
+		\node [style=box] (3) at (0, -0.75) {$M'(|\Phi|)$};
+		\node [style=none] (8) at (2, -0.25) {$\scriptstyle{A}$};
+		\node [style=bang box, minimum width=2em, minimum height=1em] (12) at (0, 0.75) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (0.center) to (3);
+		\draw [style=bold edge] (3) to (1.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

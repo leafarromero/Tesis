@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (1) at (2.5, 0) {};
+		\node [style=Z phase dot bold] (14) at (0, 0) {$\frac{\pi}{n}$};
+		\node [style=none] (15) at (-2.5, 0) {};
+		\node [style=none] (17) at (-1.5, 0.25) {$\scriptstyle{n+1}$};
+		\node [style=none] (18) at (1.5, 0.25) {$\scriptstyle{n+1}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (15.center) to (14);
+		\draw [style=bold edge] (14) to (1.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

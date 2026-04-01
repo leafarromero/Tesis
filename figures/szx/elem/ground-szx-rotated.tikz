@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (2) at (1, 0) {};
+		\node [style=none] (3) at (0.5, 0.25) {$\scriptstyle{k}$};
+		\node [style=ground bold, rotate=-90] (4) at (0, 0) {$\ground$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (2.center) to (4.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

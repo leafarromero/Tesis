@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (1) at (2, 0) {};
+		\node [style=none] (2) at (0, 0) {};
+		\node [style=none] (3) at (1, 0.25) {$\scriptstyle{n+m}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=180, out=0] (2.center) to (1.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

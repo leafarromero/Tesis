@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=ground bold, rotate=-90] (0) at (0, 0.5) {\ground};
+		\node [style=ground bold, rotate=-90] (1) at (0, -0.5) {\ground};
+		\node [style=none] (4) at (1, 0.5) {};
+		\node [style=none] (5) at (1, -0.5) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=180, out=0, looseness=1.50] (0.center) to (4.center);
+		\draw [style=bold edge, in=180, out=0, looseness=1.50] (1.center) to (5.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

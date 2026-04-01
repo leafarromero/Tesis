@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (40) at (2.75, 0.5) {$\scriptstyle{0}$};
+		\node [style=none] (42) at (3, 0) {};
+		\node [style=none] (43) at (-3, 0) {};
+		\node [style=none] (45) at (-2.75, 0.5) {$\scriptstyle{0}$};
+		\node [style=split] (46) at (-1, 0) {};
+		\node [style=gather] (47) at (1, 0) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (47.center) to (42.center);
+		\draw [style=bold edge] (43.center) to (46.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

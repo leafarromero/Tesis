@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (1) at (2.5, -1) {};
+		\node [style=none] (15) at (-2.5, -1) {};
+		\node [style=hadamard] (19) at (0, 0) {$\scriptstyle{\ \overrightarrow\alpha(N)\ }$};
+		\node [style=none] (20) at (-2.5, 1) {};
+		\node [style=none] (21) at (2.5, 1) {};
+		\node [style=none] (26) at (-3.5, 1) {};
+		\node [style=none] (27) at (-3.5, -1) {};
+		\node [style=none] (28) at (3.5, 1) {};
+		\node [style=none] (29) at (3.5, -1) {};
+		\node [style=none] (30) at (3, 1.5) {$\scriptstyle{v(N)}$};
+		\node [style=none] (31) at (-3, -0.5) {$\scriptstyle{v(N)}$};
+		\node [style=none] (32) at (-3, 1.5) {$\scriptstyle{v(N)}$};
+		\node [style=none] (33) at (3, -0.5) {$\scriptstyle{v(N)}$};
+		\node [style=none] (98) at (-3, 0.5) {$\scriptscriptstyle{\vdots}$};
+		\node [style=none] (99) at (3, 0.5) {$\scriptscriptstyle{\vdots}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=-165, out=0] (15.center) to (19);
+		\draw [style=bold edge, in=180, out=-15] (19) to (1.center);
+		\draw [style=bold edge, in=165, out=0] (20.center) to (19);
+		\draw [style=bold edge, in=-180, out=15] (19) to (21.center);
+		\draw [style=bold edge] (26.center) to (20.center);
+		\draw [style=bold edge] (27.center) to (15.center);
+		\draw [style=bold edge] (1.center) to (29.center);
+		\draw [style=bold edge] (21.center) to (28.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

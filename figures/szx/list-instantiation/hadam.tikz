@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=bang box, minimum width=5em, minimum height=1.5em] (17) at (0, 0.25) {};
+		\node [style=none] (18) at (0, -1) {$n\in N$};
+		\node [style=none] (24) at (-1, 0.25) {$\scriptstyle{v(n)}$};
+		\node [style=none] (54) at (1, 0.25) {$\scriptstyle{v(n)}$};
+		\node [style=none] (26) at (-3.5, 0) {};
+		\node [style=hadamard] (99) at (0, 0) {};
+		\node [style=none] (28) at (3.5, 0) {};
+		\node [style=none] (30) at (3, 0.5) {$\scriptstyle{v(N)}$};
+		\node [style=none] (32) at (-3, 0.5) {$\scriptstyle{v(N)}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (26.center) to (99);
+		\draw [style=bold edge] (99) to (28.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

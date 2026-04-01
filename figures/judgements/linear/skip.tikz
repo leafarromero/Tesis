@@ -1,0 +1,5 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=bang box, minimum width=1em, minimum height=1em] (0) at (0, 0) {};
+	\end{pgfonlayer}
+\end{tikzpicture}

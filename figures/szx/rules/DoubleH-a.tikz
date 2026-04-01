@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=Z dot bold] (0) at (-0.75, 0) {};
+		\node [style=Z dot bold] (5) at (0.75, 0) {};
+		\node [style=none] (1) at (1.5, 0.5) {};
+		\node [style=none] (2) at (-1.5, 0.5) {};
+		\node [style=none] (3) at (-1.5, -0.5) {};
+		\node [style=none] (4) at (1.5, -0.5) {};
+		\node [style=none, rotate=90] (7) at (-1.75, 0) {...};
+		\node [style=none, rotate=90] (8) at (1.75, 0) {...};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=-141, out=0, looseness=0.75] (3.center) to (0);
+		\draw [style=bold edge, in=141, out=0, looseness=0.75] (2.center) to (0);
+		\draw [style=bold edge, in=180, out=-39, looseness=0.75] (5) to (4.center);
+		\draw [style=bold edge, in=180, out=39, looseness=0.75] (5) to (1.center);
+		\draw [style=hadamard edge, in=-135, out=-45] (0) to (5);
+		\draw [style=hadamard edge, in=135, out=45] (0) to (5);
+	\end{pgfonlayer}
+\end{tikzpicture}

@@ -1,0 +1,67 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (40) at (-1.5, -2.25) {$\scriptstyle{0}$};
+		\node [style=none] (43) at (-2.5, -0.5) {};
+		\node [style=none] (45) at (-2.25, -0.25) {$\scriptstyle{\Gamma}$};
+		\node [style=gather] (47) at (-2.25, -2.5) {};
+		\node [style=split] (48) at (-1, -2.5) {};
+		\node [style=box] (49) at (-1, -0.5) {$M'$};
+		\node [style=none] (50) at (-0.25, -0.5) {};
+		\node [style=none] (51) at (1.25, -2.75) {};
+		\node [style=none] (53) at (0.75, -0.75) {$\scriptstyle{0}$};
+		\node [style=split] (55) at (-4.25, 0) {};
+		\node [style=none] (56) at (0, 2.25) {$\scriptstyle{0}$};
+		\node [style=none] (57) at (-2.5, 2.75) {};
+		\node [style=none] (58) at (-2.25, 2.25) {$\scriptstyle{\Gamma}$};
+		\node [style=gather] (59) at (0, 1.25) {};
+		\node [style=box] (61) at (-1, 2.75) {$M'$};
+		\node [style=none] (63) at (1.25, 0.75) {};
+		\node [style=none] (64) at (0.75, 1.5) {$\scriptstyle{0}$};
+		\node [style=gather] (66) at (3, -0.5) {};
+		\node [style=none] (67) at (4, -0.5) {};
+		\node [style=none] (68) at (-5.5, 0) {};
+		\node [style=none] (69) at (-5.25, 0.5) {$\scriptstyle{\Gamma}$};
+		\node [style=none] (70) at (-3, 0.25) {};
+		\node [style=none] (71) at (-3, -3.25) {};
+		\node [style=none] (72) at (1.5, 0.25) {};
+		\node [style=none] (73) at (1.5, -3.25) {};
+		\node [style=none] (74) at (-1.5, -4) {$k\in[0]^{\otimes \delta_{l>0}}$};
+		\node [style=none] (75) at (-3, 3.5) {};
+		\node [style=none] (76) at (-3, 0.5) {};
+		\node [style=none] (77) at (1.5, 3.5) {};
+		\node [style=none] (78) at (1.5, 0.5) {};
+		\node [style=none] (79) at (-1.5, 4.25) {$k\in[0]^{\otimes \delta_{l=0}}$};
+		\node [style=split] (80) at (0.75, 2.75) {};
+		\node [style=gather] (81) at (-0.25, -2) {};
+		\node [style=none] (82) at (-1, -1.25) {$\scriptstyle{0}$};
+		\node [style=gather] (83) at (-2.25, -1.5) {};
+		\node [style=none] (84) at (3.75, 0) {$\scriptstyle{0}$};
+		\node [style=none] (85) at (1, -2.25) {$\scriptstyle{0}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (47.center) to (48.center);
+		\draw [style=bold edge] (49) to (50.center);
+		\draw [style=bold edge, in=180, out=-15] (48.center) to (51.center);
+		\draw [style=bold edge] (43.center) to (49);
+		\draw [style=bold edge] (57.center) to (61);
+		\draw [style=bold edge, in=150, out=0] (63.center) to (66.center);
+		\draw [style=bold edge, in=-150, out=0, looseness=0.75] (51.center) to (66.center);
+		\draw [style=bold edge] (66.center) to (67.center);
+		\draw [style=bold edge, in=180, out=30, looseness=0.50] (55.center) to (57.center);
+		\draw [style=bold edge, in=180, out=-15] (55.center) to (43.center);
+		\draw [style=bold edge] (68.center) to (55.center);
+		\draw [style=dashed edge] (70.center) to (72.center);
+		\draw [style=dashed edge] (72.center) to (73.center);
+		\draw [style=dashed edge] (73.center) to (71.center);
+		\draw [style=dashed edge] (71.center) to (70.center);
+		\draw [style=dashed edge] (75.center) to (77.center);
+		\draw [style=dashed edge] (77.center) to (78.center);
+		\draw [style=dashed edge] (78.center) to (76.center);
+		\draw [style=dashed edge] (76.center) to (75.center);
+		\draw [style=bold edge] (61) to (80.center);
+		\draw [style=bold edge, in=180, out=-15] (59.center) to (63.center);
+		\draw [style=bold edge, in=0, out=0, looseness=1.50] (50.center) to (81.center);
+		\draw [style=bold edge, in=150, out=0, looseness=1.25] (83.center) to (81.center);
+		\draw [style=bold edge, in=15, out=-165] (81.center) to (48.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

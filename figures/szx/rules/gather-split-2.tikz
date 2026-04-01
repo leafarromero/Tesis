@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (1) at (1.25, -0.5) {};
+		\node [style=none] (2) at (-0.75, -0.5) {};
+		\node [style=none] (3) at (0.25, -0.25) {$\scriptstyle{m}$};
+		\node [style=none] (4) at (1.25, 0.5) {};
+		\node [style=none] (5) at (-0.75, 0.5) {};
+		\node [style=none] (6) at (0.25, 0.75) {$\scriptstyle{n}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=180, out=0] (2.center) to (1.center);
+		\draw [style=bold edge, in=180, out=0] (5.center) to (4.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

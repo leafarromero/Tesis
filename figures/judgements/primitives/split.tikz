@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (40) at (1, 0.25) {$\scriptstyle{(n+m)A \multimap nA \otimes mA}$};
+		\node [style=gather] (41) at (-1.5, 0) {};
+		\node [style=none] (42) at (3.25, 0) {};
+		\node [style=none] (43) at (-2.75, 0.5) {$\scriptstyle{(n+m)A}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw (42.center) to (41.center);
+		\draw [in=-135, out=150, loop] (41) to ();
+	\end{pgfonlayer}
+\end{tikzpicture}

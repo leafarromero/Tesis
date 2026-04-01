@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (1) at (0.5, 0) {};
+		\node [style=none] (14) at (0.5, 0.5) {$\scriptstyle{\qubit}$};
+		\node [style=X phase dot] (15) at (-0.5, 0) {$\pi$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (15) to (1.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

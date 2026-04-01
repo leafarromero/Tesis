@@ -1,0 +1,37 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=split] (0) at (2.25, -0.5) {};
+		\node [style=gather] (1) at (-2, -0.5) {};
+		\node [style=none] (2) at (-3, -0.25) {};
+		\node [style=none] (3) at (-1.25, -0.25) {$\scriptstyle{ks}$};
+		\node [style=none] (5) at (3, -1) {};
+		\node [style=none] (7) at (-2.5, -1) {$\scriptstyle{s}$};
+		\node [style=none] (8) at (-2.75, -1) {};
+		\node [style=none] (9) at (3.25, -0.25) {};
+		\node [style=none] (11) at (2.75, -1) {$\scriptstyle{s}$};
+		\node [style=box] (12) at (0, -0.25) {$g^k$};
+		\node [style=none] (13) at (1.25, -0.25) {$\scriptstyle{ks}$};
+		\node [style=none] (14) at (0, -1.25) {$\scriptstyle{(k-1)s}$};
+		\node [style=none] (15) at (2.5, -1.5) {};
+		\node [style=none] (16) at (-2.25, -1.5) {};
+		\node [style=none] (17) at (0, -0.5) {};
+		\node [style=none] (18) at (0, 0) {};
+		\node [style=none] (19) at (-3, 1) {};
+		\node [style=none] (20) at (3.25, 1) {};
+		\node [style=none] (21) at (-2, 1.25) {$\scriptstyle{kn}$};
+		\node [style=none] (22) at (2.25, 1.25) {$\scriptstyle{km}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=150, out=0] (2.center) to (1.center);
+		\draw [style=bold edge, in=-150, out=90] (8.center) to (1.center);
+		\draw [style=bold edge, in=90, out=30, looseness=1.50] (0.center) to (5.center);
+		\draw [style=bold edge, in=180, out=-30, looseness=1.25] (0.center) to (9.center);
+		\draw [style=bold edge, in=0, out=-90, looseness=1.25] (5.center) to (15.center);
+		\draw [style=bold edge, in=-180, out=-90] (8.center) to (16.center);
+		\draw [style=bold edge] (16.center) to (15.center);
+		\draw [style=bold edge] (1.center) to (17.center);
+		\draw [style=bold edge] (17.center) to (0.center);
+		\draw [style=bold edge, in=180, out=0, looseness=1.25] (19.center) to (18.center);
+		\draw [style=bold edge, in=-180, out=0, looseness=1.25] (18.center) to (20.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

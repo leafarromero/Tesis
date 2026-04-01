@@ -1,0 +1,24 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (15) at (-1.75, -0.75) {};
+		\node [style=gather] (19) at (0, 0) {};
+		\node [style=none] (20) at (-1.75, 0.75) {};
+		\node [style=none] (26) at (-2.5, 0.75) {};
+		\node [style=none] (27) at (-2.5, -0.75) {};
+		\node [style=none] (28) at (8.5, 0) {};
+		\node [style=none] (30) at (7.25, 0.5) {$\scriptstyle{(v+w)(n::N)}$};
+		\node [style=none] (31) at (-2, -0.25) {$\scriptstyle{w(n::N)}$};
+		\node [style=none] (32) at (-2, 1.25) {$\scriptstyle{v(n::N)}$};
+		\node [style=rfarr] (34) at (4.75, 0) {};
+		\node [style=none] (35) at (4.75, 1) {$\scriptstyle{\sigma(n::N,v,w)}$};
+		\node [style=none] (36) at (2, 0.5) {$\scriptstyle{v(n::N)+w(n::N)}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge, in=-165, out=0] (15.center) to (19.center);
+		\draw [style=bold edge, in=165, out=0] (20.center) to (19.center);
+		\draw [style=bold edge] (26.center) to (20.center);
+		\draw [style=bold edge] (27.center) to (15.center);
+		\draw [style=bold edge] (19.center) to (34);
+		\draw [style=bold edge] (34) to (28.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

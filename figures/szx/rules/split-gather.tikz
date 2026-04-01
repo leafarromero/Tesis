@@ -1,0 +1,18 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=split] (0) at (-0.75, 0) {};
+		\node [style=gather] (1) at (0.75, 0) {};
+		\node [style=none] (2) at (-2.25, 0) {};
+		\node [style=none] (3) at (-1.75, 0.25) {$\scriptstyle{n+m}$};
+		\node [style=none] (4) at (1.75, 0.25) {$\scriptstyle{n+m}$};
+		\node [style=none] (5) at (2.25, 0) {};
+		\node [style=none] (6) at (0, 0.75) {$\scriptstyle{n}$};
+		\node [style=none] (7) at (0, -0.75) {$\scriptstyle{m}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (2.center) to (0.center);
+		\draw [style=bold edge] (1.center) to (5.center);
+		\draw [style=bold edge, in=135, out=45] (0.center) to (1.center);
+		\draw [style=bold edge, in=-135, out=-45] (0.center) to (1.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

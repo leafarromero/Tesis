@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (26) at (-2, 0) {};
+		\node [style=rfarr] (99) at (0, 0) {};
+		\node [style=none] (100) at (0, .5) {$\scriptstyle{\sigma(N)}$};
+		\node [style=none] (28) at (2, 0) {};
+		\node [style=none] (32) at (-1.5, 0.5) {$\scriptstyle{v(N)}$};
+		\node [style=none] (32) at (1.5, 0.5) {$\scriptstyle{v(N)}$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (26.center) to (99.center);
+		\draw [style=bold edge] (99.center) to (28.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

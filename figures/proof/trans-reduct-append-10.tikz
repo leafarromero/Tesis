@@ -1,0 +1,39 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (43) at (-4.75, 1.5) {};
+		\node [style=none] (45) at (-4.5, 2) {$\scriptstyle{\Gamma}$};
+		\node [style=box] (49) at (-2, 1.5) {$M_1(|\Phi|)$};
+		\node [style=none] (50) at (-0.25, 1.5) {};
+		\node [style=none] (53) at (0.25, 2) {$\scriptstyle{nA}$};
+		\node [style=none] (54) at (-4.75, 0) {};
+		\node [style=none] (55) at (-4.5, 0.5) {$\scriptstyle{\Delta}$};
+		\node [style=box] (56) at (-2, 0) {$M_2(|\Phi|)$};
+		\node [style=none] (57) at (-0.25, 0) {};
+		\node [style=none] (58) at (0, 0.5) {$\scriptstyle{mA}$};
+		\node [style=gather] (59) at (1.5, 0.75) {};
+		\node [style=gather] (60) at (-0.75, -1.75) {};
+		\node [style=split] (61) at (0.25, -1.75) {};
+		\node [style=none] (62) at (-1.5, -1.75) {};
+		\node [style=none] (63) at (2.5, -2) {};
+		\node [style=none] (64) at (1.5, -1) {};
+		\node [style=none] (65) at (2, -1.5) {$\scriptstyle{(n+m)A}$};
+		\node [style=none] (66) at (-1.5, -1) {$\scriptstyle{(n+m)A}$};
+		\node [style=none] (67) at (2.5, 1.25) {$\scriptstyle{(n+m)A}$};
+		\node [style=none] (68) at (-3, 1.5) {};
+		\node [style=none] (69) at (-3, 0) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=bold edge] (49) to (50.center);
+		\draw [style=bold edge] (56) to (57.center);
+		\draw [style=bold edge, in=165, out=0] (50.center) to (59.center);
+		\draw [style=bold edge, in=-165, out=0] (57.center) to (59.center);
+		\draw [style=bold edge, in=45, out=0] (59.center) to (64.center);
+		\draw [style=bold edge, in=30, out=-135] (64.center) to (61.center);
+		\draw [style=bold edge] (60.center) to (61.center);
+		\draw [style=bold edge, in=90, out=150, looseness=1.50] (60.center) to (62.center);
+		\draw [style=bold edge, in=-150, out=-90, looseness=1.75] (62.center) to (60.center);
+		\draw [style=bold edge, in=180, out=-15] (61.center) to (63.center);
+		\draw [style=bold edge] (54.center) to (69.center);
+		\draw [style=bold edge] (43.center) to (68.center);
+	\end{pgfonlayer}
+\end{tikzpicture}
