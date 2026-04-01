@@ -64,19 +64,17 @@ notation~$\vv\sum$.
   \vspace{-2\baselineskip}
   \begin{align*}
     &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vv{t})}{\vv{s}}
-    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{s}}) \\
+    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{s}})\\[7pt]
     &\LetP{x_1}{X}{x_2}{Y}{\vv{t}+\vv{s}}{\vv{r}}
-    \equiv
-      (\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{r}})
-      +(\LetP{x_1}{X}{x_2}{Y}{\vv{s}}{\vv{r}}) 
-      \\
+    \equiv\\
+      &\qquad(\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{r}})
+      +(\LetP{x_1}{X}{x_2}{Y}{\vv{s}}{\vv{r}})\\[7pt]
     &\gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}
-    \equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}) \\
+    \equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\\[7pt]
     &\gencase{(\vv{t}+\vv{s})}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
-    \equiv\begin{aligned}[t]
-      &\gencase{\vv{t}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}\\
-      &+\gencase{\vv{s}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
-    \end{aligned}
+    \equiv\\
+    &\qquad\gencase{\vv{t}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
+    +\gencase{\vv{s}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_2}}
   \end{align*}
   \caption{Term congruence}
   \label{tab:Congruence}
