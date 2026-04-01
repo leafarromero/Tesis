@@ -4,6 +4,17 @@
 \newtheorem{remark}{Remark}
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary}{Corollary}
+\newtheorem{convention}{Convention}
 
+%%% Mergear environments 
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defin}[thm]{Definition}
+
+
+\input{probabilisticConfluenceMacros.tex}
 \input{basisSensitiveMacros.tex}
 \input{SZXEncodingMacros}
