@@ -4,15 +4,13 @@ The nature of quantum measurement is intrinsically probabilistic, with this in m
 
 This inclusion adds a layer of complexity to the usual mechanisms over traditional rewrite systems. For example, properties like strong termination or confluence take on different definitions to accomodate this characteristic. We will focus particularly on confluence of probabilistic calculi for our first chapter.
 
-% Definición de confluencia tradicional
-To give a simple overview, confluence (otherwise known as the Church-Rosser property) is a property that states that no matter which redex is reduced on a term $t$ 
+% Definición de confluencia tradicional TODO:
+% To give a simple overview, confluence (otherwise known as the Church-Rosser property) is a property that states that no matter which redex is reduced on a term $t$ 
 
 % Breve explicación de porque no funciona
-
 When dealing with probabilistic lambda calculus, we can find two different sources of divergence.
 \begin{itemize}
 \item A \textit{single redex} may reduce in two different ways via a probabilistic reduction.
-
 \item A term with \textit{multiple redexes} and no strategy, could be reduced in different ways.
 \end{itemize}
 For example, we can consider a lambda calculus extended with a coin $\coin$ reducing to $0$ or $1$ with probability $\frac 12$ each. Then, taking just the coin, we are in the first case of divergence. While taking, for example, $(\lambda x.\lambda y.yxx)\coin$, we are in the second case, since we can either beta reduce, or reduce the coin.
@@ -51,3 +49,8 @@ If we denote by $[(p_1,t_1),\dots,(p_n,t_n)]$ the probability distribution where
     \label{fig:noconfl}
 \end{figure}
 
+%Let's take the example a step further and pass the multiplication function as an argument. In this case, both results yield 0, 1 but with different probabilities
+
+% [Tikzcd pasando multiplicación como argumento]
+
+% No solo nos interesa llegar al mismo resultado, sino que también nos interesa que ambas ramas tengan la misma probabilidad
