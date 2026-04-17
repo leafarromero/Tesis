@@ -1,0 +1,166 @@
+\section{Computational confluence with a sub-affine type system}\label{sec:subaffine}
+The solution considered in Section~\ref{sec:affine} seems quite extreme. In particular, using the same variable in different branches of an if-then-else construction does not actually duplicate it, since only one of those branches will remain. However, changing the rule $\mathsf{if}$ from Table~\ref{tab:AffineTS} to $\mathsf{if}_s$ given by
+\[
+  \infer[\mathsf{if}_s]{\Gamma,\Delta\vdash\ite t u v:A}{
+    \Gamma\vdash t:\mathbb{B}
+    & 
+    \Delta\vdash u:A 
+    &
+    \Delta\vdash v:A
+  }
+\]
+breaks confluence anyway. We call this calculus ``sub-affine''.
+Consider the following example. Let $\mathsf{not}=\lambda x.\ite x01$, then
+
+\begin{center}
+  \begin{tikzcd}[row sep=11pt,column sep=-50pt]
+  & (\lambda x.\lambda y. \ite y {x}{\mathsf{not}~x})\coin \ar[dl]\ar[dr]& \\
+ \left[
+ \begin{tabular}{c}
+   $(1/2, (\lambda x.\lambda y. \ite y {x}{\mathsf{not}~x})0);$\\
+   $(1/2, (\lambda x.\lambda y. \ite y {x}{\mathsf{not}~x})1)$
+ \end{tabular} 	
+ \right] \ar[d]& &
+ \left[(1, (\lambda y. \ite y {\coin}{\mathsf{not}~\coin}))\right]\ar[d]\\
+ \left[
+ \begin{array}[c]{l}
+ 	(\nicefrac 12, \lambda y. \ite y 01);\\
+	(\nicefrac 12, \lambda y. \ite y 10) 
+ \end{array}
+ \right] & &
+ \left[	
+   \begin{array}[c]{l}
+  (\nicefrac 14, \lambda y. \ite y 00);\\
+ 	(\nicefrac 14, \lambda y. \ite y 01);\\
+ 	(\nicefrac 14, \lambda y. \ite y 10);\\
+ 	(\nicefrac 14, \lambda y. \ite y 11)
+   \end{array}
+ \right]
+\end{tikzcd}
+\end{center}
+
+Note that terms in both distributions are in normal form. The two paths are syntactically divergent, however the resulting programs share the same behaviour under the same inputs. If we were to apply the resulting abstractions to either $0$ or $1$, both paths would yield $[(\nicefrac 12, 0); (\nicefrac 12, 1)]$. Therefore, these distributions are semantically confluent, they are not the same terms but they \textit{represent} the same function.
+
+We can formalise this notion for the sub-affine calculus as follows. Let 
+\(
+  C := \lozenge\mid Cv
+\)
+be an elimination context, where $\lozenge$ is called ``placeholder'' and $v$ is a normal closed term. We write $C\langle t\rangle$ for $C[t/\lozenge]$. Notice that $C\langle t\rangle$ is a term. We say that $C$ is an elimination context of $A$, written $C^A$, if for all $\vdash t:A$, we have $\vdash C\langle t\rangle:\mathbb B$. That is, it applies $t$ until it reaches the basic type $\mathbb B$.
+
+The computational equivalence is defined as follows.
+\begin{defin}
+Let $D_1 = [(p_i,t_i)]_i$ and $D_2 = [(q_j,r_j)]_j$ be two distributions of
+terms, all closed of type $A$. Then, we say that these distributions are
+computationally equivalent (notation $D_1\equiv D_2$) if for all $C^A$ we have
+$C\langle t_i\rangle\topr[u_{ik}]^* b_{ik}$ and $C\langle r_j\rangle\topr[s_{jh}]^* c_{jh}$ such that the
+$b_{ik}$ and $c_{jh}$ are in normal form, and  $[(p_iu_{ik},b_{ik})]_{ik} \sim
+[(q_js_{jh},c_{jh})]_{jh}$
+, where $\sim$ denotes the equality on distributions.
+\end{defin}
+The previous definition means that two distributions are computationally equivalent if by applying the resulting terms to all the possible inputs, they produce the same probability distribution of results. Notice that the definition is not assuming confluence. 
+
+Then, we can prove that the confluence modulo computational equivalence of the sub-affine calculus (Theorem~\ref{thm:confmodulo}). We need the following two lemmas, which follow by straightforward induction.
+\begin{lem}\label{lem:subst}
+Let $y\not\in\FV{r}$, then $t[q/y][r/x]= t[r/x][q[r/x]/y]$.
+\qed
+\end{lem}
+
+\begin{lem}\label{lem:distRed}
+Let $t$ reduce to the distribution $D$, then $t[r/x]$ reduces to $D[r/x]$.
+\qed
+\end{lem}
+
+\begin{thm}[Computational confluence]\label{thm:confmodulo}
+  Let $\vdash t:A$ in the sub-affine calculus.
+  If $t$ reduces to the distribution $D_1$ and to the distribution $D_2$, then $D_1\equiv D_2$.
+\end{thm}
+\begin{proof}
+  We only consider the six critical pairs, 
+  four derived from the if-then-else construction and two from the classical lambda calculus.
+  Non-critical pairs are trivially probabilistically confluent.
+\begin{center}
+  \begin{tikzcd}[column sep=-1em,row sep=1ex]
+    & \ite{1}{r}{s} \ar[dl]\ar[dr] & \\
+    {[(p_i, \ite{1}{r_i}{s})]_i}\ar[dr,dashed]  && {[(1, r)]}\ar[dl,dashed] \\
+    & {[(p_i, r_i)]_i}  &
+  \end{tikzcd}
+  \hfill
+  \begin{tikzcd}[column sep=-1em,row sep=1ex]
+    & \ite{1}{s}{r} \ar[dl]\ar[dr] & \\
+    {[(p_i, \ite{1}{s}{r_i})]_i}\ar[dr,dashed] &&  {[(1, s)]}\ar[dl,dashed]\\
+    & {[(p_i, s)]_i} \sim [(1, s)] 
+  \end{tikzcd}
+\end{center}
+
+
+The symmetrical cases with $0$ close in a similar way. 
+The fifth critical pair closes by Lemma \ref{lem:distRed}.
+\begin{center}
+  \begin{tikzcd}[row sep=1ex]
+    {[(p_i, (\lambda x.t_i)r)]_i}\ar[dr,dashed]
+    & (\lambda x.t)r\ar[l]\ar[r]& 
+    {[(1, t[r/x])]}\ar[dl,dashed]\\
+    & {[(p_i, t_i[r/x])]_i} &
+  \end{tikzcd}
+\end{center}
+
+The last critical pair requires a more thorough analysis. 
+\begin{center}
+  \begin{tikzcd}[row sep=1ex]
+    {[(p_i, (\lambda x.t)r_i)]_i}\ar[dr,dashed] 
+    & (\lambda x.t)r\ar[l]\ar[r]& 
+    {[(1, t[r/x])]}\\
+    &{[(p_i,t[r_i/x])]_i} & 
+  \end{tikzcd}
+\end{center}
+
+We must prove that for all $C^A$ and for all $i$, there exists $b_{ij}$ with $C\langle t[r_i/x]\rangle\topr[q_{ij}]^* b_{ij}$ and $c_k$ with $C\langle t[r/x]\rangle\topr[s_{k}]^* c_k$ such that
+\(
+  [p_iq_{ij},b_{ij}]_{ij} \sim [s_k,c_k]_k
+\).
+It is enough to take only one path to $[p_iq_{ij},b_{ij}]_{ij}$ and to $[s_k,c_k]_k$ according to the definition of $\equiv$.
+If $x\notin\FV{t}$, then 
+    \(
+      C\langle t[r/x]\rangle
+      =
+      C\langle t\rangle
+      =
+      C\langle t[r_i/x]\rangle
+    \).
+  If $x$ appears once in $t$, 
+    \(
+      C\langle t[r/x]\rangle
+      \topr[p_i] C\langle t[r_i/x]\rangle
+    \).
+    If $x$ appears more than once in $t$, it appears at most $2^n$ times (where $n$ is the number of if-then-else constructions), so we can proceed by induction on $n$.
+    \begin{itemize}
+      \item 
+	If $n=1$, then there is one if-then-else, say $\ite c{s_1}{s_2}$ and $x$ appears both in $s_1$ and in $s_2$. Therefore, there are three cases:
+	\begin{itemize}
+
+	  \item $c$ is $0$ or $1$, then, for $j=0$ or $j=1$, we have
+	    \(
+	      C\langle t[r/x]\rangle
+	      \topr[1]^*
+	      C\langle s_j[r/x]\rangle
+	      \topr[p_i]^*
+	      C\langle s_j[r_i/x]\rangle
+	    \).
+	    Notice that $C\langle t[r_i/x]\rangle\topr[1] C\langle s_j[r_i/x]\rangle$.
+	  \item $c\topr[q_j]^* j$ with $j=0,1$, so we have
+	    \(
+	      C\langle t[r/x]\rangle
+	      \topr[q_j]^*
+	      C\langle s_j[r/x]\rangle
+	      \topr[p_i]^*
+	      C\langle s_j[r_i/x]\rangle
+	    \).
+	    That is, we arrived to the distribution $[(q_jp_i,s_j[r_i/x])]_{ij}$.
+	    Notice that since $C\langle t[r_i/x]\rangle\topr[q_j]
+	    C\langle s_j[r_i/x]\rangle$, we arrive to the same distribution in the right branch of this critical pair.
+	  \item $c$ is an open term, hence not reducing to a constant $0$ or $1$.
+	    In such a case, since $t[r/x]$ is a closed term, it means that the if-then-else construction in $t$ is under a lambda-abstraction, therefore, we must beta-reduce first, either with the argument in $t$, or with an external argument given by the context $C$. We can repeat the same process until we get one of the previously treated cases (that is, at some point, the if-then-else becomes a redex).
+	\end{itemize}
+      \item If $n>1$, we proceed as the previous case, reducing the if-then-else first, which reduces $n$ and so the induction hypothesis applies.\qedhere
+    \end{itemize}
+\end{proof}

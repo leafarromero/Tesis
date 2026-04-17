@@ -1,0 +1,58 @@
+\section{Removing the divergence sources}
+\subsection{Defining a strategy}\label{sec:strategy}
+The definition of a strategy is the easiest modification. Choosing a reduction strategy makes all critical pairs disappear, since there is only one possible reduction rule to be applied for each term distribution. For example, in Figure~\ref{fig:noconfl} a \textit{call-by-name} strategy would take the right path, where \textit{call-by-value} would take the left one. 
+
+Ultimately the choice lies in how to interpret the duplication of variables. Reducing via call-by-name means that the probabilistic event is duplicated. Whereas, a call-by-value strategy duplicates the outcome of said event (see~\cite{Dallago} for a discussion on this choice, and even an alternative combining both approaches).
+
+\subsection{Internalising the probabilities}\label{sec:circulito}
+Following~\cite{lambdarho}, we can modify the reduction on $\lambprot$ to internalize the entire distribution of a term. In this particular case, every reduction has probability $1$, and the coin toss deterministically reduces to its probability distribution.
+We write $t\oplus_{p}r$ for the probability distribution $[(p,t),(1-p,r)]$, $(t\oplus_p r)\oplus_q s$ for the probability distribution $[(qp,t),(q(1-p)r),(1-q,s)]$, etc. Then, we can consider the rewrite rule
+\(
+  \coin\to 0 \oplus_{\frac 12} 1
+\).
+This idea is common in non-probabilistic settings as well, e.g.,~\cite{AlvesDunduaFloridoKutsiaIGPL18}.
+
+Following this approach brings confluence to the calculus, since every repetition of a probabilistic event rewrites to the same result, its distribution. For example, the two branches of Figure~\ref{fig:noconfl} become $(\lambda x.\lambda y.yxx)(0\oplus_{\frac 12}1)$ and $\lambda y.y\coin\coin$, both converging to $\lambda y.y(0\oplus_{\frac 12}1)(0\oplus_{\frac 12}1)$.
+
+Although this is a valid solution, it forces us to consider every possible state of a program at the same time along with its probability of occurrence, making the management of the system more complex. Here we are dealing with a simple coin, but more involved calculi might have several different reductions, each with its own distribution. If not designed correctly, a language that holds every possible state in the probability distribution can easily become too cumbersome to be effective.
+
+
+\subsection{Affine variables}\label{sec:affine}
+The last reasonable solution is to restrict duplication. One way to do this is by controlling the appearance of variables at the type system level, with an affine type system, see Table~\ref{tab:AffineTS}.
+
+\begin{table}[t]
+  \[
+    A:= \mathbb{B}  \mid A\rightarrow A
+  \]
+  \[
+    \infer[\mathsf{ax}]{\Gamma,x:A\vdash x:A}{} 
+    \qquad
+    \infer[\mathsf{ax}_1]{\Gamma\vdash 1:\mathbb{B}}{}
+    \qquad
+    \infer[\mathsf{ax}_0]{\Gamma\vdash 0:\mathbb{B}}{}
+  \]
+  \[
+    \infer[\rightarrow_i]{\Gamma\vdash\lambda x.t:A\rightarrow B}
+    	{\Gamma,x:A\vdash t:B}
+	  \qquad 
+    \infer[\rightarrow_e]{\Gamma,\Delta\vdash tr:B}
+    	{\Gamma\vdash t:A\rightarrow B & \Delta\vdash r:A}
+  \]
+  \[
+    \infer[\mathsf{ax}_{\coin}]{\Gamma\vdash \coin:\mathbb{B}}{} 
+    \qquad
+    \infer[\mathsf{if}]{\Gamma,\Delta_1,\Delta_2\vdash\ite t u v:A}{\Gamma\vdash t:\mathbb{B}& \Delta_1\vdash u:A & \Delta_2\vdash v:A}    
+  \]
+  \caption{Affine type system for $\lambprot$
+  (different contexts are considered to be disjoint).
+  }
+  \label{tab:AffineTS}
+\end{table}
+
+This type system solves the counterexample from Figure~\ref{fig:noconfl}, since the considered term has no type in this system. In particular, we can prove the following property:
+\begin{lem}
+  If $r\topr[p] s$ then $t[r/x]\topr[p] t[s/x]$.
+\end{lem}
+Notice that this property is not true in the unrestricted $\lambprot$. For example, while $\coin\topr[\frac 12]1$, we have $(\lambda y.yxx)[\coin/x]=\lambda y.y\coin\coin\topr[\frac 14]^*\lambda y.y11$.
+
+The drawback in this approach is clear, there is a loss in expressivity. Of course, in some cases, this restriction is a desirable quality. For example, in quantum computing it may serve to avoid cloning qubits, a forbidden operation in quantum mechanics.

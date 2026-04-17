@@ -1,0 +1,93 @@
+\section{Introduction}
+% Introducción a la idea
+The nature of quantum measurement is intrinsically probabilistic, with this in mind, we are interested in studying probabilistic evolution for lambda calculi. This evolution can be thought as a non-deterministic reduction step, with every option is weighted with a probability where every option sums to 1.
+
+This inclusion adds a layer of complexity to the usual mechanisms over traditional rewrite systems. For example, properties like strong termination or confluence take on different definitions to accomodate this characteristic. We will focus particularly on confluence of probabilistic calculi for our first chapter.
+
+To give a simple overview, confluence (otherwise known as the Church-Rosser property) is a property that states that no matter which redex is reduced on a term $t$ first, there always exists two chains of reductions such that the end result is the same. More formally:
+
+\begin{definition}[Confluence]
+A term $t$ globally confluent if, for every term $r_1$, $r_2$ with $t\eval r_1$ and $t\eval r_2$. There exists a term $s$ such that $r_1\eval s$ and $r_2\eval s$. If every term follows this property, then the calculus is said to be globally confluent. Diagramatically:
+\begin{center}    
+\begin{tikzcd}
+   & t\arrow[two heads]{dl}\arrow[two heads]{dr} & \\
+   r_1\arrow[two heads, dashed]{dr} & & r_2\arrow[two heads, dashed]{dl} \\
+   & s & \\
+\end{tikzcd}
+\end{center}
+\end{definition}
+
+% Breve explicación de porque no funciona
+However, when dealing with probabilistic lambda calculus, we can find two different sources of divergence.
+\begin{itemize}
+\item A \textit{single redex} may reduce in two different ways via a probabilistic reduction.
+\item A term with \textit{multiple redexes} and no strategy, could be reduced in different ways.
+\end{itemize}
+For example, we can consider a lambda calculus extended with a coin $\coin$ reducing to $0$ or $1$ with probability $\frac 12$ each. Then, taking just the coin, we are in the first case of divergence. While taking, for example, $(\lambda x.\lambda y.yxx)\coin$, we are in the second case, since we can either beta reduce, or reduce the coin.
+
+There is no point in trying to achieve confluence in the first case: the coin is non-confluent by design. However, we can analyse the branching paths and verify that the probability of reducing to a particular term stays the same, regardless of the reduction sequence. This is what we call \textit{probabilistic confluence}.
+
+If we denote by $[(p_1,t_1),\dots,(p_n,t_n)]$ the probability distribution where $t_i$ has probability $p_i$, the possible reductions from the previous example are depicted in Figure~\ref{fig:noconfl}. The resulting distributions are not only different, but also divergent, since in the left branch, the probability to arrive, for example, to $\lambda y.y01$ is $0$, while it is one of the possible results in the right branch.
+
+We can take the example a step further and pass the multiplication function ($\times$) as an argument, as done in Figure~\ref{fig:noconfl2}. In this case, we reach the same set of possible terms, however the associated probabilities differ on both branches. Not only we wish to match the result, but also the probability with which we reach that result.
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzcd}[column sep=small]
+    & (\lambda x.\lambda y.yxx)\coin \ar[dl]\ar[dr] & \\
+    \left[\begin{array}{c}
+        ({\frac 12}, (\lambda x.\lambda y.yxx)0),\\[5pt]
+        ({\frac 12}, (\lambda x.\lambda y.yxx)1)
+        \end{array}\right]\ar[d] 
+    & &  
+    {[(1, \lambda y.y\coin\coin)]}\ar[d,"*",pos=1]\\
+    \left[\begin{array}{c}
+        ({\frac 12}, \lambda y.y00),\\[5pt]
+        ({\frac 12}, \lambda y.y11)
+    \end{array}\right]
+    &&\hspace{-50pt}
+    \left[\begin{array}{c}
+        ({\frac 14}, \lambda y.y00), 
+        ({\frac 14}, \lambda y.y01),\\[5pt]
+        ({\frac 14}, \lambda y.y10), 
+        ({\frac 14}, \lambda y.y11)
+    \end{array}\right]
+    \end{tikzcd}
+    \caption{Counterexample of confluence}
+    \label{fig:noconfl}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzcd}[column sep=small]
+    & (\lambda x.\lambda y.yxx)\coin \times\ar[dl]\ar[dr] & \\
+    \left[\begin{array}{c}
+        ({\frac 12}, (\lambda x.\lambda y.yxx)0 \times),\\[5pt]
+        ({\frac 12}, (\lambda x.\lambda y.yxx)1 \times)
+        \end{array}\right]\ar[d] 
+    & &  
+    {[(1, \lambda y.y\coin\coin\times)]}\ar[d,"*",pos=1]\\
+    \left[\begin{array}{c}
+        ({\frac 12}, (\lambda y.y00)\times) ,\\[5pt]
+        ({\frac 12}, (\lambda y.y11)\times) 
+    \end{array}\right]\ar[d]
+    &&\hspace{-50pt}
+    \left[\begin{array}{c}
+        ({\frac 14}, (\lambda y.y00)\times), 
+        ({\frac 14}, (\lambda y.y01)\times),\\[5pt]
+        ({\frac 14}, (\lambda y.y10)\times), 
+        ({\frac 14}, (\lambda y.y11)\times)
+    \end{array}\right]\ar[d]\\
+    \left[(\frac 12, 0), (\frac 12, 1)\right]&&
+    \left[(\frac 34, 0), (\frac 14, 1)\right]
+    \end{tikzcd}
+    \caption{Counterexample of confluence}
+    \label{fig:noconfl2}
+\end{figure}
+
+To study this kind of cases, Bournez and Kirchner developed the notion of PARS~\cite{BK02}, later refined in \cite{BG06}. Using the techniques described in~\cite{DCM17,Faggian} we can define the rewriting rules over the distributions.
+
+In this chapter we consider a simply typed lambda calculus extended with a coin, and show different possibilities for achieving some sort of confluence, without giving preference to any of them. This analysis will be helpful to set up the design choices of later chapters, since quantum measurement is an inherent probabilistic operation.
+
+In Section~\ref{sec:calculus} we introduce the calculus to be studied, without any restrictions either in the rewriting rules, nor in the typing rules. As we argued above, this naive definition is not confluent (cf.~Figure~\ref{fig:noconfl}), unless a strategy is defined (in which case it becomes trivially probabilistically confluent, as will be discussed in Section~\ref{sec:strategy}).
+In Section~\ref{sec:circulito} we show that we can achieve confluence by internalizing the probabilistic reductions in the terms. In Section~\ref{sec:affine} we show that we can achieve probabilistic confluence by taking an affine-linear type system. Then, in Section~\ref{sec:subaffine}, we show that we can relax the type system in an if-then-else branching, obtaining a probabilistic confluence result modulo a computational equivalence.
