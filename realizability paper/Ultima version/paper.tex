@@ -308,7 +308,7 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
   previous basis-sensitive systems by allowing abstractions to be expressed with
   respect to arbitrary---possibly entangled---bases.  Each abstraction and
   $\mathsf{let}$-construct is annotated with a basis, and a new basis-dependent
-  substitution governs the decomposition of value distributions.  These
+  substitution governs the decomposition of value combinations.  These
   extensions preserve the expressive power of earlier calculi while enabling
   finer reasoning about programs under basis changes.  A realisability semantics
   connects the reduction system with the type system, yielding a direct
@@ -499,7 +499,8 @@ All omitted proofs appear in the appendices.
 \section{Core language}\label{sec:calculus}
 %\subsection{Syntax and congruence}
 This section presents the calculus on which our realisability model will be
-built. It is a $\lambda$-calculus extended with linear combinations of terms, in the line of~\cite{ArrighiDowekLMCS17}.
+built. It is a $\lambda$-calculus extended with linear combinations of terms, 
+along the lines of~\cite{ArrighiDowekLMCS17}.
 
 \begin{table}[t]
   \begin{align*}
@@ -520,22 +521,22 @@ built. It is a $\lambda$-calculus extended with linear combinations of terms, in
 The syntax of the calculus is described in
 Table~\ref{tab:Syntax}; it is divided into four
 distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
-($\Lambda$), \emph{value distributions} ($\ValD$), and \emph{term
-distributions} ($\vec\Lambda$). Values are composed of variables, decorated
+($\Lambda$), \emph{value combinations} ($\ValD$), and \emph{term
+combinations} ($\vec\Lambda$). Values are composed of variables, decorated
 lambda abstractions, and two basis values representing orthogonal vectors,
 $\ket 0$ and $\ket 1$. A pair of values is also considered a value.  Terms
 include values, applications, pair constructors and destructors, and pattern
 matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
-Both term and value distributions are built as $\C$-linear combinations of
-terms and values, respectively. 
+Both term and value combinations are built $\C$-linear combinations of
+basic terms and values, respectively. 
 We use $v,u,w$ to denote values and $t,s,r$ for terms, writing $\vv{\cdot}$ when
-they are distributions.
+they are combinations.
 
 The symbols $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
 expressed; their precise nature is made explicit below.
 Before formally defining the notion of bases, we first establish the
-algebraic structure underlying the space of value distributions.
+algebraic structure underlying the space of value combinations.
 This is achieved by introducing the congruence relation defined in
 Table~\ref{tab:Congruence}.
 The congruence captures the intended behaviour of addition and scalar
@@ -580,7 +581,7 @@ notation~$\sum$.
 \end{table}
 
 The rules in Table~\ref{tab:Congruence} ensure that the
-set of value distributions satisfies the axioms of a vector space.  The notion
+set of value combinations satisfies the axioms of a vector space.  The notion
 of basis in this calculus builds on this algebraic foundation. Once the vector
 structure is established, we can define which subsets $B\subseteq \ValD$
 qualify as \emph{bases}, thereby justifying the decorations appearing in the
@@ -612,7 +613,7 @@ basis elements; for instance,
 expresses $(1,0)$ in the basis
 $\{\tfrac{(1,1)}{\sqrt{2}}, \tfrac{(1,-1)}{\sqrt{2}}\}$.
 By identifying $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we see that
-the calculus allows every vector (or value distribution) to be expressed as a
+the calculus allows every vector (or value combination) to be expressed as a
 superposition of elements of the basis attached to each abstraction.
 The congruence ensures that these linear combinations behave algebraically as
 in a complex vector space, supporting the standard operations of addition,
@@ -621,9 +622,9 @@ scalar multiplication, and the zero vector.
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
 \begin{definition}[Qubits]\label{def:Qubit}
-  A \emph{1-qubit state} is a value distribution of the form
+  A \emph{1-qubit state} is a value combination of the form
   $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
-  \emph{$n$-qubit state} is a value distribution of the form
+  \emph{$n$-qubit state} is a value combination of the form
   $\alpha\Pair{\ket{0}}{\vv{w_1}} + \beta\Pair{\ket{1}}{\vv{w_2}}$, where
   $\vv{w_1}$ and $\vv{w_2}$ are $(n-1)$-qubit states,
   where $|\alpha|^2 + |\beta|^2 = 1$.
@@ -631,7 +632,7 @@ must first specify the kind of values they contain.
 We use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
 extend it to longer tuples by associating to the right.
 
-From now on, we call the value distributions, i.e. the elements of $\ValD$,
+From now on, we call the value combinations, i.e. the elements of $\ValD$,
 \emph{vectors}. The vector space $\ValD$ is equipped with an inner
 product defined by,  
 \(
@@ -652,7 +653,7 @@ calculus syntax. As expected, two values are \emph{orthogonal} when their inner
 product is equal to zero. We can now formally define the sets that
 decorate abstractions.
 \begin{definition}[Basis]\label{def:NthDimensionalBasis}
-  A set of value distributions $B$ is a \emph{$2^n$-dimensional orthonormal
+  A set of value combinations $B$ is a \emph{$2^n$-dimensional orthonormal
   basis} if it satisfies:
   \begin{enumerate*}
     \item $B$ has cardinality $2^n$.
@@ -697,7 +698,7 @@ capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
 However, beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
 operation substitutes variables with vectors expressed in the chosen basis; the
-accompanying coefficients are those of the value distribution being
+accompanying coefficients are those of the value combination being
 substituted.
 
 Alongside this substitution, we expand the set of orthogonal basis with a 
@@ -710,7 +711,7 @@ So, from now on, the symbols $B, B_1, B_2$ in Table~\ref{tab:Syntax} are either 
 
 
 \begin{definition}[Basis-dependent substitution]
-  Let $\vv t$ be a term distribution, $\vv v$ a value distribution, $x$ a
+  Let $\vv t$ be a term combination, $\vv v$ a value combination, $x$ a
   variable, and $B$ an orthonormal basis. We define the substitution
   $\vv t\ansubst{\vv v/x}{B}$ as follows:
   \[
@@ -771,7 +772,7 @@ With this substitution in place, we can establish certain needed properties.
 First, basis-dependent substitution distributes over linear combinations.
 
 \begin{lemma}[Distributivity over linear combinations]\label{lem:distributiveSubstitution}
-  For term distributions $\vv{t_i}$, a value distribution $\vv{v}$, a
+  For term combinations $\vv{t_i}$, a value combination $\vv{v}$, a
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
   $\ansubst{\vv v/x}{B}$ is defined:
   \(
@@ -786,7 +787,7 @@ The next result states that substitution behaves consistently within each
 equivalence class induced by the congruence $\equiv$.
 
 \begin{lemma}[Compatibility with congruence]\label{lem:EquivSubstitutions}
-  For value distributions $\vv{v},\vv{w}$, a term distribution $\vv{t}$, and
+  For value combinations $\vv{v},\vv{w}$, a term combination $\vv{t}$, and
   an orthonormal basis $B$ such that both
   $\ansubst{\vv{v}/x}{B}$ and $\ansubst{\vv{w}/x}{B}$ are defined:
   if $\vv{v}\equiv\vv{w}$, then
@@ -823,7 +824,7 @@ represents a superposition of distinct experiments.
 Finally, we introduce a convenient notation for generalised substitutions over
 a term by closed values. A substitution $\sigma$ can be seen as a finite set of
 individual substitutions applied consecutively to a term. Formally, for a term
-$\vv{t}$, closed value distributions $\vv{v_1},\dots,\vv{v_n}$, variables
+$\vv{t}$, closed value combinations $\vv{v_1},\dots,\vv{v_n}$, variables
 $x_1,\dots,x_n$, and bases $B_1,\dots,B_n$:
 \[
   \vv{t}\ansubst{\sigma}{}
@@ -831,9 +832,9 @@ $x_1,\dots,x_n$, and bases $B_1,\dots,B_n$:
 \]
 Since each $\vv{v_i}$ is closed, the order of substitutions is irrelevant. We
 regard $\sigma$ as a partial function from variables to pairs of closed value
-distributions and bases, and write $\dom{\sigma}$ for its domain. The operation
+combinations and bases, and write $\dom{\sigma}$ for its domain. The operation
 extends naturally: for a term $\vv{t}$, substitution $\sigma$, a new variable
-$x\notin\dom{\sigma}$, value distribution $\vv{v}$, and basis $B$,
+$x\notin\dom{\sigma}$, value combination $\vv{v}$, and basis $B$,
 \(
   \vv{t}\ansubst{\sigma}{}\ansubst{\vv{v}/x}{B}
   = \vv{t}\ansubst{\sigma'}{}
@@ -906,7 +907,7 @@ $\alpha\,t\vv s+\beta\,t\vv r$.
 
 The only exception occurs for higher-order terms: since no orthogonal bases are
 defined for abstractions, we introduced the symbol $\AbsBasis$ to 
-linearly over the basis values of a distribution. For instance,
+linearly over the basis values of a combination. For instance,
 \[
   (\Lam{x}{\AbsBasis}{\vv t})
   \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
@@ -959,9 +960,9 @@ equivalence relation $\equiv$ commutes with $\eval$; in other words,
 equivalence is preserved by reduction modulo~$\equiv$.
 
 \begin{theorem}[Reduction preserves equivalence]\label{thm:confluence}
-  Let $\vv{t}$ and $\vv{s}$ be closed term distributions with
+  Let $\vv{t}$ and $\vv{s}$ be closed term combinations with
   $\vv{t}\equiv\vv{s}$. If $\vv{t}\lraneq\vv{t'}$ and $\vv{s}\lraneq\vv{s'}$,
-  then there exist term distributions $\vv{r_1}$ and $\vv{r_2}$ such that
+  then there exist term combinations $\vv{r_1}$ and $\vv{r_2}$ such that
   $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
   $\vv{r_1}\equiv\vv{r_2}$.
 %  Diagrammatically:
@@ -984,7 +985,7 @@ equivalence is preserved by reduction modulo~$\equiv$.
 
 \begin{remark}\label{rmk:determinism}
   Since the reduction relation $\eval$ is defined modulo~$\equiv$, the result
-  above is equivalent to stating that there exists a single distribution
+  above is equivalent to stating that there exists a single combination
   $\vv{r}$ such that $\vv{t'}\eval\vv{r}$ and $\vv{s'}\eval\vv{r}$.
   Moreover, as the elementary reduction~$\lraneq$ is deterministic, the
   reduction relation~$\lra$ is also deterministic; that is, if
@@ -1008,14 +1009,14 @@ vectors we wish to study belong to the \emph{unit sphere}. We denote $\Sph
 corresponds to the mathematical representation of quantum data as unit vectors
 in a Hilbert space.
 
-\begin{definition}[Unitary value distribution]
-  A value distribution $\vv{v}$ is said to be \emph{unitary} if its norm equals~1,
+\begin{definition}[Unitary value combination]
+  A value combination $\vv{v}$ is said to be \emph{unitary} if its norm equals~1,
   that is, if $\vv{v}\in\Sph$.
 \end{definition}
 
 \begin{definition}[Unitary type]
-  A \emph{unitary type} (or simply a \emph{type}) is a notation~$A$ together
-  with a set of unitary value distributions, denoted~$\sem{A}$, called the
+  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$ together
+  with a set of unitary value combinations, denoted~$\sem{A}$, called the
   \emph{unitary semantics} of~$A$.
 \end{definition}
 
@@ -1027,9 +1028,9 @@ Thus, we assign identical types to $\vv t$ and $e^{i\theta}\vv t$, a principle
 that guides the definition of realizers.
 
 \begin{definition}[Type realizer]\label{def:Realizer}
-  Given a type~$A$ and a term distribution~$\vv t$, we say that~$\vv t$
+  Given a type~$A$ and a term combination~$\vv t$, we say that~$\vv t$
   \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
-  distribution~$\vv v\in\sem A$ such that
+  combination~$\vv v\in\sem A$ such that
   $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
 \end{definition}
 
@@ -1050,7 +1051,7 @@ that guides the definition of realizers.
       \forall\vv{w}\in\sem{A},\,
       (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{X}\real B
     \bigr\}\\
-    \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot\quad\text{Where: }A^\bot = \{\vec{v}\in\Sph\,\mid\,\scal{\vec{v}}{a} = 0, \forall a\in A\}
+    \sem{\sharp X}&:= {(\sem{X}^\bot)}^\bot\quad\text{Where: }X^\bot = \{\vec{v}\in\Sph\,\mid\,\scal{\vec{v}}{a} = 0, \forall x\in X\}
   \end{align*}
   \caption{Type notations and semantics}
   \label{tab:UnitaryTypes}
@@ -1071,7 +1072,7 @@ boolean type can be represented by a basis of size 2, yet we are not restricted
 to a single one, as infinitely many bases exist.
 
 Pairs are standard, and written using the notation introduced earlier.
-The arrow type~$A\Arr B$ consists of distributions of $\lambda$-abstractions
+The arrow type~$A\Arr B$ consists of combinations of $\lambda$-abstractions
 mapping elements of~$\sem{A}$ to realizers of~$B$.  
 Finally, $\sharp A$ denotes the double orthogonal complement of~$A$ (within the unit sphere),
 representing quantum data. Since these are linear resources, they cannot be erased or
@@ -1099,14 +1100,14 @@ As expected for a span, the $\sharp$ operator is idempotent.
 \end{theorem}
 
 \begin{remark}
-  A basis type~$\basis{X}$ may consist of value distributions of pairs and can
+  A basis type~$\basis{X}$ may consist of value combinations of pairs and can
   therefore be written as the product type of smaller bases. For example, if
   $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\sem{\basis{X}}=\sem{\basis{\B}\times\basis{\B}}$.
   However, entangled bases, such as the Bell basis, do not allow this.
 \end{remark}
 
 Our type algebra captures the intended sets of
-value distributions. The following theorem shows that every member of a type
+value combinations. The following theorem shows that every member of a type
 interpretation has norm~$1$.
 
 \begin{theorem}\label{prop:UnitaryTypes}
@@ -1129,9 +1130,9 @@ If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
   $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
 \end{example}
 
-Although every type is defined by norm-1 value distributions, not every
-norm-1 distribution is contained in the interpretation of a type.
-For example, consider the distribution
+Although every type is defined by norm-1 value combinations, not every
+norm-1 combination is contained in the interpretation of a type.
+For example, consider the combination
 $\tfrac{1}{\sqrt{2}}(\ket{0} + \ket{00})$.
 Another example is a linear combination of abstractions defined over different
 bases. For instance, the term
@@ -1170,7 +1171,7 @@ words, these abstractions preserve both norm and orthogonality.
   Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if 
   for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
-  there exist value distributions
+  there exist value combinations
   $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
     $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$
     and
@@ -1183,9 +1184,9 @@ words, these abstractions preserve both norm and orthogonality.
 Terms such as $\ket{0}$ and $\ket{1}$ are syntactic objects of the
 calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
 terms on Hilbert spaces, we shall occasionally abuse notation and identify
-value distributions representing qubits with their corresponding canonical
+value combinations representing qubits with their corresponding canonical
 basis vectors in~$\C^{2^n}$. This identification applies only to those
-distributions denoting quantum data, not to general values such as
+combinations denoting quantum data, not to general values such as
 $\lambda$-abstractions---in particular, to all elements of
 $\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
 be made precise as follows.
@@ -1277,7 +1278,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   \qedhere
 \end{proof}
 
-  This result naturally extends to unitary distributions of
+  This result naturally extends to unitary combinations of
   $\lambda$-ab\-strac\-tions, since a term of the form
   $\Lam{x}{{X}}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}$ is syntactically different
   but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
@@ -1392,7 +1393,7 @@ We therefore introduce the following notion.
       for every
       $\sigma\in\sem{\Gamma,\Delta_1}$ and
       $\tau\in\sem{\Gamma,\Delta_2}$,
-      there exist value distributions $\vv{v},\vv{w}$ such that
+      there exist value combinations $\vv{v},\vv{w}$ such that
       $\vv{t}\ansubst{\sigma}{}\eval\vv{v}$,
       $\vv{s}\ansubst{\tau}{}\eval\vv{w}$,
       and $\vv{v}\perp\vv{w}$.
@@ -1575,14 +1576,13 @@ the derived judgement is
    \Arr \sharp(\basis{\B}\times\basis{\B})
 \).
 This type is correct but coarse: it only ensures the result is a
-unitary distribution of boolean pairs. Operationally, the
+unitary combination of boolean pairs. Operationally, the
 first output is a basis state ($\ket{0}$ or~$\ket{1}$) indicating if
 $f$ is constant or balanced, while the second may be ignored.
 
 Then, we can consider a basis-aware implementation with tighter typing.
 The key observation is that the oracle is always called on the fixed state
-$\ket{+-}$.  
-Thus it is natural to write the program in the
+$\ket{+-}$. Thus it is natural to write the program in the
 $\XB=\{\ket{+},\ket{-}\}$ basis, letting the types track that we remain in a
 basis state at the oracle boundary. We first define the same gates in the $\XB$ basis:
 \begin{align*}
@@ -1596,7 +1596,8 @@ basis state at the oracle boundary. We first define the same gates in the $\XB$ 
 \end{align*}
 We then rewrite the program and the four oracles in~$\XB$:
 \[
-\mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})} {\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+\mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
+{\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
 \]
 \begin{align*}
   O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
@@ -1631,8 +1632,7 @@ $\B$-basis bit.  In the typing derivation, no variable carries a $\sharp$-type:
 guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
 algorithm.
 
-
-\subsection{Quantum teleportation}\label{sec:teleportation}
+\subsection{Quantum teleportation}
 We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
 quantum information theory that exemplifies the manipulation of entangled
 states and the transmission of quantum data through classical communication.
@@ -1644,31 +1644,26 @@ discipline introduced earlier, we can encode the teleportation process in a
 way that remains both syntactically compact and semantically faithful to its
 quantum-mechanical counterpart.
 
-The deferred-measurement principle (see, for example,~\cite[\S 4.4]{NC00}) states that any quantum circuit can delay
-its measurements without altering the final outcome.  
-More precisely, any gate classically controlled by the result of a measurement
-is equivalent to another circuit where the control qubit remains unmeasured,
-acting coherently on all branches of the superposition.  
+The deferred-measurement principle (see, for example,~\cite[\S 4.4]{NC00})
+states that any quantum circuit can delay its measurements without altering
+the final outcome. More precisely, any gate classically controlled by the
+result of a measurement is equivalent to another circuit where the control
+qubit remains unmeasured, acting coherently on all branches of the superposition.  
 Although the $\lambdaB$ calculus has no primitive operation for measurement,
 the $\mathsf{case}$ constructor allows us to simulate such classically
 controlled gates by branching on basis states.
 
-A canonical example that exploits this principle is the
-\emph{quantum teleportation protocol}.  
-Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
-state.  
-Using this shared entanglement and two bits of classical information,
-Alice can transmit an unknown quantum state~$\ket{\psi}$ to Bob without
-physically sending the qubit itself.  
+A canonical example that exploits this principle is the \emph{quantum teleportation
+protocol}. Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
+state. Using this shared entanglement and two bits of classical information, Alice can
+transmit an unknown quantum state~$\ket{\psi}$ to Bob without physically sending the qubit itself.  
 
-The algorithm first creates the Bell state $\Phi^{+}$ between the second and
-third qubits, then performs a Bell-basis measurement on the first and second
-qubits.  
+The algorithm first creates the Bell state $\Phi^{+}$ between the second and third qubits,
+then performs a Bell-basis measurement on the first and second qubits.  
 Operationally, this measurement is implemented by applying a CNOT gate followed
 by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
-then measuring both qubits.  
-Depending on the pair of classical outcomes, a Pauli correction ($I$, $X$, $Z$,
-or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
+then measuring both qubits. Depending on the pair of classical outcomes, a Pauli correction
+($I$, $X$, $Z$, or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
 (for a more thorough analysis of the algorithm, see \cite{PhysRevLett.70.1895}).
 
 We can simulate the behaviour of this protocol in the $\lambdaB$ calculus by
@@ -1676,7 +1671,7 @@ defining a term that, instead of performing measurements, explicitly
 describes the computation corresponding to each branch.  
 A possible encoding is:
 \begin{align*}
-  &\mathsf{Teleport} :=
+&\mathsf{Teleport}_{\Phi^+} :=
   \Lam{x}{\B}{
     \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
       \mathsf{case}\;
@@ -1696,17 +1691,35 @@ It takes the input~$\ket{\psi}$ and pairs it with one half of an
 entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
 qubits (the input and Alice's entangled qubit) against the Bell basis, and in
 each branch applies the appropriate correction to Bob's qubit to
-recover~$\ket{\psi}$.  The resulting term represents the same quantum
-transformation but expressed without any explicit
-measurement---instead, each branch encodes the coherent superposition of
-possible outcomes.
+recover~$\ket{\psi}$. The resulting term represents the same quantum
+transformation but expressed without any explicit measurement---instead,
+each branch encodes the coherent superposition of possible outcomes.
+\iffalse
+Despite usually taking $\Phi^+$ for the execution of the protocol,
+any of the four states can be used to perform the teleportation. So perhaps,
+a more precise representation of the algorithm would be a program which takes
+\emph{any} Bell state and an arbitrary qubit as argument and performs
+the corresponding computations. 
+
+.....
+This program exhibits some interesting characteristics:
+\begin{itemize}
+  \item 
+\end{itemize}
+
+
+This program exhibits both classical control (when matching the Bell state),
+and quantum control (when )
+.....
+\fi
 
 The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
 steps in the Bell basis, exploiting the deferred-measurement principle in a
 type-safe way.  
 Each branch of the $\mathsf{case}$ corresponds to a unitary transformation
 preserving linearity and orthogonality, and the overall term has type
-${\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}$\footnote{The type derivation relies on the subtypings 
+${\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}$
+\footnote{The type derivation relies on the subtypings 
 $\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
 $\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}.
 
@@ -1720,7 +1733,7 @@ to arbitrary bases, beyond the canonical one.
 The central mechanism enabling this extension is the decoration of
 $\lambda$-ab\-strac\-tions and $\mathsf{let}$-constructors with basis annotations,
 alongside a modified substitution operation that governs how value
-distributions decompose onto different bases.  
+combinations decompose onto different bases.  
 These additions do not increase the expressivity of the original calculus
 on which $\lambdaB$ builds, yet they offer a novel perspective for reasoning
 about quantum programs and their behaviour under basis changes.
@@ -1728,7 +1741,7 @@ about quantum programs and their behaviour under basis changes.
 The reduction system coordinates computation through these extended syntactic
 constructs and substitutions.  
 A key property is that evaluation commutes with the $\equiv$-relation,
-ensuring that interpreting a value distribution in a different basis does not
+ensuring that interpreting a value combination in a different basis does not
 affect the computational result.  
 Consequently, it is meaningful to reason about terms modulo basis
 congruence.
@@ -1788,7 +1801,7 @@ the calculus.
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:distributiveSubstitution}]
   \itshape
-  For term distributions $\vv{t_i}$, a value distribution $\vv{v}$, a
+  For term combinations $\vv{t_i}$, a value combination $\vv{v}$, a
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
   $\ansubst{\vv v/x}{B}$ is defined:
   \[
@@ -1812,7 +1825,7 @@ the calculus.
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:EquivSubstitutions}]
   \itshape
-  For value distributions $\vv{v},\vv{w}$, a term distribution $\vv{t}$, and
+  For value combinations $\vv{v},\vv{w}$, a term combination $\vv{t}$, and
   an orthonormal basis $B$ such that both
   $\ansubst{\vv{v}/x}{B}$ and $\ansubst{\vv{w}/x}{B}$ are defined:
   if $\vv{v}\equiv\vv{w}$, then
@@ -1836,7 +1849,9 @@ the calculus.
 \section{Omitted proofs from Section~\ref{sec:reduction}}\label{sec:appendixB}
 
 \begin{lemma}[Weak diamond property for $\lraneq$]\label{lem:SquigDiamond}
-  Let $\vv{t}, \vv{s_1}, \vv{s_2}$ term distributions such that $\vv{t}\lraneq{s_1}$ and $\vv{t}\lraneq\vv{s_2}$. Then, either there exists a term distribution $\vv{r}$ such that $\vv{s_1}\lraneq\vv{r}$ and $\vv{s_2}\lraneq \vv{r}$. Or, $\vv{s_1}=\vv{s_2}$. Diagrammatically:
+  Let $\vv{t}, \vv{s_1}, \vv{s_2}$ term combinations such that $\vv{t}\lraneq{s_1}$ and $\vv{t}\lraneq\vv{s_2}$. 
+  Then, either there exists a term combination $\vv{r}$ such that $\vv{s_1}\lraneq\vv{r}$ and 
+  $\vv{s_2}\lraneq \vv{r}$. Or, $\vv{s_1}=\vv{s_2}$. Diagrammatically:
   \[
     \begin{tikzcd}
       & \vv{t}
@@ -1859,7 +1874,9 @@ the calculus.
 \end{lemma}
 
 \begin{proof}
-  The proof follows from the fact that the $\lraneq$ reduction is deterministic over basic values. And, in case of term distributions, we only need to match the reduction on the corresponding sub-terms. Let $\vv{t}=\sum\limits_{i=1}^n \alpha_i \vv{t_i}$, $\vv{s_1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}$, and $\vv{s_2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i}+\alpha_k\vv{s_k}$. Where $\vv{t_j}\lraneq\vv{s_j}$ and $\vv{t_k}\lraneq\vv{s_k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
+  The proof follows from the fact that the $\lraneq$ reduction is deterministic over basic values. 
+  And, in case of term combinations, we only need to match the reduction on the corresponding sub-terms. 
+  Let $\vv{t}=\sum\limits_{i=1}^n \alpha_i \vv{t_i}$, $\vv{s_1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}$, and $\vv{s_2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i}+\alpha_k\vv{s_k}$. Where $\vv{t_j}\lraneq\vv{s_j}$ and $\vv{t_k}\lraneq\vv{s_k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
   \[
     \begin{tikzcd}
       &[-1em] \sum\limits_{i=1}^n \alpha_i \vv{t_i}
@@ -1877,9 +1894,9 @@ the calculus.
 
 \begin{restatetheorem}[Restatement of Theorem~\ref{thm:confluence}]
   \itshape
-  Let $\vv{t}$ and $\vv{s}$ be closed term distributions with
+  Let $\vv{t}$ and $\vv{s}$ be closed term combinations with
   $\vv{t}\equiv\vv{s}$. If $\vv{t}\lraneq\vv{t'}$ and $\vv{s}\lraneq\vv{s'}$,
-  then there exist term distributions $\vv{r_1}$ and $\vv{r_2}$ such that
+  then there exist term combinations $\vv{r_1}$ and $\vv{r_2}$ such that
   $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
   $\vv{r_1}\equiv\vv{r_2}$.
   Diagrammatically:
@@ -1902,7 +1919,7 @@ the calculus.
   \begin{description}
     \item[$\vv{t_1} + 0\vv{t_2}\equiv\vv{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond} since the reductions can only be performed in $\vv{t_1}$.
     
-    \item[$0\vv{t}\equiv\vv{0}$:] The term distributions cannot reduce on either side of the equivalence.
+    \item[$0\vv{t}\equiv\vv{0}$:] The term combinations cannot reduce on either side of the equivalence.
     
     \item[$1\vv{t}\equiv\vv{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
     
@@ -1914,7 +1931,7 @@ the calculus.
     
     \item[$(\alpha+\beta)\vv{t}\equiv\vv{t}$:] We start analyzing the coefficients. If $\alpha+\beta = 0$, then there cannot be a reduction on the left hand-side. If $(\alpha + \beta)\neq 0$ and either $\alpha=0$ or $\beta=0$, then we are on a particular case of $\vv{t_1} + 0\vv{t_2}\equiv\vv{t_1}$ with $\vv{t_1}=\vv{t_2}$. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    \item[$\alpha(\vv{t_1}+\vv{t_2})\equiv\alpha\vv{t_1}+\alpha\vv{t_2}$:] If $\alpha=0$, then the term distributions cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    \item[$\alpha(\vv{t_1}+\vv{t_2})\equiv\alpha\vv{t_1}+\alpha\vv{t_2}$:] If $\alpha=0$, then the term combinations cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
     \item[$\vv{t} (\alpha\vv{s})\equiv\alpha(\vv{t}\vv{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
@@ -2114,7 +2131,7 @@ the calculus.
   Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if 
   for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
-  there exist value distributions
+  there exist value combinations
   $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
   \[
     \vv{t}[\vv{v_i}/x]\eval\vv{w_i}
@@ -2166,7 +2183,7 @@ the calculus.
 
 Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesValidity}), we need the following results.
 
-\begin{theorem}\label{prop:InnerProdPairs} For all value distributions $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
+\begin{theorem}\label{prop:InnerProdPairs} For all value combinations $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
 \[
 \scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}} = \scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}
 \]
@@ -2196,7 +2213,7 @@ Given a type $A$, two vectors $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and a scalar 
 \begin{proof}
     Let $\lambda:=\|\vv{u_1}+\alpha\vv{u_2}\|$. When $\lambda\neq 0$, we take $\vv{u_0}=\frac{1}{\lambda}(\vv{u_1}+\alpha\vv{u_2})\in\sem{\sharp A}$, and we are done.
 
-    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vv{u_1}\|=0$ which is absurd since $\|\vv{u_1}\|=1$. Moreover, since $\lambda=\|\vv{u_1}+\alpha\vv{u_2}\|=0$, we observe that all the coefficients of the distribution $\vv{u_1}+\alpha\vv{u_2}$ are zeroes when written in canonical form which implies that:
+    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vv{u_1}\|=0$ which is absurd since $\|\vv{u_1}\|=1$. Moreover, since $\lambda=\|\vv{u_1}+\alpha\vv{u_2}\|=0$, we observe that all the coefficients of the combination $\vv{u_1}+\alpha\vv{u_2}$ are zeroes when written in canonical form which implies that:
     \[
     \vv{u_1}+\alpha\vv{u_2} = 0(\vv{u_1}+\alpha\vv{u_2}) = 0\vv{u_1}+0\vv{u_2}
     \]
@@ -2223,7 +2240,7 @@ For all values $\vv{v}$ and $\vv{w}$ we have:
 \end{theorem}
 
 \begin{lemma}\label{lem:InnerProdSingleVar} %A7
-Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value distributions $\vv{w_1}, \vv{w_2}\in\sem{C}$ such that:
+Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value combinations $\vv{w_1}, \vv{w_2}\in\sem{C}$ such that:
 \[
 \begin{array}{c}
     \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
@@ -2235,13 +2252,13 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
 \end{lemma}
 
 \begin{proof}
-    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
     \begin{align*}
         \vv{u_1} + \vv{u_2} = \lambda_1 \vv{u_{01}} & \vv{u_1} + i \vv{u_2} = \lambda_3 \vv{u_{03}} \\
         \vv{u_1} + (-1) \vv{u_2} = \lambda_2 \vv{u_{02}} & \vv{u_1} + (-i) \vv{u_2} = \lambda_4 \vv{u_{04}} 
     \end{align*}
 
-    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, we also know that there are value distributions $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
+    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, we also know that there are value combinations $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
     \begin{align*}
         \vv{w_1} + \vv{w_2} = \lambda_1 \vv{w_{01}} & \vv{w_1} + i \vv{w_2} = \lambda_3 \vv{w_{03}} \\
         \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} 
@@ -2260,7 +2277,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
 \end{proof}
 
 \begin{lemma}\label{lem:OrthogonalSubstitution} %A8
-Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
+Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value combinations $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
 \[
 \begin{array}{c}
     \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
@@ -2331,7 +2348,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
 \end{proof}
 
 \begin{lemma}\label{lem:UnitPreserTens} %A9
-Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value distributions $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and $\vv{v_1},\vv{v_2}\in\sem{\sharp B}$, there are value distributions $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
+Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and $\vv{v_1},\vv{v_2}\in\sem{\sharp B}$, there are value combinations $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
 \[
 \begin{array}{c}
     \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
@@ -2423,7 +2440,7 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
         &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\qquad{\text{By Lemma~\ref{lem:distributiveSubstitution}}}
     \end{align*}
     
-    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\real B$. Finally, we can conclude that the distribution: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})\in\sem{A\Arr B}$.
+    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\real B$. Finally, we can conclude that the combination: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})\in\sem{A\Arr B}$.
 
     \item[App] If the hypotheses are valid, then:
     \begin{itemize}
