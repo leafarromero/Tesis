@@ -405,6 +405,9 @@ to state that the term reduces to a value of that type.
 Each typing rule therefore corresponds to a provable theorem in this setting.
 Rather than building ad hoc typing rules, the system is derived from the
 computational content of the calculus.
+While the untyped calculus allows for the construction of non-physical terms, 
+the extracted type system acts as a logical filter: only those terms that reduce 
+to unit-norm values and correspond to unitary transformations are typable.
 
 Following this approach, we enrich abstractions with explicit basis
 decorations. Intuitively, the reduction system treats values expressed in the
@@ -470,18 +473,22 @@ basis-sensitive typing and higher-order quantum control.
 %\paragraph{Contributions.}
 The contributions of this paper can be summarised as follows.
 \begin{itemize}[nosep]
-  \item We introduce a \emph{basis-sensitive} quantum $\lambda$-calculus in the
-  quantum-control paradigm, extending previous systems to a setting that is
-  unit-norm, higher-order, and supports multiple-qubit entangled bases.
-\item We develop a \emph{realisability-based semantics} that connects
-  reduction and typing, enabling the systematic extraction of a sound
-  type system.
-  \item We formalise a \emph{type algebra} capable of tracking basis
-  information throughout programs, and derive typing rules corresponding to
-  provable theorems in the realisability interpretation.
-  \item We illustrate the expressive power of the calculus through examples
-  involving basis-dependent operations and multi-qubit structures, showing how
-  it subsumes and extends previous single-basis approaches.
+  \item We introduce $\lambdaB$, a quantum-control $\lambda$-calculus that 
+  generalises the basis-sensitive paradigm to arbitrary, possibly entangled 
+  multi-qubit bases in a higher-order setting.
+  \item We provide a full \emph{realisability-based semantics} that 
+  logically internalises the semantic requirement of unitarity. This allows 
+  the systematic extraction of a sound type system where the physical consistency 
+  of programs (unit-norm preservation and isometries) is guaranteed by 
+  construction.
+  \item We achieve a direct \emph{semantic characterisation of unitary operators} 
+  of arbitrary finite dimension $2^n$ as abstractions in our type algebra. 
+  This result generalises previous characterisations which were restricted 
+  to the computational basis.
+  \item We demonstrate the \emph{expressive benefits} of basis-awareness 
+  through a series of examples. Specifically, we show how the system captures 
+  classical determinism and the deferred-measurement principle via static 
+  typing, yielding more precise program descriptions than earlier calculi.
 \end{itemize}
 
 The paper is organised as follows.  
@@ -727,6 +734,7 @@ symbol $\AbsBasis$.
       \text{undefined} & \text{otherwise.}
     \end{cases}
   \]
+  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Theorem~\ref{thm:UniqueDecomposition}.
 \end{definition}
 
 The definition captures two distinct substitution modes.  
@@ -809,15 +817,15 @@ For example,
   = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}.
 \]
 This difference arises because the relation $\equiv$ does not commute with
-lambda abstraction, nor with the case construct. Although the two terms are
-operationally equivalent, the calculus distinguishes between the
-superposition of results,
-$\Lam{x}{B}{\alpha\vv{v_1} + \beta\vv{v_2}}$,
-and the superposition of functions,
-$\alpha(\Lam{x}{B}{\vv{v_1}}) + \beta(\Lam{x}{B}{\vv{v_2}})$.
-This distinction reflects a physical intuition: the former corresponds to a
-single experiment producing a superposition of outcomes, while the latter
-represents a superposition of distinct experiments.
+lambda abstraction, nor with the case construct (indeed, the calculus is
+intensional with respect to functions, since it is issued from a realizability
+model).  Although the two terms are operationally equivalent, the calculus
+distinguishes between the superposition of results, $\Lam{x}{B}{\alpha\vv{v_1}
++ \beta\vv{v_2}}$, and the superposition of functions,
+$\alpha(\Lam{x}{B}{\vv{v_1}}) + \beta(\Lam{x}{B}{\vv{v_2}})$.  This distinction
+reflects a physical intuition: the former corresponds to a single experiment
+producing a superposition of outcomes, while the latter represents a
+superposition of distinct experiments.
 
 Finally, we introduce a convenient notation for generalised substitutions over
 a term by closed values. A substitution $\sigma$ can be seen as a finite set of
@@ -857,22 +865,15 @@ $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
     \text{If for all } i\neq j\ \vv{v_i}\perp\vv{v_j}:\quad&
     \gencase{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}} \lraneq \sum_{i=1}^{n}\alpha_i \vv{t_i}
   \end{align*}
-  \[
-    \begin{array}{c}
-      \infer{st\lraneq s\vv r}{t\lraneq \vv r}
-      \qquad\qquad
-      \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
-      \qquad\qquad
-      \infer[(*)]{\vv v+\alpha t+\vv s\lraneq \vv v+\alpha \vv r+\vv s}{t\lraneq \vv r & \alpha\neq 0}
-      \\[12pt]
-      \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
-      \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
-      \\[5pt]
-      \infer{\gencase{t}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}\lraneq
-      \gencase{\vv r}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}{t\lraneq \vv r}
-    \end{array}
-  \]
-    In (*) we use the convention that the subterms in the sum are ordered as follows: first we place all the values, if any, followed by the non-value terms in a lexicographical order.
+  If $t\lraneq \vv r$, then
+  $\left\{\begin{aligned}
+    st &\lraneq s\vv r \qquad\qquad tv \lraneq \vv rv \\
+    \text{If }\alpha\neq 0:\quad\vv v+\alpha t+\vv s &\lraneq \vv v+\alpha \vv r+\vv s & (*)\\
+    \LetP{x}{A}{y}{B}{t}{\vv{s}} &\lraneq \LetP{x}{A}{y}{B}{\vv r}{\vv{s}} \\
+    \gencase{t}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}} &\lraneq \gencase{\vv r}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}
+\end{aligned}\right.$
+
+   \noindent In $(*)$ we use the convention that the subterms in the sum are ordered as follows: first we place all the values, if any, followed by the non-value terms in a lexicographical order.
   \caption{Reduction system.}
   \label{tab:Reduction}
 \end{table}
@@ -1103,10 +1104,13 @@ interpretation has norm~$1$.
 \end{theorem}
 
 Defining types as sets of values naturally induces a semantic notion of
-subtyping. We say that a type~$A$ is a subtype of a type~$B$
+subtyping.
+\begin{definition}[Subtyping and isomorphism]\label{def:Subtyping}
+We say that a type~$A$ is a subtype of a type~$B$
 (written~$A\leq B$) when $\sem A\subseteq\sem B$. 
 If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
 (written~$A\cong B$).
+\end{definition}
 
 \begin{example}
   For every type~$A$, we have $A\leq\sharp A$.
@@ -1211,57 +1215,14 @@ This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
 characterisation of unitary operators as values in
 $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 
-\begin{theorem}[Characterisation of Unitary Operators]
+\begin{theorem}[Characterisation of Unitary Operators]\label{thm:characterisation}
   Let $X$ and $Y$ be orthonormal bases of size~$2^n$.
   A closed $\lambda$-abstraction
   $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if it represents a unitary operator
   $F:\C^{2^n}\to\C^{2^n}$.
+  \qed
 \end{theorem}
-
-\begin{proof}
-  \textit{Necessity.}
-  Suppose that $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
-  Then, by Lemma~\ref{lem:BasesIso}, for every
-  $\vv{v_i}\in\sem{\basis{X}}$ there exists
-  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
-  $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
-  $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
-  Let $F:\C^{2^n}\to\C^{2^n}$ be the operator defined by
-  $F(\vv{v_i})=\vv{w_i}$.
-  By linearity over~$X$, it follows that
-  $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
-  Then, $F$ is unitary since
-  $\|\vv{w_i}\|_{\C^{2^n}}=\|\vv{w_j}\|_{\C^{2^n}}=1$ and
-  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^{2^n}}=0$.
-
-  \smallskip
-  \textit{Sufficiency.}
-  Conversely, suppose that $\Lam{x}{{X}}{\vv{t}}$ represents a
-  unitary operator $F:\C^{2^n}\to\C^{2^n}$.
-  Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
-  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
-  $F(\vv{v_i}) = \vv{w_i}$ and
-  $(\Lam{x}{{X}}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
-  Hence,
-  \(
-    (\Lam{x}{{X}}{\vv{t}})\vv{v_i}
-    \lraneq
-    \vv{t}\ansubst{\vv{v_i}/x}{X}
-    = \vv{t}[\vv{v_i}/x]
-    \eval \vv{w_i}
-    \in \sem{\sharp\basis{Y}}
-  \),
-  as $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$. Since
-  \(
-    \scal{\vv{w_i}}{\vv{w_j}}
-    = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
-    = 0
-  \),
-  from Lemma~\ref{lem:BasesIso} it follows that
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
-  \qedhere
-\end{proof}
 
   This result naturally extends to unitary combinations of
   $\lambda$-ab\-strac\-tions, since a term of the form
@@ -2139,6 +2100,59 @@ the calculus.
 
   Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Theorem~\ref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
 \end{proof}
+
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:characterisation}]
+  Let $X$ and $Y$ be orthonormal bases of size~$2^n$.
+  A closed $\lambda$-abstraction
+  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  if and only if it represents a unitary operator
+  $F:\C^{2^n}\to\C^{2^n}$.
+\end{restatetheorem}
+
+\begin{proof}
+  \textit{Necessity.}
+  Suppose that $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+  Then, by Lemma~\ref{lem:BasesIso}, for every
+  $\vv{v_i}\in\sem{\basis{X}}$ there exists
+  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
+  $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
+  $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
+  Let $F:\C^{2^n}\to\C^{2^n}$ be the operator defined by
+  $F(\vv{v_i})=\vv{w_i}$.
+  By linearity over~$X$, it follows that
+  $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
+  Then, $F$ is unitary since
+  $\|\vv{w_i}\|_{\C^{2^n}}=\|\vv{w_j}\|_{\C^{2^n}}=1$ and
+  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^{2^n}}=0$.
+
+  \smallskip
+  \textit{Sufficiency.}
+  Conversely, suppose that $\Lam{x}{{X}}{\vv{t}}$ represents a
+  unitary operator $F:\C^{2^n}\to\C^{2^n}$.
+  Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
+  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
+  $F(\vv{v_i}) = \vv{w_i}$ and
+  $(\Lam{x}{{X}}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
+  Hence,
+  \(
+    (\Lam{x}{{X}}{\vv{t}})\vv{v_i}
+    \lraneq
+    \vv{t}\ansubst{\vv{v_i}/x}{X}
+    = \vv{t}[\vv{v_i}/x]
+    \eval \vv{w_i}
+    \in \sem{\sharp\basis{Y}}
+  \),
+  as $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$. Since
+  \(
+    \scal{\vv{w_i}}{\vv{w_j}}
+    = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
+    = 0
+  \),
+  from Lemma~\ref{lem:BasesIso} it follows that
+  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+  \qedhere
+\end{proof}
+
 
 Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesValidity}), we need the following results.
 
