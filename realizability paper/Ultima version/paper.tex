@@ -301,8 +301,6 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
 \setlength{\belowdisplayshortskip}{3pt}
 
 \maketitle
-
-%TODO mandatory: add short abstract of the document
 \begin{abstract}
   We present $\lambdaB$, a quantum‐control $\lambda$‐calculus that refines
   previous basis-sensitive systems by allowing abstractions to be expressed with
@@ -337,21 +335,18 @@ linear combinations of them. Classical bits can be copied and deleted freely,
 while such operations on arbitrary qubits are restricted.
 
 In this paper, we introduce a quantum $\lambda$-calculus in the
-quantum-control paradigm—by contrast with the classical-control one, where the
-control flow is classical and cannot be superposed. Our approach is inspired by
-a line of work on basis-sensitive quantum typing. The earliest system,
-Lambda-S \cite{DiazcaroDowekRinaldiBIO19}, could distinguish whether a qubit
-was in the computational basis, allowing duplication and erasure only in that
-case. Later, Lambda-S$_1$
-\cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} refined this
-approach by restricting to unit-norm vectors, introducing higher-order
-abstractions, and ensuring that terms of type qubit-to-qubit denote unitary
-maps. More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25}
-generalised Lambda-S to arbitrary non-entangled single-qubit bases, to first order.
-The $\lambda_B$ calculus 
-presented here extends these ideas to a unit-norm, higher-order setting over
-multiple-qubit bases, grounded in a realisability semantics;
-a comparison with previous systems is provided in Table~\ref{tab:related}.
+quantum-control paradigm—by contrast with the classical-control one, which
+cannot be superposed. Our approach is inspired by a line of work on basis-sensitive
+quantum typing. The earliest system, Lambda-S \cite{DiazcaroDowekRinaldiBIO19},
+identified qubits in the computational basis, allowing duplication and erasure
+only in that case. Later, Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022}
+refined this approach by restricting to unit-norm vectors, introducing higher-order
+abstractions, and ensuring that terms of type qubit-to-qubit denote unitary maps.
+More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25} generalised
+Lambda-S to arbitrary non-entangled single-qubit bases, to first order. The
+$\lambda_B$ calculus presented here extends these ideas to a unit-norm, higher-order
+setting over multiple-qubit bases, grounded in a realisability semantics; a comparison
+with previous systems is provided in Table~\ref{tab:related}.
 \begin{table}
   \centering
   \begin{tabular}{|l|c|c|c|c|c|}\hline
@@ -395,16 +390,15 @@ a comparison with previous systems is provided in Table~\ref{tab:related}.
   \label{tab:related}
 \end{table}
 
-The realisability methodology, originating with Kleene's work on Heyting
-arithmetic \cite{KleeneJSL45}, provides a constructive framework that connects
+The realisability methodology, provides a constructive framework that connects
 operational semantics with type systems. In our context, it allows the
 extraction of a sound type system directly from the reduction semantics of the
 calculus, ensuring that safety properties hold by construction. The approach
 proceeds as follows:
 First define a calculus with a deterministic evaluation strategy.
 Then, define types as sets of closed values in the language.
-Finally, define the typing judgement so that asserting that a term has a given type
-is, by definition, to state that the term reduces to a value of that type.
+Finally, define the typing judgement so that a type assertion equates, by definition,
+to state that the term reduces to a value of that type.
 Each typing rule therefore corresponds to a provable theorem in this setting.
 Rather than building ad hoc typing rules, the system is derived from the
 computational content of the calculus.
@@ -416,7 +410,9 @@ represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
 linear handling for unknown qubits.
 
-This work pursues two goals: first, to provide a more exact program description via the extracted type system; and second, to express quantum algorithms compositionally, rather than as mere circuit translations.
+This work pursues two goals: first, to provide a more exact program description
+via the extracted type system; and second, to express quantum algorithms compositionally,
+rather than as mere circuit translations.
 
 %\paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
@@ -433,11 +429,10 @@ arbitrary---possibly entangled---bases, extending basis awareness beyond the
 single-qubit setting and recovering higher-order computation.
 
 A number of other frameworks support reasoning about multiple bases through
-different paradigms.  
-The ZX-calculus~\cite{CoeckeRossICALP08} provides a graphical language where
-spiders correspond to computations relative to the computational and Hadamard
-bases, while the Many-Worlds
-Calculus~\cite{ChardonnetdeVismeValironVilmartLMCS25} also accommodates
+different paradigms. The ZX-calculus~\cite{CoeckeRossICALP08} provides a
+graphical language where spiders correspond to computations relative to the
+computational and Hadamard bases, while the Many-Worlds Calculus
+\cite{ChardonnetdeVismeValironVilmartLMCS25} also accommodates
 superpositions of programs but within a diagrammatic semantics.  
 By contrast, our approach operates directly within a typed term calculus,
 allowing basis transitions to be tracked syntactically.
@@ -528,9 +523,8 @@ $\ket 0$ and $\ket 1$. A pair of values is also considered a value.  Terms
 include values, applications, pair constructors and destructors, and pattern
 matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
 Both term and value combinations are built $\C$-linear combinations of
-basic terms and values, respectively. 
-We use $v,u,w$ to denote values and $t,s,r$ for terms, writing $\vv{\cdot}$ when
-they are combinations.
+basic terms and values, respectively. We use $v,u,w$ to denote values and
+$t,s,r$ for terms, writing $\vv{\cdot}$ when they are combinations.
 
 The symbols $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
@@ -580,16 +574,15 @@ notation~$\sum$.
   \label{tab:Congruence}
 \end{table}
 
-The rules in Table~\ref{tab:Congruence} ensure that the
-set of value combinations satisfies the axioms of a vector space.  The notion
-of basis in this calculus builds on this algebraic foundation. Once the vector
-structure is established, we can define which subsets $B\subseteq \ValD$
-qualify as \emph{bases}, thereby justifying the decorations appearing in the
-syntax of Table~\ref{tab:Syntax}.
+The rules in Table~\ref{tab:Congruence} ensure that the set of value combinations
+satisfies the axioms of a vector space. The notion of basis in this calculus builds
+on this algebraic foundation. Once the vector structure is established, we can define
+which subsets $B\subseteq \ValD$ qualify as \emph{bases}, thereby justifying the
+decorations appearing in the syntax of Table~\ref{tab:Syntax}.
 
 We will also consider the following notation for linear combinations of
-pairs. This notation does not appear in the syntax,
-but is rather useful to describe specific states.
+pairs. This notation does not appear in the syntax, but is rather useful to describe
+specific states.
 \[
   \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
   := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
@@ -597,7 +590,6 @@ but is rather useful to describe specific states.
   \Pair{r}{\alpha  t+\vv{t_1}} 
   := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
 \]
-
 
 Before proceeding further, let us briefly illustrate the intuition behind the
 congruence in Table~\ref{tab:Congruence}.  
@@ -664,17 +656,23 @@ decorate abstractions.
 
 As a first step, the syntax introduced in Table~\ref{tab:Syntax}
 can be restricted to sets $B$ forming $2^n$-dimensional
-orthonormal bases.
-These sets indicate the basis in which a term is expressed: qubits in the
-decorating basis are treated in call-by-value, while others are decomposed as
+orthonormal bases. These sets indicate the basis in which a term is expressed:
+qubits in the decorating basis are treated in call-by-value, while others are decomposed as
 $\C$-linear combinations of basis elements, with the function applied linearly
 to each component.  If a term cannot be expressed in the decorating basis,
 evaluation becomes stuck.
 
-As expected, no non-trivial linear combination of basis
-elements yields the null vector; otherwise, some basis vector would violate
-pairwise orthogonality. Consequently, each decomposition over a basis is
-unique.
+The basis analysis will be restricted to $n$-qubit states. In other words, we will
+not be considering bases for $\lambda$-abstractions, this is due to the fact that a syntactical
+approach to higher-order bases is insufficient. For example, two different $\lambda$-terms
+which encode the same function $f$, are considered orthogonal to each other. This itself is
+an issue since the norm-$1$ linear combination of these terms does not preserve unitarity.
+Solving this problem is not a trivial endeavor and we leave it as a possible avenue for future
+research.
+
+As expected, no non-trivial linear combination of basis elements yields the null vector;
+otherwise, some basis vector would violate pairwise orthogonality. Consequently, each
+decomposition over a basis is unique.
 
 \begin{theorem}[Unique decomposition]\label{thm:UniqueDecomposition}
   If $B$ is a $2^n$-dimensional basis, then every $n$-qubit state has a
@@ -702,13 +700,13 @@ accompanying coefficients are those of the value combination being
 substituted.
 
 Alongside this substitution, we expand the set of orthogonal basis with a 
-special symbol, denoted $\AbsBasis$. This symbol changes the nature of the lambda
-abstraction, allowing it to take other abstractions as arguments. This is the only
-instance of higher-order functions in the calculus. The symbol $\AbsBasis$, is a purely
-syntactical device, intuitively it can be thought as the canonical basis. It 
-distributes the application over every basic value as defined in the syntax.
-So, from now on, the symbols $B, B_1, B_2$ in Table~\ref{tab:Syntax} are either $2^n$-dimensional orthonormal basis, or the special symbol $\AbsBasis$.
-
+special symbol, denoted $\AbsBasis$. Since we only consider bases for
+first-order terms, we need a method to deal with combinations of $\lambda$-abstractions.
+This symbol marks that the argument of a function should be treated linearly over its
+basic values as defined in the syntax. This is the only instance of higher-order
+functions in the calculus. So, from now on, the symbols $B, B_1, B_2$ in Table
+\ref{tab:Syntax} are either $2^n$-dimensional orthonormal basis, or the special
+symbol $\AbsBasis$.
 
 \begin{definition}[Basis-dependent substitution]
   Let $\vv t$ be a term combination, $\vv v$ a value combination, $x$ a
@@ -728,17 +726,14 @@ So, from now on, the symbols $B, B_1, B_2$ in Table~\ref{tab:Syntax} are either 
   \]
 \end{definition}
 
-The two cases in the definition capture distinct substitution modes.  
+The definition captures two distinct substitution modes.  
 In the first, substitution proceeds linearly using the decomposition of
-$\vv v$ over the explicit basis $B$.  
-In the second, when $B=\AbsBasis$, substitution proceeds linearly over the basic
-values that form $\vv v$.  
-This case recovers the substitution mechanism of 
-non base-sensitive calculi---as first defined in
-\cite{ArrighiDowekLMCS17}---but generalises it by introducing
-basis-dependent behaviour.  
-This special case is also the only one applicable to
-$\lambda$-abstractions, since abstractions do not belong to orthonormal bases.
+$\vv v$ over the explicit basis $B$. In the second, when $B=\AbsBasis$,
+substitution proceeds linearly over the basic values that form $\vv v$.  
+This case recovers the mechanism of non base-sensitive calculi
+---as first defined in \cite{ArrighiDowekLMCS17}. This special case is
+also the only one applicable to $\lambda$-abstractions, since abstractions
+do not belong to orthonormal bases.
 
 The definition also extends to pairs of values. If
 $\vv v\equiv\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
@@ -753,20 +748,20 @@ where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
 with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
 purely notational.
 
-\begin{example}
-  Let
-  $\vv v = \alpha\ket{01}
-           + \beta\ket{10}$.
-  Then 
-  \[
-    (y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}
-    = \alpha\,(y,x)[\ket{0}/x][\ket{1}/y]
-    + \beta\,(y,x)[\ket{1}/x][\ket{0}/y] 
-    = 
-    \alpha\ket{10}
-    + \beta\ket{01}
-  \]
-\end{example}
+%\begin{example}
+%  Let
+%  $\vv v = \alpha\ket{01}
+%           + \beta\ket{10}$.
+%  Then 
+%  \[
+%    (y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}
+%    = \alpha\,(y,x)[\ket{0}/x][\ket{1}/y]
+%    + \beta\,(y,x)[\ket{1}/x][\ket{0}/y] 
+%    = 
+%    \alpha\ket{10}
+%    + \beta\ket{01}
+%  \]
+%\end{example}
 
 With this substitution in place, we can establish certain needed properties.
 First, basis-dependent substitution distributes over linear combinations.
@@ -826,10 +821,10 @@ a term by closed values. A substitution $\sigma$ can be seen as a finite set of
 individual substitutions applied consecutively to a term. Formally, for a term
 $\vv{t}$, closed value combinations $\vv{v_1},\dots,\vv{v_n}$, variables
 $x_1,\dots,x_n$, and bases $B_1,\dots,B_n$:
-\[
+\(
   \vv{t}\ansubst{\sigma}{}
   := \vv{t}\ansubst{\vv{v_1}/x_1}{B_1}\dotsb\ansubst{\vv{v_n}/x_n}{B_n}.
-\]
+\)
 Since each $\vv{v_i}$ is closed, the order of substitutions is irrelevant. We
 regard $\sigma$ as a partial function from variables to pairs of closed value
 combinations and bases, and write $\dom{\sigma}$ for its domain. The operation
@@ -865,12 +860,7 @@ $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
       \qquad\qquad
       \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
       \qquad\qquad
-     % \infer{\alpha t\lraneq \alpha \vv r}{t\lraneq\vv r & \alpha\neq 0}
-     % \\[5pt]
       \infer[(*)]{\vv v+\alpha t+\vv s\lraneq \vv v+\alpha \vv r+\vv s}{t\lraneq \vv r & \alpha\neq 0}
-%      \infer{(\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j t_j + (\sum\limits_{i=j+1}^{n} \alpha_i t_i) 
-%      \lraneq (\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j \vv r_j + (\sum\limits_{i=j+1}^{n} \alpha_i t_i) }
-%      {t_j\lraneq \vv r_j & \text{ (*)}}
       \\[12pt]
       \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
       \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
@@ -890,7 +880,6 @@ Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms
 considered modulo the congruence of Table~\ref{tab:Congruence}.  
 Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
 a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
-
 The side condition~$\alpha\neq0$ avoids vacuous steps such as
 $0t\lraneq0r$, preventing spurious nondeterminism. On that note,
 the condition on the contextual rule of the sum, imposes a strategy
@@ -1015,7 +1004,7 @@ in a Hilbert space.
 \end{definition}
 
 \begin{definition}[Unitary type]
-  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$ together
+  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$
   with a set of unitary value combinations, denoted~$\sem{A}$, called the
   \emph{unitary semantics} of~$A$.
 \end{definition}
@@ -1028,8 +1017,8 @@ Thus, we assign identical types to $\vv t$ and $e^{i\theta}\vv t$, a principle
 that guides the definition of realizers.
 
 \begin{definition}[Type realizer]\label{def:Realizer}
-  Given a type~$A$ and a term combination~$\vv t$, we say that~$\vv t$
-  \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
+  Given a term combination~$\vv t$ and type~$A$, we say that~$\vv t$
+  \emph{realizes}~$A$ (not.~$\vv t \real A$) if there exists a value
   combination~$\vv v\in\sem A$ such that
   $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
 \end{definition}
@@ -1051,7 +1040,7 @@ that guides the definition of realizers.
       \forall\vv{w}\in\sem{A},\,
       (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{X}\real B
     \bigr\}\\
-    \sem{\sharp X}&:= {(\sem{X}^\bot)}^\bot\quad\text{Where: }X^\bot = \{\vec{v}\in\Sph\,\mid\,\scal{\vec{v}}{a} = 0, \forall x\in X\}
+    \sem{\sharp Y}&:= {(\sem{Y}^\bot)}^\bot\quad\text{Where: }Y^\bot = \{\vec{v}\in\Sph\,\mid\,\scal{\vec{v}}{y} = 0, \forall y\in Y\}
   \end{align*}
   \caption{Type notations and semantics}
   \label{tab:UnitaryTypes}
@@ -1060,11 +1049,6 @@ With the notions of unitary types and their realizers in place, we can now
 define a concrete approach for our language. We begin with the type grammar
 given in~Table~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
 values we aim to represent.
-Before that, we introduce the notion of orthogonal complement, which will be
-used in the semantics of the~$\sharp$~type:
-\[
-  \comp{A} = \{\, \vv{v}\in \Sph \mid \scal{\vv{v}}{a} = 0 \text{ for all } a\in A\,\}.
-\]
 
 The types $\basis{X}$ serve as atomic types. Each of them represents a finite
 set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
@@ -1151,13 +1135,13 @@ basis types~$\basis{X}$.
 
 \subsection{Characterisation of unitary operators}
 
-
 One of the main results of~\cite{DiazcaroGuillermoMiquelValironLICS19}
-is the characterisation of $\C^2\to\C^2$ unitary operators using values in
-$\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
-In this subsection we extend this result. Our goal is to prove that abstractions
-of type $\sharp\basis{X}\Arr\sharp\basis{Y}$, where both bases have size~$2^n$,
-represent unitary operators $\C^{2^n}\to\C^{2^n}$.
+is characterising $\C^2\to\C^2$ unitary operators as values in
+$\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~
+\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
+Our goal is to extend the characterisation for unitary operators
+$\C^{2^n}\to\C^{2^n}$ as abstractions of type $\sharp\basis{X}
+\Arr\sharp\basis{Y}$, where both bases have size~$2^n$.
 
 Unitary operators are isomorphisms between Hilbert spaces, as they preserve the
 structure of the space. With this in mind, the first step is to show that the
@@ -1195,11 +1179,11 @@ be made precise as follows.
   Let $X$ be an orthonormal basis of size~$2^n$. For every $\vv{v}\in X$, we can
   write
   \(
-    \vv{v}\equiv \sum\limits_{i=1}^{2^n}\alpha_i\ket{i}
+    \vv{v}\equiv \sum_{i=1}^{2^n}\alpha_i\ket{i}
   \),
   where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
   corresponding to the binary representation of~$i$, and
-  $\sum\limits_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
+  $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
   $\ket{0011}$. We then define $\pi_n:X\to\C^{2^n}$ by
   \(
     \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_{2^n})
@@ -1207,9 +1191,7 @@ be made precise as follows.
 \end{definition}
 
 To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vv v$
-directly.
-
-We now establish a correspondence between $\lambda$-abstractions and operators
+directly. We now establish a correspondence between $\lambda$-abstractions and operators
 on~$\C^{2^n}$. Intuitively, an abstraction represents a linear operator when its
 operational behaviour coincides with the action of that operator on vectors.
 Formally:
@@ -1383,13 +1365,9 @@ We therefore introduce the following notion.
 \begin{definition}
   An \emph{orthogonality judgement}
   $\ORTH{\Gamma}{\Delta_1}{\vv{t}}{\Delta_2}{\vv{s}}{A}$
-  is said to be \emph{valid} when
-  \begin{itemize}[nosep]
-    \item 
-  the judgements
+  is said to be \emph{valid} when the judgements
       $\TYP{\Gamma,\Delta_1}{\vv{t}}{A}$ and
       $\TYP{\Gamma,\Delta_2}{\vv{s}}{A}$ are valid, and
-    \item for
       for every
       $\sigma\in\sem{\Gamma,\Delta_1}$ and
       $\tau\in\sem{\Gamma,\Delta_2}$,
@@ -1397,7 +1375,6 @@ We therefore introduce the following notion.
       $\vv{t}\ansubst{\sigma}{}\eval\vv{v}$,
       $\vv{s}\ansubst{\tau}{}\eval\vv{w}$,
       and $\vv{v}\perp\vv{w}$.
-  \end{itemize}
 When both $\Delta_1$ and $\Delta_2$ are empty,
 we just write
 $\SORTH{\Gamma}{\vv{t}}{\vv{s}}{A}$.
@@ -1497,8 +1474,7 @@ realizer (cf.~Definition~\ref{def:Realizer}).
 \emph{Subject reduction} is also immediate: indeed, if
 $\TYP{\Gamma}{\vv{t}}{A}$ and $\vv{t}\to\vv{u}$, then
 $\TYP{\Gamma}{\vv{u}}{A}$ by definition.
-However, if we restrict ourselves to a subset of typing rules—such as those
-presented in Table~\ref{tab:TypingRules}—we must
+However, if we restrict ourselves to a subset of typing rules—such as those in Table~\ref{tab:TypingRules}—we must
 ensure that this restricted system still suffices to type all reducts of a
 term, once the underlying realisability semantics is abstracted away.  In our
 case, the rules proven valid in Theorem~\ref{thm:TypingRulesValidity}
@@ -1666,10 +1642,9 @@ then measuring both qubits. Depending on the pair of classical outcomes, a Pauli
 ($I$, $X$, $Z$, or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
 (for a more thorough analysis of the algorithm, see \cite{PhysRevLett.70.1895}).
 
-We can simulate the behaviour of this protocol in the $\lambdaB$ calculus by
+We can simulate this protocol in $\lambdaB$ by
 defining a term that, instead of performing measurements, explicitly
-describes the computation corresponding to each branch.  
-A possible encoding is:
+describes the computation corresponding to each branch:
 \begin{align*}
 &\mathsf{Teleport}_{\Phi^+} :=
   \Lam{x}{\B}{
@@ -1694,24 +1669,6 @@ each branch applies the appropriate correction to Bob's qubit to
 recover~$\ket{\psi}$. The resulting term represents the same quantum
 transformation but expressed without any explicit measurement---instead,
 each branch encodes the coherent superposition of possible outcomes.
-\iffalse
-Despite usually taking $\Phi^+$ for the execution of the protocol,
-any of the four states can be used to perform the teleportation. So perhaps,
-a more precise representation of the algorithm would be a program which takes
-\emph{any} Bell state and an arbitrary qubit as argument and performs
-the corresponding computations. 
-
-.....
-This program exhibits some interesting characteristics:
-\begin{itemize}
-  \item 
-\end{itemize}
-
-
-This program exhibits both classical control (when matching the Bell state),
-and quantum control (when )
-.....
-\fi
 
 The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
 steps in the Bell basis, exploiting the deferred-measurement principle in a
@@ -1742,8 +1699,7 @@ The reduction system coordinates computation through these extended syntactic
 constructs and substitutions.  
 A key property is that evaluation commutes with the $\equiv$-relation,
 ensuring that interpreting a value combination in a different basis does not
-affect the computational result.  
-Consequently, it is meaningful to reason about terms modulo basis
+affect the computational result. Then, it is meaningful to reason about terms modulo basis
 congruence.
 
 The benefit of this design becomes clear in the realisability model.
