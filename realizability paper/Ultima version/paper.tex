@@ -398,13 +398,14 @@ The realisability methodology provides a constructive framework connecting
 operational semantics with type systems. In our context, it allows extracting a
 sound type system directly from the reduction semantics, ensuring safety by
 construction. The approach is as follows: define a calculus with a
-deterministic evaluation; then, define types as sets of closed values; finally,
+deterministic evaluation; then, define types as sets of closed values; finally, 
 define typing so that an assertion equates to the term reducing to a value of
-that type. Each typing rule thus corresponds to a provable theorem. Rather than
+that type.  Rather than
 building ad hoc rules, the system is derived from the calculus's computational
 content. While the untyped calculus allows for non-physical terms, the
-extracted type system acts as a logical filter: only terms reducing to
-unit-norm values and representing unitary transformations are typable.
+extracted type system acts as a logical filter: only unit-norm, unitary terms
+are typable, enabling static certification of unitary behaviour across basis
+changes and capturing basis-dependent invariants beyond fixed-basis systems.
 
 Following this approach, we enrich abstractions with explicit basis
 decorations. Intuitively, the reduction system treats values expressed in the
