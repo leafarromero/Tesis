@@ -217,6 +217,7 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
 %%% Case construct
 \def\case#1#2#3#4#5{\ensuremath{\mathsf{case}~#1~\mathsf{of}~\{#2\mapsto #4 \mid #3\mapsto #5\}}}
 \def\gencase#1#2#3#4#5{\ensuremath{\mathsf{case}~#1~\mathsf{of}~\{#2\mapsto #4 \mid \dotsb \mid #3\mapsto #5\}}}
+\def\gencasei#1#2#3{\ensuremath{\mathsf{case}~#1~\mathsf{of}~\{#2\mapsto #3\}}}
 %%% Syntax (misc.)
 \def\supp{\mathrm{supp}}
 \def\weight{\varpi}
@@ -507,19 +508,30 @@ This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, 
 along the lines of~\cite{ArrighiDowekLMCS17}.
 
+%\begin{table}[t]
+%  \begin{align*}
+%    v &::= x \mid \Lam{x}B{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
+%    (\Val)\\
+%    t &::= v \mid tt \mid (t,t) \mid
+%    \LetP{x}{B_1}{y}{B_2}{\vec{t}}{\vec{t}}\mid
+%    \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}} &
+%    (\Lambda) \\
+%    \vec{v} &::= v \mid \vec{v}+\vec{v} \mid \alpha \vec{v} \mid \vec 0
+%    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+%    \vec{t} &::= t \mid \vec{t}+\vec{t} \mid \alpha \vec{t} \mid \vec 0
+%    \qquad\hfill(\alpha\in\C) & (\vec \Lambda)
+%  \end{align*}
+%  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
+%  \label{tab:Syntax}
+%\end{table}
 \begin{table}[t]
-  \begin{align*}
-    v &::= x \mid \Lam{x}B{\vv{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
-    (\Val)\\
-    t &::= v \mid tt \mid (t,t) \mid
-    \LetP{x}{B_1}{y}{B_2}{\vv{t}}{\vv{t}}\mid
-    \gencase{\vv{t}}{\vv{v}}{\vv{v}}{\vv{t}}{\vv{t}} &
-    (\Lambda) \\
-    \vv{v} &::= v \mid \vv{v}+\vv{v} \mid \alpha \vv{v} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\ValD) \\
-    \vv{t} &::= t \mid \vv{t}+\vv{t} \mid \alpha \vv{t} \mid \vv 0
-    \qquad\hfill(\alpha\in\C) & (\vv \Lambda)
-  \end{align*}
+  \centering
+  \begin{tabular}{rcll}
+    $v$ & $::=$ & $x \mid \Lam{x}B{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1}$ & $(\Val)$ \\
+    $t$ & $::=$ & $v \mid tt \mid (t,t) \mid \LetP{x}{B_1}{y}{B_2}{\vec{t}}{\vec{t}} \mid \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}$ & $(\Lambda)$ \\
+    $\vec{v}$ & $::=$ & $v \mid \vec{v}+\vec{v} \mid \alpha \vec{v} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\ValD)$ \\
+    $\vec{t}$ & $::=$ & $t \mid \vec{t}+\vec{t} \mid \alpha \vec{t} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\vec \Lambda)$
+  \end{tabular}
   \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
   \label{tab:Syntax}
 \end{table}
@@ -534,7 +546,7 @@ include values, applications, pair constructors and destructors, and pattern
 matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
 Both term and value combinations are built $\C$-linear combinations of
 basic terms and values, respectively. We use $v,u,w$ to denote values and
-$t,s,r$ for terms, writing $\vv{\cdot}$ when they are combinations.
+$t,s,r$ for terms, writing $\vec{\cdot}$ when they are combinations.
 
 The symbols $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
 destructors denote the bases of the vector spaces in which the terms are
@@ -549,37 +561,76 @@ as genuine algebraic entities rather than mere syntactic constructions.
 In particular, it enforces the commutativity and associativity of addition and
 the distributivity of scalar multiplication, thereby justifying summation
 notation~$\sum$.
+%\begin{table}[t]
+%  \begin{align*}
+%    0\vec t &\equiv \vec 0 & \vec t+\vec 0 &\equiv \vec t \\
+%    1\vec{t} &\equiv \vec{t} &
+%    \alpha(\beta\vec{t}) &\equiv (\alpha\beta)\vec{t} \\
+%    \vec{t}_{1}+\vec{t}_{2} &\equiv \vec{t}_{2}+\vec{t}_{1} &
+%    (\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3} &\equiv \vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3}) \\
+%    (\alpha+\beta)\vec{t} &\equiv \alpha\vec{t}+\beta\vec{t} &
+%    \alpha(\vec{t}_{1}+\vec{t}_{2}) &\equiv \alpha\vec{t}_{1}+\alpha\vec{t}_{2} \\
+%    \vec{t}(\alpha\vec{s}) &\equiv \alpha(\vec{t}\vec{s}) &
+%    (\alpha\vec{t})\vec{s} &\equiv \alpha(\vec{t}\vec{s}) \\
+%    (\vec{t}+\vec{s})\vec{r} &\equiv \vec{t}\vec{r}+\vec{s}\vec{r} &
+%    \vec{t}(\vec{s}+\vec{r}) &\equiv \vec{t}\vec{s}+\vec{t}\vec{r} &&
+%  \end{align*}
+%  \vspace{-2\baselineskip}
+%  \begin{align*}
+%    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vec{t})}{\vec{s}}
+%    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{s}}) \\
+%    &\LetP{x_1}{X}{x_2}{Y}{\vec{t}+\vec{s}}{\vec{r}}
+%    \equiv
+%      (\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{r}})
+%      +(\LetP{x_1}{X}{x_2}{Y}{\vec{s}}{\vec{r}}) 
+%      \\
+%    &\gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}
+%    \equiv \alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}) \\
+%    &\gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{r}_{1}}{\vec{r}_{k}}
+%    \equiv\begin{aligned}[t]
+%      &\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}\\
+%      &+\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}
+%    \end{aligned}
+%  \end{align*}
+%  \caption{Term congruence}
+%  \label{tab:Congruence}
+%\end{table}
 \begin{table}[t]
-  \begin{align*}
-    0\vv t &\equiv \vv 0 & \vv t+\vv 0 &\equiv \vv t \\
-    1\vv{t} &\equiv \vv{t} &
-    \alpha(\beta\vv{t}) &\equiv (\alpha\beta)\vv{t} \\
-    \vv{t_1}+\vv{t_2} &\equiv \vv{t_2}+\vv{t_1} &
-    (\vv{t_1}+\vv{t_2})+\vv{t_3} &\equiv \vv{t_1}+(\vv{t_2}+\vv{t_3}) \\
-    (\alpha+\beta)\vv{t} &\equiv \alpha\vv{t}+\beta\vv{t} &
-    \alpha(\vv{t_1}+\vv{t_2}) &\equiv \alpha\vv{t_1}+\alpha\vv{t_2} \\
-    \vv{t}(\alpha\vv{s}) &\equiv \alpha(\vv{t}\vv{s}) &
-    (\alpha\vv{t})\vv{s} &\equiv \alpha(\vv{t}\vv{s}) \\
-    (\vv{t}+\vv{s})\vv{r} &\equiv \vv{t}\vv{r}+\vv{s}\vv{r} &
-    \vv{t}(\vv{s}+\vv{r}) &\equiv \vv{t}\vv{s}+\vv{t}\vv{r} &&
-  \end{align*}
-  \vspace{-2\baselineskip}
-  \begin{align*}
-    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vv{t})}{\vv{s}}
-    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{s}}) \\
-    &\LetP{x_1}{X}{x_2}{Y}{\vv{t}+\vv{s}}{\vv{r}}
-    \equiv
-      (\LetP{x_1}{X}{x_2}{Y}{\vv{t}}{\vv{r}})
-      +(\LetP{x_1}{X}{x_2}{Y}{\vv{s}}{\vv{r}}) 
-      \\
-    &\gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_k}}{\vv{s_1}}{\vv{s_k}}
-    \equiv \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_k}}{\vv{s_1}}{\vv{s_k}}) \\
-    &\gencase{(\vv{t}+\vv{s})}{\vv{v_1}}{\vv{v_k}}{\vv{r_1}}{\vv{r_k}}
-    \equiv\begin{aligned}[t]
-      &\gencase{\vv{t}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_k}}\\
-      &+\gencase{\vv{s}}{\vv{v}}{\vv{w}}{\vv{r_1}}{\vv{r_k}}
-    \end{aligned}
-  \end{align*}
+  \centering
+  \begin{tabular}{r@{~}c@{~}l@{\qquad}r@{~}c@{~}l}
+    \multicolumn{6}{c}{$
+      \vec{t}_1+\vec{t}_2 \equiv \vec{t}_2+\vec{t}_1,
+      \quad
+      (\vec{t}_1+\vec{t}_2)+\vec{t}_3 \equiv \vec{t}_1+(\vec{t}_2+\vec{t}_3),
+      \quad
+      0\vec{t} \equiv \vec{0},
+      \quad
+      1\vec{t} \equiv \vec{t},
+      \quad 
+      \vec{t}+\vec{0} \equiv \vec{t},
+    $} \\
+    \multicolumn{6}{c}{$
+      \alpha(\beta\vec{t})\equiv(\alpha\beta)\vec t,
+      \quad 
+      (\alpha+\beta)\vec{t} \equiv \alpha\vec{t}+\beta\vec{t},
+      \quad
+      \alpha(\vec{t}_1+\vec{t}_2) \equiv \alpha\vec{t}_1+\alpha\vec{t}_2,
+    $} \\
+    \multicolumn{6}{c}{$
+      \vec{t}(\alpha\vec{s}) \equiv \alpha(\vec{t}\vec{s}),
+      \qquad
+      (\alpha\vec{t})\vec{s} \equiv \alpha(\vec{t}\vec{s}),
+      \qquad
+      (\vec{t}+\vec{s})\vec{r} \equiv \vec{t}\vec{r}+\vec{s}\vec{r},
+      \qquad
+      \vec{t}(\vec{s}+\vec{r}) \equiv \vec{t}\vec{s}+\vec{t}\vec{r},
+    $} \\
+    \multicolumn{3}{l}{$\mathsf{let} (x^X, y^Y) = (\alpha\vec{t}) \text{ in } \vec{s} \equiv \alpha\mathsf{let} (x^X, y^Y) = \vec{t} \text{ in } \vec{s}$} &
+    \multicolumn{3}{l}{$\text{case } \alpha \vec{t} \text{ of } \{\vec{v}_i \mapsto \vec{s}_i\} \equiv \alpha\text{case } \vec{t} \text{ of } \{\vec{v}_i \mapsto \vec{s}_i\}$} \\
+    \noalign{\smallskip}
+    \multicolumn{3}{l}{$\mathsf{let} (x^X, y^Y) = (\vec{t}+\vec{s}) \text{ in } \vec{r} \equiv \sum_{z \in \{\vec{t}, \vec{s}\}} \mathsf{let} \dots z \dots$} &
+    \multicolumn{3}{l}{$\text{case } (\vec{t}+\vec{s}) \text{ of } \dots \equiv \sum_{z \in \{\vec{t}, \vec{s}\}} \text{case } z \dots$} 
+  \end{tabular}
   \caption{Term congruence}
   \label{tab:Congruence}
 \end{table}
@@ -594,11 +645,11 @@ We will also consider the following notation for linear combinations of
 pairs. This notation does not appear in the syntax, but is rather useful to describe
 specific states.
 \[
-  \Pair{\alpha  t+\vv{t_1}}{\vv{t_2}} 
-  := \alpha\Pair{t}{\vv{t_2}} + \Pair{\vv{t_1}}{\vv{t_2}}
+  \Pair{\alpha  t+\vec{t}_{1}}{\vec{t}_{2}} 
+  := \alpha\Pair{t}{\vec{t}_{2}} + \Pair{\vec{t}_{1}}{\vec{t}_{2}}
   \qquad\qquad
-  \Pair{r}{\alpha  t+\vv{t_1}} 
-  := \alpha\Pair{r}{t} + \Pair{r}{\vv{t_1}}
+  \Pair{r}{\alpha  t+\vec{t}_{1}} 
+  := \alpha\Pair{r}{t} + \Pair{r}{\vec{t}_{1}}
 \]
 
 Before proceeding further, let us briefly illustrate the intuition behind the
@@ -627,8 +678,8 @@ must first specify the kind of values they contain.
   A \emph{1-qubit state} is a value combination of the form
   $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
   \emph{$n$-qubit state} is a value combination of the form
-  $\alpha\Pair{\ket{0}}{\vv{w_1}} + \beta\Pair{\ket{1}}{\vv{w_2}}$, where
-  $\vv{w_1}$ and $\vv{w_2}$ are $(n-1)$-qubit states,
+  $\alpha\Pair{\ket{0}}{\vec{w}_{1}} + \beta\Pair{\ket{1}}{\vec{w}_{2}}$, where
+  $\vec{w}_{1}$ and $\vec{w}_{2}$ are $(n-1)$-qubit states,
   where $|\alpha|^2 + |\beta|^2 = 1$.
 \end{definition}
 We use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
@@ -638,16 +689,16 @@ From now on, we call the value combinations, i.e. the elements of $\ValD$,
 \emph{vectors}. The vector space $\ValD$ is equipped with an inner
 product defined by,  
 \(
-  \scal{\vv{v}}{\vv{w}} := \sum_{i=1}^k\sum_{j=1}^k
+  \scal{\vec{v}}{\vec{w}} := \sum_{i=1}^k\sum_{j=1}^k
   \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},
 \)
 and an $\ell_2$-norm 
 \(
-  \|\vv{v}\| := \sqrt{\scal{\vv{v}}{\vv{v}}}
+  \|\vec{v}\| := \sqrt{\scal{\vec{v}}{\vec{v}}}
   = \sqrt{\sum_{i=1}^k|\alpha_i|^2}
 \),
-where $\vv{v}=\sum_{i=1}^k\alpha_i v_i$ and
-$\vv{w}=\sum_{j=1}^k\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
+where $\vec{v}=\sum_{i=1}^k\alpha_i v_i$ and
+$\vec{w}=\sum_{j=1}^k\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
 delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
 
 With this notion of inner product, we can complete the description of the
@@ -691,7 +742,7 @@ decomposition over a basis is unique.
 \end{theorem}
 
 \begin{corollary}[Preservation under congruence]\label{cor:EquivalentDecomposition}
-  If $\vv{v} \equiv \vv{w}$, then they share the same decomposition over any
+  If $\vec{v} \equiv \vec{w}$, then they share the same decomposition over any
   basis $B$.
   \qed
 \end{corollary}
@@ -701,8 +752,8 @@ basis by $\XB=\{\ket{+},\ket{-}\}$, where
 $\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.  
 
 %\subsection{Basis-dependent substitutions}
-As usual, the expression $\vv t[\vv v/x]$ denotes the
-capture-avoiding substitution of $\vv v$ for $x$ in $\vv t$.
+As usual, the expression $\vec t[\vec v/x]$ denotes the
+capture-avoiding substitution of $\vec v$ for $x$ in $\vec t$.
 However, beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
 operation substitutes variables with vectors expressed in the chosen basis; the
@@ -718,54 +769,66 @@ functions in the calculus. So, from now on, the symbols $B, B_1, B_2$ in Table
 \ref{tab:Syntax} are either $2^n$-dimensional orthonormal basis, or the special
 symbol $\AbsBasis$.
 
+%\begin{definition}[Basis-dependent substitution]
+%  Let $\vec t$ be a term combination, $\vec v$ a value combination, $x$ a
+%  variable, and $B$ an orthonormal basis. We define the substitution
+%  $\vec t\ansubst{\vec v/x}{B}$ as follows:
+%  \[
+%    \vec t\ansubst{\vec v/x}{B} \;=\;
+%    \begin{cases}
+%      \ds\sum_{i\in I}\alpha_i\,\vec t\,[\vec{b}_{i}/x] &
+%        \text{if } B=\{\vec{b}_{i}\}_{i\in I}\ \text{and}\
+%        \vec v \equiv \ds\sum_{i\in I}\alpha_i\,\vec{b}_{i},\\[6pt]
+%      \ds\sum_{i\in I}\alpha_i\,\vec t\,[v_i/x] &
+%        \text{if } B=\AbsBasis\ \text{and}\
+%        \vec v = \ds\sum_{i\in I}\alpha_i\,v_i,\\[2pt]
+%      \text{undefined} & \text{otherwise.}
+%    \end{cases}
+%  \]
+%  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Theorem~\ref{thm:UniqueDecomposition}.
+%\end{definition}
 \begin{definition}[Basis-dependent substitution]
-  Let $\vv t$ be a term combination, $\vv v$ a value combination, $x$ a
-  variable, and $B$ an orthonormal basis. We define the substitution
-  $\vv t\ansubst{\vv v/x}{B}$ as follows:
-  \[
-    \vv t\ansubst{\vv v/x}{B} \;=\;
-    \begin{cases}
-      \ds\sum_{i\in I}\alpha_i\,\vv t\,[\vv{b_i}/x] &
-        \text{if } B=\{\vv{b_i}\}_{i\in I}\ \text{and}\
-        \vv v \equiv \ds\sum_{i\in I}\alpha_i\,\vv{b_i},\\[6pt]
-      \ds\sum_{i\in I}\alpha_i\,\vv t\,[v_i/x] &
-        \text{if } B=\AbsBasis\ \text{and}\
-        \vv v = \ds\sum_{i\in I}\alpha_i\,v_i,\\[2pt]
-      \text{undefined} & \text{otherwise.}
-    \end{cases}
-  \]
-  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Theorem~\ref{thm:UniqueDecomposition}.
+  Let $\vec t$ be a term combination, $\vec v$ a value combination, $x$ a
+  variable, and $B$ an orthonormal basis or $\AbsBasis$. The substitution 
+  $\vec t\ansubst{\vec v/x}{B}$ is defined as $\sum_{i\in I}\alpha_i\vec{t}[\vec{b}_i/x]$ 
+  if $B=\{\vec{b}_i\}_{i\in I}$ and $\vec{v}\equiv\sum_{i\in I} \alpha_i\vec{b}_i$; 
+  or as $\sum_{i\in I}\alpha_i\vec{t}[v_i/x]$ if $B=\AbsBasis$ and 
+  $\vec{v}=\sum_{i\in I} \alpha_i v_i$; otherwise it is undefined. The 
+  uniqueness of the decomposition over $B$ is guaranteed by 
+  Theorem~\ref{thm:UniqueDecomposition}.
 \end{definition}
 
-The definition captures two distinct substitution modes.  
-In the first, substitution proceeds linearly using the decomposition of
-$\vv v$ over the explicit basis $B$. In the second, when $B=\AbsBasis$,
-substitution proceeds linearly over the basic values that form $\vv v$.  
-This case recovers the mechanism of non base-sensitive calculi
----as first defined in \cite{ArrighiDowekLMCS17}. This special case is
-also the only one applicable to $\lambda$-abstractions, since abstractions
-do not belong to orthonormal bases.
+This definition captures two substitution modes: linear decomposition of $\vec v$ over an explicit basis $B$, or over its basic values when $B=\AbsBasis$ (recovering the mechanism of~\cite{ArrighiDowekLMCS17}). The latter is the only case applicable to $\lambda$-abstractions. The operation extends to pairs: if $\vec v\equiv\sum_{i\in I}\alpha_i(\vec{v}_i, \vec{w}_i)$, then $\vec t\ansubst{\vec v/x\otimes y}{B_1\otimes B_2} = \sum_{i\in I}\alpha_i (\vec t\ansubst{\vec{v}_i/x}{B_1}\ansubst{\vec{w}_i/y}{B_2})$, where $B_1, B_2$ are the bases associated with $x, y$.
 
-The definition also extends to pairs of values. If
-$\vv v\equiv\sum_{i\in I}\alpha_i\,\Pair{\vv{v_i}}{\vv{w_i}}$,
-then:
-\[
-  \vv t\ansubst{\vv v/x\otimes y}{B_1\otimes B_2}
-    \;=\; \sum_{i\in I}\alpha_i\,
-    \bigl(\vv t\ansubst{\vv{v_i}/x}{B_1}\ansubst{\vv{w_i}/y}{B_2}\bigr),
-    \text{ if defined},
-\]
-where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
-with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
-purely notational.
+%The definition captures two distinct substitution modes.  
+%In the first, substitution proceeds linearly using the decomposition of
+%$\vec v$ over the explicit basis $B$. In the second, when $B=\AbsBasis$,
+%substitution proceeds linearly over the basic values that form $\vec v$.  
+%This case recovers the mechanism of non base-sensitive calculi
+%---as first defined in \cite{ArrighiDowekLMCS17}. This special case is
+%also the only one applicable to $\lambda$-abstractions, since abstractions
+%do not belong to orthonormal bases.
+%
+%The definition also extends to pairs of values. If
+%$\vec v\equiv\sum_{i\in I}\alpha_i\,\Pair{\vec{v}_{i}}{\vec{w}_{i}}$,
+%then:
+%\[
+%  \vec t\ansubst{\vec v/x\otimes y}{B_1\otimes B_2}
+%    \;=\; \sum_{i\in I}\alpha_i\,
+%    \bigl(\vec t\ansubst{\vec{v}_{i}/x}{B_1}\ansubst{\vec{w}_{i}/y}{B_2}\bigr),
+%    \text{ if defined},
+%\]
+%where $B_1$ and $B_2$ are (orthonormal) bases---or $\AbsBasis$---associated
+%with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
+%purely notational.
 
 %\begin{example}
 %  Let
-%  $\vv v = \alpha\ket{01}
+%  $\vec v = \alpha\ket{01}
 %           + \beta\ket{10}$.
 %  Then 
 %  \[
-%    (y,x)\ansubst{\vv v/x\otimes y}{\B\otimes\B}
+%    (y,x)\ansubst{\vec v/x\otimes y}{\B\otimes\B}
 %    = \alpha\,(y,x)[\ket{0}/x][\ket{1}/y]
 %    + \beta\,(y,x)[\ket{1}/x][\ket{0}/y] 
 %    = 
@@ -778,13 +841,13 @@ With this substitution in place, we can establish certain needed properties.
 First, basis-dependent substitution distributes over linear combinations.
 
 \begin{lemma}[Distributivity over linear combinations]\label{lem:distributiveSubstitution}
-  For term combinations $\vv{t_i}$, a value combination $\vv{v}$, a
+  For term combinations $\vec{t}_{i}$, a value combination $\vec{v}$, a
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
-  $\ansubst{\vv v/x}{B}$ is defined:
+  $\ansubst{\vec v/x}{B}$ is defined:
   \(
-    \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
+    \Bigl(\sum_i \alpha_i\vec{t}_{i}\Bigr)\ansubst{\vec v/x}{B}
     \equiv
-    \sum_i \alpha_i\vv{t_i} \ansubst{\vv v/x}{B}
+    \sum_i \alpha_i\vec{t}_{i} \ansubst{\vec v/x}{B}
   \).
   \qed
 \end{lemma}
@@ -793,20 +856,20 @@ The next result states that substitution behaves consistently within each
 equivalence class induced by the congruence $\equiv$.
 
 \begin{lemma}[Compatibility with congruence]\label{lem:EquivSubstitutions}
-  For value combinations $\vv{v},\vv{w}$, a term combination $\vv{t}$, and
+  For value combinations $\vec{v},\vec{w}$, a term combination $\vec{t}$, and
   an orthonormal basis $B$ such that both
-  $\ansubst{\vv{v}/x}{B}$ and $\ansubst{\vv{w}/x}{B}$ are defined:
-  if $\vv{v}\equiv\vv{w}$, then
-  $\vv{t}\ansubst{\vv{v}/x}{B}
-  =\vv{t}\ansubst{\vv{w}/x}{B}$.
+  $\ansubst{\vec{v}/x}{B}$ and $\ansubst{\vec{w}/x}{B}$ are defined:
+  if $\vec{v}\equiv\vec{w}$, then
+  $\vec{t}\ansubst{\vec{v}/x}{B}
+  =\vec{t}\ansubst{\vec{w}/x}{B}$.
   \qed
 \end{lemma}
 
 We remark that the result in the previous lemma uses $=$ instead of $\equiv$
-since $\vv{t}\ansubst{\vv{v}/x}{B}$ and $\vv{t}\ansubst{\vv{w}/x}{B}$
+since $\vec{t}\ansubst{\vec{v}/x}{B}$ and $\vec{t}\ansubst{\vec{w}/x}{B}$
 are both substitution with the exact same outcome. Note that this property
-does not extend across different bases; that is, $\vv{t}\ansubst{\vv{v}/x}{A}
-\not\equiv\vv{t}\ansubst{\vv{v}/x}{B}$.
+does not extend across different bases; that is, $\vec{t}\ansubst{\vec{v}/x}{A}
+\not\equiv\vec{t}\ansubst{\vec{v}/x}{B}$.
 For example,
 \[
   (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\XB}
@@ -820,9 +883,9 @@ This difference arises because the relation $\equiv$ does not commute with
 lambda abstraction, nor with the case construct (indeed, the calculus is
 intensional with respect to functions, since it is issued from a realizability
 model).  Although the two terms are operationally equivalent, the calculus
-distinguishes between the superposition of results, $\Lam{x}{B}{\alpha\vv{v_1}
-+ \beta\vv{v_2}}$, and the superposition of functions,
-$\alpha(\Lam{x}{B}{\vv{v_1}}) + \beta(\Lam{x}{B}{\vv{v_2}})$.  This distinction
+distinguishes between the superposition of results, $\Lam{x}{B}{\alpha\vec{v}_{1}
++ \beta\vec{v}_{2}}$, and the superposition of functions,
+$\alpha(\Lam{x}{B}{\vec{v}_{1}}) + \beta(\Lam{x}{B}{\vec{v}_{2}})$.  This distinction
 reflects a physical intuition: the former corresponds to a single experiment
 producing a superposition of outcomes, while the latter represents a
 superposition of distinct experiments.
@@ -830,50 +893,71 @@ superposition of distinct experiments.
 Finally, we introduce a convenient notation for generalised substitutions over
 a term by closed values. A substitution $\sigma$ can be seen as a finite set of
 individual substitutions applied consecutively to a term. Formally, for a term
-$\vv{t}$, closed value combinations $\vv{v_1},\dots,\vv{v_n}$, variables
+$\vec{t}$, closed value combinations $\vec{v}_{1},\dots,\vec{v}_{n}$, variables
 $x_1,\dots,x_n$, and bases $B_1,\dots,B_n$:
 \(
-  \vv{t}\ansubst{\sigma}{}
-  := \vv{t}\ansubst{\vv{v_1}/x_1}{B_1}\dotsb\ansubst{\vv{v_n}/x_n}{B_n}.
+  \vec{t}\ansubst{\sigma}{}
+  := \vec{t}\ansubst{\vec{v}_{1}/x_1}{B_1}\dotsb\ansubst{\vec{v}_{n}/x_n}{B_n}.
 \)
-Since each $\vv{v_i}$ is closed, the order of substitutions is irrelevant. We
+Since each $\vec{v}_{i}$ is closed, the order of substitutions is irrelevant. We
 regard $\sigma$ as a partial function from variables to pairs of closed value
 combinations and bases, and write $\dom{\sigma}$ for its domain. The operation
-extends naturally: for a term $\vv{t}$, substitution $\sigma$, a new variable
-$x\notin\dom{\sigma}$, value combination $\vv{v}$, and basis $B$,
+extends naturally: for a term $\vec{t}$, substitution $\sigma$, a new variable
+$x\notin\dom{\sigma}$, value combination $\vec{v}$, and basis $B$,
 \(
-  \vv{t}\ansubst{\sigma}{}\ansubst{\vv{v}/x}{B}
-  = \vv{t}\ansubst{\sigma'}{}
+  \vec{t}\ansubst{\sigma}{}\ansubst{\vec{v}/x}{B}
+  = \vec{t}\ansubst{\sigma'}{}
 \),
-where $\sigma'$ extends $\sigma$ by mapping $x$ to $(\vv v,B)$. Likewise, two
+where $\sigma'$ extends $\sigma$ by mapping $x$ to $(\vec v,B)$. Likewise, two
 disjoint substitutions $\sigma_1$ and $\sigma_2$ can be merged:
 \(
-  \vv{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}
-  = \vv{t}\ansubst{\sigma'}{}
+  \vec{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}
+  = \vec{t}\ansubst{\sigma'}{}
 \),
 where $\dom{\sigma_1}\cap\dom{\sigma_2}=\emptyset$ and $\sigma'$ coincides with
 $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
 
 
 \section{Operational semantics}\label{sec:reduction}
+%\begin{table}[t]
+%  \begin{align*}
+%    \text{If }\vec{t}\ansubst{\vec v/x}{X}\text{ is defined}:\quad&
+%    (\Lam{x}{X}{\vec{t}})\vec{v} \lraneq \vec{t}\ansubst{\vec v/x}{X}\\
+%    \text{If }\vec{t}\ansubst{\vec v/x}{X\otimes Y}\text{ is defined}:\quad&
+%    \LetP{x}{X}{y}{Y}{\vec v}{\vec{t}} \lraneq \vec{t}\ansubst{\vec{v}/x\otimes y}{X\otimes Y}\\
+%    \text{If for all } i\neq j\ \vec{v}_{i}\perp\vec{v}_{j}:\quad&
+%    \gencase{\sum_{i=1}^{n}\alpha_i \vec{v}_{i}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}} \lraneq \sum_{i=1}^{n}\alpha_i \vec{t}_{i}
+%  \end{align*}
+%  If $t\lraneq \vec r$, then
+%  $\left\{\begin{aligned}
+%    st &\lraneq s\vec r \qquad\qquad tv \lraneq \vec rv \\
+%    \text{If }\alpha\neq 0:\quad\vec v+\alpha t+\vec s &\lraneq \vec v+\alpha \vec r+\vec s & (*)\\
+%    \LetP{x}{A}{y}{B}{t}{\vec{s}} &\lraneq \LetP{x}{A}{y}{B}{\vec r}{\vec{s}} \\
+%    \gencase{t}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}} &\lraneq \gencase{\vec r}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}}
+%\end{aligned}\right.$
+%
+%   \noindent In $(*)$ we use the convention that the subterms in the sum are ordered as follows: first we place all the values, if any, followed by the non-value terms in a lexicographical order.
+%  \caption{Reduction system.}
+%  \label{tab:Reduction}
+%\end{table}
 \begin{table}[t]
-  \begin{align*}
-    \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined}:\quad&
-    (\Lam{x}{X}{\vv{t}})\vv{v} \lraneq \vv{t}\ansubst{\vv v/x}{X}\\
-    \text{If }\vv{t}\ansubst{\vv v/x}{X\otimes Y}\text{ is defined}:\quad&
-    \LetP{x}{X}{y}{Y}{\vv v}{\vv{t}} \lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{X\otimes Y}\\
-    \text{If for all } i\neq j\ \vv{v_i}\perp\vv{v_j}:\quad&
-    \gencase{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}} \lraneq \sum_{i=1}^{n}\alpha_i \vv{t_i}
-  \end{align*}
-  If $t\lraneq \vv r$, then
-  $\left\{\begin{aligned}
-    st &\lraneq s\vv r \qquad\qquad tv \lraneq \vv rv \\
-    \text{If }\alpha\neq 0:\quad\vv v+\alpha t+\vv s &\lraneq \vv v+\alpha \vv r+\vv s & (*)\\
-    \LetP{x}{A}{y}{B}{t}{\vv{s}} &\lraneq \LetP{x}{A}{y}{B}{\vv r}{\vv{s}} \\
-    \gencase{t}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}} &\lraneq \gencase{\vv r}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}
-\end{aligned}\right.$
-
-   \noindent In $(*)$ we use the convention that the subterms in the sum are ordered as follows: first we place all the values, if any, followed by the non-value terms in a lexicographical order.
+  \centering
+  \begin{tabular}{r@{~}c@{~}l}
+    $(\lambda x^X.\vec{t})\vec{v}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x\rangle_X$ \hfill (if defined) \\
+    $\mathsf{let} (x^X, y^Y) = \vec{v} \text{ in } \vec{t}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x \otimes y\rangle_{X \otimes Y}$ \hfill (if defined) \\
+    %$\mathsf{case} \sum \alpha_i \vec{v}_i \text{ of } \{\vec{v}_1 \mapsto \vec{t}_1 \mid \dots\}$ & $\rightsquigarrow$ & $\sum \alpha_i \vec{t}_i$ \hfill (if $\vec{v}_i \perp \vec{v}_j$) \\
+    $\gencasei{\sum_{i}\alpha_i \vec{v_i}}{\vec{v_i}}{\vec{t_i}}$ & $\lraneq$ & $\sum_{i}\alpha_i \vec{t_i}$ \hfill (if $\vec{v}_i \perp \vec{v}_j$) \\
+    \multicolumn{3}{l}{
+      If $t\lraneq \vec r$, then
+      $\left\{\begin{aligned}
+	  &st \lraneq s\vec r, \qquad\qquad tv, \lraneq \vec rv, \qquad\qquad
+	  \vec v+\alpha t+\vec s \lraneq \vec v+\alpha \vec r+\vec s\quad  (\text{if }\alpha\neq 0)^*,\\
+	  &\LetP{x}{A}{y}{B}{t}{\vec{s}} \lraneq \LetP{x}{A}{y}{B}{\vec r}{\vec{s}},\\
+	  &\gencasei{t}{\vec{v_i}}{\vec{s_i}} \lraneq \gencasei{\vec r}{\vec{v_i}}{\vec{s_i}}
+      \end{aligned}\right.$
+    }
+  \end{tabular}
+  \noindent\footnotesize $^*$Subterms are ordered: values first, then non-values in lexicographical order.
   \caption{Reduction system.}
   \label{tab:Reduction}
 \end{table}
@@ -883,7 +967,7 @@ that basis.
 Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
 considered modulo the congruence of Table~\ref{tab:Congruence}.  
 Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
-a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
+a step $\vec t\lra\vec r$ abbreviates $\vec t\equiv\vec t'\lraneq\vec r'\equiv\vec r$.
 The side condition~$\alpha\neq0$ avoids vacuous steps such as
 $0t\lraneq0r$, preventing spurious nondeterminism. On that note,
 the condition on the contextual rule of the sum, imposes a strategy
@@ -895,18 +979,21 @@ Both $\lambda$ and $\mathsf{let}$ bind variables decorated with an orthonormal
 basis, indicating which vectors are treated as classical data.  Linear
 combinations of these vectors are handled as quantum data, reducing linearly by
 the congruence rules, so that
-$t(\alpha\vv s+\beta\vv r)$ is equivalent to
-$\alpha\,t\vv s+\beta\,t\vv r$.
+$t(\alpha\vec s+\beta\vec r)$ is equivalent to
+$\alpha\,t\vec s+\beta\,t\vec r$.
 
 The only exception occurs for higher-order terms: since no orthogonal bases are
-defined for abstractions, we introduced the symbol $\AbsBasis$ to 
-linearly over the basis values of a combination. For instance,
-\[
-  (\Lam{x}{\AbsBasis}{\vv t})
-  \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
-  \lra
-  \sum_{i=1}^n\alpha_i\vv t[\Lam{y}{X}{\vv{s_i}}/x].
-\]
+defined for abstractions, the symbol $\AbsBasis$ allows for linear reduction
+over basis values. For instance, 
+$(\Lam{x}{\AbsBasis}{\vec t}) \sum_i
+\alpha_i(\Lam{y}{X}{\vec{s}_{i}}) \lra \sum_i\alpha_i\vec
+t[\Lam{y}{X}{\vec{s}_{i}}/x]$.
+%\[
+%  (\Lam{x}{\AbsBasis}{\vec t})
+%  \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vec{s}_{i}})
+%  \lra
+%  \sum_{i=1}^n\alpha_i\vec t[\Lam{y}{X}{\vec{s}_{i}}/x].
+%\]
 
 The $\mathsf{case}$ pattern matching controls program flow.  
 Each operator keeps track of a set of orthogonal values and tests whether the
@@ -914,8 +1001,8 @@ argument equals each vector, selecting the matching branch.
 If the argument is a linear combination of several vectors, the result is the
 corresponding linear combination of the branches.  For example:
 \[
-  \case{\ket{-}}{\ket{0}}{\ket{1}}{\vv{t_1}}{\vv{t_2}} \lra
-  \tfrac{1}{\sqrt{2}}\,\vv{t_1} - \tfrac{1}{\sqrt{2}}\,\vv{t_2}.
+  \case{\ket{-}}{\ket{0}}{\ket{1}}{\vec{t}_{1}}{\vec{t}_{2}} \lra
+  \tfrac{1}{\sqrt{2}}\,\vec{t}_{1} - \tfrac{1}{\sqrt{2}}\,\vec{t}_{2}.
 \]
 
 The advantage over a binary conditional branching is the ability to match against
@@ -926,11 +1013,11 @@ against those vectors.  For example, using the \emph{Bell basis}\footnote{ The f
 Bell states are $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and $\Psi^{\pm}=
 \sqrthalf(\ket{01}\pm\ket{10})$.}:
 \[
-  \mathsf{case}\;\vv{v}\;\mathsf{of}\;\{
-  \Phi^+ \mapsto \vv{t_1}\ \mid
-  \Phi^- \mapsto \vv{t_2}\ \mid
-  \Psi^+ \mapsto \vv{t_3}\ \mid
-  \Psi^- \mapsto \vv{t_4}\ \}.
+  \mathsf{case}\;\vec{v}\;\mathsf{of}\;\{
+  \Phi^+ \mapsto \vec{t}_{1}\ \mid
+  \Phi^- \mapsto \vec{t}_{2}\ \mid
+  \Psi^+ \mapsto \vec{t}_{3}\ \mid
+  \Psi^- \mapsto \vec{t}_{4}\ \}.
 \]
 
 The Bell basis is central in quantum communication. In
@@ -953,23 +1040,23 @@ equivalence relation $\equiv$ commutes with $\eval$; in other words,
 equivalence is preserved by reduction modulo~$\equiv$.
 
 \begin{theorem}[Reduction preserves equivalence]\label{thm:confluence}
-  Let $\vv{t}$ and $\vv{s}$ be closed term combinations with
-  $\vv{t}\equiv\vv{s}$. If $\vv{t}\lraneq\vv{t'}$ and $\vv{s}\lraneq\vv{s'}$,
-  then there exist term combinations $\vv{r_1}$ and $\vv{r_2}$ such that
-  $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
-  $\vv{r_1}\equiv\vv{r_2}$.
+  Let $\vec{t}$ and $\vec{s}$ be closed term combinations with
+  $\vec{t}\equiv\vec{s}$. If $\vec{t}\lraneq\vv{t'}$ and $\vec{s}\lraneq\vv{s'}$,
+  then there exist term combinations $\vec{r}_{1}$ and $\vec{r}_{2}$ such that
+  $\vv{t'}\eval\vec{r}_{1}$, $\vv{s'}\eval\vec{r}_{2}$, and
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
 %  Diagrammatically:
 %  \[
 %    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
-%      & \vv{t}
+%      & \vec{t}
 %        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
 %        &[-3em] \equiv
-%        &[-3em] \vv{s}
+%        &[-3em] \vec{s}
 %        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
 %        &\\
 %      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
 %      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
-%      & \vv{r_1} & \equiv & \vv{r_2} & 
+%      & \vec{r}_{1} & \equiv & \vec{r}_{2} & 
 %    \end{tikzcd}
 %    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
 %  \]
@@ -979,16 +1066,15 @@ equivalence is preserved by reduction modulo~$\equiv$.
 \begin{remark}\label{rmk:determinism}
   Since the reduction relation $\eval$ is defined modulo~$\equiv$, the result
   above is equivalent to stating that there exists a single combination
-  $\vv{r}$ such that $\vv{t'}\eval\vv{r}$ and $\vv{s'}\eval\vv{r}$.
+  $\vec{r}$ such that $\vv{t'}\eval\vec{r}$ and $\vv{s'}\eval\vec{r}$.
   Moreover, as the elementary reduction~$\lraneq$ is deterministic, the
   reduction relation~$\lra$ is also deterministic; that is, if
-  $\vv{t}\lra\vv{r_1}$ and $\vv{t}\lra\vv{r_2}$, then
-  $\vv{r_1}\equiv\vv{r_2}$.
+  $\vec{t}\lra\vec{r}_{1}$ and $\vec{t}\lra\vec{r}_{2}$, then
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
 \end{remark}
 
 
 \section{Realizability model}\label{sec:model}
-
 \subsection{Unitary type semantics}
 Given the deterministic machine presented in the previous section
 (see~Remark~\ref{rmk:determinism}), the next
@@ -998,13 +1084,13 @@ of a type.
 
 Our aim is to define types exclusively inhabited by values of norm~1. The
 vectors we wish to study belong to the \emph{unit sphere}. We denote $\Sph 
-:= \{\vv v \in \vv{\Val} \mid \|\vv v\| = 1\}$, which
+:= \{\vec v \in \vv{\Val} \mid \|\vec v\| = 1\}$, which
 corresponds to the mathematical representation of quantum data as unit vectors
 in a Hilbert space.
 
 \begin{definition}[Unitary value combination]
-  A value combination $\vv{v}$ is said to be \emph{unitary} if its norm equals~1,
-  that is, if $\vv{v}\in\Sph$.
+  A value combination $\vec{v}$ is said to be \emph{unitary} if its norm equals~1,
+  that is, if $\vec{v}\in\Sph$.
 \end{definition}
 
 \begin{definition}[Unitary type]
@@ -1017,36 +1103,28 @@ in a Hilbert space.
 We now turn to type realizers.  
 Since the global phase of a quantum state has no physical significance, terms
 that differ only by a phase should share the same type.  
-Thus, we assign identical types to $\vv t$ and $e^{i\theta}\vv t$, a principle
+Thus, we assign identical types to $\vec t$ and $e^{i\theta}\vec t$, a principle
 that guides the definition of realizers.
 
 \begin{definition}[Type realizer]\label{def:Realizer}
-  Given a term combination~$\vv t$ and type~$A$, we say that~$\vv t$
-  \emph{realizes}~$A$ (not.~$\vv t \real A$) if there exists a value
-  combination~$\vv v\in\sem A$ such that
-  $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
+  Given a term combination~$\vec t$ and type~$A$, we say that~$\vec t$
+  \emph{realizes}~$A$ (not.~$\vec t \real A$) if there exists a value
+  combination~$\vec v\in\sem A$ such that
+  $\vec{t}\eval e^{i\theta}\vec{v}$ for some $\theta\in\R$,
 \end{definition}
 
 \begin{table}[t]
-  \[
-    A := \basis{X} \mid A\Arr A \mid A\times A \mid \sharp A,
-    \qquad\text{where $X$ is any orthonormal basis.}
-  \]
-  \[
-    \sem{\basis{X}}:= X\qquad
-    \sem{A\times B}:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
-  \]
-  \vspace{-1.5\baselineskip}
-  \begin{align*}
-    \sem{A\Arr B}&:=
-    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{X}{\vv{t_i}})\in\Sph
-      \;\bigm|\;
-      \forall\vv{w}\in\sem{A},\,
-      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{X}\real B
-    \bigr\}\\
-    \sem{\sharp Y}&:= {(\sem{Y}^\bot)}^\bot\quad\text{Where: }Y^\bot = \{\vec{v}\in\Sph\,\mid\,\scal{\vec{v}}{y} = 0, \forall y\in Y\}
-  \end{align*}
-  \caption{Type notations and semantics}
+  \centering
+  $A := \basis{X} \mid A\Arr A \mid A\times A \mid \sharp A$, with $X$ an orthonormal basis.
+  \vspace{2pt}
+  \hrule
+  \vspace{4pt}
+  \begin{tabular}{l}
+    $\sem{\basis{X}}:= X \qquad \sem{A\times B}:= \{(\vec v, \vec w) \mid \vec v\in\sem{A}, \vec w\in\sem{B}\}$ \\
+    $\sem{A\Arr B}:= \{\sum_i \alpha_i(\Lam{x}{X}{\vec{t}_{i}})\in\Sph \mid \forall\vec{w}\in\sem{A}, (\sum_i \alpha_i \vec{t}_{i})\ansubst{\vec{w}/x}{X}\real B\}$ \\
+    $\sem{\sharp Y}:= {(\sem{Y}^\bot)}^\bot$, with $Y^\bot = \{\vec{v}\in\Sph \mid \forall y\in Y, \scal{\vec{v}}{y} = 0\}$
+  \end{tabular}
+  \caption{Type notations and semantics.}
   \label{tab:UnitaryTypes}
 \end{table}
 With the notions of unitary types and their realizers in place, we can now
@@ -1158,17 +1236,17 @@ words, these abstractions preserve both norm and orthogonality.
 
 \begin{lemma}\label{lem:BasesIso}
   Let $X$ and $Y$ be orthonormal bases of the same finite
-  dimension, and let $\Lam{x}{{X}}{\vv t}$ be a closed $\lambda$-abstraction.
-  Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  dimension, and let $\Lam{x}{{X}}{\vec t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{X}}{\vec t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if 
-  for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
+  for all $\vec{v}_{i},\vec{v}_{j}\in\sem{\basis{X}}$,
   there exist value combinations
-  $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
-    $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$
+  $\vec{w}_{i},\vec{w}_{j}\in\sem{\sharp\basis{Y}}$ such that,
+    $\vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}$
     and
-    $\vv{t}[\vv{v_j}/x]\eval\vv{w_j}$,
+    $\vec{t}[\vec{v}_{j}/x]\eval\vec{w}_{j}$,
     with
-    $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
+    $\vec{w}_{i}\perp\vec{w}_{j}$ whenever $i\neq j$.
     \qed
 \end{lemma}
 
@@ -1183,32 +1261,32 @@ $\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
 be made precise as follows.
 
 \begin{definition}
-  Let $X$ be an orthonormal basis of size~$2^n$. For every $\vv{v}\in X$, we can
+  Let $X$ be an orthonormal basis of size~$2^n$. For every $\vec{v}\in X$, we can
   write
   \(
-    \vv{v}\equiv \sum_{i=1}^{2^n}\alpha_i\ket{i}
+    \vec{v}\equiv \sum_{i=1}^{2^n}\alpha_i\ket{i}
   \),
   where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
   corresponding to the binary representation of~$i$, and
   $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
   $\ket{0011}$. We then define $\pi_n:X\to\C^{2^n}$ by
   \(
-    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_{2^n})
+    \pi_n(\vec{v}) = (\alpha_1,\dotsc,\alpha_{2^n})
   \).
 \end{definition}
 
-To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vv v$
+To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vec v$
 directly. We now establish a correspondence between $\lambda$-abstractions and operators
 on~$\C^{2^n}$. Intuitively, an abstraction represents a linear operator when its
 operational behaviour coincides with the action of that operator on vectors.
 Formally:
 
 \begin{definition}
-  A $\lambda$-abstraction $\Lam{x}{{X}}{\vv{t}}$ is said to \emph{represent}
+  A $\lambda$-abstraction $\Lam{x}{{X}}{\vec{t}}$ is said to \emph{represent}
   an operator $F:\C^{2^n}\to\C^{2^n}$ if
-    $(\Lam{x}{{X}}{\vv{t}})\vv{v} \eval \vv{w}$
+    $(\Lam{x}{{X}}{\vec{t}})\vec{v} \eval \vec{w}$
     if and only if
-    $F(\vv{v}) = \vv{w}$.
+    $F(\vec{v}) = \vec{w}$.
 \end{definition}
 
 This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
@@ -1218,7 +1296,7 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 \begin{theorem}[Characterisation of Unitary Operators]\label{thm:characterisation}
   Let $X$ and $Y$ be orthonormal bases of size~$2^n$.
   A closed $\lambda$-abstraction
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  $\Lam{x}{{X}}{\vec{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if it represents a unitary operator
   $F:\C^{2^n}\to\C^{2^n}$.
   \qed
@@ -1226,9 +1304,9 @@ $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
 
   This result naturally extends to unitary combinations of
   $\lambda$-ab\-strac\-tions, since a term of the form
-  $\Lam{x}{{X}}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}$ is syntactically different
+  $\Lam{x}{{X}}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}$ is syntactically different
   but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
-  \Lam{x}{{X}}{\vv{t_i}}$.  Hence, the characterisation of unitary operators
+  \Lam{x}{{X}}{\vec{t}_{i}}$.  Hence, the characterisation of unitary operators
   also applies to superpositions of abstractions sharing the same basis~$X$.
 
 \subsection{Typing rules}    
@@ -1278,8 +1356,8 @@ it will simplify the forthcoming proofs.
       \text{ and } \forall {x_i} \in \dom{\Gamma},\\
       &\Gamma(x_i) = (A_i, \basis{X_i})
       \text{ implies }
-      \sigma(x_i) = \ansubst{\vv{v_i}/x_i}{{X_i}}
-      \text{ for some }\vv{v_i} \in \sem{A_i}\}.
+      \sigma(x_i) = \ansubst{\vec{v}_{i}/x_i}{{X_i}}
+      \text{ for some }\vec{v}_{i} \in \sem{A_i}\}.
   \end{align*}
 \end{definition}
 
@@ -1302,24 +1380,24 @@ form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
   }
 \end{definition}
 
-A typing judgement $\Gamma\vdash \vv{t}:A$ is valid if it satisfies two
-conditions.  First, every free variable of~$\vv{t}$ must belong to the domain
+A typing judgement $\Gamma\vdash \vec{t}:A$ is valid if it satisfies two
+conditions.  First, every free variable of~$\vec{t}$ must belong to the domain
 of~$\Gamma$, and every variable in the strict domain~$\sdom{\Gamma}$ must occur
-in~$\vv{t}$.  This ensures that no information is erased and that all variables
+in~$\vec{t}$.  This ensures that no information is erased and that all variables
 are properly accounted for.  The linear treatment of quantum data is thus
 enforced by the substitution.
 
 Second, for every substitution in the unitary semantics of~$\Gamma$, applying
-it to~$\vv{t}$ must yield a term that reduces to a realizer of type~$A$.  This
+it to~$\vec{t}$ must yield a term that reduces to a realizer of type~$A$.  This
 condition ensures that the operational behaviour of the term within the context
 is faithfully captured by the type.  Formally:
 
 \begin{definition}[Typing judgement]
-  A \emph{typing judgement} $\TYP{\Gamma}{\vv{t}}{A}$ is valid when:
-    $\sdom{\Gamma}\subseteq\FV{\vv{t}}\subseteq\dom{\Gamma}$
+  A \emph{typing judgement} $\TYP{\Gamma}{\vec{t}}{A}$ is valid when:
+    $\sdom{\Gamma}\subseteq\FV{\vec{t}}\subseteq\dom{\Gamma}$
     and
     for all $\sigma\in\sem{\Gamma}$, 
-          $\vv{t}\ansubst{\sigma}{}\real A$.
+          $\vec{t}\ansubst{\sigma}{}\real A$.
 \end{definition}
 
 We are also interested in \emph{orthogonal terms}, that is, terms that reduce
@@ -1328,20 +1406,20 @@ We therefore introduce the following notion.
 
 \begin{definition}
   An \emph{orthogonality judgement}
-  $\ORTH{\Gamma}{\Delta_1}{\vv{t}}{\Delta_2}{\vv{s}}{A}$
+  $\ORTH{\Gamma}{\Delta_1}{\vec{t}}{\Delta_2}{\vec{s}}{A}$
   is said to be \emph{valid} when the judgements
-      $\TYP{\Gamma,\Delta_1}{\vv{t}}{A}$ and
-      $\TYP{\Gamma,\Delta_2}{\vv{s}}{A}$ are valid, and
+      $\TYP{\Gamma,\Delta_1}{\vec{t}}{A}$ and
+      $\TYP{\Gamma,\Delta_2}{\vec{s}}{A}$ are valid, and
       for every
       $\sigma\in\sem{\Gamma,\Delta_1}$ and
       $\tau\in\sem{\Gamma,\Delta_2}$,
-      there exist value combinations $\vv{v},\vv{w}$ such that
-      $\vv{t}\ansubst{\sigma}{}\eval\vv{v}$,
-      $\vv{s}\ansubst{\tau}{}\eval\vv{w}$,
-      and $\vv{v}\perp\vv{w}$.
+      there exist value combinations $\vec{v},\vec{w}$ such that
+      $\vec{t}\ansubst{\sigma}{}\eval\vec{v}$,
+      $\vec{s}\ansubst{\tau}{}\eval\vec{w}$,
+      and $\vec{v}\perp\vec{w}$.
 When both $\Delta_1$ and $\Delta_2$ are empty,
 we just write
-$\SORTH{\Gamma}{\vv{t}}{\vv{s}}{A}$.
+$\SORTH{\Gamma}{\vec{t}}{\vec{s}}{A}$.
 \end{definition}
 
 
@@ -1358,66 +1436,66 @@ This is the main result of the paper, as the validity of these rules ensures all
     \begin{array}{c}
       \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
       \qquad
-	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{{X}}{\vv{t_i}})}{A\Arr B}}
-	{\TYP{\Gamma,x^{X}:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}}
+	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{{X}}{\vec{t}_{i}})}{A\Arr B}}
+	{\TYP{\Gamma,x^{X}:A}{\sum_{i=1}^{n}\alpha_i\vec{t}_{i}}{B}}
       \\
       \noalign{\medskip}
-      \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vv{s}\,\vv{t}}{B}}
-      {\TYP{\Gamma}{\vv{s}}{A\Arr B} & \TYP{\Delta}{\vv{t}}{A}}
+      \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vec{s}\,\vec{t}}{B}}
+      {\TYP{\Gamma}{\vec{s}}{A\Arr B} & \TYP{\Delta}{\vec{t}}{A}}
       \qquad
       \infer[\snam{Pair}]{\TYP{\Gamma,\Delta}
-      {\Pair{\vv{t}}{\vv{s}}}{A\times B}}{
-	\TYP{\Gamma}{\vv{t}}{A}&\TYP{\Delta}{\vv{s}}{B}
+      {\Pair{\vec{t}}{\vec{s}}}{A\times B}}{
+	\TYP{\Gamma}{\vec{t}}{A}&\TYP{\Delta}{\vec{s}}{B}
       }
       \\
       \noalign{\medskip}
       \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
-      {\LetP{x}{{X}}{y}{{Y}}{\vv{t}}{\vv{s}}}{C}}{
-	\TYP{\Gamma}{\vv{t}}{A\times B}&
-	\TYP{\Delta,x^{{X}}:A,y^{Y}:B}{\vv{s}}{C}
+      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{C}}{
+	\TYP{\Gamma}{\vec{t}}{A\times B}&
+	\TYP{\Delta,x^{{X}}:A,y^{Y}:B}{\vec{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
-      {\LetP{x}{{X}}{y}{{Y}}{\vv{t}}{\vv{s}}}{\sharp C}}{
-	\TYP{\Gamma}{\vv{t}}{\sharp(A\times B)}&
-	\TYP{\Delta,x^{X}:\sharp A,y^{Y}:\sharp B}{\vv{s}}{C}
+      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{\sharp C}}{
+	\TYP{\Gamma}{\vec{t}}{\sharp(A\times B)}&
+	\TYP{\Delta,x^{X}:\sharp A,y^{Y}:\sharp B}{\vec{s}}{C}
       }\\
       \noalign{\medskip}
       \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
-      {\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}{A}}{
-	\TYP{\Gamma}{\vv{t}}{\genbasis{\vv{v_i}}{i=1}{n}}&
-	\forall i,\ \TYP{\Delta}{\vv{s_i}}{A}
+      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{A}}{
+	\TYP{\Gamma}{\vec{t}}{\genbasis{\vec{v}_{i}}{i=1}{n}}&
+	\forall i,\ \TYP{\Delta}{\vec{s}_{i}}{A}
       }\\
       \noalign{\medskip}
       \infer[\snam{UnitCase}]{\TYP{\Gamma,\Delta}
-      {\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}{\sharp A}}{
-	\TYP{\Gamma}{\vv{t}}{\sharp \genbasis{\vv{v_i}}{i=1}{n}}&
-	\forall i\neq j,\ \SORTH{\Delta}{\vv{s_i}}{\vv{s_j}}{A}
+      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{\sharp A}}{
+	\TYP{\Gamma}{\vec{t}}{\sharp \genbasis{\vec{v}_{i}}{i=1}{n}}&
+	\forall i\neq j,\ \SORTH{\Delta}{\vec{s}_{i}}{\vec{s}_{j}}{A}
       }\\
       \noalign{\medskip}
       \infer[\snam{Sum}]
-      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}}
-      {\forall i\neq j,\, \SORTH{\Gamma}{\vv{t_i}}{\vv{t_j}}{A} &
+      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}{\sharp A}}
+      {\forall i\neq j,\, \SORTH{\Gamma}{\vec{t}_{i}}{\vec{t}_{j}}{A} &
       \sum_{i=1}^{n}|\alpha_i|^2 = 1}
       \\
       \noalign{\medskip}
-      \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:{\basis{X}}}{\vv{t}\,[y:=x]}{B}}{
-	\TYP{\Gamma,x^{X}:{\basis{X}},y^{X}:{\basis{X}}}{\vv{t}}{B}
+      \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:{\basis{X}}}{\vec{t}\,[y:=x]}{B}}{
+	\TYP{\Gamma,x^{X}:{\basis{X}},y^{X}:{\basis{X}}}{\vec{t}}{B}
       } 
       \qquad
-	\infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vv{t}}{C}}{
-	  \TYP{\Gamma}{\vv{t}}{C}
+	\infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vec{t}}{C}}{
+	  \TYP{\Gamma}{\vec{t}}{C}
 	}
       \\
       \noalign{\medskip}
-      \infer[\snam{Sub}]{\TYP{\Gamma}{\vv{t}}{B}}{\TYP{\Gamma}{\vv{t}}{A} & \SUB{A}{B}}
+      \infer[\snam{Sub}]{\TYP{\Gamma}{\vec{t}}{B}}{\TYP{\Gamma}{\vec{t}}{A} & \SUB{A}{B}}
       \quad
-      \infer[\snam{Equiv}]{\TYP{\Gamma}{\vv{s}}{A}}{
-	\TYP{\Gamma}{\vv{t}}{A}& \vv t\equiv \vv s
+      \infer[\snam{Equiv}]{\TYP{\Gamma}{\vec{s}}{A}}{
+	\TYP{\Gamma}{\vec{t}}{A}& \vec t\equiv \vec s
       }
       \quad 
-      \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vv{t}}{A}}
-      {\TYP{\Gamma}{\vv{t}}{A}}
+      \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vec{t}}{A}}
+      {\TYP{\Gamma}{\vec{t}}{A}}
     \end{array}
   \]
   \caption{Some valid typing rules}
@@ -1436,8 +1514,8 @@ deterministic (cf.~Remark~\ref{rmk:determinism}).
 \emph{Strong normalisation} follows directly from the definition of a
 realizer (cf.~Definition~\ref{def:Realizer}).  
 \emph{Subject reduction} is also immediate: indeed, if
-$\TYP{\Gamma}{\vv{t}}{A}$ and $\vv{t}\to\vv{u}$, then
-$\TYP{\Gamma}{\vv{u}}{A}$ by definition.
+$\TYP{\Gamma}{\vec{t}}{A}$ and $\vec{t}\to\vec{u}$, then
+$\TYP{\Gamma}{\vec{u}}{A}$ by definition.
 However, if we restrict ourselves to a subset of typing rules—such as those in Table~\ref{tab:TypingRules}—we must
 ensure that this restricted system still suffices to type all reducts of a
 term, once the underlying realisability semantics is abstracted away.  In our
@@ -1447,9 +1525,9 @@ stated below.
 
 
 \begin{theorem}[Subject reduction]\label{thm:SubjectReduction}
-  If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
-  Table~\ref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
-  $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
+  If $\TYP{\Gamma}{\vec{t}}{A}$ can be derived using the set of rules in
+  Table~\ref{tab:TypingRules} and $\vec{t}\to\vec{u}$, then
+  $\TYP{\Gamma}{\vec{u}}{A}$ can also be derived by the same set of rules.
   \qed
 \end{theorem}
 
@@ -1699,69 +1777,69 @@ the calculus.
   a unique decomposition over $B$.
 \end{restatetheorem}
 \begin{proof}
-  Let $\vv{b_i}$ be the basis vectors of $B$. Suppose
-  $\sum_{i=1}^{2^n} \alpha_i \vv{b_i}$ and $\sum_{i=1}^{2^n} \beta_i \vv{b_i}$
-  are two decompositions of $\vv{v}$ over $B$. Then
+  Let $\vec{b}_{i}$ be the basis vectors of $B$. Suppose
+  $\sum_{i=1}^{2^n} \alpha_i \vec{b}_{i}$ and $\sum_{i=1}^{2^n} \beta_i \vec{b}_{i}$
+  are two decompositions of $\vec{v}$ over $B$. Then
   \[
-    0=\vv{v}-\vv{v}=\sum_{i=1}^{2^n}(\alpha_i-\beta_i)\vv{b_i}.
+    0=\vec{v}-\vec{v}=\sum_{i=1}^{2^n}(\alpha_i-\beta_i)\vec{b}_{i}.
   \]
   By linear independence, $\alpha_i=\beta_i$ for all $i$.
 \end{proof}
 
 \begin{restatecorollary}[Restatement of Corollary~\ref{cor:EquivalentDecomposition}]
   \itshape
-  If $\vv{v}\equiv\vv{w}$, then they share the same decomposition over any
+  If $\vec{v}\equiv\vec{w}$, then they share the same decomposition over any
   basis $B$.
 \end{restatecorollary}
 \begin{proof}
-  Since $\vv{v}-\vv{w}\equiv\vv{v}-\vv{v}\equiv\vv{w}-\vv{w}$, the same
-  argument as in Theorem~\ref{thm:UniqueDecomposition} shows that $\vv{v}$ and $\vv{w}$ have the
+  Since $\vec{v}-\vec{w}\equiv\vec{v}-\vec{v}\equiv\vec{w}-\vec{w}$, the same
+  argument as in Theorem~\ref{thm:UniqueDecomposition} shows that $\vec{v}$ and $\vec{w}$ have the
   same decomposition over $B$.
 \end{proof}
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:distributiveSubstitution}]
   \itshape
-  For term combinations $\vv{t_i}$, a value combination $\vv{v}$, a
+  For term combinations $\vec{t}_{i}$, a value combination $\vec{v}$, a
   variable $x$, coefficients $\alpha_i\in\C$, and a basis $B$ such that
-  $\ansubst{\vv v/x}{B}$ is defined:
+  $\ansubst{\vec v/x}{B}$ is defined:
   \[
-    \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
+    \Bigl(\sum_i \alpha_i\vec{t}_{i}\Bigr)\ansubst{\vec v/x}{B}
     \equiv
-    \sum_i \alpha_i\vv{t_i} \ansubst{\vv v/x}{B}.
+    \sum_i \alpha_i\vec{t}_{i} \ansubst{\vec v/x}{B}.
   \]
 \end{restatelemma}
 \begin{proof}
   Let $B\neq\AbsBasis$ and
-  $\vv{v}\equiv\sum_{j=1}^n\beta_j\vv{b_j}$ with each $\vv{b_j}\in B$.
+  $\vec{v}\equiv\sum_{j=1}^n\beta_j\vec{b}_{j}$ with each $\vec{b}_{j}\in B$.
   Then
   \begin{align*}
-    \Bigl(\sum_i \alpha_i\vv{t_i}\Bigr)\ansubst{\vv v/x}{B}
-    &= \sum_{j=1}^n \beta_j\Bigl(\sum_{i=1}^{n}\alpha_i t_i\Bigr)[\vv{b_j}/x]\\
-    &\equiv \sum_{i=1}^{n}\alpha_i\Bigl(\sum_{j=1}^n\beta_j t_i[\vv{b_j}/x]\Bigr)
-    = \sum_{i=1}^{n}\alpha_i\vv{t_i}\ansubst{\vv v/x}{B}.
+    \Bigl(\sum_i \alpha_i\vec{t}_{i}\Bigr)\ansubst{\vec v/x}{B}
+    &= \sum_{j=1}^n \beta_j\Bigl(\sum_{i=1}^{n}\alpha_i t_i\Bigr)[\vec{b}_{j}/x]\\
+    &\equiv \sum_{i=1}^{n}\alpha_i\Bigl(\sum_{j=1}^n\beta_j t_i[\vec{b}_{j}/x]\Bigr)
+    = \sum_{i=1}^{n}\alpha_i\vec{t}_{i}\ansubst{\vec v/x}{B}.
   \end{align*}
   The case $B=\AbsBasis$ is analogous.
 \end{proof}
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:EquivSubstitutions}]
   \itshape
-  For value combinations $\vv{v},\vv{w}$, a term combination $\vv{t}$, and
+  For value combinations $\vec{v},\vec{w}$, a term combination $\vec{t}$, and
   an orthonormal basis $B$ such that both
-  $\ansubst{\vv{v}/x}{B}$ and $\ansubst{\vv{w}/x}{B}$ are defined:
-  if $\vv{v}\equiv\vv{w}$, then
-  $\vv{t}\ansubst{\vv{v}/x}{B}
-  =\vv{t}\ansubst{\vv{w}/x}{B}$.
+  $\ansubst{\vec{v}/x}{B}$ and $\ansubst{\vec{w}/x}{B}$ are defined:
+  if $\vec{v}\equiv\vec{w}$, then
+  $\vec{t}\ansubst{\vec{v}/x}{B}
+  =\vec{t}\ansubst{\vec{w}/x}{B}$.
 \end{restatelemma}
 \begin{proof}
-  Since $\vv{v}\equiv\vv{w}$, by
+  Since $\vec{v}\equiv\vec{w}$, by
   Corollary~\ref{cor:EquivalentDecomposition},
   both can be written as
-  $\vv{v}\equiv\vv{w}\equiv\sum_{i=1}^{n}\alpha_i\vv{b_i}$ with
-  $\vv{b_i}\in B$. Hence
+  $\vec{v}\equiv\vec{w}\equiv\sum_{i=1}^{n}\alpha_i\vec{b}_{i}$ with
+  $\vec{b}_{i}\in B$. Hence
   \[
-    \vv{t}\ansubst{\vv{v}/x}{B}
-    = \sum_{i=1}^{n}\alpha_i\vv{t}[\vv{b_i}/x]
-    = \vv{t}\ansubst{\vv{w}/x}{B}.
+    \vec{t}\ansubst{\vec{v}/x}{B}
+    = \sum_{i=1}^{n}\alpha_i\vec{t}[\vec{b}_{i}/x]
+    = \vec{t}\ansubst{\vec{w}/x}{B}.
     \tag*{\qedhere}
   \]
 \end{proof}
@@ -1769,26 +1847,26 @@ the calculus.
 \section{Omitted proofs from Section~\ref{sec:reduction}}\label{sec:appendixB}
 
 \begin{lemma}[Weak diamond property for $\lraneq$]\label{lem:SquigDiamond}
-  Let $\vv{t}, \vv{s_1}, \vv{s_2}$ term combinations such that $\vv{t}\lraneq{s_1}$ and $\vv{t}\lraneq\vv{s_2}$. 
-  Then, either there exists a term combination $\vv{r}$ such that $\vv{s_1}\lraneq\vv{r}$ and 
-  $\vv{s_2}\lraneq \vv{r}$. Or, $\vv{s_1}=\vv{s_2}$. Diagrammatically:
+  Let $\vec{t}, \vec{s}_{1}, \vec{s}_{2}$ term combinations such that $\vec{t}\lraneq{s_1}$ and $\vec{t}\lraneq\vec{s}_{2}$. 
+  Then, either there exists a term combination $\vec{r}$ such that $\vec{s}_{1}\lraneq\vec{r}$ and 
+  $\vec{s}_{2}\lraneq \vec{r}$. Or, $\vec{s}_{1}=\vec{s}_{2}$. Diagrammatically:
   \[
     \begin{tikzcd}
-      & \vv{t}
+      & \vec{t}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
       &\\
-      \vv{s_1}\arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
-      \vv{s_2}\arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
-      & \vv{r} &
+      \vec{s}_{1}\arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
+      \vec{s}_{2}\arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
+      & \vec{r} &
     \end{tikzcd}
     \quad\text{ Or }\quad
     \begin{tikzcd}
-      &[-2em] \vv{t}
+      &[-2em] \vec{t}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
       &[-2em]\\
-      \vv{s_1}& = &\vv{s_2}\\
+      \vec{s}_{1}& = &\vec{s}_{2}\\
     \end{tikzcd}
   \]
 \end{lemma}
@@ -1796,180 +1874,180 @@ the calculus.
 \begin{proof}
   The proof follows from the fact that the $\lraneq$ reduction is deterministic over basic values. 
   And, in case of term combinations, we only need to match the reduction on the corresponding sub-terms. 
-  Let $\vv{t}=\sum\limits_{i=1}^n \alpha_i \vv{t_i}$, $\vv{s_1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}$, and $\vv{s_2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i}+\alpha_k\vv{s_k}$. Where $\vv{t_j}\lraneq\vv{s_j}$ and $\vv{t_k}\lraneq\vv{s_k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
+  Let $\vec{t}=\sum\limits_{i=1}^n \alpha_i \vec{t}_{i}$, $\vec{s}_{1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vec{t}_{i} + \alpha_j\vec{s}_{j}$, and $\vec{s}_{2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vec{t}_{i}+\alpha_k\vec{s}_{k}$. Where $\vec{t}_{j}\lraneq\vec{s}_{j}$ and $\vec{t}_{k}\lraneq\vec{s}_{k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
   \[
     \begin{tikzcd}
-      &[-1em] \sum\limits_{i=1}^n \alpha_i \vv{t_i}
+      &[-1em] \sum\limits_{i=1}^n \alpha_i \vec{t}_{i}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
       &[-1em]\\
-      \sum\limits_{i=1; i\neq j}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}
+      \sum\limits_{i=1; i\neq j}^n \alpha_i \vec{t}_{i} + \alpha_j\vec{s}_{j}
       \arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
-      \sum\limits_{i=1; i\neq k}^n \alpha_i \vv{t_i} + \alpha_k\vv{s_k}
+      \sum\limits_{i=1; i\neq k}^n \alpha_i \vec{t}_{i} + \alpha_k\vec{s}_{k}
       \arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
-      & \sum\limits_{i=1; i\neq j,k}^n \alpha_i \vv{t_i} + \alpha_j\vv{s_j}+\alpha_k\vv{s_k} &
+      & \sum\limits_{i=1; i\neq j,k}^n \alpha_i \vec{t}_{i} + \alpha_j\vec{s}_{j}+\alpha_k\vec{s}_{k} &
     \end{tikzcd}
   \]
 \end{proof}
 
 \begin{restatetheorem}[Restatement of Theorem~\ref{thm:confluence}]
   \itshape
-  Let $\vv{t}$ and $\vv{s}$ be closed term combinations with
-  $\vv{t}\equiv\vv{s}$. If $\vv{t}\lraneq\vv{t'}$ and $\vv{s}\lraneq\vv{s'}$,
-  then there exist term combinations $\vv{r_1}$ and $\vv{r_2}$ such that
-  $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
-  $\vv{r_1}\equiv\vv{r_2}$.
+  Let $\vec{t}$ and $\vec{s}$ be closed term combinations with
+  $\vec{t}\equiv\vec{s}$. If $\vec{t}\lraneq\vv{t'}$ and $\vec{s}\lraneq\vv{s'}$,
+  then there exist term combinations $\vec{r}_{1}$ and $\vec{r}_{2}$ such that
+  $\vv{t'}\eval\vec{r}_{1}$, $\vv{s'}\eval\vec{r}_{2}$, and
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
   Diagrammatically:
   \[
     \begin{tikzcd}
-      & \vv{t}
+      & \vec{t}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         &[-2.5em] \equiv
-        &[-2.5em] \vv{s}
+        &[-2.5em] \vec{s}
         \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         &\\
       \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
       \vv{s'}\arrow[ld,"*"',pos=0.9] \\
-      & \vv{r_1} & \equiv & \vv{r_2} &
+      & \vec{r}_{1} & \equiv & \vec{r}_{2} &
     \end{tikzcd}
   \]
 \end{restatetheorem}
 \begin{proof}
-  We do a case-by-case analysis over the relation $\vv{t}\equiv\vv{s}$.
+  We do a case-by-case analysis over the relation $\vec{t}\equiv\vec{s}$.
   \begin{description}
-    \item[$\vv{t_1} + 0\vv{t_2}\equiv\vv{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond} since the reductions can only be performed in $\vv{t_1}$.
+    \item[$\vec{t}_{1} + 0\vec{t}_{2}\equiv\vec{t}_{1}$:] This case follows from Lemma \ref{lem:SquigDiamond} since the reductions can only be performed in $\vec{t}_{1}$.
     
-    \item[$0\vv{t}\equiv\vv{0}$:] The term combinations cannot reduce on either side of the equivalence.
+    \item[$0\vec{t}\equiv\vec{0}$:] The term combinations cannot reduce on either side of the equivalence.
     
-    \item[$1\vv{t}\equiv\vv{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    \item[$1\vec{t}\equiv\vec{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
     
-    \item[$\alpha(\beta \vv{t})\equiv\delta\vv{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    \item[$\alpha(\beta \vec{t})\equiv\delta\vec{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
     
-    \item[$\vv{t_1}+\vv{t_2}\equiv\vv{t_2}+\vv{t_1}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    \item[$\vec{t}_{1}+\vec{t}_{2}\equiv\vec{t}_{2}+\vec{t}_{1}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
     
-    \item[$\vv{t_1}+(\vv{t_2}+\vv{t_3})\equiv(\vv{t_1}+\vv{t_2})+\vv{t_3}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    \item[$\vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3})\equiv(\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
     
-    \item[$(\alpha+\beta)\vv{t}\equiv\vv{t}$:] We start analyzing the coefficients. If $\alpha+\beta = 0$, then there cannot be a reduction on the left hand-side. If $(\alpha + \beta)\neq 0$ and either $\alpha=0$ or $\beta=0$, then we are on a particular case of $\vv{t_1} + 0\vv{t_2}\equiv\vv{t_1}$ with $\vv{t_1}=\vv{t_2}$. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    \item[$(\alpha+\beta)\vec{t}\equiv\vec{t}$:] We start analyzing the coefficients. If $\alpha+\beta = 0$, then there cannot be a reduction on the left hand-side. If $(\alpha + \beta)\neq 0$ and either $\alpha=0$ or $\beta=0$, then we are on a particular case of $\vec{t}_{1} + 0\vec{t}_{2}\equiv\vec{t}_{1}$ with $\vec{t}_{1}=\vec{t}_{2}$. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    \item[$\alpha(\vv{t_1}+\vv{t_2})\equiv\alpha\vv{t_1}+\alpha\vv{t_2}$:] If $\alpha=0$, then the term combinations cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    \item[$\alpha(\vec{t}_{1}+\vec{t}_{2})\equiv\alpha\vec{t}_{1}+\alpha\vec{t}_{2}$:] If $\alpha=0$, then the term combinations cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    \item[$\vv{t} (\alpha\vv{s})\equiv\alpha(\vv{t}\vv{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    \item[$\vec{t} (\alpha\vec{s})\equiv\alpha(\vec{t}\vec{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vec{s}$ or $\vec{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    If $\vv{t} = (\Lam{x}{B}{\vv{t_1}})$ and $\vv{s}=\vv{v}$ and $\vv{t_1}\ansubst{\vv{v}/x}{B}$, is defined then (we consider the case $B\neq\AbsBasis$):
+    If $\vec{t} = (\Lam{x}{B}{\vec{t}_{1}})$ and $\vec{s}=\vec{v}$ and $\vec{t}_{1}\ansubst{\vec{v}/x}{B}$, is defined then (we consider the case $B\neq\AbsBasis$):
     \begin{align*}
-      (\Lam{x}{B}{\vv{t_i}}) (\alpha\vv{v}) &\lraneq \vv{t_1}\ansubst{\alpha\vv{v}/x}{B}\\
-      &= \sum_{i=1}^{n} \alpha\beta_i \vv{t_1}[\vv{b_i}/x]\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B
+      (\Lam{x}{B}{\vec{t}_{i}}) (\alpha\vec{v}) &\lraneq \vec{t}_{1}\ansubst{\alpha\vec{v}/x}{B}\\
+      &= \sum_{i=1}^{n} \alpha\beta_i \vec{t}_{1}[\vec{b}_{i}/x]\quad \text{with }\vec{v}\equiv\sum_{i=1}^{n} \beta_i \vec{b}_{i} \text{ with } \vec{b}_{i}\in B
     \end{align*}
     On the other side:
     \begin{align*}
-      \alpha ((\Lam{x}{B}{\vv{t_1}}) \vv{v}) &\lraneq \alpha(\vv{t_1}\ansubst{\vv{v}/x}{B})\\
-      &=\alpha(\sum_{i=1}^{n} \beta_i \vv{t_1}[\vv{b_i}/x])\quad \text{with }\vv{v}\equiv\sum_{i=1}^{n} \beta_i \vv{b_i} \text{ with } \vv{b_i}\in B
+      \alpha ((\Lam{x}{B}{\vec{t}_{1}}) \vec{v}) &\lraneq \alpha(\vec{t}_{1}\ansubst{\vec{v}/x}{B})\\
+      &=\alpha(\sum_{i=1}^{n} \beta_i \vec{t}_{1}[\vec{b}_{i}/x])\quad \text{with }\vec{v}\equiv\sum_{i=1}^{n} \beta_i \vec{b}_{i} \text{ with } \vec{b}_{i}\in B
     \end{align*}
 
     And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
 
-    \item[$(\alpha\vv{t})\vv{s}\equiv\alpha(\vv{t}\vv{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a basic value to reduce on the left hand-side.
+    \item[$(\alpha\vec{t})\vec{s}\equiv\alpha(\vec{t}\vec{s})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vec{s}$ or $\vec{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a basic value to reduce on the left hand-side.
     
-    \item[$(\vv{t}+\vv{s})\vv{r}\equiv \vv{t}\vv{s} + \vv{t}\vv{r}$:] If there is an internal reduction on either $\vv{t}$,$\vv{s}$ or $\vv{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a basic value to reduce on the left hand-side.
+    \item[$(\vec{t}+\vec{s})\vec{r}\equiv \vec{t}\vec{s} + \vec{t}\vec{r}$:] If there is an internal reduction on either $\vec{t}$,$\vec{s}$ or $\vec{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}. There are no other possible redexes since the abstraction must be a basic value to reduce on the left hand-side.
     
-    \item[$\vv{t}(\vv{s}+\vv{r})\equiv\vv{t}\vv{s} + \vv{t}\vv{r}$:] If there is an internal reduction on either $\vv{t}$, $\vv{s}$ or $\vv{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    \item[$\vec{t}(\vec{s}+\vec{r})\equiv\vec{t}\vec{s} + \vec{t}\vec{r}$:] If there is an internal reduction on either $\vec{t}$, $\vec{s}$ or $\vec{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    If $\vv{t} = (\Lam{x}{B}{\vv{t_1}})$, $\vv{s}=\vv{v}$, and $\vv{r}=\vv{w}$ with
-    $\vv{t_1}\ansubst{\vv{v}/x}{B}$ and $\vv{t_1}\ansubst{\vv{w}/x}{B}$ defined then (we consider the case where $B\neq\AbsBasis$):
+    If $\vec{t} = (\Lam{x}{B}{\vec{t}_{1}})$, $\vec{s}=\vec{v}$, and $\vec{r}=\vec{w}$ with
+    $\vec{t}_{1}\ansubst{\vec{v}/x}{B}$ and $\vec{t}_{1}\ansubst{\vec{w}/x}{B}$ defined then (we consider the case where $B\neq\AbsBasis$):
     \begin{align*}
-      (\Lam{x}{B}{\vv{t_1}}) (\vv{v}+\vv{w}) &\lraneq \vv{t_1}\ansubst{\vv{v}+\vv{w}/x}{B}\\
-      &=\sum_{i=1}^{n}(\alpha_i+\beta_i)\vv{t_1}[\vv{b_i}/x]\\
-      &\quad\text{where }\vv{v}\equiv\sum_{i=1}^{n}\alpha_i\vv{b_i},\vv{w}\equiv\sum_{i=1}^{n}\beta_i\vv{b_i}\text{ with }\vv{b_i}\in B 
+      (\Lam{x}{B}{\vec{t}_{1}}) (\vec{v}+\vec{w}) &\lraneq \vec{t}_{1}\ansubst{\vec{v}+\vec{w}/x}{B}\\
+      &=\sum_{i=1}^{n}(\alpha_i+\beta_i)\vec{t}_{1}[\vec{b}_{i}/x]\\
+      &\quad\text{where }\vec{v}\equiv\sum_{i=1}^{n}\alpha_i\vec{b}_{i},\vec{w}\equiv\sum_{i=1}^{n}\beta_i\vec{b}_{i}\text{ with }\vec{b}_{i}\in B 
     \end{align*}
 
     On the other side:
     \begin{align*}
-      (\Lam{x}{B}{\vv{t_1}}) \vv{v} + (\Lam{x}{B}{\vv{t_1}}) \vv{w} &\lraneq \vv{t_1}\ansubst{\vv{v}/x}{B} + (\Lam{x}{B}{\vv{t_1}}) \vv{w}\\
-      &\lraneq \vv{t_1}\ansubst{\vv{v}/x}{B} + \vv{t_1}\ansubst{\vv{w}/x}{B}\\
-      &=\sum_{i=1}^{n}(\alpha_i)\vv{t_1}[\vv{b_i}/x] + =\sum_{i=1}^{n}(\alpha_i)\vv{t_1}[\vv{b_i}/x]\\
-      &\quad\text{where }\vv{v}\equiv\sum_{i=1}^{n}\alpha_i\vv{b_i},\vv{w}\equiv\sum_{i=1}^{n}\beta_i\vv{b_i}\text{ with }\vv{b_i}\in B 
+      (\Lam{x}{B}{\vec{t}_{1}}) \vec{v} + (\Lam{x}{B}{\vec{t}_{1}}) \vec{w} &\lraneq \vec{t}_{1}\ansubst{\vec{v}/x}{B} + (\Lam{x}{B}{\vec{t}_{1}}) \vec{w}\\
+      &\lraneq \vec{t}_{1}\ansubst{\vec{v}/x}{B} + \vec{t}_{1}\ansubst{\vec{w}/x}{B}\\
+      &=\sum_{i=1}^{n}(\alpha_i)\vec{t}_{1}[\vec{b}_{i}/x] + =\sum_{i=1}^{n}(\alpha_i)\vec{t}_{1}[\vec{b}_{i}/x]\\
+      &\quad\text{where }\vec{v}\equiv\sum_{i=1}^{n}\alpha_i\vec{b}_{i},\vec{w}\equiv\sum_{i=1}^{n}\beta_i\vec{b}_{i}\text{ with }\vec{b}_{i}\in B 
     \end{align*}
 
     And we have that both terms are equivalent. The case for $B=\AbsBasis$ is similar.
 
-    \item[$\LetP{x_1}{B_1}{x_2}{B_2}{(\alpha \vv{t})}{\vv{s}}\equiv\alpha(\LetP{x_1}{A}{x_2}{B}{\vv{t}}{\vv{s}})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vv{s}$ or $\vv{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    \item[$\LetP{x_1}{B_1}{x_2}{B_2}{(\alpha \vec{t})}{\vec{s}}\equiv\alpha(\LetP{x_1}{A}{x_2}{B}{\vec{t}}{\vec{s}})$:] If $\alpha=0$, then there is no reduction possible on the right-hand side. If there is an internal reduction on either $\vec{s}$ or $\vec{t}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    If $\vv{t}=\vv{v}$ and $\vv{s}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2}$ is defined, then (we consider $B_1,B_2\neq\AbsBasis$):
+    If $\vec{t}=\vec{v}$ and $\vec{s}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}$ is defined, then (we consider $B_1,B_2\neq\AbsBasis$):
     \begin{align*}
-    \LetP{x_1}{B_1}{x_2}{B_2}{(\alpha \vv{v})}{&\vv{s}}\lraneq \vv{s}\ansubst{\alpha\vv{v}/x_1\otimes x_2}{B_1\otimes B_2}\\
-    &=\sum_{i=1}^{n}\alpha\beta_i \vv{s}[\vv{v_i}/x_1][\vv{w_i}/x_2]\\ 
-    &\text{where: }\vv{v}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2
+    \LetP{x_1}{B_1}{x_2}{B_2}{(\alpha \vec{v})}{&\vec{s}}\lraneq \vec{s}\ansubst{\alpha\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}\\
+    &=\sum_{i=1}^{n}\alpha\beta_i \vec{s}[\vec{v}_{i}/x_1][\vec{w}_{i}/x_2]\\ 
+    &\text{where: }\vec{v}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v}_{i}}{\vec{w}_{i}} \text{ with } \vec{v}_{i}\in B_1, \vec{w}_{i}\in B_2
     \end{align*}
     On the other side;
     \begin{align*}
-    \alpha(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{v}}{&\vv{s}})\lraneq \alpha(\vv{s}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2})\\
-    &=\alpha\sum_{i=1}^{n}\beta_i \vv{s}[\vv{v_i}/x_1][\vv{w_i}/x_2]\\ 
-    &\text{where: } \vv{v}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2
+    \alpha(\LetP{x_1}{B_1}{x_2}{B_2}{\vec{v}}{&\vec{s}})\lraneq \alpha(\vec{s}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2})\\
+    &=\alpha\sum_{i=1}^{n}\beta_i \vec{s}[\vec{v}_{i}/x_1][\vec{w}_{i}/x_2]\\ 
+    &\text{where: } \vec{v}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v}_{i}}{\vec{w}_{i}} \text{ with } \vec{v}_{i}\in B_1, \vec{w}_{i}\in B_2
     \end{align*}
 
     And we have that both terms are equivalent. The case for $B_1,B_2=\AbsBasis$ are similar.
 
     \item[\parbox{.75\linewidth}{\begin{align*}
-      &\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}+\vv{s}}{\vv{r}}\equiv\\
-      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{r}}) +
-      (\LetP{x_1}{B_2}{x_2}{B_2}{\vv{s}}{\vv{r}})
+      &\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}+\vec{s}}{\vec{r}}\equiv\\
+      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}}{\vec{r}}) +
+      (\LetP{x_1}{B_2}{x_2}{B_2}{\vec{s}}{\vec{r}})
       \end{align*}}:]\hfill\\
-      If there is an internal reduction on either $\vv{t}, \vv{s}$ or $\vv{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+      If there is an internal reduction on either $\vec{t}, \vec{s}$ or $\vec{r}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
 
-      If $\vv{t}=\vv{v}$ and $\vv{s}=\vv{w}$ with $\vv{r}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2}$ and $\vv{r}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2}$ defined, then (we consider $B_1,B_2\neq\AbsBasis$):
+      If $\vec{t}=\vec{v}$ and $\vec{s}=\vec{w}$ with $\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}$ and $\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2}$ defined, then (we consider $B_1,B_2\neq\AbsBasis$):
       \begin{align*}
-      \LetP{x_1}{B_1}{x_2}{B_2}{\vv{v}+\vv{w}}{\vv{r}}&\lraneq\vv{r}\ansubst{\vv{v}+\vv{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
-      &=\sum_{i=1}^n (\alpha_i+\beta_i) \vv{r}[\vv{v_i}/x_1][\vv{w_i}/x_2]\\
-      &\text{where: }\vv{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2\\
-      &\text{and: }\vv{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2
+      \LetP{x_1}{B_1}{x_2}{B_2}{\vec{v}+\vec{w}}{\vec{r}}&\lraneq\vec{r}\ansubst{\vec{v}+\vec{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
+      &=\sum_{i=1}^n (\alpha_i+\beta_i) \vec{r}[\vec{v}_{i}/x_1][\vec{w}_{i}/x_2]\\
+      &\text{where: }\vec{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vec{v}_{i}}{\vec{w}_{i}} \text{ with } \vec{v}_{i}\in B_1, \vec{w}_{i}\in B_2\\
+      &\text{and: }\vec{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v}_{i}}{\vec{w}_{i}} \text{ with } \vec{v}_{i}\in B_1, \vec{w}_{i}\in B_2
       \end{align*}
 
       On the other side:
       \begin{align*}
-      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vv{t}}{\vv{r}}) + (\LetP{x_1}{B_2}{x_2}{B_2}{\vv{s}}{\vv{r}})\\
-      &\lraneq\vv{r}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2} + (\LetP{x_1}{B_2}{x_2}{B_2}{\vv{s}}{\vv{r}})\\
-      &\lraneq\vv{r}\ansubst{\vv{v}/x_1\otimes x_2}{B_1\otimes B_2} + \vv{r}\ansubst{\vv{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
-      &=\sum_{i=1}^n\alpha_i\vv{r}[\vv{v_i}/x_1][\vv{w_i}/x_2] + \sum_{i=1}^n \beta_i \vv{r}[\vv{v_i}/x_1][\vv{w_i}/x_2]\\
-      &\text{where: }\vv{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2\\
-      &\text{and: }\vv{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vv{v_i}}{\vv{w_i}} \text{ with } \vv{v_i}\in B_1, \vv{w_i}\in B_2
+      &(\LetP{x_1}{B_1}{x_2}{B_2}{\vec{t}}{\vec{r}}) + (\LetP{x_1}{B_2}{x_2}{B_2}{\vec{s}}{\vec{r}})\\
+      &\lraneq\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2} + (\LetP{x_1}{B_2}{x_2}{B_2}{\vec{s}}{\vec{r}})\\
+      &\lraneq\vec{r}\ansubst{\vec{v}/x_1\otimes x_2}{B_1\otimes B_2} + \vec{r}\ansubst{\vec{w}/x_1\otimes x_2}{B_1\otimes B_2}\\
+      &=\sum_{i=1}^n\alpha_i\vec{r}[\vec{v}_{i}/x_1][\vec{w}_{i}/x_2] + \sum_{i=1}^n \beta_i \vec{r}[\vec{v}_{i}/x_1][\vec{w}_{i}/x_2]\\
+      &\text{where: }\vec{v}\equiv\sum_{i=1}^n\alpha_i\Pair{\vec{v}_{i}}{\vec{w}_{i}} \text{ with } \vec{v}_{i}\in B_1, \vec{w}_{i}\in B_2\\
+      &\text{and: }\vec{w}\equiv\sum_{i=1}^n\beta_i\Pair{\vec{v}_{i}}{\vec{w}_{i}} \text{ with } \vec{v}_{i}\in B_1, \vec{w}_{i}\in B_2
       \end{align*}
         
       And we have that both terms are equivalent. The case for $B_1,B_2=\AbsBasis$ are similar.
 
     \item[\parbox{.55\linewidth}{\begin{align*}
-      &\gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}\equiv\\
-      &\alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})
+      &\gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}\equiv\\
+      &\alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})
     \end{align*}}:] \hfill\\
     
-    If $\alpha=0$, then there is no reduction possible on the right hand-side. If there are internal reductions on $\vv{t}$, then we match on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    If $\alpha=0$, then there is no reduction possible on the right hand-side. If there are internal reductions on $\vec{t}$, then we match on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
     
-    If $\vv{t}=\vv{v}\equiv\sum_{i=1}^n\beta_i \vv{v_i}$. Then:
+    If $\vec{t}=\vec{v}\equiv\sum_{i=1}^n\beta_i \vec{v}_{i}$. Then:
     \begin{align*}
-      \gencase{\alpha \vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}\lraneq \sum_{i=1}^n\alpha\beta_i \vv{s_i}
+      \gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}\lraneq \sum_{i=1}^n\alpha\beta_i \vec{s}_{i}
     \end{align*}
     On the other side:
     \begin{align*}
-      \alpha(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\lraneq \alpha\sum_{i=1}^n\beta_i \vv{s_i}
+      \alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\lraneq \alpha\sum_{i=1}^n\beta_i \vec{s}_{i}
     \end{align*}
     And we have that both terms are equivalent.
 
     \item[\parbox{.55\linewidth}{\begin{align*}
-      &\gencase{(\vv{t}+\vv{s})}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}\equiv\\ 
-      &\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}+\\
-      &\gencase{\vv{s}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}  
+      &\gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}\equiv\\ 
+      &\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}+\\
+      &\gencase{\vec{s}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}  
     \end{align*}}:]\hfill\\
 
-    If there is an internal reduction on either $\vv{t}$ or $\vv{s}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    If there is an internal reduction on either $\vec{t}$ or $\vec{s}$, then we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
 
-    If $\vv{t}=\vv{v}\equiv\sum_{i=1}^n\alpha_i \vv{v_i}$, and $\vv{s}=\vv{w}\equiv\sum_{i=1}^n\beta_i \vv{v_i}$. Then:
+    If $\vec{t}=\vec{v}\equiv\sum_{i=1}^n\alpha_i \vec{v}_{i}$, and $\vec{s}=\vec{w}\equiv\sum_{i=1}^n\beta_i \vec{v}_{i}$. Then:
     \begin{align*}
-      \gencase{(\vv{t}+\vv{s})}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}\lraneq \sum_{i=1}^n (\alpha_i+\beta_i) \vv{r_i}
+      \gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}\lraneq \sum_{i=1}^n (\alpha_i+\beta_i) \vec{r}_{i}
     \end{align*}
     On the other side:
     \begin{align*}
-      &\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}+\gencase{\vv{s}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}\\
-      &\lraneq \sum_{i=1}^n \alpha_i+ \vv{r_i} + \gencase{\vv{s}}{\vv{v_1}}{\vv{v_n}}{\vv{r_1}}{\vv{r_n}}\\
-      &\lraneq \sum_{i=1}^n \alpha_i \vv{r_i} + \sum_{i=1}^n \beta_i \vv{r_i}
+      &\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}+\gencase{\vec{s}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}\\
+      &\lraneq \sum_{i=1}^n \alpha_i+ \vec{r}_{i} + \gencase{\vec{s}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}\\
+      &\lraneq \sum_{i=1}^n \alpha_i \vec{r}_{i} + \sum_{i=1}^n \beta_i \vec{r}_{i}
     \end{align*}
 
     And we have that both terms are equivalent.
@@ -1993,19 +2071,19 @@ the calculus.
 \begin{proof}
   Proof by double inclusion.
   \begin{description}
-    \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vv{v}\in\Span(\sem{A})\cap\Sph$. Then $\vv{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vv{v_i}$ with $\vv{v_i}\in\sem{A}$. Taking $\vv{w}\in\sem{A}^\bot$, we examine the inner product:
+    \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vec{v}\in\Span(\sem{A})\cap\Sph$. Then $\vec{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vec{v}_{i}$ with $\vec{v}_{i}\in\sem{A}$. Taking $\vec{w}\in\sem{A}^\bot$, we examine the inner product:
     \begin{align*}
-    \scal{\vv{v}}{\vv{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{w}}\\
-    &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vv{v_i}}{\vv{w}}=0
+    \scal{\vec{v}}{\vec{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vec{v}_{i}}{\vec{w}}\\
+    &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vec{v}_{i}}{\vec{w}}=0
     \end{align*}
 
-    Then $\vv{v}\in(\sem{A}^\bot)^\bot$.
+    Then $\vec{v}\in(\sem{A}^\bot)^\bot$.
 
-    \item[$(\sem{A}^\bot)^\bot\subseteq \Span(\sem{A})\cap\Sph$:] Reasoning by contradiction, we assume that there is a $\vv{v}\in(\sem{A}^\bot)^\bot$ such that $v\not\in\Span(\sem{A})\cap\Sph$. Since $\vv{v}\not\in\Span(\sem{A})$, $\vv{v}=\vv{w_1} + \vv{w_2}$ such that $\vv{w_1}\in\Span{\sem{A}}$ and $\vv{w_2}$ is a non-null vector which cannot be written as a linear combination of elements of $\sem{A}$. In other words, $\vv{w_2}\in\sem{A}^\bot$. Taking the inner product:
+    \item[$(\sem{A}^\bot)^\bot\subseteq \Span(\sem{A})\cap\Sph$:] Reasoning by contradiction, we assume that there is a $\vec{v}\in(\sem{A}^\bot)^\bot$ such that $v\not\in\Span(\sem{A})\cap\Sph$. Since $\vec{v}\not\in\Span(\sem{A})$, $\vec{v}=\vec{w}_{1} + \vec{w}_{2}$ such that $\vec{w}_{1}\in\Span{\sem{A}}$ and $\vec{w}_{2}$ is a non-null vector which cannot be written as a linear combination of elements of $\sem{A}$. In other words, $\vec{w}_{2}\in\sem{A}^\bot$. Taking the inner product:
     \[
-    \scal{\vv{v}}{\vv{w_2}} = \scal{\vv{w_1}+\vv{w_2}}{\vv{w_2}} = \|\vv{w_2}\|\neq 0
+    \scal{\vec{v}}{\vec{w}_{2}} = \scal{\vec{w}_{1}+\vec{w}_{2}}{\vec{w}_{2}} = \|\vec{w}_{2}\|\neq 0
     \]
-    Then $\vv{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vv{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
+    Then $\vec{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vec{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
   \end{description}
 \end{proof}
 
@@ -2018,9 +2096,9 @@ the calculus.
   We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
 
   \begin{description}
-    \item[$A\subseteq A^{\bot^2}$:] Let $\vv{v}\in A$. Then, for all $\vv{w}\in\comp{A}$, $\scal{\vv{v}}{\vv{w}} = 0$. Then $\vv{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
+    \item[$A\subseteq A^{\bot^2}$:] Let $\vec{v}\in A$. Then, for all $\vec{w}\in\comp{A}$, $\scal{\vec{v}}{\vec{w}} = 0$. Then $\vec{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
     
-    \item[$A^{\bot^3}\subseteq \comp{A}$:] Let $\vv{u}\in \comp[3]{A}$. Then, for all $\vv{v}\in\comp[2]{A}$, $\scal{\vv u}{\vv v} = 0$. Since we have shown that $A\subseteq \comp[2]{A}$, we have that for all $\vv{w}\in A$, $\scal{\vv u}{\vv w} = 0$. Then $\vv u\in\comp{A}$. With this we have $\comp[3]{A}\subseteq \comp{A}$.
+    \item[$A^{\bot^3}\subseteq \comp{A}$:] Let $\vec{u}\in \comp[3]{A}$. Then, for all $\vec{v}\in\comp[2]{A}$, $\scal{\vec u}{\vec v} = 0$. Since we have shown that $A\subseteq \comp[2]{A}$, we have that for all $\vec{w}\in A$, $\scal{\vec u}{\vec w} = 0$. Then $\vec u\in\comp{A}$. With this we have $\comp[3]{A}\subseteq \comp{A}$.
   \end{description}
 
   With these two inclusions we have that $\comp{A}=\comp[3]{A}$. So we conclude that: $\sem{\sharp(\sharp A)} = \comp[4]{A} = \comp[2]{A} = \sem{\sharp A}$ \qedhere
@@ -2034,143 +2112,143 @@ the calculus.
 \begin{proof}
   Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{X}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $\sem{A\times B}$.
   
-  Let $\vv v = \sum_{i=0}^{n} \alpha_i v_i \in\sem{A}$ and $\vv w = \sum_{j=0}^{m} \beta_j w_j$ where every $v_i$ are pairwise orthogonal, same for $w_j$. Then:
+  Let $\vec v = \sum_{i=0}^{n} \alpha_i v_i \in\sem{A}$ and $\vec w = \sum_{j=0}^{m} \beta_j w_j$ where every $v_i$ are pairwise orthogonal, same for $w_j$. Then:
      
-  \[(\vv v, \vv w) = \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i\beta_j (v_i,w_j)\]
+  \[(\vec v, \vec w) = \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i\beta_j (v_i,w_j)\]
   
   So we have: 
-  \[\|\Pair{\vv v}{\vv w}\| = \sqrt{\sum_{i=1}^n\sum_{j=1}^{m} |\alpha_i\beta_j|^2} = \sqrt{\sum_{i=1}^n |\alpha_i|^2 \sum_{j=1}^{m} |\beta_j|^2}\]
+  \[\|\Pair{\vec v}{\vec w}\| = \sqrt{\sum_{i=1}^n\sum_{j=1}^{m} |\alpha_i\beta_j|^2} = \sqrt{\sum_{i=1}^n |\alpha_i|^2 \sum_{j=1}^{m} |\beta_j|^2}\]
 
-  Since both $\vv v\in\sem{A}$ and $\vv w\in\sem{B}$, by inductive hypothesis, we have that $\|\vv v\| = \| \vv w \| = 1$. Which is to say $\sum_{i=1}^{n} |\alpha_i|^2 = \sum_{j=1}^{m} |\beta_j| = 1$. So we conclude $\|\Pair{\vv{v}}{\vv{w}}\| = 1$.
+  Since both $\vec v\in\sem{A}$ and $\vec w\in\sem{B}$, by inductive hypothesis, we have that $\|\vec v\| = \| \vec w \| = 1$. Which is to say $\sum_{i=1}^{n} |\alpha_i|^2 = \sum_{j=1}^{m} |\beta_j| = 1$. So we conclude $\|\Pair{\vec{v}}{\vec{w}}\| = 1$.
   \qedhere
 \end{proof}
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:BasesIso}]
   Let $X$ and $Y$ be orthonormal bases of the same finite
-  dimension, and let $\Lam{x}{{X}}{\vv t}$ be a closed $\lambda$-abstraction.
-  Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  dimension, and let $\Lam{x}{{X}}{\vec t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{X}}{\vec t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if 
-  for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
+  for all $\vec{v}_{i},\vec{v}_{j}\in\sem{\basis{X}}$,
   there exist value combinations
-  $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
+  $\vec{w}_{i},\vec{w}_{j}\in\sem{\sharp\basis{Y}}$ such that,
   \[
-    \vv{t}[\vv{v_i}/x]\eval\vv{w_i}
+    \vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}
     \quad\text{and}\quad
-    \vv{t}[\vv{v_j}/x]\eval\vv{w_j},
+    \vec{t}[\vec{v}_{j}/x]\eval\vec{w}_{j},
     \quad\text{with } 
-    \vv{w_i}\perp\vv{w_j}\text{ whenever }i\neq j.
+    \vec{w}_{i}\perp\vec{w}_{j}\text{ whenever }i\neq j.
   \]
 \end{restatelemma}
 \begin{proof}
-  \textit{The condition is necessary:} Suppose that $\Lam{x}{{X}}{\vv{t_k}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vv{v_i}\in\sem{\sharp\basis{X}},\ \vv{t}\ansubst{\vv{v_i}/x}{X}\eval\vv{w_i}\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vv{w_i} \perp \vv{w_j}$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
+  \textit{The condition is necessary:} Suppose that $\Lam{x}{{X}}{\vec{t}_{k}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$, thus $\forall \vec{v}_{i}\in\sem{\sharp\basis{X}},\ \vec{t}\ansubst{\vec{v}_{i}/x}{X}\eval\vec{w}_{i}\in\sem{\sharp\basis{Y}}$. It remains to be seen that $\vec{w}_{i} \perp \vec{w}_{j}$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $X$ we observe that:
   \begin{align*}
-    (\Lam{x}{{X}}{\vv{t}})(\sum_{i=1}^n \alpha_i \vv{v_i}) &\lra \vv t\ansubst{\sum_{i=1}^n \alpha_i \vv{v_i}/x}{X}
-    = \sum_{i=1}^{n} \alpha_i \vv{t}[\vv{v_i}/x] 
-    \eval \sum_{i=1}^n \alpha_i \vv{w_i}
+    (\Lam{x}{{X}}{\vec{t}})(\sum_{i=1}^n \alpha_i \vec{v}_{i}) &\lra \vec t\ansubst{\sum_{i=1}^n \alpha_i \vec{v}_{i}/x}{X}
+    = \sum_{i=1}^{n} \alpha_i \vec{t}[\vec{v}_{i}/x] 
+    \eval \sum_{i=1}^n \alpha_i \vec{w}_{i}
   \end{align*}
 
-  But since $\sum_{i=1}^n \alpha_i \vv{v_i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vv{w_i}\|=1$. Therefore:
+  But since $\sum_{i=1}^n \alpha_i \vec{v}_{i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vec{w}_{i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vec{w}_{i}\|=1$. Therefore:
   \begin{align*}
-    1 = \|\sum_{i=1}^n \alpha_i \vv{w_i}\| &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i<j}^n 2~\Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \|\vv{w_i}\|^2 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 + 2\sum_{i,j=1; i<j}^n\Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}\\
-    &= 1 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}}
+    1 = \|\sum_{i=1}^n \alpha_i \vec{w}_{i}\| &= \scal{\sum_{i=1}^n \alpha_i \vec{w}_{i}}{\sum_{j=1}^n \alpha_j \vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec{w}_{i}}{\vec{w}_{i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec{w}_{i}}{\vec{w}_{i} } + \sum_{i,j=1; i<j}^n 2~\Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \|\vec{w}_{i}\|^2 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 + 2\sum_{i,j=1; i<j}^n\Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}\\
+    &= 1 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}
   \end{align*}
 
-  And thus we are left with $\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}} = 0$. Taking $\alpha_{i'} = \alpha_{j'} = \frac{1}{\sqrt{2}}$ with $0$ for the rest of coefficients, we have $\Rpart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. In the same way, taking $\alpha_{i'} = \frac{1}{\sqrt{2}}$ and $\alpha_{j'}=\frac{i}{\sqrt{2}}$ with $0$ for the rest of the coefficients, we have $\Ipart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. Finally, we can conclude that $\scal{\vv{w_i}}{\vv{w_j}}=0$ if $i\neq j$.
+  And thus we are left with $\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}} = 0$. Taking $\alpha_{i'} = \alpha_{j'} = \frac{1}{\sqrt{2}}$ with $0$ for the rest of coefficients, we have $\Rpart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. In the same way, taking $\alpha_{i'} = \frac{1}{\sqrt{2}}$ and $\alpha_{j'}=\frac{i}{\sqrt{2}}$ with $0$ for the rest of the coefficients, we have $\Ipart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. Finally, we can conclude that $\scal{\vec{w}_{i}}{\vec{w}_{j}}=0$ if $i\neq j$.
 
-  \textit{The condition is sufficient:} Suppose that there are $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that for every $\vv{v_i}\in\sem{\basis{X}}$:
+  \textit{The condition is sufficient:} Suppose that there are $\vec{w}_{i}\in\sem{\sharp\basis{Y}}$ such that for every $\vec{v}_{i}\in\sem{\basis{X}}$:
   \[
-    \vv t[\vv{v_i}/x] \eval \vv{w_i} \perp \vv{w_j} \lave \vv t[\vv{v_j}/x]\qquad \text{If } i\neq j
+    \vec t[\vec{v}_{i}/x] \eval \vec{w}_{i} \perp \vec{w}_{j} \lave \vec t[\vec{v}_{j}/x]\qquad \text{If } i\neq j
   \]
-  Given any $\vv u\in\sem{\sharp\basis{X}}$ we have that $\vv u = \sum_{i=1}^n \alpha_i \vv{v_i}$ with $\sum_{i=1}^n |\alpha_i|^2 = 1$ and $\vv{v_i}\in\sem{\basis{X}}$. Then 
+  Given any $\vec u\in\sem{\sharp\basis{X}}$ we have that $\vec u = \sum_{i=1}^n \alpha_i \vec{v}_{i}$ with $\sum_{i=1}^n |\alpha_i|^2 = 1$ and $\vec{v}_{i}\in\sem{\basis{X}}$. Then 
   \[
-    (\Lam{x}{{X}}{\vv t}) \vv u \lra \vv{t_k}\ansubst{\vv u/x}{X}=\sum_{i=1}^{n}\alpha_i \vv{t}[\vv{v_i}/x]\eval\sum_{i=1}^n \alpha_i\vv{w_i}
+    (\Lam{x}{{X}}{\vec t}) \vec u \lra \vec{t}_{k}\ansubst{\vec u/x}{X}=\sum_{i=1}^{n}\alpha_i \vec{t}[\vec{v}_{i}/x]\eval\sum_{i=1}^n \alpha_i\vec{w}_{i}
   \]
 
-  We have that for each $i$, $\vv{w_i}\in\sem{\sharp\basis{Y}}$. In order to show that $(\Lam{x}{A}{\vv t})\vv u\real\sharp\basis{Y}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vv{w_i}\| = 1$
+  We have that for each $i$, $\vec{w}_{i}\in\sem{\sharp\basis{Y}}$. In order to show that $(\Lam{x}{A}{\vec t})\vec u\real\sharp\basis{Y}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vec{w}_{i}\| = 1$
   \begin{align*}
-    \|\sum_{i=1}^n \alpha_i \vv{w_i}\|^2 &= \scal{\sum_{i=1}^n \alpha_i \vv{w_i}}{\sum_{j=1}^n \alpha_j \vv{w_j}}\\
-    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vv{w_i}}{\vv{w_i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vv{w_i}}{\vv{w_j}}\\
+    \|\sum_{i=1}^n \alpha_i \vec{w}_{i}\|^2 &= \scal{\sum_{i=1}^n \alpha_i \vec{w}_{i}}{\sum_{j=1}^n \alpha_j \vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec{w}_{i}}{\vec{w}_{i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}\\
     &=\sum_{i=1}^n |\alpha_i|^2 + 0\\
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vv{w_i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Theorem~\ref{thm:IdempotentSharp}. Since for every $\vv u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vv t}) \vv u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vv t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
+  Then $\sum_{i=1}^n \alpha_i \vec{w}_{i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Theorem~\ref{thm:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
 \end{proof}
 
 \begin{restatetheorem}[Restatement of Theorem~\ref{thm:characterisation}]
   Let $X$ and $Y$ be orthonormal bases of size~$2^n$.
   A closed $\lambda$-abstraction
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  $\Lam{x}{{X}}{\vec{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
   if and only if it represents a unitary operator
   $F:\C^{2^n}\to\C^{2^n}$.
 \end{restatetheorem}
 
 \begin{proof}
   \textit{Necessity.}
-  Suppose that $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+  Suppose that $\Lam{x}{{X}}{\vec{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   Then, by Lemma~\ref{lem:BasesIso}, for every
-  $\vv{v_i}\in\sem{\basis{X}}$ there exists
-  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
-  $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
-  $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
+  $\vec{v}_{i}\in\sem{\basis{X}}$ there exists
+  $\vec{w}_{i}\in\sem{\sharp\basis{Y}}$ such that
+  $\vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}$ and
+  $\vec{w}_{i}\perp\vec{w}_{j}$ whenever $i\neq j$.
   Let $F:\C^{2^n}\to\C^{2^n}$ be the operator defined by
-  $F(\vv{v_i})=\vv{w_i}$.
+  $F(\vec{v}_{i})=\vec{w}_{i}$.
   By linearity over~$X$, it follows that
-  $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
+  $\Lam{x}{{X}}{\vec{t}}$ represents~$F$.
   Then, $F$ is unitary since
-  $\|\vv{w_i}\|_{\C^{2^n}}=\|\vv{w_j}\|_{\C^{2^n}}=1$ and
-  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^{2^n}}=0$.
+  $\|\vec{w}_{i}\|_{\C^{2^n}}=\|\vec{w}_{j}\|_{\C^{2^n}}=1$ and
+  $\scal{\vec{w}_{i}}{\vec{w}_{j}}_{\C^{2^n}}=0$.
 
   \smallskip
   \textit{Sufficiency.}
-  Conversely, suppose that $\Lam{x}{{X}}{\vv{t}}$ represents a
+  Conversely, suppose that $\Lam{x}{{X}}{\vec{t}}$ represents a
   unitary operator $F:\C^{2^n}\to\C^{2^n}$.
-  Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
-  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
-  $F(\vv{v_i}) = \vv{w_i}$ and
-  $(\Lam{x}{{X}}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
+  Then, for each $\vec{v}_{i}\in\sem{\basis{X}}$, there exists
+  $\vec{w}_{i}\in\sem{\sharp\basis{Y}}$ such that
+  $F(\vec{v}_{i}) = \vec{w}_{i}$ and
+  $(\Lam{x}{{X}}{\vec{t}})\vec{v}_{i}\eval\vec{w}_{i}$.
   Hence,
   \(
-    (\Lam{x}{{X}}{\vv{t}})\vv{v_i}
+    (\Lam{x}{{X}}{\vec{t}})\vec{v}_{i}
     \lraneq
-    \vv{t}\ansubst{\vv{v_i}/x}{X}
-    = \vv{t}[\vv{v_i}/x]
-    \eval \vv{w_i}
+    \vec{t}\ansubst{\vec{v}_{i}/x}{X}
+    = \vec{t}[\vec{v}_{i}/x]
+    \eval \vec{w}_{i}
     \in \sem{\sharp\basis{Y}}
   \),
-  as $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$. Since
+  as $\|\vec{w}_{i}\|=\|F(\vec{v}_{i})\|_{\C^n}=1$. Since
   \(
-    \scal{\vv{w_i}}{\vv{w_j}}
-    = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
+    \scal{\vec{w}_{i}}{\vec{w}_{j}}
+    = \scal{F(\vec{v}_{i})}{F(\vec{v}_{j})}_{\C^n}
     = 0
   \),
   from Lemma~\ref{lem:BasesIso} it follows that
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+  $\Lam{x}{{X}}{\vec{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
   \qedhere
 \end{proof}
 
 
 Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesValidity}), we need the following results.
 
-\begin{theorem}\label{prop:InnerProdPairs} For all value combinations $\vv{v_1}, \vv{v_2}, \vv{w_1}, \vv{w_2}$ we have:
+\begin{theorem}\label{prop:InnerProdPairs} For all value combinations $\vec{v}_{1}, \vec{v}_{2}, \vec{w}_{1}, \vec{w}_{2}$ we have:
 \[
-\scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}} = \scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}
+\scal{\Pair{\vec{v}_{1}}{\vec{w}_{1}}}{\Pair{\vec{v}_{2}}{\vec{w}_{2}}} = \scal{\vec{v}_{1}}{\vec{v}_{2}}\scal{\vec{w}_{1}}{\vec{w}_{2}}
 \]
 \begin{proof}
-    Let us write $\vv{v_1}=\sum_{i_1=1}^{n_1}\alpha_{i_1} v_{i_1}$, $\vv{v_2}=\sum_{i_2=1}^{n_2}\alpha'_{i_2} v_{i_2}$, $\vv{w_1}=\sum_{j_1=1}^{m_1}\beta_{j_1} w_{j_1}$ and $\vv{w_2}=\sum_{j_2=1}^{m_2}\beta'_{j_2} w_{j_2}$. Then we have:
+    Let us write $\vec{v}_{1}=\sum_{i_1=1}^{n_1}\alpha_{i_1} v_{i_1}$, $\vec{v}_{2}=\sum_{i_2=1}^{n_2}\alpha'_{i_2} v_{i_2}$, $\vec{w}_{1}=\sum_{j_1=1}^{m_1}\beta_{j_1} w_{j_1}$ and $\vec{w}_{2}=\sum_{j_2=1}^{m_2}\beta'_{j_2} w_{j_2}$. Then we have:
     \begin{align*}
-        &\scal{\Pair{\vv{v_1}}{\vv{w_1}}}{\Pair{\vv{v_2}}{\vv{w_2}}}\\
+        &\scal{\Pair{\vec{v}_{1}}{\vec{w}_{1}}}{\Pair{\vec{v}_{2}}{\vec{w}_{2}}}\\
         &=\scal{\sum_{i_1=1}^{n_1}\sum_{j_1=1}^{m_1} \alpha_{i_1}\beta'_{j_1}\Pair{v_{i_1}}{w_{j_1}}}{\sum_{i_2=1}^{n_2}\sum_{j_2=1}^{m_2} \alpha_{i_2}\beta'_{j_2}\Pair{v_{i_2}}{w_{j_2}}}\\
         &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \scal{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
         &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
         &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{v_{i_1}}{v_{i_2}}\Kron{w_{j_1}}{w_{j_2}}\\
         &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Kron{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Kron{w_{j_1}}{w_{j_2}})\\
         &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Pair{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Pair{w_{j_1}}{w_{j_2}})\\
-        &=\scal{\vv{v_1}}{\vv{v_2}}\scal{\vv{w_1}}{\vv{w_2}}
+        &=\scal{\vec{v}_{1}}{\vec{v}_{2}}\scal{\vec{w}_{1}}{\vec{w}_{2}}
 	\tag*{\qedhere}
     \end{align*}
 \end{proof}  
@@ -2178,96 +2256,96 @@ Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesVa
 \end{theorem}
 
 \begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
-Given a type $A$, two vectors $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vv{u_0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
+Given a type $A$, two vectors $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vec{u}_{0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
 \[
-\vv{u_1} + \alpha\vv{u_2} = \lambda \vv{u_0} 
+\vec{u}_{1} + \alpha\vec{u}_{2} = \lambda \vec{u}_{0} 
 \]
 \end{lemma}
 \begin{proof}
-    Let $\lambda:=\|\vv{u_1}+\alpha\vv{u_2}\|$. When $\lambda\neq 0$, we take $\vv{u_0}=\frac{1}{\lambda}(\vv{u_1}+\alpha\vv{u_2})\in\sem{\sharp A}$, and we are done.
+    Let $\lambda:=\|\vec{u}_{1}+\alpha\vec{u}_{2}\|$. When $\lambda\neq 0$, we take $\vec{u}_{0}=\frac{1}{\lambda}(\vec{u}_{1}+\alpha\vec{u}_{2})\in\sem{\sharp A}$, and we are done.
 
-    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vv{u_1}\|=0$ which is absurd since $\|\vv{u_1}\|=1$. Moreover, since $\lambda=\|\vv{u_1}+\alpha\vv{u_2}\|=0$, we observe that all the coefficients of the combination $\vv{u_1}+\alpha\vv{u_2}$ are zeroes when written in canonical form which implies that:
+    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vec{u}_{1}\|=0$ which is absurd since $\|\vec{u}_{1}\|=1$. Moreover, since $\lambda=\|\vec{u}_{1}+\alpha\vec{u}_{2}\|=0$, we observe that all the coefficients of the combination $\vec{u}_{1}+\alpha\vec{u}_{2}$ are zeroes when written in canonical form which implies that:
     \[
-    \vv{u_1}+\alpha\vv{u_2} = 0(\vv{u_1}+\alpha\vv{u_2}) = 0\vv{u_1}+0\vv{u_2}
+    \vec{u}_{1}+\alpha\vec{u}_{2} = 0(\vec{u}_{1}+\alpha\vec{u}_{2}) = 0\vec{u}_{1}+0\vec{u}_{2}
     \]
     Using the triangular inequality we observe that:
     \begin{align*}
     0 &< 2|\alpha|\\
-    &= \|2\alpha\vv{u_2}\|\\
-    &\leq\|\vv{u_1}+\alpha\vv{u_2}\| + \|\vv{u_1 }+ (-\alpha)\vv{u_2}\|\\
-    &= \|\vv{u_1}+(-\alpha)\vv{u_2}\|
+    &= \|2\alpha\vec{u}_{2}\|\\
+    &\leq\|\vec{u}_{1}+\alpha\vec{u}_{2}\| + \|\vv{u_1 }+ (-\alpha)\vec{u}_{2}\|\\
+    &= \|\vec{u}_{1}+(-\alpha)\vec{u}_{2}\|
     \end{align*}
-    Hence $\lambda' := \|\vv{u_1}+(-\alpha)\vv{u_2}\|>0$. Taking $\vv{u_0}:= \frac{1}{\lambda'}(\vv{u_1}+ (-\alpha)\vv{u_2})\in\sem{\sharp A}$, we easily see that:
+    Hence $\lambda' := \|\vec{u}_{1}+(-\alpha)\vec{u}_{2}\|>0$. Taking $\vec{u}_{0}:= \frac{1}{\lambda'}(\vec{u}_{1}+ (-\alpha)\vec{u}_{2})\in\sem{\sharp A}$, we easily see that:
     \[
-    \vv{u_1}+\alpha\vv{u_2} = 0\vv{u_1} + 0\vv{u_2} = 0(\frac{1}{\lambda'} (\vv{u_1} + (-\alpha) \vv{u_2})) = \lambda \vv{u_0}
+    \vec{u}_{1}+\alpha\vec{u}_{2} = 0\vec{u}_{1} + 0\vec{u}_{2} = 0(\frac{1}{\lambda'} (\vec{u}_{1} + (-\alpha) \vec{u}_{2})) = \lambda \vec{u}_{0}
     \tag*{\qedhere}
     \]
 \end{proof}
 
 \begin{theorem}[Polarization identity]\label{prop:Polarization} %A6
-For all values $\vv{v}$ and $\vv{w}$ we have:
+For all values $\vec{v}$ and $\vec{w}$ we have:
 \[
-  \scal{\vv{v}}{\vv{w}}=
-  \frac{1}{4} (\|\vv{v}+\vv{w}\|^2 - \|\vv{v} + (-1) \vv{w}\|^2 - i\|\vv{v} + i\vv{w}\|^2 + i\|\vv{v}+ (-i)\vv{w}\|^2)
+  \scal{\vec{v}}{\vec{w}}=
+  \frac{1}{4} (\|\vec{v}+\vec{w}\|^2 - \|\vec{v} + (-1) \vec{w}\|^2 - i\|\vec{v} + i\vec{w}\|^2 + i\|\vec{v}+ (-i)\vec{w}\|^2)
 \]
 \end{theorem}
 
 \begin{lemma}\label{lem:InnerProdSingleVar} %A7
-Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value combinations $\vv{w_1}, \vv{w_2}\in\sem{C}$ such that:
+Given a valid typing judgement of the term $\TYP{\Delta,x_B:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$, there are value combinations $\vec{w}_{1}, \vec{w}_{2}\in\sem{C}$ such that:
 \[
 \begin{array}{c}
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{B_1}{\ansubst{\vec{v}_{1}/y}{B_2}}\eval\vec{w}_{1}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{B_1}{\ansubst{\vec{v}_{2}/y}{B_2}}\eval\vec{w}_{2}
 \end{array}
 \]
 
-And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}}$.
+And, $\scal{\vec{w}_{1}}{\vec{w}_{2}} = \scal{\vec{u}_{1}}{\vec{u}_{2}}$.
 \end{lemma}
 
 \begin{proof}
-    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vv{w_1},\vv{w_2}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{A}\eval\vv{w_1}$ and $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{A}\eval\vv{w_2}$. In particular, we have that $\|\vv{w_1}\| = \|\vv{w_2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    From the validity of the judgement of the form $\TYP{\Delta, x_A:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vec{w}_{1},\vec{w}_{2}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{A}\eval\vec{w}_{1}$ and $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{A}\eval\vec{w}_{2}$. In particular, we have that $\|\vec{w}_{1}\| = \|\vec{w}_{2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
     \begin{align*}
-        \vv{u_1} + \vv{u_2} = \lambda_1 \vv{u_{01}} & \vv{u_1} + i \vv{u_2} = \lambda_3 \vv{u_{03}} \\
-        \vv{u_1} + (-1) \vv{u_2} = \lambda_2 \vv{u_{02}} & \vv{u_1} + (-i) \vv{u_2} = \lambda_4 \vv{u_{04}} 
+        \vec{u}_{1} + \vec{u}_{2} = \lambda_1 \vv{u_{01}} & \vec{u}_{1} + i \vec{u}_{2} = \lambda_3 \vv{u_{03}} \\
+        \vec{u}_{1} + (-1) \vec{u}_{2} = \lambda_2 \vv{u_{02}} & \vec{u}_{1} + (-i) \vec{u}_{2} = \lambda_4 \vv{u_{04}} 
     \end{align*}
 
-    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vv{s}}{C}$, we also know that there are value combinations $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
+    From the validity of the judgement  $\TYP{\Delta, x_A:\sharp A}{\vec{s}}{C}$, we also know that there are value combinations $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}}{}\eval\vv{w_{oj}}$ for all $f\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ with the uniqueness of normal forms we deduce from what precedes that:
     \begin{align*}
-        \vv{w_1} + \vv{w_2} = \lambda_1 \vv{w_{01}} & \vv{w_1} + i \vv{w_2} = \lambda_3 \vv{w_{03}} \\
-        \vv{w_1} + (-1) \vv{w_2} = \lambda_2 \vv{w_{02}} & \vv{w_1} + (-i) \vv{w_2} = \lambda_4 \vv{w_{04}} 
+        \vec{w}_{1} + \vec{w}_{2} = \lambda_1 \vv{w_{01}} & \vec{w}_{1} + i \vec{w}_{2} = \lambda_3 \vv{w_{03}} \\
+        \vec{w}_{1} + (-1) \vec{w}_{2} = \lambda_2 \vv{w_{02}} & \vec{w}_{1} + (-i) \vec{w}_{2} = \lambda_4 \vv{w_{04}} 
     \end{align*}
 
     Using the polarization identity (Theorem~\ref{prop:Polarization}), we conclude that:
     \begin{align*}
-        &\scal{\vv{w_1}}{\vv{w_2}}\\
-        &= \frac{1}{4}(\|\vv{w_1}+\vv{w_2}\| - \|\vv{w_1} + (-1)\vv{w_2}\| - i \|\vv{v_1} + i \vv{v_2}\| + i \|\vv{v_1} + (-i) \vv{v_2}\|)\\
+        &\scal{\vec{w}_{1}}{\vec{w}_{2}}\\
+        &= \frac{1}{4}(\|\vec{w}_{1}+\vec{w}_{2}\| - \|\vec{w}_{1} + (-1)\vec{w}_{2}\| - i \|\vec{v}_{1} + i \vec{v}_{2}\| + i \|\vec{v}_{1} + (-i) \vec{v}_{2}\|)\\
         &= \frac{1}{4}((\lambda_1)^2\|\vv{w_{01}}\| - (\lambda_2)^2\|\vv{w_{02}}\| - i (\lambda_)^2 \|\vv{w_{03}}\| + i (\lambda_)^2\|\vv{w_{04}}\|)\\
         &= \frac{1}{4}((\lambda_1)^2\|\vv{u_{01}}\| - (\lambda_2)^2\|\vv{u_{02}}\| - i (\lambda_)^2 \|\vv{u_{03}}\| + i (\lambda_)^2\|\vv{u_{04}}\|)\\
-        &= \frac{1}{4}(\|\vv{u_1}+\vv{u_2}\| - \|\vv{u_1} + (-1)\vv{u_2}\| - i \|\vv{u_1} + i \vv{u_2}\| + i \|\vv{u_1} + (-i) \vv{u_2}\|)\\
+        &= \frac{1}{4}(\|\vec{u}_{1}+\vec{u}_{2}\| - \|\vec{u}_{1} + (-1)\vec{u}_{2}\| - i \|\vec{u}_{1} + i \vec{u}_{2}\| + i \|\vec{u}_{1} + (-i) \vec{u}_{2}\|)\\
         &=\scal{u_1}{u_2}
 	\tag*{\qedhere}
     \end{align*}
 \end{proof}
 
 \begin{lemma}\label{lem:OrthogonalSubstitution} %A8
-Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$, there are value combinations $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
+Given a valid typing judgement of the form $\TYP{\Delta, x_{B_1}:\sharp A_1, y_{B_2}: \sharp A_2}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$, there are value combinations $\vec{w}_{1},\vec{w}_{2}\in\sem{C}$ such that:
 \[
 \begin{array}{c}
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{B_1}{\ansubst{\vec{v}_{1}/y}{B_2}}\eval\vec{w}_{1}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{B_1}{\ansubst{\vec{v}_{2}/y}{B_2}}\eval\vec{w}_{2}\\
 \end{array}
 \]
-And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
+And, $\scal{\vec{w}_{1}}{\vec{w}_{2}} = 0$.
 \end{lemma}
 
 \begin{proof}
-    From Lemma~\ref{lem:VecRewrite} we know that there are $\vv{u_0}\in\sem{\sharp A}, \vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    From Lemma~\ref{lem:VecRewrite} we know that there are $\vec{u}_{0}\in\sem{\sharp A}, \vec{v}_{0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
     \[
-    \vv{u_2} + (-1) \vv{u_1} = \lambda\vv{u_0}\quad\text{and}\quad\vv{v_2} + (-1) \vv{v_1} = \mu \vv{v_0}
+    \vec{u}_{2} + (-1) \vec{u}_{1} = \lambda\vec{u}_{0}\quad\text{and}\quad\vec{v}_{2} + (-1) \vec{v}_{1} = \mu \vec{v}_{0}
     \]
-    For all $j,k\in\{0,1,2\}$, we have $\vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_j}/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\eval\vv{w_{jk}}$. In particular, we can take $\vv{w_1}=\vv{w_{11}}$ and $\vv{w_2}=\vv{w_{22}}$. Now we observe that:
+    For all $j,k\in\{0,1,2\}$, we have $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{j}/x}{B_1}\ansubst{\vec{v}_{k}/y}{B_2}\eval\vv{w_{jk}}$. In particular, we can take $\vec{w}_{1}=\vv{w_{11}}$ and $\vec{w}_{2}=\vv{w_{22}}$. Now we observe that:
     \begin{enumerate}
-        \item\label{A8:it1} $\vv{u_1}+\lambda\vv{u_0}= \vv{u_1} + \vv{u_2} + (-1) \vv{u_1}= \vv{u_2} + 0\vv{u_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \item\label{A8:it1} $\vec{u}_{1}+\lambda\vec{u}_{0}= \vec{u}_{1} + \vec{u}_{2} + (-1) \vec{u}_{1}= \vec{u}_{2} + 0\vec{u}_{1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
         \[
         \begin{array}{c c}
             \begin{array}{c}
@@ -2278,7 +2356,7 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
         \end{array}
         \]
         
-        \item\label{A8:it2} $\vv{v_1}+\mu\vv{v_0}= \vv{v_1} + \vv{v_2} + (-1) \vv{v_1}= \vv{v_2} + 0\vv{v_1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \item\label{A8:it2} $\vec{v}_{1}+\mu\vec{v}_{0}= \vec{v}_{1} + \vec{v}_{2} + (-1) \vec{v}_{1}= \vec{v}_{2} + 0\vec{v}_{1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
         \[
         \begin{array}{c c}
             \begin{array}{c}
@@ -2289,14 +2367,14 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
         \end{array}
         \]
         
-        \item\label{A8:it3} $\scal{\vv{u_1}}{\vv{u_2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
+        \item\label{A8:it3} $\scal{\vec{u}_{1}}{\vec{u}_{2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
         
-        \item\label{A8:it4} $\scal{\vv{v_1}}{\vv{v_2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
+        \item\label{A8:it4} $\scal{\vec{v}_{1}}{\vec{v}_{2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
     \end{enumerate}
 
     From the above, we get:
     \begin{align*}
-        \scal{\vv{w_1}}{\vv{w_2}} &= \scal{\vv{w_{11}}}{\vv{w_{22}}} = \scal{\vv{w_{11}}}{\vv{w_{22}}+0\vv{w_{12}}} & \\
+        \scal{\vec{w}_{1}}{\vec{w}_{2}} &= \scal{\vv{w_{11}}}{\vv{w_{22}}} = \scal{\vv{w_{11}}}{\vv{w_{22}}+0\vv{w_{12}}} & \\
         &=\scal{\vv{w_{11}}}{\vv{w_{12}}+ \lambda\vv{w_{02}}} & (\text{from Item~\ref{A8:it1}, } k=2)\\
         &=\scal{\vv{w_{11}}}{\vv{w_{12}}} + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} &\\
         &= 0 + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} & (\text{from Item~\ref{A8:it4}, } j=1)\\
@@ -2309,68 +2387,68 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = 0$.
         &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from Item~\ref{A8:it4}, } j=2)
     \end{align*}
 
-    Hence $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
+    Hence $\scal{\vec{w}_{1}}{\vec{w}_{2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
     \[
-    \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\scal{\vv{w_{12}}}{\vv{w_{21}}}
+    \scal{\vec{w}_{1}}{\vec{w}_{2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\scal{\vv{w_{12}}}{\vv{w_{21}}}
     \]
     So that we have:
     \[
-        \scal{\vv{w_1}}{\vv{w_2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\overline{\scal{\vv{w_{21}}}{\vv{w_{12}}}}\in\R
+        \scal{\vec{w}_{1}}{\vec{w}_{2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\overline{\scal{\vv{w_{21}}}{\vv{w_{12}}}}\in\R
     \]
-    If we now replace $\vv{u_2}\in\sem{\sharp A}$ with $i\vv{u_2}\in\sem{\sharp A}$, the very same technique allows us to prove that $i\scal{\vv{w_1}}{\vv{w_2}}=\scal{\vv{w_1}}{i \vv{w_2}}\in\R$. Therefore, $\scal{\vv{w_1}}{\vv{w_2}}=0$.
+    If we now replace $\vec{u}_{2}\in\sem{\sharp A}$ with $i\vec{u}_{2}\in\sem{\sharp A}$, the very same technique allows us to prove that $i\scal{\vec{w}_{1}}{\vec{w}_{2}}=\scal{\vec{w}_{1}}{i \vec{w}_{2}}\in\R$. Therefore, $\scal{\vec{w}_{1}}{\vec{w}_{2}}=0$.
 \end{proof}
 
 \begin{lemma}\label{lem:UnitPreserTens} %A9
-Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vv{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vv{u_1},\vv{u_2}\in\sem{\sharp A}$ and $\vv{v_1},\vv{v_2}\in\sem{\sharp B}$, there are value combinations $\vv{w_1},\vv{w_2}\in\sem{C}$ such that:
+Given a valid typing judgement of the form $\TYP{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$ and $\vec{v}_{1},\vec{v}_{2}\in\sem{\sharp B}$, there are value combinations $\vec{w}_{1},\vec{w}_{2}\in\sem{C}$ such that:
 \[
 \begin{array}{c}
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_1}/x}{B_1}{\ansubst{\vv{v_1}/y}{B_2}}\eval\vv{w_1}\\
-    \vv{s}\ansubst{\sigma}{}\ansubst{\vv{u_2}/x}{B_1}{\ansubst{\vv{v_2}/y}{B_2}}\eval\vv{w_2}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{B_1}{\ansubst{\vec{v}_{1}/y}{B_2}}\eval\vec{w}_{1}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{B_1}{\ansubst{\vec{v}_{2}/y}{B_2}}\eval\vec{w}_{2}\\
 \end{array}
 \]
 
-And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{v_2}}$.
+And, $\scal{\vec{w}_{1}}{\vec{w}_{2}} = \scal{\vec{u}_{1}}{\vec{u}_{2}} \scal{\vec{v}_{1}}{\vec{v}_{2}}$.
 
 \begin{proof}
-    Let $\alpha=\scal{\vv{u_1}}{\vv{u_2}}$ and $\beta=\scal{\vv{v_1}}{\vv{v_2}}$. We observe that:
+    Let $\alpha=\scal{\vec{u}_{1}}{\vec{u}_{2}}$ and $\beta=\scal{\vec{v}_{1}}{\vec{v}_{2}}$. We observe that:
     \[
-    \scal{\vv{u_1}}{\vv{u_2}+(-\alpha)\vv{u_1}} = \scal{\vv{u_1}}{\vv{u_2}} - \alpha \scal{\vv{u_1}}{\vv{u_1}} = \alpha - \alpha = 0
+    \scal{\vec{u}_{1}}{\vec{u}_{2}+(-\alpha)\vec{u}_{1}} = \scal{\vec{u}_{1}}{\vec{u}_{2}} - \alpha \scal{\vec{u}_{1}}{\vec{u}_{1}} = \alpha - \alpha = 0
     \]
-    And similarly that, $\scal{\vv{v_1}}{\vv{v_2}+ (-\beta) \vv{v_1}} = 0$. From Lemma~\ref{lem:VecRewrite}, we know that there are $\vv{u_0}\in\sem{\sharp A}$, $\vv{v_0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    And similarly that, $\scal{\vec{v}_{1}}{\vec{v}_{2}+ (-\beta) \vec{v}_{1}} = 0$. From Lemma~\ref{lem:VecRewrite}, we know that there are $\vec{u}_{0}\in\sem{\sharp A}$, $\vec{v}_{0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
     \begin{align*}
-        \vv{u_2} +(-\alpha)\vv{u_1} = \lambda\vv{u_0}& \text{ and } & \vv{v_2} + (-\beta)\vv{v_1} = \mu\vv{v_0} 
+        \vec{u}_{2} +(-\alpha)\vec{u}_{1} = \lambda\vec{u}_{0}& \text{ and } & \vec{v}_{2} + (-\beta)\vec{v}_{1} = \mu\vec{v}_{0} 
     \end{align*}
-    For all $j,k\in\{0,1,2\}$, we have$\ansubst{\sigma}{}\ansubst{\vv{u_j}/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\in\sem{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}$, hence there is $\vv{w_{jk}}\in\sem{C}$ such that:
+    For all $j,k\in\{0,1,2\}$, we have$\ansubst{\sigma}{}\ansubst{\vec{u}_{j}/x}{B_1}\ansubst{\vec{v}_{k}/y}{B_2}\in\sem{\Delta,x_{B_1}:\sharp A_1, y_{B_2}:\sharp A_2}$, hence there is $\vv{w_{jk}}\in\sem{C}$ such that:
     \[
-    \vv{s}\ansubst{\sigma}{}\ansubst{u_j/x}{B_1}\ansubst{\vv{v_k}/y}{B_2}\eval\vv{w_{jk}}
+    \vec{s}\ansubst{\sigma}{}\ansubst{u_j/x}{B_1}\ansubst{\vec{v}_{k}/y}{B_2}\eval\vv{w_{jk}}
     \]
-    In particular, we can take $\vv{w_1}=\vv{w_{11}}$ and $\vv{w_2}=\vv{w_{22}}$. Now we observe that:
+    In particular, we can take $\vec{w}_{1}=\vv{w_{11}}$ and $\vec{w}_{2}=\vv{w_{22}}$. Now we observe that:
     \begin{enumerate}
-        \item\label{A9:it1} $\lambda \vv{u_0} + \alpha\vv{u_1}=\vv{u_2} + (-\alpha) \vv{u_1} + \alpha \vv{u_1} = \vv{u_2} + 0 \vv{u_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \item\label{A9:it1} $\lambda \vec{u}_{0} + \alpha\vec{u}_{1}=\vec{u}_{2} + (-\alpha) \vec{u}_{1} + \alpha \vec{u}_{1} = \vec{u}_{2} + 0 \vec{u}_{1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
         \[
         \lambda\vv{w_{0k}} + \alpha \vv{w_{1k}} = \vv{w_{2k}} + 0 \vv{w_{1k}} \qquad(\text{for all }k\in\{0,1,2\})
         \]
         
-        \item\label{A9:it2} $\mu\vv{v_0} + \beta\vv{v_1}=\vv{v_2} + (-\beta) \vv{v_1} + \beta \vv{v_1} = \vv{v_2} + 0 \vv{v_1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \item\label{A9:it2} $\mu\vec{v}_{0} + \beta\vec{v}_{1}=\vec{v}_{2} + (-\beta) \vec{v}_{1} + \beta \vec{v}_{1} = \vec{v}_{2} + 0 \vec{v}_{1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
         \[
         \mu\vv{w_{j0}} + \beta \vv{w_{j1}} = \vv{w_{j2}} + 0 \vv{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
         \]
         
-        \item\label{A9:it3} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{u_1}}{\vv{u_2}+(- \alpha)\vv{u_1}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
+        \item\label{A9:it3} $\scal{\vec{u}_{1}}{\lambda\vec{u}_{0}}=\scal{\vec{u}_{1}}{\vec{u}_{2}+(- \alpha)\vec{u}_{1}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
         \[
         \scal{\vv{w_{1k}}}{\lambda\vv{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
         \]
         
-        \item\label{A9:it4} $\scal{\vv{v_1}}{\mu\vv{v_0}}=\scal{\vv{v_1}}{\vv{v_2} + (-\beta)}\vv{v_1}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
+        \item\label{A9:it4} $\scal{\vec{v}_{1}}{\mu\vec{v}_{0}}=\scal{\vec{v}_{1}}{\vec{v}_{2} + (-\beta)}\vec{v}_{1}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
         \[
         \scal{\vv{w_{j1}}}{\mu\vv{w_{j0}}}=0
         \]
                 
-        \item\label{A9:it5} $\scal{\vv{u_1}}{\lambda\vv{u_0}}=\scal{\vv{v_1}}{\mu\vv{v_0}}=0$ so that from Lemma~\ref{lem:OrthogonalSubstitution} we get:
+        \item\label{A9:it5} $\scal{\vec{u}_{1}}{\lambda\vec{u}_{0}}=\scal{\vec{v}_{1}}{\mu\vec{v}_{0}}=0$ so that from Lemma~\ref{lem:OrthogonalSubstitution} we get:
         \[
         \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}=0
         \]
-        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vv{u_1}}{\vv{u_0}}=\scal{\vv{v_1}}{\vv{v_0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by Lemma~\ref{lem:OrthogonalSubstitution})
+        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vec{u}_{1}}{\vec{u}_{0}}=\scal{\vec{v}_{1}}{\vec{v}_{0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by Lemma~\ref{lem:OrthogonalSubstitution})
     \end{enumerate}
 
     From above, we get:
@@ -2383,12 +2461,12 @@ And, $\scal{\vv{w_1}}{\vv{w_2}} = \scal{\vv{u_1}}{\vv{u_2}} \scal{\vv{v_1}}{\vv{
     \end{align*}
     Therefore:
     \begin{align*}
-        &\scal{\vv{w_1}}{\vv{w_2}} \\
+        &\scal{\vec{w}_{1}}{\vec{w}_{2}} \\
         &= \scal{\vv{w_{11}}}{\vv{w_{22}} + 0 \vv{w_{12}} + 0 \vv{w_{01}} + 0 \vv{w_{11}}}\\
         &= \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10}} + \alpha\beta\vv{w_{11}}}\\
         &=\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}} + \scal{\vv{w_{11}}}{\lambda\beta\vv{w_{01}}} + \scal{\vv{w_{11}}}{\alpha\mu\vv{w_{10}}} + \scal{\vv{w_{11}}}{\alpha\beta\vv{w_{11}}}\\
         &=\lambda\mu\scal{\vv{w_{11}}}{\vv{w_{00}}} + \lambda\beta\scal{\vv{w_{11}}}{\vv{w_{01}}} + \alpha\mu\scal{\vv{w_{11}}}{\vv{w_{10}}} + \alpha\beta\scal{\vv{w_{11}}}{\vv{w_{11}}}\\
-        &= 0 + 0 + 0 + \alpha\beta = \scal{\vv{u_1}}{\vv{u_2}}\scal{\vv{v_1}}{\vv{v_2}}
+        &= 0 + 0 + 0 + \alpha\beta = \scal{\vec{u}_{1}}{\vec{u}_{2}}\scal{\vec{v}_{1}}{\vec{v}_{2}}
     \end{align*}
   From Items~\ref{A9:it5}, \ref{A9:it3}, \ref{A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
 \end{proof}
@@ -2402,264 +2480,264 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
 \begin{proof}
     For each typing rule in Table~\ref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
     \begin{description}
-    \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x^B:A}$, we have $\sigma=\ansubst{\vv v/x}{B}$ for some $\vv{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vv v}{B}=\vv{v}\real A$.
+    \item[Axiom] It is clear that $\sdom{x:A}\subseteq\{x\}=\dom{x:A}$. Moreover, given $\sigma\in\sem{x^B:A}$, we have $\sigma=\ansubst{\vec v/x}{B}$ for some $\vec{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vec v}{B}=\vec{v}\real A$.
     
-    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^X:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vv{t_i}}\subseteq \dom{\Gamma,x^X:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vv v\in\sem{A}$, then:
+    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^X:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}\subseteq \dom{\Gamma,x^X:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t}_{i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t}_{i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vec v\in\sem{A}$, then:
     \begin{align*}
-        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{X}{\vv{t_i}}))\ansubst{\sigma}{} \vv v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{X}{\vv{t_i}}) [\sigma_i])) \vv{v} \\
-        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{X}{\vv{t_i}[\sigma_j]}))\vv v\\
-        &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vv{t_i}[\sigma_j]\ansubst{\vv v/x}{X}\\
-        &=\sum_{i=1}^{n}\alpha_i \vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\\
-        &=(\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\qquad{\text{By Lemma~\ref{lem:distributiveSubstitution}}}
+        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{X}{\vec{t}_{i}}))\ansubst{\sigma}{} \vec v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{X}{\vec{t}_{i}}) [\sigma_i])) \vec{v} \\
+        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{X}{\vec{t}_{i}[\sigma_j]}))\vec v\\
+        &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vec{t}_{i}[\sigma_j]\ansubst{\vec v/x}{X}\\
+        &=\sum_{i=1}^{n}\alpha_i \vec{t}_{i}\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\\
+        &=(\sum_{i=1}^{n}\alpha_i \vec{t}_{i})\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\qquad{\text{By Lemma~\ref{lem:distributiveSubstitution}}}
     \end{align*}
     
-    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vv{t_i}}{B}$, then $\vv{t_i}\ansubst{\sigma}{}\ansubst{\vv v/x}{X}\real B$. Finally, we can conclude that the combination: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vv{t_i}})\in\sem{A\Arr B}$.
+    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vec{t}_{i}}{B}$, then $\vec{t}_{i}\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\real B$. Finally, we can conclude that the combination: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t}_{i}})\in\sem{A\Arr B}$.
 
     \item[App] If the hypotheses are valid, then:
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv s}\subseteq \dom{\Gamma}$ and $\vv s \ansubst{\sigma_\Gamma}{}\Vdash A\Arr B\ \forall \sigma_\Gamma\in\sem{\Gamma}$.
-        \item $\sdom{\Delta}\subseteq \FV{\vv t}\subseteq \dom{\Delta}$ and $\vv t\ansubst{\sigma_\Delta}{}\Vdash A\ \forall\sigma_\Delta\in\sem{\Delta}$.
+        \item $\sdom{\Gamma}\subseteq \FV{\vec s}\subseteq \dom{\Gamma}$ and $\vec s \ansubst{\sigma_\Gamma}{}\Vdash A\Arr B\ \forall \sigma_\Gamma\in\sem{\Gamma}$.
+        \item $\sdom{\Delta}\subseteq \FV{\vec t}\subseteq \dom{\Delta}$ and $\vec t\ansubst{\sigma_\Delta}{}\Vdash A\ \forall\sigma_\Delta\in\sem{\Delta}$.
     \end{itemize}
     
-    From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{\vv s \vv t}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
+    From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{\vec s \vec t}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
     \begin{align*}
-        (\vv{t}\vv{s})\ansubst{\sigma}{} &= (\vv{t}\vv{s})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &=(\sum_{i=i}^{n}\alpha_i (\vv{t}\vv{s})[\sigma_{\Gamma i}])\ansubst{\sigma_\Delta}{}\\
-        &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\vv{t} \vv{s})[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
-        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \vv{t}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}] \vv{s}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
-        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \vv{t}\,[\sigma_{\Gamma i}]\vv{s}\,[\sigma_{\Delta j}]\\
-        &\equiv (\sum_{i=1}^{n}\alpha_i\vv{t}[\sigma_{\Gamma i}])(\sum_{j=1}^{m} \beta_j \vv{s}[\sigma_{\Delta j}])\\
-        &=\vv{t}\ansubst{\sigma_\Gamma}{} \vv{s}\ansubst{\sigma_\Delta}{}\\
-        &\eval (e^{i\theta_{1}} \vv{v}) (e^{i\theta_{2}} \vv{w})\qquad\text{Where: } \vv{v}\in\sem{A\Arr B}, \vv{w}\in\sem{A}\\
-        &\equiv e^{i\theta} (\vv{v} \vv{w})\qquad\text{with: }\theta=\theta_1 + \theta_2\\
-        &\lraneq e^{i\theta}\vv r\qquad\text{where: } \vv{r}\real B
+        (\vec{t}\vec{s})\ansubst{\sigma}{} &= (\vec{t}\vec{s})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=i}^{n}\alpha_i (\vec{t}\vec{s})[\sigma_{\Gamma i}])\ansubst{\sigma_\Delta}{}\\
+        &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\vec{t} \vec{s})[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
+        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \vec{t}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}] \vec{s}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
+        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \vec{t}\,[\sigma_{\Gamma i}]\vec{s}\,[\sigma_{\Delta j}]\\
+        &\equiv (\sum_{i=1}^{n}\alpha_i\vec{t}[\sigma_{\Gamma i}])(\sum_{j=1}^{m} \beta_j \vec{s}[\sigma_{\Delta j}])\\
+        &=\vec{t}\ansubst{\sigma_\Gamma}{} \vec{s}\ansubst{\sigma_\Delta}{}\\
+        &\eval (e^{i\theta_{1}} \vec{v}) (e^{i\theta_{2}} \vec{w})\qquad\text{Where: } \vec{v}\in\sem{A\Arr B}, \vec{w}\in\sem{A}\\
+        &\equiv e^{i\theta} (\vec{v} \vec{w})\qquad\text{with: }\theta=\theta_1 + \theta_2\\
+        &\lraneq e^{i\theta}\vec r\qquad\text{where: } \vec{r}\real B
     \end{align*}
     
-    Then we can conclude that $(\vv{t}\vv{s})\ansubst{\sigma}{}\real B$.
+    Then we can conclude that $(\vec{t}\vec{s})\ansubst{\sigma}{}\real B$.
 
     \item[Pair] If the hypotheses are valid, then:
 
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv s}\subseteq \dom{\Gamma}$ and $\vv s \ansubst{\sigma_\Gamma}{}\Vdash A\ \forall \sigma_\Gamma\in\sem{\Gamma}$.
-        \item $\sdom{\Delta}\subseteq \FV{\vv t}\subseteq \dom{\Delta}$ and $\vv t\ansubst{\sigma_\Delta}{}\Vdash B\ \forall \sigma_\Delta\in\sem{\Delta}$.
+        \item $\sdom{\Gamma}\subseteq \FV{\vec s}\subseteq \dom{\Gamma}$ and $\vec s \ansubst{\sigma_\Gamma}{}\Vdash A\ \forall \sigma_\Gamma\in\sem{\Gamma}$.
+        \item $\sdom{\Delta}\subseteq \FV{\vec t}\subseteq \dom{\Delta}$ and $\vec t\ansubst{\sigma_\Delta}{}\Vdash B\ \forall \sigma_\Delta\in\sem{\Delta}$.
     \end{itemize}
     
-    From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{(\vv s, \vv t)}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some  $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
+    From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{(\vec s, \vec t)}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some  $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
     \begin{align*}
-        \Pair{\vv{t}}{\vv{s}}\ansubst{\sigma}{} &= \Pair{\vv{t}}{\vv{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i \Pair{\vv{t}}{\vv{s}}[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
-        &\equiv\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vv{t}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]}{\vv{s}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]}\\
-        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vv{t}\,[\sigma_{\Gamma i}]}{\vv{s}\,[\sigma_{\Delta j}]}\\
-        &=\Pair{\sum_{i=1}^{n} \alpha_i \vv{t}\, [\sigma_{\Gamma i}]}{\sum_{j=1}^{m} \beta_j \vv{s}\, [\sigma_{\Delta j}]}\\
-        &=\Pair{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}\ansubst{\sigma_\Delta}{}}\\
-        &\eval \Pair{e^{i\theta_1}\vv v}{e^{i\theta_2}\vv w}\qquad\text{where: }\vv{v}\in\sem{A}, \vv{w}\in\sem{B}\\
-        &= e^{i\theta} \Pair{\vv{v}}{\vv{w}}\qquad\text{where: }\theta=\theta_1 + \theta_2
+        \Pair{\vec{t}}{\vec{s}}\ansubst{\sigma}{} &= \Pair{\vec{t}}{\vec{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i \Pair{\vec{t}}{\vec{s}}[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
+        &\equiv\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vec{t}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]}{\vec{s}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]}\\
+        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vec{t}\,[\sigma_{\Gamma i}]}{\vec{s}\,[\sigma_{\Delta j}]}\\
+        &=\Pair{\sum_{i=1}^{n} \alpha_i \vec{t}\, [\sigma_{\Gamma i}]}{\sum_{j=1}^{m} \beta_j \vec{s}\, [\sigma_{\Delta j}]}\\
+        &=\Pair{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{s}\ansubst{\sigma_\Delta}{}}\\
+        &\eval \Pair{e^{i\theta_1}\vec v}{e^{i\theta_2}\vec w}\qquad\text{where: }\vec{v}\in\sem{A}, \vec{w}\in\sem{B}\\
+        &= e^{i\theta} \Pair{\vec{v}}{\vec{w}}\qquad\text{where: }\theta=\theta_1 + \theta_2
     \end{align*}
     
-    From this we can conclude that $\Pair{\vv t}{\vv{s}}\ansubst{\sigma}{}\real A\times B$.
+    From this we can conclude that $\Pair{\vec t}{\vec{s}}\ansubst{\sigma}{}\real A\times B$.
     
     \item[LetPair] If the hypotheses are valid, then:
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv t} \subseteq \dom{\Gamma}$ and $\vv t \ansubst{\sigma_\Gamma}{}\Vdash A\times B\ \forall \sigma_\Gamma\in\sem\Gamma$
-        \item $\sdom{\Delta, {x}^{X}:A, {y}^{Y}:B}\subseteq\FV{\vv s}$
-        \item $\FV{\vv{s}}\subseteq \dom{\Delta, {x}^{X}:A, {y}^{Y}:B}$
-        \item $\vv s \ansubst{\sigma_\Delta}{}\Vdash C\ \forall \sigma_\Delta\in\sem{\Delta, {x}^{X}:A, {y}^{Y}:B}$
+        \item $\sdom{\Gamma}\subseteq \FV{\vec t} \subseteq \dom{\Gamma}$ and $\vec t \ansubst{\sigma_\Gamma}{}\Vdash A\times B\ \forall \sigma_\Gamma\in\sem\Gamma$
+        \item $\sdom{\Delta, {x}^{X}:A, {y}^{Y}:B}\subseteq\FV{\vec s}$
+        \item $\FV{\vec{s}}\subseteq \dom{\Delta, {x}^{X}:A, {y}^{Y}:B}$
+        \item $\vec s \ansubst{\sigma_\Delta}{}\Vdash C\ \forall \sigma_\Delta\in\sem{\Delta, {x}^{X}:A, {y}^{Y}:B}$
     \end{itemize}
     From this, we can conclude that:
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y}{\vv{s}}{\vv{t}}}$
-        \item $\FV{\LetP{x}{X}{y}{Y}{\vv{s}}{\vv{t}}}\subseteq\dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y}{\vec{s}}{\vec{t}}}$
+        \item $\FV{\LetP{x}{X}{y}{Y}{\vec{s}}{\vec{t}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
     Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Then we have:
     \begin{align*}
-        (&\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{} = \\
-        &(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &= (\sum_{i=1}^{n}\alpha_i(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})[\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta j}}{}\\
-        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i[\sigma_{\Gamma i}]\vv{t}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
-        &= (\LetP{x}{X}{y}{Y}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
-        &\eval (\LetP{x}{X}{y}{Y}{e^{i\theta} \Pair{\vv{v}}{\vv{w}}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
-        &\hspace*{4cm}{\text{Where: }}\vv{v}\in\sem{A},\vv{w}\in\sem{B}\\
-        &\lra e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vv{v}}{\vv{w}}/x\otimes y}{X\otimes Y})\\
-        &= e^{i\theta_1} (\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x}{X}\ansubst{\vv{w}/y}{Y})\\
-        &\eval e^{i\theta_1}  (e^{i\theta_2}  \vv{u})\qquad\text{where: }\vv{u}\in\sem{C}\\
-        &\equiv e^{i\theta}  \vv{u}\qquad\text{where: }\theta=\theta_1 + \theta_2
+        (&\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{} = \\
+        &(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &= (\sum_{i=1}^{n}\alpha_i(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})[\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta j}}{}\\
+        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i[\sigma_{\Gamma i}]\vec{t}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &= (\LetP{x}{X}{y}{Y}{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\eval (\LetP{x}{X}{y}{Y}{e^{i\theta} \Pair{\vec{v}}{\vec{w}}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\hspace*{4cm}{\text{Where: }}\vec{v}\in\sem{A},\vec{w}\in\sem{B}\\
+        &\lra e^{i\theta_1} (\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vec{v}}{\vec{w}}/x\otimes y}{X\otimes Y})\\
+        &= e^{i\theta_1} (\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{v}/x}{X}\ansubst{\vec{w}/y}{Y})\\
+        &\eval e^{i\theta_1}  (e^{i\theta_2}  \vec{u})\qquad\text{where: }\vec{u}\in\sem{C}\\
+        &\equiv e^{i\theta}  \vec{u}\qquad\text{where: }\theta=\theta_1 + \theta_2
     \end{align*}
     
-    Since $\ansubst{\sigma_\Delta}{}\ansubst{\vv{v}/x}{X}\ansubst{\vv{w}/y}{Y}\in\sem{\Delta,{x}^{X}:A,{y}^Y:B}$, then we can conclude that $(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real C$.
+    Since $\ansubst{\sigma_\Delta}{}\ansubst{\vec{v}/x}{X}\ansubst{\vec{w}/y}{Y}\in\sem{\Delta,{x}^{X}:A,{y}^Y:B}$, then we can conclude that $(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{}\real C$.
 
     \item[LetTens] If the hypotheses are valid then:
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv t} \subseteq \dom{\Gamma}$ and $\vv t \ansubst{\sigma}{}\Vdash \sharp(A\times B)\ \forall \sigma\in\sem\Gamma$
-        \item $\sdom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}\subseteq \FV{\vv s}$
+        \item $\sdom{\Gamma}\subseteq \FV{\vec t} \subseteq \dom{\Gamma}$ and $\vec t \ansubst{\sigma}{}\Vdash \sharp(A\times B)\ \forall \sigma\in\sem\Gamma$
+        \item $\sdom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}\subseteq \FV{\vec s}$
         \item $\subseteq \dom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
-        \item $\vv s \ansubst{\sigma}{}\Vdash \sharp C\ \forall \sigma\in\sem{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
+        \item $\vec s \ansubst{\sigma}{}\Vdash \sharp C\ \forall \sigma\in\sem{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
     \end{itemize}
     
     From this we can conclude that:
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y|}{\vv{t}}{\vv{s}}}$
-        \item $\FV{\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}}\subseteq\dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y|}{\vec{t}}{\vec{s}}}$
+        \item $\FV{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vv t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from Theorem~\ref{thm:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from Theorem~\ref{thm:SharpCharacterization} we have that:
     
-    \[\vv t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vv{v_k}}{\vv{u_k}})\] 
+    \[\vec t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vec{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vec{v}_{k}}{\vec{u}_{k}})\] 
     
     With:
     \begin{itemize}
         \item $\sum_{k=1}^{l} |\gamma_k|^2 = 1$
-        \item $\forall k,\ \vv{v_k}\in\sem{A},\ \vv{u_k}\in\sem{B}$
-        \item $\forall k\neq l, \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_l}}{\vv{u_l}}}= 0$
+        \item $\forall k,\ \vec{v}_{k}\in\sem{A},\ \vec{u}_{k}\in\sem{B}$
+        \item $\forall k\neq l, \scal{\Pair{\vec{v}_{k}}{\vec{u}_{k}}}{\Pair{\vec{v}_{l}}{\vec{u}_{l}}}= 0$
     \end{itemize}
     
     Then:
     \begin{align*}
-        (&\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{} \\
-        &= \LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &=(\sum_{i=1}^{n}\alpha_i\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}}\ [\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta}}{}\\
-        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i\vv{t}\ [\sigma_{\Gamma i}]}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
-        &=(\LetP{x}{X}{y}{Y}{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
-        &\eval(\LetP{x}{X}{y}{Y}{e^{i\theta_1}\vv{u}}{\vv{s}})\ansubst{\sigma_\Delta}{}\\
-        &\lra e^{i\theta_1}(\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{u}/x\otimes y}{X\otimes Y})\\
-        &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vv{s}\ansubst{\sigma_\Delta}{}\ansubst{\vv{v_k}/x}{X}\ansubst{\vv{u_k}/y}{Y})\\
-        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k})\quad\text{where: }\vv{w_k}\in\sem{C}
+        (&\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{} \\
+        &= \LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=1}^{n}\alpha_i\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}\ [\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta}}{}\\
+        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i\vec{t}\ [\sigma_{\Gamma i}]}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &=(\LetP{x}{X}{y}{Y}{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\LetP{x}{X}{y}{Y}{e^{i\theta_1}\vec{u}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\lra e^{i\theta_1}(\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{u}/x\otimes y}{X\otimes Y})\\
+        &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{v}_{k}/x}{X}\ansubst{\vec{u}_{k}/y}{Y})\\
+        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k})\quad\text{where: }\vec{w}_{k}\in\sem{C}
     \end{align*}
 
-    It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\|=1$. For that, we observe:
+    It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k}\|=1$. For that, we observe:
     \begin{align*}
-        \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\| \\
-        &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vv{w_k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vv{w_{k'}}}\\
-        &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vv{w_k}}{\vv{w_{k'}}}\\
-        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vv{v_k}}{\vv{v_{k'}}}\scal{\vv{u_k}}{\vv{u_{k'}}}\quad(\text{from Lemma~\ref{lem:UnitPreserTens}})\\
-        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vv{u_k}}{\vv{v_k}}}{\Pair{\vv{u_{k'}}}{\vv{v_{k'}}}}\quad(\text{from Theorem~\ref{prop:InnerProdPairs}})\\
-        &=\sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_k}}{\vv{u_k}}} \\
-        & \quad + \sum_{k,k'=1; k\neq k'}^n \overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vv{v_k}}{\vv{u_k}}}{\Pair{\vv{v_{k'}}}{\vv{u_{k'}}}}\\
+        \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k}\| \\
+        &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vec{w}_{k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vv{w_{k'}}}\\
+        &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vec{w}_{k}}{\vv{w_{k'}}}\\
+        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v}_{k}}{\vv{v_{k'}}}\scal{\vec{u}_{k}}{\vv{u_{k'}}}\quad(\text{from Lemma~\ref{lem:UnitPreserTens}})\\
+        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u}_{k}}{\vec{v}_{k}}}{\Pair{\vv{u_{k'}}}{\vv{v_{k'}}}}\quad(\text{from Theorem~\ref{prop:InnerProdPairs}})\\
+        &=\sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} \scal{\Pair{\vec{v}_{k}}{\vec{u}_{k}}}{\Pair{\vec{v}_{k}}{\vec{u}_{k}}} \\
+        & \quad + \sum_{k,k'=1; k\neq k'}^n \overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{v}_{k}}{\vec{u}_{k}}}{\Pair{\vv{v_{k'}}}{\vv{u_{k'}}}}\\
         &= \sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} + 0 \\
         &= \sum_{k=1}^{l} |\gamma_k|^2 |e^{i\rho_k}|^2 = 1
     \end{align*}
 
-    Then $\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vv{w_k}\in\sem{\sharp C}$. Finally, we can conclude that: $(\LetP{x}{X}{y}{Y}{\vv{t}}{\vv{s}})\ansubst{\sigma}{}\real{\sharp C}$
+    Then $\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k}\in\sem{\sharp C}$. Finally, we can conclude that: $(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{}\real{\sharp C}$
 
     \item[Case] If the hypotheses are valid then:
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv{t}}\subseteq \dom{\Gamma}$
-        \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\genbasis{\vv{v_i}}{i=1}{n}$
-        \item For every $i\in\{0,\dotsb ,n\}, \sdom{\Delta}\subseteq \FV{\vv{s_i}}\subseteq \dom{\Delta}$
-        \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vv{s_i}\ansubst{\sigma_\Delta}{}\real A$
+        \item $\sdom{\Gamma}\subseteq \FV{\vec{t}}\subseteq \dom{\Gamma}$
+        \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vec{t}\ansubst{\sigma_\Gamma}{}\real\genbasis{\vec{v}_{i}}{i=1}{n}$
+        \item For every $i\in\{0,\dotsb ,n\}, \sdom{\Delta}\subseteq \FV{\vec{s}_{i}}\subseteq \dom{\Delta}$
+        \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\real A$
     \end{itemize}
 
     From this we can conclude that:
 
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vv{t}}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}}$
-        \item $\FV{\gencase{\vv{t}}{\vv{v_1}}{\vv {v_n}}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}}}$
+        \item $\FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}}}\subseteq \dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vv{v_k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vec{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vec{v}_{k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\vec{u}_{i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
 
     \begin{align*}
-        (&\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
-        &= (\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &= (\sum_{i=1}^{n}\alpha_i \gencase{\vv{t}[\sigma_{\Gamma i}]}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{} \\
-        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &=(\gencase{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &\eval(\gencase{e^{i\theta_1}\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &\lraneq e^{i\theta_1}(\vv{s_k}\ansubst{\sigma_\Delta}{})\\
-        &\eval e^{i\theta_1}(e^{i\rho_k} \vv{u_k})\qquad\text{Where: }\vv{u_k}\in\sem{A}\\
-        &\equiv e^{i\theta} \vv{u_k}\qquad\text{With: }\theta=\theta_1 +\theta_2
+        (&\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\\ 
+        &= (\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &= (\sum_{i=1}^{n}\alpha_i \gencase{\vec{t}[\sigma_{\Gamma i}]}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{} \\
+        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vec{t}[\sigma_{\Gamma i}]}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &=(\gencase{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\gencase{e^{i\theta_1}\vec{v}_{k}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &\lraneq e^{i\theta_1}(\vec{s}_{k}\ansubst{\sigma_\Delta}{})\\
+        &\eval e^{i\theta_1}(e^{i\rho_k} \vec{u}_{k})\qquad\text{Where: }\vec{u}_{k}\in\sem{A}\\
+        &\equiv e^{i\theta} \vec{u}_{k}\qquad\text{With: }\theta=\theta_1 +\theta_2
     \end{align*}
     
-    Since we pose no restriction on $k$, we can conclude that: $(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\real A$
+    Since we pose no restriction on $k$, we can conclude that: $(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\real A$
 
     \item[UnitCase] If the hypotheses are valid, then:
     \begin{itemize}
-        \item $\sdom{\Gamma}\subseteq \FV{\vv{t}}\subseteq \dom{\Gamma}$
-        \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$
-        \item For every $i\in\{0,\dotsb ,n\}$, $\sdom{\Delta}\subseteq \FV{\vv{s_i}}\subseteq \dom{\Delta}$
-        \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vv{s_i}\ansubst{\sigma_\Delta}{}\real A$
+        \item $\sdom{\Gamma}\subseteq \FV{\vec{t}}\subseteq \dom{\Gamma}$
+        \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vec{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vec{v}_{i}}{i=1}{n}$
+        \item For every $i\in\{0,\dotsb ,n\}$, $\sdom{\Delta}\subseteq \FV{\vec{s}_{i}}\subseteq \dom{\Delta}$
+        \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\real A$
     \end{itemize}
     
     From this we can conclude that:
     
     \begin{itemize}
-        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}$
-        \item $\FV{\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}}}\subseteq \dom{\Gamma,\Delta}$
+        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}$
+        \item $\FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}\subseteq \dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vv{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vv{v_i}}{i=1}{n}$, then $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vv{u}\equiv e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{v_i})$ where $\sum_{i=1}^{n}|\beta_i|^2=1$. From the second hypothesis we have that $\vv{s_i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vv{u_i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vec{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vec{v}_{i}}{i=1}{n}$, then $\vec{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vec{u}\equiv e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vec{v}_{i})$ where $\sum_{i=1}^{n}|\beta_i|^2=1$. From the second hypothesis we have that $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vec{u}_{i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
 
     \begin{align*}
-        (&\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\\ 
-        &= (\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
-        &=(\sum_{i=1}^{n}\alpha_i \gencase{\vv{t}[\sigma_{\Gamma i}]}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{} \\
-        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vv{t}[\sigma_{\Gamma i}]}{\vv {v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &=(\gencase{\vv{t}\ansubst{\sigma_\Gamma}{}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma_\Delta}{}\\
-        &\eval(\gencase{e^{i\theta_1} \vv{u}}{\vv{v}}{\vv{w}}{\vv{s_1}}{\vv{s_2}})\ansubst{\sigma_\Delta}{}\\
+        (&\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\\ 
+        &= (\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=1}^{n}\alpha_i \gencase{\vec{t}[\sigma_{\Gamma i}]}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{} \\
+        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vec{t}[\sigma_{\Gamma i}]}{\vec {v_1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &=(\gencase{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\gencase{e^{i\theta_1} \vec{u}}{\vec{v}}{\vec{w}}{\vec{s}_{1}}{\vec{s}_{2}})\ansubst{\sigma_\Delta}{}\\
         &\lra e^{i\theta_1} (\sum_{i=1}^{n}\beta_i s_i)\ansubst{\sigma_\Delta}{}\\
-        &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vv{s_i})[\sigma_{\Delta j}])\\
-        &\equiv e^{i\theta_1} (\sum_{i,j=1}^{n}\beta_i\delta_j\vv{s_i}[\sigma_{\Delta j}])\\
-        &= e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vv{s_i}\ansubst{\sigma_\Delta}{})\\
-        &\eval e^{i\theta_1} (\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i})
+        &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vec{s}_{i})[\sigma_{\Delta j}])\\
+        &\equiv e^{i\theta_1} (\sum_{i,j=1}^{n}\beta_i\delta_j\vec{s}_{i}[\sigma_{\Delta j}])\\
+        &= e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vec{s}_{i}\ansubst{\sigma_\Delta}{})\\
+        &\eval e^{i\theta_1} (\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i})
     \end{align*}
     
-    It remains to be seen that: $\|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}\|=1$:
+    It remains to be seen that: $\|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}\|=1$:
     \begin{align*}
-        \|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}\| &= \scal{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}}{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vv{u_i}}\\
-        &= \sum_{i,j=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vv{u_i}}{\vv{u_j}}\\
-        &= \sum_{i=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_i e^{i\rho_i} \scal{\vv{u_i}}{\vv{u_i}}\\
-        &\qquad + \sum_{i,j=1; i\neq j}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vv{u_i}}{\vv{u_j}}\\
+        \|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}\| &= \scal{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}}{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}}\\
+        &= \sum_{i,j=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vec{u}_{i}}{\vec{u}_{j}}\\
+        &= \sum_{i=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_i e^{i\rho_i} \scal{\vec{u}_{i}}{\vec{u}_{i}}\\
+        &\qquad + \sum_{i,j=1; i\neq j}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vec{u}_{i}}{\vec{u}_{j}}\\
         &= \sum_{i=1}^{n}|\beta_i|^2 |e^{i\rho_i}|^2  + 0\\
         &= \sum_{i=1}^{n}|\beta_i|^2 = 1
     \end{align*}
 
-    Then we can conclude that $\sum_{i=1}^{n}\beta_i e^{i\rho_i}\vv{u_i}\in\sem{\sharp A}$ and finally: $(\gencase{\vv{t}}{\vv{v_1}}{\vv{v_n}}{\vv{s_1}}{\vv{s_n}})\ansubst{\sigma}{}\real\sharp A $
+    Then we can conclude that $\sum_{i=1}^{n}\beta_i e^{i\rho_i}\vec{u}_{i}\in\sem{\sharp A}$ and finally: $(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\real\sharp A $
   
-    \item[Sum] If the hypothesis is valid then for every $i$, $\sdom{\Gamma}\subseteq\FV{\vv{t_i}}\subseteq\dom{\Gamma}$.
+    \item[Sum] If the hypothesis is valid then for every $i$, $\sdom{\Gamma}\subseteq\FV{\vec{t}_{i}}\subseteq\dom{\Gamma}$.
     
-    From this we can conclude that $\sdom{\Gamma}\subseteq\sum_{i=1}^{n}\alpha_i \vv{t_i}\subseteq\dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we have for every $i$, $\vv{t_i}\ansubst{\sigma}{}\eval e^{i\rho_i} \vv{v_i}$ where $\vv{v_i}\in\sem{A}$. Moreover, for every $i\neq j$, $\vv{v_i}\perp\vv{v_j}$ and $\sum_{i=1}^{n}|\alpha_i|^2=1$. Then:
+    From this we can conclude that $\sdom{\Gamma}\subseteq\sum_{i=1}^{n}\alpha_i \vec{t}_{i}\subseteq\dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we have for every $i$, $\vec{t}_{i}\ansubst{\sigma}{}\eval e^{i\rho_i} \vec{v}_{i}$ where $\vec{v}_{i}\in\sem{A}$. Moreover, for every $i\neq j$, $\vec{v}_{i}\perp\vec{v}_{j}$ and $\sum_{i=1}^{n}|\alpha_i|^2=1$. Then:
     \begin{align*}
-    (\sum_{i=1}^{n}\alpha_i\vv{t_i})\ansubst{\sigma}{} 
-    &= \sum_{j=1}^{m}\beta_j(\sum_{i=1}^{n}\alpha_i \vv{t_i})[\sigma_j]\\
-    &\equiv \sum_{i=1}^{n} \alpha_i \sum_{j=1}^{m} \beta_j \vv{t_i}[\sigma_j]\\
-    &=\sum_{i=1}^{n} \alpha_i \vv{t_i}\ansubst{\sigma}{}\\
-    &\eval \sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\\
+    (\sum_{i=1}^{n}\alpha_i\vec{t}_{i})\ansubst{\sigma}{} 
+    &= \sum_{j=1}^{m}\beta_j(\sum_{i=1}^{n}\alpha_i \vec{t}_{i})[\sigma_j]\\
+    &\equiv \sum_{i=1}^{n} \alpha_i \sum_{j=1}^{m} \beta_j \vec{t}_{i}[\sigma_j]\\
+    &=\sum_{i=1}^{n} \alpha_i \vec{t}_{i}\ansubst{\sigma}{}\\
+    &\eval \sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}\\
     \end{align*}
 
-    It remains to be seen that $\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\|=1$:
+    It remains to be seen that $\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}\|=1$:
     \begin{align*}
-    &\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}\| \\
-    &=\scal{\sum_{i=1}^{n} \alpha_i e^{i\rho_i}\vv{v_i}}{\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vv{v_i}}\\
-    &= \sum_{i=i}^{n}\sum_{j=1}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_j e^{i\rho_j} \scal{\vv{v_i}}{\vv{v_j}}\\
-    &=\sum_{i=1}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_i e^{i\rho_i} \scal{\vv{v_i}}{\vv{v_i}} + \sum_{\substack{i,j=1\\i\neq j}}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_j e^{i\rho_j} \scal{\vv{v_i}}{\vv{v_j}}\\
+    &\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}\| \\
+    &=\scal{\sum_{i=1}^{n} \alpha_i e^{i\rho_i}\vec{v}_{i}}{\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}}\\
+    &= \sum_{i=i}^{n}\sum_{j=1}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_j e^{i\rho_j} \scal{\vec{v}_{i}}{\vec{v}_{j}}\\
+    &=\sum_{i=1}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_i e^{i\rho_i} \scal{\vec{v}_{i}}{\vec{v}_{i}} + \sum_{\substack{i,j=1\\i\neq j}}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_j e^{i\rho_j} \scal{\vec{v}_{i}}{\vec{v}_{j}}\\
     &=\sum_{i=1}^{n}|\alpha_i|^2 |e^{i\rho_i}|^2+ 0\\
     &=\sum_{i=1}^{n}|\alpha_i|^2 = 1\\
     \end{align*}
 
-    Then we can conclude that $\sum_{i=1}^{n}\alpha_i e^{i\rho_i}\vv{v_i}\in\sem{\sharp A}$ and finally $(\sum_{i=1}^{n}\alpha_i\vv{t_i})\ansubst{\sigma}{}\real\sharp A$.
+    Then we can conclude that $\sum_{i=1}^{n}\alpha_i e^{i\rho_i}\vec{v}_{i}\in\sem{\sharp A}$ and finally $(\sum_{i=1}^{n}\alpha_i\vec{t}_{i})\ansubst{\sigma}{}\real\sharp A$.
 
-    \item[Contr] If the hypothesis is valid, we have that $\sdom{\Gamma, x^X:\basis{X}, y^X:\basis{X}}\subseteq\FV{\vv{t}}\subseteq\dom{\Gamma,x^X:\basis{X}, y^X:\basis{X}}$ and given $\sigma\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, then $\vv{t}\ansubst{\sigma}{}\in\sem{B}$. Then, we have that $\sdom{\Gamma, x^X:\basis{X}, y^X:\basis{X}}=\sdom{\Gamma, x^X:\basis{X}}$. Therefore:
+    \item[Contr] If the hypothesis is valid, we have that $\sdom{\Gamma, x^X:\basis{X}, y^X:\basis{X}}\subseteq\FV{\vec{t}}\subseteq\dom{\Gamma,x^X:\basis{X}, y^X:\basis{X}}$ and given $\sigma\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, then $\vec{t}\ansubst{\sigma}{}\in\sem{B}$. Then, we have that $\sdom{\Gamma, x^X:\basis{X}, y^X:\basis{X}}=\sdom{\Gamma, x^X:\basis{X}}$. Therefore:
     
     \[
-    \sdom{\Gamma, x^X:\basis{X}}\subseteq\FV{\vv{t}}[x/y]\subseteq\dom{\Gamma, x^X:\basis{X}}
+    \sdom{\Gamma, x^X:\basis{X}}\subseteq\FV{\vec{t}}[x/y]\subseteq\dom{\Gamma, x^X:\basis{X}}
     \]
 
-    Given $\sigma\in\sem{\Gamma, x^X:\basis{X}}$, we observe that $\ansubst{\sigma}{}=\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}$ with $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{\basis{X}}$. Since $\vv{v}\in\sem{\basis{X}}$, we know that $\vv{t}[\vv v/z] =\vv{t}\ansubst{\vv{v}/z}{X}$ for any variable $z$. Then we have:
+    Given $\sigma\in\sem{\Gamma, x^X:\basis{X}}$, we observe that $\ansubst{\sigma}{}=\ansubst{\vec{v}/x}{X}\ansubst{\sigma_\Gamma}{}$ with $\sigma_\Gamma\in\sem{\Gamma}$ and $\vec{v}\in\sem{\basis{X}}$. Since $\vec{v}\in\sem{\basis{X}}$, we know that $\vec{t}[\vec v/z] =\vec{t}\ansubst{\vec{v}/z}{X}$ for any variable $z$. Then we have:
     \begin{align*}
-        \vv{t}[x/y]\ansubst{\sigma}{} &= \vv{t}[x/y]\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}\\
-        &=\vv{t}[x/y][\vv{v}/x]\ansubst{\sigma_\Gamma}{}\\
-        &=\vv{t}[\vv{v}/y][\vv{v}/x]\ansubst{\sigma_\Gamma}{}\\
-        &=\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma_\Gamma}{}    
+        \vec{t}[x/y]\ansubst{\sigma}{} &= \vec{t}[x/y]\ansubst{\vec{v}/x}{X}\ansubst{\sigma_\Gamma}{}\\
+        &=\vec{t}[x/y][\vec{v}/x]\ansubst{\sigma_\Gamma}{}\\
+        &=\vec{t}[\vec{v}/y][\vec{v}/x]\ansubst{\sigma_\Gamma}{}\\
+        &=\vec{t}\ansubst{\vec{v}/y}{X}\ansubst{\vec{v}/x}{X}\ansubst{\sigma_\Gamma}{}    
     \end{align*}
     
-    Since $\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\ansubst{\sigma}{}\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, we get: $\vv{t}\ansubst{\vv{v}/y}{X}\ansubst{\vv{v}/x}{X}\\\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}\in\sem{B}$
-    Then we can finally conclude that $\vv{t}[x/y]\ansubst{\sigma}{}\real B$.
+    Since $\ansubst{\vec{v}/y}{X}\ansubst{\vec{v}/x}{X}\ansubst{\sigma}{}\in\sem{\Gamma, x^X:\basis{X}, y^X:\basis{X}}$, we get: $\vec{t}\ansubst{\vec{v}/y}{X}\ansubst{\vec{v}/x}{X}\\\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vec{w}\in\sem{B}$
+    Then we can finally conclude that $\vec{t}[x/y]\ansubst{\sigma}{}\real B$.
 
-    \item[Weak] Given $\sigma\in\sem{\Gamma,x^X:\basis{X}}$, we observe that $\ansubst{\sigma}=\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{X}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\vv{v}\in\sem{\basis{X}}$. Using the first hypothesis, we know that $\vv{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vv{w}$ where $\vv{w}\in\sem{B}$. Then we have:
+    \item[Weak] Given $\sigma\in\sem{\Gamma,x^X:\basis{X}}$, we observe that $\ansubst{\sigma}=\ansubst{\sigma_\Gamma}{}\ansubst{\vec{v}/x}{X}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\vec{v}\in\sem{\basis{X}}$. Using the first hypothesis, we know that $\vec{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vec{w}$ where $\vec{w}\in\sem{B}$. Then we have:
     \[
-    \vv{t}\ansubst{\sigma}{}=\vv{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vv{v}/x}{X}\eval e^{i\theta}\vv{w}\ansubst{\vv{v}/x}{X}
+    \vec{t}\ansubst{\sigma}{}=\vec{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vec{v}/x}{X}\eval e^{i\theta}\vec{w}\ansubst{\vec{v}/x}{X}
     \]
-    Since $\vv{v}\in\sem{\basis{X}}$, $\vv{w}\ansubst{\vv{v}/x}{X}=\vv{w}[\vv{v}/x]=\vv{w}$ and $\vv{w}\in\sem{B}$, then we can finally conclude that $\vv{t}\ansubst{\sigma}{}\real B$.
+    Since $\vec{v}\in\sem{\basis{X}}$, $\vec{w}\ansubst{\vec{v}/x}{X}=\vec{w}[\vec{v}/x]=\vec{w}$ and $\vec{w}\in\sem{B}$, then we can finally conclude that $\vec{t}\ansubst{\sigma}{}\real B$.
     
     \item[Sub] Trivial since the set of realizers of ${A}$ is included in the set of realizers of ${B}$. 
 
@@ -2674,108 +2752,108 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
   Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ an orthonormal basis.
   If
   \(
-    \TYP{\Gamma,\,x^{X}\!:\!A}{\vv{t}}{B}
+    \TYP{\Gamma,\,x^{X}\!:\!A}{\vec{t}}{B}
     \quad\text{and}\quad
-    \TYP{\Delta}{\vv{v}}{A}
+    \TYP{\Delta}{\vec{v}}{A}
   \) can be derived using the set of rules in Table~\ref{tab:TypingRules},
-  and the substitution $\vv{t}\ansubst{\vv{v}/x}{X}$ is defined,
+  and the substitution $\vec{t}\ansubst{\vec{v}/x}{X}$ is defined,
   then
   \(
-    \TYP{\Gamma,\,\Delta}{\vv{t}\ansubst{\vv{v}/x}{X}}{B}
+    \TYP{\Gamma,\,\Delta}{\vec{t}\ansubst{\vec{v}/x}{X}}{B}
   \) can also be derived by the same set of rules.
 \end{lemma}
 \begin{proof}
-  By induction on $\vv{t}$.
+  By induction on $\vec{t}$.
   \begin{description}
-    \item[$x\not\in\FV{\vv{t}}$:] Then $x\not\in\sdom{\Gamma,\,x^{X}\!:\!A}$. By a straightforward generation lemma we have that $\TYP{\Gamma}{\vv{t}}{B}$, and we can derive $\TYP{\Gamma,\Delta}{\vv{t}}{B}$ via the $\textsc{Weak}$ rule. Notice that if $x\not\in\FV{\vv{t}}$, every variable in $\Delta$ has a non-linear type and $\vv{t}\ansubst{\vv{v}/x}{X}=\vv{t}$.
+    \item[$x\not\in\FV{\vec{t}}$:] Then $x\not\in\sdom{\Gamma,\,x^{X}\!:\!A}$. By a straightforward generation lemma we have that $\TYP{\Gamma}{\vec{t}}{B}$, and we can derive $\TYP{\Gamma,\Delta}{\vec{t}}{B}$ via the $\textsc{Weak}$ rule. Notice that if $x\not\in\FV{\vec{t}}$, every variable in $\Delta$ has a non-linear type and $\vec{t}\ansubst{\vec{v}/x}{X}=\vec{t}$.
     
-    \item[$\vv{t}=x$:] Then every variable in $\Gamma$ has a non-linear type and $A\leq B$. This means we can derive $\TYP{\Gamma,\Delta}{\vv{v}}{B}$, by rules $\textsc{Weak}$ and $\textsc{Sub}$.
+    \item[$\vec{t}=x$:] Then every variable in $\Gamma$ has a non-linear type and $A\leq B$. This means we can derive $\TYP{\Gamma,\Delta}{\vec{v}}{B}$, by rules $\textsc{Weak}$ and $\textsc{Sub}$.
     
-    \item[$\vv{t}=(\Lam{y}{Y}{\vv{s}})$:] Then $\TYP{\Gamma,\,y^{Y}\!:\!C,\,x^{X}\!:\!A}{\vv{s}}{D}$, with $C\Arr D\leq B$. By induction hypothesis, $\TYP{\Gamma,\,y^{Y}\!:\!C}{\vv{s}\ansubst{\vv{v}/x}{X}}{D}$. This means we can derive $\TYP{\Gamma,\Delta}{(\Lam{y}{Y}{\vv{s}})\ansubst{\vv{v}/X}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
+    \item[$\vec{t}=(\Lam{y}{Y}{\vec{s}})$:] Then $\TYP{\Gamma,\,y^{Y}\!:\!C,\,x^{X}\!:\!A}{\vec{s}}{D}$, with $C\Arr D\leq B$. By induction hypothesis, $\TYP{\Gamma,\,y^{Y}\!:\!C}{\vec{s}\ansubst{\vec{v}/x}{X}}{D}$. This means we can derive $\TYP{\Gamma,\Delta}{(\Lam{y}{Y}{\vec{s}})\ansubst{\vec{v}/X}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
     
-    \item[$\vv{t}=\vv{s_1}\,\vv{s_2}$:] Then we have that $\TYP{\Gamma_1}{\vv{s_1}}{C\Arr D}$, and $\TYP{\Gamma_2}{\vv{s_2}}{C}$ with $D\leq B$ and $\Gamma_1,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\Delta}{\vv{s_1}\ansubst{\vv{v}/x}{X}}{C\Arr D}$. This means we can derive $\TYP{\Gamma_1',\Gamma_2,\Delta}{(\vv{s_1}\,\vv{s_2})\ansubst{\vv{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{App}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    \item[$\vec{t}=\vec{s}_{1}\,\vec{s}_{2}$:] Then we have that $\TYP{\Gamma_1}{\vec{s}_{1}}{C\Arr D}$, and $\TYP{\Gamma_2}{\vec{s}_{2}}{C}$ with $D\leq B$ and $\Gamma_1,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\Delta}{\vec{s}_{1}\ansubst{\vec{v}/x}{X}}{C\Arr D}$. This means we can derive $\TYP{\Gamma_1',\Gamma_2,\Delta}{(\vec{s}_{1}\,\vec{s}_{2})\ansubst{\vec{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{App}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
     
-    \item[$\vv{t}=\Pair{s_1}{s_2}$:] Then we have that $\TYP{\Gamma_1}{s_1}{C}$, and $\TYP{\Gamma_2}{s_2}{D}$ with $C\times D\leq B$ and $\Gamma_1,\,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1',\,\Delta}{s_1}{C}$. This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\,\Delta}{\Pair{s_1}{s_2}\ansubst{\vv{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Pair}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    \item[$\vec{t}=\Pair{s_1}{s_2}$:] Then we have that $\TYP{\Gamma_1}{s_1}{C}$, and $\TYP{\Gamma_2}{s_2}{D}$ with $C\times D\leq B$ and $\Gamma_1,\,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1',\,\Delta}{s_1}{C}$. This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\,\Delta}{\Pair{s_1}{s_2}\ansubst{\vec{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Pair}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
     
-    \item[$\vv{t}=\LetP{y}{Y}{z}{Z}{\vv{s_1}}{\vv{s_2}}$:] Then we have two possibilities:
+    \item[$\vec{t}=\LetP{y}{Y}{z}{Z}{\vec{s}_{1}}{\vec{s}_{2}}$:] Then we have two possibilities:
       \begin{enumerate}
-        \item\label{case:subs_letp_1} Either, $\TYP{\Gamma_1}{\vv{s_1}}{C\times D}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!C,\,z^{Z}\!:\!D}{\vv{s_2}}{E}$ with $E\leq B$.
-        \item\label{case:subs_letp_2} Or, $\TYP{\Gamma_1}{\vv{s_1}}{\sharp(C\times D)}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!\sharp{C},\,z^{Z}\!:\!\sharp{D}}{\vv{s_2}}{E}$ with $\sharp E\leq B$.
+        \item\label{case:subs_letp_1} Either, $\TYP{\Gamma_1}{\vec{s}_{1}}{C\times D}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!C,\,z^{Z}\!:\!D}{\vec{s}_{2}}{E}$ with $E\leq B$.
+        \item\label{case:subs_letp_2} Or, $\TYP{\Gamma_1}{\vec{s}_{1}}{\sharp(C\times D)}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!\sharp{C},\,z^{Z}\!:\!\sharp{D}}{\vec{s}_{2}}{E}$ with $\sharp E\leq B$.
       \end{enumerate}
-      In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vv{s_1}\ansubst{\vv{v}/x}{}}{C\times D}$ in case \ref{case:subs_letp_1} ($\sharp (C\times D)$ in case \ref{case:subs_letp_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\LetP{y}{Y}{z}{Z}{\vv{s_1}}{\vv{s_2}})\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{LetPair}$ (or, $\textsc{LetTens}$). The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+      In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vec{s}_{1}\ansubst{\vec{v}/x}{}}{C\times D}$ in case \ref{case:subs_letp_1} ($\sharp (C\times D)$ in case \ref{case:subs_letp_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\LetP{y}{Y}{z}{Z}{\vec{s}_{1}}{\vec{s}_{2}})\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{LetPair}$ (or, $\textsc{LetTens}$). The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
 
-    \item[$\vv{t}=\gencase{\vv{s}}{\vv{w_1}}{\vv{w_n}}{\vv{r_1}}{\vv{r_n}}$:] Then we have two possibilities:
+    \item[$\vec{t}=\gencase{\vec{s}}{\vec{w}_{1}}{\vec{w}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}$:] Then we have two possibilities:
     \begin{enumerate}
-      \item\label{case:subs_case_1} Either, $\TYP{\Gamma_1}{\vv{s_1}}{\basis{\{\vv{v_i}\}_{i=1}^n}}$, and for all $i\in\{0,\dotsb,n\}$, $\TYP{\Gamma_2}{\vv{s_i}}{C}$ with $C\leq B$.
-      \item\label{case:subs_case_2} Or, $\TYP{\Gamma_1}{\vv{s_1}}{\sharp\basis{\{\vv{v_i}\}_{i=1}^n}}$, and for all $i,j\in\{0,\dotsb,n\}$, with $i\neq j$ $\SORTH{\Gamma_2}{\vv{s_i}}{\vv{s_j}}{C}$ with $\sharp C\leq B$.
+      \item\label{case:subs_case_1} Either, $\TYP{\Gamma_1}{\vec{s}_{1}}{\basis{\{\vec{v}_{i}\}_{i=1}^n}}$, and for all $i\in\{0,\dotsb,n\}$, $\TYP{\Gamma_2}{\vec{s}_{i}}{C}$ with $C\leq B$.
+      \item\label{case:subs_case_2} Or, $\TYP{\Gamma_1}{\vec{s}_{1}}{\sharp\basis{\{\vec{v}_{i}\}_{i=1}^n}}$, and for all $i,j\in\{0,\dotsb,n\}$, with $i\neq j$ $\SORTH{\Gamma_2}{\vec{s}_{i}}{\vec{s}_{j}}{C}$ with $\sharp C\leq B$.
     \end{enumerate}
-    In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vv{s_1}\ansubst{\vv{v}/x}{}}{\basis{\{\vv{v_i}\}_{i=1}^n}}$ in case \ref{case:subs_case_1} ($\sharp \basis{\{\vv{v_i}\}_{i=1}^n}$ in case \ref{case:subs_case_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\gencase{\vv{s}}{\vv{w_1}}{\vv{w_n}}{\vv{r_1}}{\vv{r_n}})\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Case}$ (or, $\textsc{UnitCase}$). Since orthogonality is preserved by substitutions in $\sem{\Gamma_2}$, the case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vec{s}_{1}\ansubst{\vec{v}/x}{}}{\basis{\{\vec{v}_{i}\}_{i=1}^n}}$ in case \ref{case:subs_case_1} ($\sharp \basis{\{\vec{v}_{i}\}_{i=1}^n}$ in case \ref{case:subs_case_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\gencase{\vec{s}}{\vec{w}_{1}}{\vec{w}_{n}}{\vec{r}_{1}}{\vec{r}_{n}})\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Case}$ (or, $\textsc{UnitCase}$). Since orthogonality is preserved by substitutions in $\sem{\Gamma_2}$, the case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
 
-    \item[$\vv{t}=\sum_{i=1}^{n}\alpha_i \vv{s_i}$:] Then we have two posibilities:
+    \item[$\vec{t}=\sum_{i=1}^{n}\alpha_i \vec{s}_{i}$:] Then we have two posibilities:
     \begin{enumerate}
-      \item\label{case:subs_sum_1} For all $i\in\{0,\dotsb, n\}, \vv{s_i}=(\Lam{y}{Y}{\vv{r_i}})$, and:\\
-      $\TYP{\Gamma,\,x^{X}\!:\!A}{\sum_{i=1}^{n}\alpha_i(\Lam{y}{Y}{\vv{r_i}})}{C\Arr D}$ with $C\Arr D\leq B$.
-      \item\label{case:subs_sum_2} For all $i\in\{0,\dotsb, n\}$, with $i\neq j$, $\SORTH{\Gamma,\,x^{X}\!:\!A}{\vv{s_i}}{\vv{s_j}}{C}$, $\sum_{i=1}^{n}|\alpha_i|^2=1$, and $\sharp C\leq B$.
+      \item\label{case:subs_sum_1} For all $i\in\{0,\dotsb, n\}, \vec{s}_{i}=(\Lam{y}{Y}{\vec{r}_{i}})$, and:\\
+      $\TYP{\Gamma,\,x^{X}\!:\!A}{\sum_{i=1}^{n}\alpha_i(\Lam{y}{Y}{\vec{r}_{i}})}{C\Arr D}$ with $C\Arr D\leq B$.
+      \item\label{case:subs_sum_2} For all $i\in\{0,\dotsb, n\}$, with $i\neq j$, $\SORTH{\Gamma,\,x^{X}\!:\!A}{\vec{s}_{i}}{\vec{s}_{j}}{C}$, $\sum_{i=1}^{n}|\alpha_i|^2=1$, and $\sharp C\leq B$.
     \end{enumerate}
     
     In case \ref{case:subs_sum_1}, by inductive hypothesis we have that:\\
-    $\TYP{\Gamma,\,\Delta,\,y^{Y}\!:\!C}{\sum_{i=1}^{n}\alpha_i \vv{r_i}\ansubst{\vv{v}/x}{X}}{D}$. This means we can derive \\$\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i (\Lam{y}{Y}{\vv{r_i}})\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
+    $\TYP{\Gamma,\,\Delta,\,y^{Y}\!:\!C}{\sum_{i=1}^{n}\alpha_i \vec{r}_{i}\ansubst{\vec{v}/x}{X}}{D}$. This means we can derive \\$\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i (\Lam{y}{Y}{\vec{r}_{i}})\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
 
-    In case \ref{case:subs_sum_2}, by inductive hypothesis we have that for all $i\in\{0,\dotsb,n\}$, and $i\neq j$ $\SORTH{\Gamma,\Delta}{\vv{s_i}\ansubst{\vv{v}/x}{X}}{\vv{s_j}\ansubst{\vv{v}/x}{X}}{C}$. Since orthogonality is preserved by substitutions in $\sem{\Gamma,\Delta}$, this means we can derive $\TYP{\Gamma,\Delta}{\sum_{i=1}^n\alpha_i \vv{s_i}\ansubst{\vv{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Sum}$.
+    In case \ref{case:subs_sum_2}, by inductive hypothesis we have that for all $i\in\{0,\dotsb,n\}$, and $i\neq j$ $\SORTH{\Gamma,\Delta}{\vec{s}_{i}\ansubst{\vec{v}/x}{X}}{\vec{s}_{j}\ansubst{\vec{v}/x}{X}}{C}$. Since orthogonality is preserved by substitutions in $\sem{\Gamma,\Delta}$, this means we can derive $\TYP{\Gamma,\Delta}{\sum_{i=1}^n\alpha_i \vec{s}_{i}\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Sum}$.
 
-    \item[$\vv{t}=\alpha\vv{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vv{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vv{s}\ansubst{\vv{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{e^{i\theta}\vv{s}\ansubst{\vv{v}/X}{X}}{\\B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
+    \item[$\vec{t}=\alpha\vec{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vec{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vec{s}\ansubst{\vec{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{e^{i\theta}\vec{s}\ansubst{\vec{v}/X}{X}}{\\B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
       \qedhere
   \end{description}
 \end{proof}
 
 \begin{restatetheorem}[Restatement of Theorem~\ref{thm:SubjectReduction}]
-  If $\TYP{\Gamma}{\vv{t}}{A}$ can be derived using the set of rules in
-  Table~\ref{tab:TypingRules} and $\vv{t}\to\vv{u}$, then
-  $\TYP{\Gamma}{\vv{u}}{A}$ can also be derived by the same set of rules.
+  If $\TYP{\Gamma}{\vec{t}}{A}$ can be derived using the set of rules in
+  Table~\ref{tab:TypingRules} and $\vec{t}\to\vec{u}$, then
+  $\TYP{\Gamma}{\vec{u}}{A}$ can also be derived by the same set of rules.
 \end{restatetheorem}
 \begin{proof}
   We proceed by induction on the derivation of the elementary reduction
   $\lraneq$. The congruence closure to obtain $\lra$ is handled trivially via
   the \textsc{Equiv} rule. We only give the basis cases as the inductive cases (the contextual cases) are straightforward.
   \begin{itemize}
-    \item Let $(\Lam{x}{X}{\vv t})\vv v \lraneq \vv t\ansubst{\vv v/x}{X}$:
-      Assume $\TYP{\Gamma,\Delta}{(\Lam{x}{X}{\vv t})\,\vv v}{B}$. By
-      \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$ and
-      $\TYP{\Delta}{\vv v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vv t}}{A\Arr B}$
-      and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vv t}{B}$. By
+    \item Let $(\Lam{x}{X}{\vec t})\vec v \lraneq \vec t\ansubst{\vec v/x}{X}$:
+      Assume $\TYP{\Gamma,\Delta}{(\Lam{x}{X}{\vec t})\,\vec v}{B}$. By
+      \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vec t}}{A\Arr B}$ and
+      $\TYP{\Delta}{\vec v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vec t}}{A\Arr B}$
+      and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vec t}{B}$. By
       Lemma~\ref{lem:Substitution},
-      using $\TYP{\Delta}{\vv v}{A}$ and the fact that $\vv t\ansubst{\vv
-      v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vv t\ansubst{\vv
+      using $\TYP{\Delta}{\vec v}{A}$ and the fact that $\vec t\ansubst{\vv
+      v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vec t\ansubst{\vv
       v/x}{X}}{B}$, as required.
 
-    \item Let $\LetP{x}{X}{y}{Y}{\vv v}{\vv t} \lraneq \vv t\ansubst{\vv
+    \item Let $\LetP{x}{X}{y}{Y}{\vec v}{\vec t} \lraneq \vec t\ansubst{\vv
       v/x\otimes y}{X\otimes Y}$: Assume
-      $\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vv v}{\vv t}}{C}$.  By
-      \textsc{LetPair} we have $\TYP{\Gamma}{\vv v}{A\times B}$ and
-      $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vv t}{C}$.  Decompose $\vv v$ (in
-      $X\otimes Y$) as required by the definition of $\ansubst{\vv v/x\otimes
+      $\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vec v}{\vec t}}{C}$.  By
+      \textsc{LetPair} we have $\TYP{\Gamma}{\vec v}{A\times B}$ and
+      $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vec t}{C}$.  Decompose $\vec v$ (in
+      $X\otimes Y$) as required by the definition of $\ansubst{\vec v/x\otimes
       y}{X\otimes Y}$; by Lemma~\ref{lem:Substitution}
       applied twice
       (first for $x$, then for $y$), we conclude $\TYP{\Gamma,\Delta}{\vv
-      t\ansubst{\vv v/x\otimes y}{X\otimes Y}}{C}$.
+      t\ansubst{\vec v/x\otimes y}{X\otimes Y}}{C}$.
 
-    \item Let $\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-      \lraneq \vv{t_k}$: Assume
-      $\TYP{\Gamma,\Delta}{\gencase{\vv{v_k}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
-      By \textsc{Case} we have $\TYP{\Gamma}{{\vv{v_k}}}{\basis{\{\vv
-      v_i\}_{i=1}^n}}$ and $\TYP{\Delta}{\vv t_i}{A}$ for all $i$.  Thus, we are
+    \item Let $\gencase{\vec{v}_{k}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}
+      \lraneq \vec{t}_{k}$: Assume
+      $\TYP{\Gamma,\Delta}{\gencase{\vec{v}_{k}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}}{A}$.
+      By \textsc{Case} we have $\TYP{\Gamma}{{\vec{v}_{k}}}{\basis{\{\vv
+      v_i\}_{i=1}^n}}$ and $\TYP{\Delta}{\vec t_i}{A}$ for all $i$.  Thus, we are
       done.
 
     \item Let
-      $\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-      \lraneq \sum_{i=1}^n\alpha_i\vv{t_i}$: \\ Assume 
-      $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}}{A}$.
-      By \textsc{UnitCase} we have $\TYP{\Gamma}{\vv t}{\sharp\basis{\{\vv
-      v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vv t_i}{\vv t_j}{A}$.
-      Then the reduct $\sum_{i=1}^{n}\alpha_i \vv{t_i}$ is typed by \textsc{Sum}
+      $\gencase{\sum_{i=1}^n\alpha_i\vec{v}_{i}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}
+      \lraneq \sum_{i=1}^n\alpha_i\vec{t}_{i}$: \\ Assume 
+      $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vec{v}_{i}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}}{A}$.
+      By \textsc{UnitCase} we have $\TYP{\Gamma}{\vec t}{\sharp\basis{\{\vv
+      v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vec t_i}{\vec t_j}{A}$.
+      Then the reduct $\sum_{i=1}^{n}\alpha_i \vec{t}_{i}$ is typed by \textsc{Sum}
       as $\sharp A$ (using the orthogonality premises and the normalisation
       condition ensured by the semantics of $\sharp$), hence
-      $\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}{\sharp A}$.
+      $\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}{\sharp A}$.
       \qedhere
   \end{itemize}
 \end{proof}
