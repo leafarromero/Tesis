@@ -1723,9 +1723,9 @@ By delayining measurement, we define a term that explicitly describes the comput
 \end{align*}
 This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, X, Z, ZX$). 
 
-The strength of this approach lies in the type system's ability to verify the consistency of the entire superposition: each branch is statically checked as a unitary transformation. The overall term is assigned the precise type $\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})$, where $\sharp\basis{\Bell}$ captures the entanglement of the first two qubits\footnote{The type derivation relies on the subtypings 
+The strength of this approach lies in the type system's ability to verify the consistency of the entire superposition: each branch is statically checked as a unitary transformation. The overall term is assigned the precise type $\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})$, where $\sharp\basis{\Bell}$ captures the entanglement of the first two qubits (relying on the subtypings 
 $\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
-$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}.
+$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$).
 
 %
 %\subsection{Quantum teleportation}\label{sec:teleportation}
