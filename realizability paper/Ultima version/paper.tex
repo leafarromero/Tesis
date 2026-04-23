@@ -1431,74 +1431,104 @@ Table~\ref{tab:TypingRules} presents a representative subset forming a reasonabl
 core typing system for the calculus, whose validity is stated below.
 This is the main result of the paper, as the validity of these rules ensures all the safety properties established in the realisability model.
 
+%\begin{table}[t]
+%  \[
+%    \begin{array}{c}
+%      \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
+%      \qquad
+%	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{{X}}{\vec{t}_{i}})}{A\Arr B}}
+%	{\TYP{\Gamma,x^{X}:A}{\sum_{i=1}^{n}\alpha_i\vec{t}_{i}}{B}}
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vec{s}\,\vec{t}}{B}}
+%      {\TYP{\Gamma}{\vec{s}}{A\Arr B} & \TYP{\Delta}{\vec{t}}{A}}
+%      \qquad
+%      \infer[\snam{Pair}]{\TYP{\Gamma,\Delta}
+%      {\Pair{\vec{t}}{\vec{s}}}{A\times B}}{
+%	\TYP{\Gamma}{\vec{t}}{A}&\TYP{\Delta}{\vec{s}}{B}
+%      }
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
+%      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{C}}{
+%	\TYP{\Gamma}{\vec{t}}{A\times B}&
+%	\TYP{\Delta,x^{{X}}:A,y^{Y}:B}{\vec{s}}{C}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
+%      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{\sharp C}}{
+%	\TYP{\Gamma}{\vec{t}}{\sharp(A\times B)}&
+%	\TYP{\Delta,x^{X}:\sharp A,y^{Y}:\sharp B}{\vec{s}}{C}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
+%      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{A}}{
+%	\TYP{\Gamma}{\vec{t}}{\genbasis{\vec{v}_{i}}{i=1}{n}}&
+%	\forall i,\ \TYP{\Delta}{\vec{s}_{i}}{A}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{UnitCase}]{\TYP{\Gamma,\Delta}
+%      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{\sharp A}}{
+%	\TYP{\Gamma}{\vec{t}}{\sharp \genbasis{\vec{v}_{i}}{i=1}{n}}&
+%	\forall i\neq j,\ \SORTH{\Delta}{\vec{s}_{i}}{\vec{s}_{j}}{A}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{Sum}]
+%      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}{\sharp A}}
+%      {\forall i\neq j,\, \SORTH{\Gamma}{\vec{t}_{i}}{\vec{t}_{j}}{A} &
+%      \sum_{i=1}^{n}|\alpha_i|^2 = 1}
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:{\basis{X}}}{\vec{t}\,[y:=x]}{B}}{
+%	\TYP{\Gamma,x^{X}:{\basis{X}},y^{X}:{\basis{X}}}{\vec{t}}{B}
+%      } 
+%      \qquad
+%	\infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vec{t}}{C}}{
+%	  \TYP{\Gamma}{\vec{t}}{C}
+%	}
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{Sub}]{\TYP{\Gamma}{\vec{t}}{B}}{\TYP{\Gamma}{\vec{t}}{A} & \SUB{A}{B}}
+%      \quad
+%      \infer[\snam{Equiv}]{\TYP{\Gamma}{\vec{s}}{A}}{
+%	\TYP{\Gamma}{\vec{t}}{A}& \vec t\equiv \vec s
+%      }
+%      \quad 
+%      \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vec{t}}{A}}
+%      {\TYP{\Gamma}{\vec{t}}{A}}
+%    \end{array}
+%  \]
+%  \caption{Some valid typing rules}
+%  \label{tab:TypingRules}
+%\end{table}
+
 \begin{table}[t]
-  \[
-    \begin{array}{c}
-      \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
-      \qquad
-	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{{X}}{\vec{t}_{i}})}{A\Arr B}}
-	{\TYP{\Gamma,x^{X}:A}{\sum_{i=1}^{n}\alpha_i\vec{t}_{i}}{B}}
-      \\
-      \noalign{\medskip}
-      \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vec{s}\,\vec{t}}{B}}
-      {\TYP{\Gamma}{\vec{s}}{A\Arr B} & \TYP{\Delta}{\vec{t}}{A}}
-      \qquad
-      \infer[\snam{Pair}]{\TYP{\Gamma,\Delta}
-      {\Pair{\vec{t}}{\vec{s}}}{A\times B}}{
-	\TYP{\Gamma}{\vec{t}}{A}&\TYP{\Delta}{\vec{s}}{B}
-      }
-      \\
-      \noalign{\medskip}
-      \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
-      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{C}}{
-	\TYP{\Gamma}{\vec{t}}{A\times B}&
-	\TYP{\Delta,x^{{X}}:A,y^{Y}:B}{\vec{s}}{C}
-      }\\
-      \noalign{\medskip}
-      \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
-      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{\sharp C}}{
-	\TYP{\Gamma}{\vec{t}}{\sharp(A\times B)}&
-	\TYP{\Delta,x^{X}:\sharp A,y^{Y}:\sharp B}{\vec{s}}{C}
-      }\\
-      \noalign{\medskip}
-      \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
-      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{A}}{
-	\TYP{\Gamma}{\vec{t}}{\genbasis{\vec{v}_{i}}{i=1}{n}}&
-	\forall i,\ \TYP{\Delta}{\vec{s}_{i}}{A}
-      }\\
-      \noalign{\medskip}
-      \infer[\snam{UnitCase}]{\TYP{\Gamma,\Delta}
-      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{\sharp A}}{
-	\TYP{\Gamma}{\vec{t}}{\sharp \genbasis{\vec{v}_{i}}{i=1}{n}}&
-	\forall i\neq j,\ \SORTH{\Delta}{\vec{s}_{i}}{\vec{s}_{j}}{A}
-      }\\
-      \noalign{\medskip}
-      \infer[\snam{Sum}]
-      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}{\sharp A}}
-      {\forall i\neq j,\, \SORTH{\Gamma}{\vec{t}_{i}}{\vec{t}_{j}}{A} &
-      \sum_{i=1}^{n}|\alpha_i|^2 = 1}
-      \\
-      \noalign{\medskip}
-      \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:{\basis{X}}}{\vec{t}\,[y:=x]}{B}}{
-	\TYP{\Gamma,x^{X}:{\basis{X}},y^{X}:{\basis{X}}}{\vec{t}}{B}
-      } 
-      \qquad
-	\infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vec{t}}{C}}{
-	  \TYP{\Gamma}{\vec{t}}{C}
-	}
-      \\
-      \noalign{\medskip}
-      \infer[\snam{Sub}]{\TYP{\Gamma}{\vec{t}}{B}}{\TYP{\Gamma}{\vec{t}}{A} & \SUB{A}{B}}
-      \quad
-      \infer[\snam{Equiv}]{\TYP{\Gamma}{\vec{s}}{A}}{
-	\TYP{\Gamma}{\vec{t}}{A}& \vec t\equiv \vec s
-      }
-      \quad 
-      \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vec{t}}{A}}
-      {\TYP{\Gamma}{\vec{t}}{A}}
-    \end{array}
-  \]
-  \caption{Some valid typing rules}
+  \centering
+  \begin{tabular}{c@{\quad}c}
+    \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis} &
+    \infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_i \alpha_i (\lambda x^X.\vec{t}_i)}{A\Arr B}}{\TYP{\Gamma,x^{X}:A}{\sum_i \alpha_i \vec{t}_i}{B}} 
+    \\ \noalign{\small\smallskip}
+    \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vec{s}\,\vec{t}}{B}}{\TYP{\Gamma}{\vec{s}}{A\Arr B} & \TYP{\Delta}{\vec{t}}{A}} &
+    \infer[\snam{Pair}]{\TYP{\Gamma,\Delta}{\Pair{\vec{t}}{\vec{s}}}{A\times B}}{\TYP{\Gamma}{\vec{t}}{A}&\TYP{\Delta}{\vec{s}}{B}} 
+    \\ \noalign{\small\smallskip}
+    \multicolumn{2}{c}{
+      \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}{C}}{\TYP{\Gamma}{\vec{t}}{A\times B} & \TYP{\Delta,x^X:A,y^Y:B}{\vec{s}}{C}} \quad
+      \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}{\sharp C}}{\TYP{\Gamma}{\vec{t}}{\sharp(A\times B)} & \TYP{\Delta,x^X:\sharp A,y^Y:\sharp B}{\vec{s}}{C}}
+    } \\ \noalign{\small\smallskip}
+    \multicolumn{2}{c}{
+      \infer[\snam{Case}]{\TYP{\Gamma,\Delta}{\gencasei{\vec{t}}{\vec{v}_i}{\vec{s}_i}}{A}}{\TYP{\Gamma}{\vec{t}}{\basis{\{\vec{v}_i\}}} & \forall i, \TYP{\Delta}{\vec{s}_i}{A}} \quad
+      \infer[\snam{UnitCase}]{\TYP{\Gamma,\Delta}{\gencasei{\vec{t}}{\vec{v}_i}{\vec{s}_i}}{\sharp A}}{\TYP{\Gamma}{\vec{t}}{\sharp\basis{\{\vec{v}_i\}}} & \forall i\neq j, \SORTH{\Delta}{\vec{s}_i}{\vec{s}_j}{A}}
+    } \\ \noalign{\small\smallskip}
+    \infer[\snam{Sum}]{\TYP{\Gamma}{\sum_i \alpha_i \vec{t}_i}{\sharp A}}{\forall i\neq j, \SORTH{\Gamma}{\vec{t}_i}{\vec{t}_j}{A} & \sum |\alpha_i|^2 = 1} &
+    \infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vec{t}}{C}}{\TYP{\Gamma}{\vec{t}}{C}} 
+    \\ \noalign{\small\smallskip}
+    \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vec{t}[y:=x]}{B}}{\TYP{\Gamma,x^X:\basis{X},y^X:\basis{X}}{\vec{t}}{B}} &
+    \infer[\snam{Sub}]{\TYP{\Gamma}{\vec{t}}{B}}{\TYP{\Gamma}{\vec{t}}{A} & A \leq B} 
+    \\ \noalign{\small\smallskip}
+    \infer[\snam{Equiv}]{\TYP{\Gamma}{\vec{s}}{A}}{\TYP{\Gamma}{\vec{t}}{A} & \vec{t} \equiv \vec{s}} &
+    \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vec{t}}{A}}{\TYP{\Gamma}{\vec{t}}{A}}
+  \end{tabular}
+  \caption{Some valid typing rules.}
   \label{tab:TypingRules}
 \end{table}
 
@@ -1533,194 +1563,246 @@ stated below.
 
 \section{Examples}\label{sec:examples}
 \subsection{Deutsch's algorithm}\label{subsec:deutsch}
-We begin with \emph{Deutsch's algorithm}, a canonical example that highlights
-how basis types in the $\lambdaB$ calculus yield more informative typings for
-quantum programs.
-The algorithm is as follows.
-We are given black-box access to an \emph{oracle}~$U_f$ that implements an
-unknown Boolean function $f:\{0,1\}\to\{0,1\}$.  
-The oracle can only be either \emph{constant} (both inputs map to the same
-output) or \emph{balanced} (the two outputs differ).  
-Classically, determining which case holds requires two queries to~$f$.  
-Deutsch's algorithm decides this with a single query by exploiting quantum
-superposition and interference.
+Deutsch's algorithm decides if an unknown Boolean function $f:\{0,1\}\to\{0,1\}$ is constant or balanced with a single query by exploiting quantum superposition. Operationally, an oracle $U_f$ acts as $U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)}$. The standard circuit prepares $\ket{+-}$, applies $U_f$, and then applying a Hadamard gate ($H$) on the first qubit yields $\ket{0}$ if $f$ is constant and $\ket{1}$ if $f$ is balanced.
 
-Operationally, the oracle~$U_f$ acts as
-\(
-  U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)}
-\),
-where $\oplus$ is addition modulo~2.  
-The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
-then applies a Hadamard on the first qubit before measuring it.  
-The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
-To implement this algorithm in $\lambdaB$, we first encode the gates 
-we will use:
-\begin{align*}
-  \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
-  \mathsf{NOT} &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}},\\
-  \mathsf{CNOT} &:= \Lam{x}{\B}{\Lam{y}{\B}{
-    \case{x}{\ket{0}}{\ket{1}}
-      {\Pair{\ket{0}}{y}}
-      {\Pair{\ket{1}}{\pauliX{y}}}}}.
-\end{align*}
-
-We model the four possible oracles $U_f$ (two constant and two balanced):
-\begin{align*}
-  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},
-  & O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
-  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}},
-  & O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}.
-\end{align*}
-
-The standard Deutsch term prepares~$\ket{+-}$, calls the oracle, then
-applies~$H$ on the first qubit and returns the (classical) first component:
+In $\lambdaB$, we first encode the standard gates in $\B$: 
+$H := \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}}$, 
+$\mathsf{NOT} := \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}}$, and 
+$\mathsf{CNOT} := \Lam{x}{\B}{\Lam{y}{\B}{\case{x}{\ket{0}}{\ket{1}}{\Pair{\ket{0}}{y}}{\Pair{\ket{1}}{\mathsf{NOT}\,y}}}}$.
+The four possible oracles can be modeled as abstractions of type $\basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})$; for instance, 
+$O_{\mathrm{const}\,0} := \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}}$ and 
+$O_{\mathrm{id}} := \Lam{x}{\B}{\Lam{y}{\B}{\mathsf{CNOT}\,x\,y}}$. 
+The standard Deutsch term is then:
 \[
   \mathsf{Deutsch}_{\mathrm{std}} :=
   \Lam{f}{\AbsBasis}{
-    \LetP{x}{\B}{y}{\B}
-      {(f\,(\Hd\,\ket{0})\,(\Hd\,\ket{1}))}
-      {\Pair{\Hd\,x}{y}}
+    \LetP{x}{\B}{y}{\B}{(f\,(H\ket{0})\,(H\ket{1}))}{\Pair{H\,x}{y}}
   }.
 \]
+Since the oracle is applied to $\ket{+}$ and $\ket{-}$, the derived type is 
+$(\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr \sharp(\basis{\B}\times\basis{\B})) \Arr \sharp(\basis{\B}\times\basis{\B})$. 
+This type is coarse: it only ensures the result is a unitary combination of pairs, failing to capture the deterministic nature of the outcome.
 
-The oracles can be typed as 
-\(
-  \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
-\).
-However, since we apply them to $\ket{+}$ and $\ket{-}$, 
-the derived judgement is
-\(
-  (\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
-   \Arr \sharp(\basis{\B}\times\basis{\B})
-\).
-This type is correct but coarse: it only ensures the result is a
-unitary combination of boolean pairs. Operationally, the
-first output is a basis state ($\ket{0}$ or~$\ket{1}$) indicating if
-$f$ is constant or balanced, while the second may be ignored.
-
-Then, we can consider a basis-aware implementation with tighter typing.
-The key observation is that the oracle is always called on the fixed state
-$\ket{+-}$. Thus it is natural to write the program in the
-$\XB=\{\ket{+},\ket{-}\}$ basis, letting the types track that we remain in a
-basis state at the oracle boundary. We first define the same gates in the $\XB$ basis:
-\begin{align*}
-  \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
-  \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}},\\
-  \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
-    \case{y}{\ket{+}}{\ket{-}}
-      {\Pair{x}{\ket{+}}}
-      {\Pair{\pauliZXB{x}}{\ket{-}}}
-  }}.
-\end{align*}
-We then rewrite the program and the four oracles in~$\XB$:
+By contrast, a basis-aware implementation in $\XB=\{\ket{+},\ket{-}\}$ provides tighter typing. We redefine the gates and oracles in $\XB$ (details in Appendix~\ref{sec:appendixD}); for example, 
+$O_{\mathrm{const}\,0}^{\XB} := \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}}$ and 
+$O_{\mathrm{id}}^{\XB} := \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}}$. The basis-aware program is:
 \[
 \mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
-{\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+{\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}}.
 \]
-\begin{align*}
-  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
-  &O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
-  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}},
-  &O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}.
-\end{align*}
+This version is typed as $(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}$. 
+The gain is significant: the type system tracks that the oracle, when fed with basis states in $\XB$, produces a pair of basis states. This allows us to extract a classical bit ($\basis{\B}$) deterministically. Unlike the standard version, no variable in the derivation requires a $\sharp$-type, reflecting that the algorithm's result is classical and its deterministic behaviour is captured entirely at the type level.
 
-Now every oracle has the tight type
-\(
-  \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB})
-\),
-and the program itself can be typed with
-\(
-(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}.
-\)
-Intuitively, the oracle---when fed with $\ket{+-}$---produces a pair of
-basis states in~$\XB$ (up to a global phase).  Hence we can treat its output
-classically: a single $\mathsf{case}$ on the first component suffices to return
-a classical bit in the computational basis, with no need for a $\sharp$-type on
-the result.
-
-Both implementations are operationally equivalent: they compute a bit that
-decides whether $f$ is constant or balanced.  The difference lies in the
-\emph{precision} of their typings.  The standard version, expressed in~$\B$
-with explicit Hadamards, forces $\sharp$ on the oracle's interface and thus
-yields a result in~$\sharp(\basis{\B}\times\basis{\B})$.  The basis-aware
-version states, via types, that the oracle is used on a fixed $\XB$-input and
-therefore returns an $\XB$-basis pair; this lets us deterministically extract a
-$\B$-basis bit.  In the typing derivation, no variable carries a $\sharp$-type:
-(i) we may safely ignore the second qubit, and (ii) the first qubit is
-guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
-algorithm.
+%\subsection{Deutsch's algorithm}\label{subsec:deutsch}
+%We begin with \emph{Deutsch's algorithm}, a canonical example that highlights
+%how basis types in the $\lambdaB$ calculus yield more informative typings for
+%quantum programs.
+%The algorithm is as follows.
+%We are given black-box access to an \emph{oracle}~$U_f$ that implements an
+%unknown Boolean function $f:\{0,1\}\to\{0,1\}$.  
+%The oracle can only be either \emph{constant} (both inputs map to the same
+%output) or \emph{balanced} (the two outputs differ).  
+%Classically, determining which case holds requires two queries to~$f$.  
+%Deutsch's algorithm decides this with a single query by exploiting quantum
+%superposition and interference.
+%
+%Operationally, the oracle~$U_f$ acts as
+%\(
+%  U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)}
+%\),
+%where $\oplus$ is addition modulo~2.  
+%The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
+%then applies a Hadamard on the first qubit before measuring it.  
+%The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
+%To implement this algorithm in $\lambdaB$, we first encode the gates 
+%we will use:
+%\begin{align*}
+%  \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
+%  \mathsf{NOT} &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}},\\
+%  \mathsf{CNOT} &:= \Lam{x}{\B}{\Lam{y}{\B}{
+%    \case{x}{\ket{0}}{\ket{1}}
+%      {\Pair{\ket{0}}{y}}
+%      {\Pair{\ket{1}}{\pauliX{y}}}}}.
+%\end{align*}
+%
+%We model the four possible oracles $U_f$ (two constant and two balanced):
+%\begin{align*}
+%  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},
+%  & O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
+%  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}},
+%  & O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}.
+%\end{align*}
+%
+%The standard Deutsch term prepares~$\ket{+-}$, calls the oracle, then
+%applies~$H$ on the first qubit and returns the (classical) first component:
+%\[
+%  \mathsf{Deutsch}_{\mathrm{std}} :=
+%  \Lam{f}{\AbsBasis}{
+%    \LetP{x}{\B}{y}{\B}
+%      {(f\,(\Hd\,\ket{0})\,(\Hd\,\ket{1}))}
+%      {\Pair{\Hd\,x}{y}}
+%  }.
+%\]
+%
+%The oracles can be typed as 
+%\(
+%  \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
+%\).
+%However, since we apply them to $\ket{+}$ and $\ket{-}$, 
+%the derived judgement is
+%\(
+%  (\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
+%   \Arr \sharp(\basis{\B}\times\basis{\B})
+%\).
+%This type is correct but coarse: it only ensures the result is a
+%unitary combination of boolean pairs. Operationally, the
+%first output is a basis state ($\ket{0}$ or~$\ket{1}$) indicating if
+%$f$ is constant or balanced, while the second may be ignored.
+%
+%Then, we can consider a basis-aware implementation with tighter typing.
+%The key observation is that the oracle is always called on the fixed state
+%$\ket{+-}$. Thus it is natural to write the program in the
+%$\XB=\{\ket{+},\ket{-}\}$ basis, letting the types track that we remain in a
+%basis state at the oracle boundary. We first define the same gates in the $\XB$ basis:
+%\begin{align*}
+%  \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
+%  \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}},\\
+%  \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
+%    \case{y}{\ket{+}}{\ket{-}}
+%      {\Pair{x}{\ket{+}}}
+%      {\Pair{\pauliZXB{x}}{\ket{-}}}
+%  }}.
+%\end{align*}
+%We then rewrite the program and the four oracles in~$\XB$:
+%\[
+%\mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
+%{\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+%\]
+%\begin{align*}
+%  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
+%  &O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
+%  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}},
+%  &O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}.
+%\end{align*}
+%
+%Now every oracle has the tight type
+%\(
+%  \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB})
+%\),
+%and the program itself can be typed with
+%\(
+%(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}.
+%\)
+%Intuitively, the oracle---when fed with $\ket{+-}$---produces a pair of
+%basis states in~$\XB$ (up to a global phase).  Hence we can treat its output
+%classically: a single $\mathsf{case}$ on the first component suffices to return
+%a classical bit in the computational basis, with no need for a $\sharp$-type on
+%the result.
+%
+%Both implementations are operationally equivalent: they compute a bit that
+%decides whether $f$ is constant or balanced.  The difference lies in the
+%\emph{precision} of their typings.  The standard version, expressed in~$\B$
+%with explicit Hadamards, forces $\sharp$ on the oracle's interface and thus
+%yields a result in~$\sharp(\basis{\B}\times\basis{\B})$.  The basis-aware
+%version states, via types, that the oracle is used on a fixed $\XB$-input and
+%therefore returns an $\XB$-basis pair; this lets us deterministically extract a
+%$\B$-basis bit.  In the typing derivation, no variable carries a $\sharp$-type:
+%(i) we may safely ignore the second qubit, and (ii) the first qubit is
+%guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
+%algorithm.
 
 \subsection{Quantum teleportation}\label{sec:teleportation}
-We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
-quantum information theory that exemplifies the manipulation of entangled
-states and the transmission of quantum data through classical communication.
-Within the $\lambdaB$ calculus, this protocol provides a natural setting to
-combine pattern matching, linear handling of qubits, and the
-\emph{deferred-measurement principle}.  
-Using the $\mathsf{case}$ constructor together with the expressive typing
-discipline introduced earlier, we can encode the teleportation process in a
-way that remains both syntactically compact and semantically faithful to its
-quantum-mechanical counterpart.
+The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies the transmission of quantum data via shared entanglement. In $\lambdaB$, this protocol serves to illustrate how the \emph{deferred-measurement principle}~\cite[\S 4.4]{NC00} is internalised within a purely unitary framework. While measurement can be integrated into basis-sensitive calculi (as shown in~\cite{DiazcaroMonzonAPLAS25}), our focus here is to demonstrate that the $\mathsf{case}$ constructor is sufficient to reason about classically controlled gates by branching on basis states.
 
-The deferred-measurement principle (see, for example,~\cite[\S 4.4]{NC00})
-states that any quantum circuit can delay its measurements without altering
-the final outcome. More precisely, any gate classically controlled by the
-result of a measurement is equivalent to another circuit where the control
-qubit remains unmeasured, acting coherently on all branches of the superposition.  
-Although the $\lambdaB$ calculus has no primitive operation for measurement,
-the $\mathsf{case}$ constructor allows us to simulate such classically
-controlled gates by branching on basis states.
-
-A canonical example that exploits this principle is the \emph{quantum teleportation
-protocol}. Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
-state. Using this shared entanglement and two bits of classical information, Alice can
-transmit an unknown quantum state~$\ket{\psi}$ to Bob without physically sending the qubit itself.  
-
-The algorithm first creates the Bell state $\Phi^{+}$ between the second and third qubits,
-then performs a Bell-basis measurement on the first and second qubits.  
-Operationally, this measurement is implemented by applying a CNOT gate followed
-by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
-then measuring both qubits. Depending on the pair of classical outcomes, a Pauli correction
-($I$, $X$, $Z$, or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
-(for a more thorough analysis of the algorithm, see \cite{PhysRevLett.70.1895}).
-
-We can simulate this protocol in $\lambdaB$ by
-defining a term that, instead of performing measurements, explicitly
-describes the computation corresponding to each branch:
+By delayining measurement, we define a term that explicitly describes the computation for each coherent branch of the superposition:
 \begin{align*}
 &\mathsf{Teleport}_{\Phi^+} :=
   \Lam{x}{\B}{
     \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
-      \mathsf{case}\;
-        \Pair{x}{y_1}\;
-        \mathsf{of}\\
-         &\{ \Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
-          \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;
-	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
-	\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
+      \mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\; \{ \\
+         &\Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\, \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z y_2},\,
+	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X y_2},\, \Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX y_2} \}
     }
   }.
 \end{align*}
+This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, X, Z, ZX$). 
 
-This term describes the quantum teleportation protocol in terms of
-corrections on the third qubit based on the result of a Bell basis measurement.
-It takes the input~$\ket{\psi}$ and pairs it with one half of an
-entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
-qubits (the input and Alice's entangled qubit) against the Bell basis, and in
-each branch applies the appropriate correction to Bob's qubit to
-recover~$\ket{\psi}$. The resulting term represents the same quantum
-transformation but expressed without any explicit measurement---instead,
-each branch encodes the coherent superposition of possible outcomes.
-
-The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
-steps in the Bell basis, exploiting the deferred-measurement principle in a
-type-safe way.  
-Each branch of the $\mathsf{case}$ corresponds to a unitary transformation
-preserving linearity and orthogonality, and the overall term has type
-${\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}$
-\footnote{The type derivation relies on the subtypings 
+The strength of this approach lies in the type system's ability to verify the consistency of the entire superposition: each branch is statically checked as a unitary transformation. The overall term is assigned the precise type $\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})$, where $\sharp\basis{\Bell}$ captures the entanglement of the first two qubits\footnote{The type derivation relies on the subtypings 
 $\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
 $\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}.
+
+%
+%\subsection{Quantum teleportation}\label{sec:teleportation}
+%We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
+%quantum information theory that exemplifies the manipulation of entangled
+%states and the transmission of quantum data through classical communication.
+%Within the $\lambdaB$ calculus, this protocol provides a natural setting to
+%combine pattern matching, linear handling of qubits, and the
+%\emph{deferred-measurement principle}.  
+%Using the $\mathsf{case}$ constructor together with the expressive typing
+%discipline introduced earlier, we can encode the teleportation process in a
+%way that remains both syntactically compact and semantically faithful to its
+%quantum-mechanical counterpart.
+%
+%The deferred-measurement principle (see, for example,~\cite[\S 4.4]{NC00})
+%states that any quantum circuit can delay its measurements without altering
+%the final outcome. More precisely, any gate classically controlled by the
+%result of a measurement is equivalent to another circuit where the control
+%qubit remains unmeasured, acting coherently on all branches of the superposition.  
+%Although the $\lambdaB$ calculus has no primitive operation for measurement,
+%the $\mathsf{case}$ constructor allows us to simulate such classically
+%controlled gates by branching on basis states.
+%
+%A canonical example that exploits this principle is the \emph{quantum teleportation
+%protocol}. Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
+%state. Using this shared entanglement and two bits of classical information, Alice can
+%transmit an unknown quantum state~$\ket{\psi}$ to Bob without physically sending the qubit itself.  
+%
+%The algorithm first creates the Bell state $\Phi^{+}$ between the second and third qubits,
+%then performs a Bell-basis measurement on the first and second qubits.  
+%Operationally, this measurement is implemented by applying a CNOT gate followed
+%by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
+%then measuring both qubits. Depending on the pair of classical outcomes, a Pauli correction
+%($I$, $X$, $Z$, or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
+%(for a more thorough analysis of the algorithm, see \cite{PhysRevLett.70.1895}).
+%
+%We can simulate this protocol in $\lambdaB$ by
+%defining a term that, instead of performing measurements, explicitly
+%describes the computation corresponding to each branch:
+%\begin{align*}
+%&\mathsf{Teleport}_{\Phi^+} :=
+%  \Lam{x}{\B}{
+%    \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
+%      \mathsf{case}\;
+%        \Pair{x}{y_1}\;
+%        \mathsf{of}\\
+%         &\{ \Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
+%          \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;
+%	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
+%	\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
+%    }
+%  }.
+%\end{align*}
+%
+%This term describes the quantum teleportation protocol in terms of
+%corrections on the third qubit based on the result of a Bell basis measurement.
+%It takes the input~$\ket{\psi}$ and pairs it with one half of an
+%entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
+%qubits (the input and Alice's entangled qubit) against the Bell basis, and in
+%each branch applies the appropriate correction to Bob's qubit to
+%recover~$\ket{\psi}$. The resulting term represents the same quantum
+%transformation but expressed without any explicit measurement---instead,
+%each branch encodes the coherent superposition of possible outcomes.
+%
+%The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
+%steps in the Bell basis, exploiting the deferred-measurement principle in a
+%type-safe way.  
+%Each branch of the $\mathsf{case}$ corresponds to a unitary transformation
+%preserving linearity and orthogonality, and the overall term has type
+%${\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}$
+%\footnote{The type derivation relies on the subtypings 
+%$\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
+%$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}.
 
 
 \section{Conclusion}\label{sec:conclusion}
@@ -2858,5 +2940,32 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
   \end{itemize}
 \end{proof}
 
+\section{Gates for the Deutsch's algorithm example of Section~\ref{subsec:deutsch}}\label{sec:appendixD}
+\subsection{The four possible oracles \texorpdfstring{$U_f$}{Uf} in the computational basis \texorpdfstring{$\B$}{Z}}
+\begin{align*}
+  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}}\\
+  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}}\\
+  O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}}\\
+  O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}
+\end{align*}
+
+\subsection{Gates in the Hadamard basis \texorpdfstring{$\XB$}{X}}
+\begin{align*}
+  \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}}\\
+  \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}}\\
+  \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
+      \case{y}{\ket{+}}{\ket{-}}
+      {\Pair{x}{\ket{+}}}
+      {\Pair{\pauliZXB{x}}{\ket{-}}}
+  }}.
+\end{align*}
+
+\subsection{The four oracles rewritten in the \texorpdfstring{$\XB$}{X} basis}
+\begin{align*}
+  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}}\\
+  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}}\\
+  O_{\mathrm{id}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}}\\
+  O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}
+\end{align*}
 
 \end{document}
