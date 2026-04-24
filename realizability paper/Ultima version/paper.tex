@@ -1122,7 +1122,7 @@ that guides the definition of realizers.
   \begin{tabular}{l}
     $\sem{\basis{X}}:= X \qquad \sem{A\times B}:= \{(\vec v, \vec w) \mid \vec v\in\sem{A}, \vec w\in\sem{B}\}$ \\
     $\sem{A\Arr B}:= \{\sum_i \alpha_i(\Lam{x}{X}{\vec{t}_{i}})\in\Sph \mid \forall\vec{w}\in\sem{A}, (\sum_i \alpha_i \vec{t}_{i})\ansubst{\vec{w}/x}{X}\real B\}$ \\
-    $\sem{\sharp Y}:= {(\sem{Y}^\bot)}^\bot$, with $Y^\bot = \{\vec{v}\in\Sph \mid \forall y\in Y, \scal{\vec{v}}{y} = 0\}$
+    $\sem{\sharp A}:= {(\sem{A}^\bot)}^\bot$, with $Y^\bot = \{\vec{v}\in\Sph \mid \forall y\in Y, \scal{\vec{v}}{y} = 0\}$
   \end{tabular}
   \caption{Type notations and semantics.}
   \label{tab:UnitaryTypes}
@@ -1730,9 +1730,9 @@ By delayining measurement, we define a term that explicitly describes the comput
 \end{align*}
 This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, X, Z, ZX$). 
 
-The strength of this approach lies in the type system's ability to verify the consistency of the entire superposition: each branch is statically checked as a unitary transformation. The overall term is assigned the precise type $\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})$, where $\sharp\basis{\Bell}$ captures the entanglement of the first two qubits (relying on the subtypings 
-$\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
-$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$).
+The strength of this approach lies in the type system's ability to verify the consistency of the entire superposition: each branch is statically checked as a unitary transformation. The overall term is assigned the type $\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})$ (relying on the subtypings 
+$\basis{\Bell}\leq\sharp(\basis{\B}\times\basis{\B})$ and
+$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$), which also ensures the teleported qubit will be separable.
 
 %
 %\subsection{Quantum teleportation}\label{sec:teleportation}
