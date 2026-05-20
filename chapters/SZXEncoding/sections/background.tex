@@ -5,6 +5,10 @@ We describe a quantum state as a system of $n$ qubits corresponding to a vector 
 
 High-level programs can be encoded in Quipper~\cite{Green2013quipper}, a Haskell-like programming language for describing quantum computations. In this work we use a formalization of the language called Proto-Quipper-D\cite{fu_tutorial_2020} with support for linear and dependent types. Concrete quantum operations correspond to linear functions between quantum states, generated as a composition of primitive operations that can be described directly as a quantum circuit. Generic circuits may have additional parameters that must fixed at compilation time to produce the corresponding quantum circuit.
 
+%subsection zx
+\input{sections/zx.tex}
+%subsection ground extension
+\input{sections/ground.tex}
 %subsection szx
 \input{sections/szx.tex}
 %subsection proto-quipper fragment

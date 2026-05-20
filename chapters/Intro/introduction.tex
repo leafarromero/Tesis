@@ -5,6 +5,9 @@ Over the last decade we have seen research into quantum computation accelerate a
 Functional programming provides a suitable paradigm to study this topic. Considering measurement operations, quantum computation can be considered as a particular case of probabilistic computation. In addition, linear type systems are well-suited to deal with the restraints posed by no-go theorems such as no-cloning or no-deletion. For this reason, throughout this thesis, we will analise different characteristics of quantum computation through the lens of $\lambda$-calculus.
 
 Several quantum programming languages have been developed in the last 20 years. Starting with Selinger and Valiron's QPL in 2004; the technology has been iterated and refined producing real-world implementations. In a non-exhaustive way we can mention Quipper, {\color{red} ejemplos de lenguajes con citas}. 
+
+%%% STATE OF THE ART
+
 %%% FOCUS AND SCOPE
 The development of new and more capable programming languages starts with the theoretical foundations of the discipline. With this in mind, we will cover topics on the range of:
 \begin{itemize}
@@ -12,6 +15,8 @@ The development of new and more capable programming languages starts with the th
     \item ZX diagram extraction from programs and,
     \item enriched type systems via intuitionistic realisability.
 \end{itemize}
+
+%%% HABLAR DE CIRCUIT MODEL VS ALGORITMO?
 
 %%% QUESTIONS AND OBJECTIVES
 Our objective is to study two different levels of programming language design. On one side, examine a possible approach to transform programs into an intermediate representation such as ZX-diagrams. This in turn, could allow for an optimization and refinement step before a compilation onto quantum circuits.
@@ -21,9 +26,15 @@ On the flip side, we present a calculus in the quantum-control paradigm with the
 %%% OVERVIEW OF THE STRUCTURE
 This document is structured as follows:
 \begin{itemize}
-    \item The second chapter includes preliminary topics.
-    \item The third chapter presents a small analysis regarding probabilistic confluence.
-    \item The fourth chapter presents a translation between a quantum lambda calculus and $ZX_{\ground}$ diagrams.
-    \item The fifth chapter presents a quantum lambda calculus working with bases outside the computational and a its type system extracted via intuitionistic realisability.
+    \item The second chapter presents a small analysis regarding probabilistic confluence. We examine the effect of small modifications in probabilistic rewriting, affine variables, and strategies on the overall confluence in a strongly normalizing probabilistic calculus.
+    
+    This chapter is based on the paper \cite{Romero_2022}.
+
+    \item The third chapter presents a translation between a quantum lambda calculus and $ZX_{\ground}$ diagrams.
+    
+
+    \item The fourth chapter presents a quantum lambda calculus working with bases outside the computational and a its type system extracted via intuitionistic realisability.
+    
+    
     \item The last chapter holds the conclusion and some closing remarks.
 \end{itemize}
