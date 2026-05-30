@@ -3,3 +3,21 @@ Multiple extensions to the ZX-calculus have been proposed. In this work, we will
 deal with the grounded and scalable extensions. We first present the base calculus
 with the grounded-ZX extension, denoted \zxGND~\cite{ground}, to allow us to encode
 quantum state measurement operations.
+
+In conjunction to the previously described generators, this extension includes a
+new one, the $\ground$ (ground). This generator characterizes the act of discarding
+a qubit, in the semantics this is represented via the partial trace operation.
+
+When combining the ground with a 3-degree red or green spider, it corresponds
+to a measurement on the computational or Hadamard basis respectively. 
+
+%%%%%%%%%% Diagrama de cómo funciona el ground
+
+This enables the diagrams to reason about hybrid classical-quantum processes instead
+of pure quantum ones. We take for example the quantum teleportation protocol:
+
+\begin{example}[Quantum teleportation]
+{\color{red} TODO}
+\end{example}
+
+%%%%%%%%% Comentario, el trabajo no hace nada con las reglas de reescritura de ZX. No hace falta que las agregue
