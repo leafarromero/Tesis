@@ -1,27 +1,37 @@
 \chapter{Introduction}
-%%% TOPIC AND CONTEXT
+
+\section{Topic and context}
 Over the last decade we have seen research into quantum computation accelerate and the time and resources devoted to its study increase dramatically. At the time of this writing, this trend seems to continue. We intend to contribute our findings to this rapidly shifting field.
 
 Functional programming provides a suitable paradigm to study this topic. Considering measurement operations, quantum computation can be considered as a particular case of probabilistic computation. In addition, linear type systems are well-suited to deal with the restraints posed by no-go theorems such as no-cloning or no-deletion. For this reason, throughout this thesis, we will analise different characteristics of quantum computation through the lens of $\lambda$-calculus.
 
+%%% STATE OF THE ART
 Several quantum programming languages have been developed in the last 20 years. Starting with Selinger and Valiron's QPL in 2004; the technology has been iterated and refined producing real-world implementations. In a non-exhaustive way we can mention Quipper, {\color{red} ejemplos de lenguajes con citas}. 
 
-%%% STATE OF THE ART
+%%%% Básicamenetee se pueden dividir en control cuántico y control clásico
+These languages fall into two different paradigms, determined by the way they control information. Classical control calculi deal with quantum data, but the program themselves follow a classical flow. Every conditional is determined by an expression which can be the result of a measurement. This is akin to having a classical computer equipped with a quantum co-processor to perform certain operations.
+
+Quantum control calculi not only allow for quantum data, but also the superposition of programs. Control structures inside program can be determined by a \emph{superposition} of values, which yields a superposition of programs. In this sense, data and programs are considered on the same level. Continuing with the previous analogy, this languages can be thought as a single integrated machine that can perform quantum computation.
+
+%%%% En general para lenguajes de control clásico se definen compuertas primitivas y se componen similarmente a los circuitos para generar unitarias más complejas
+
+%%%% En el caso de control cuántico, se toman primitivas más fundamentales y la forma de obtener operaciones más complejas es a través de la composición de programas.
 
 %%% FOCUS AND SCOPE
+\section{Focus and Scope}
 The development of new and more capable programming languages starts with the theoretical foundations of the discipline. With this in mind, we will cover topics on the range of:
 \begin{itemize}
-    \item probabilistic evolution for measurement,
+    \item Probabilistic evolution for measurement,
     \item ZX diagram extraction from programs and,
-    \item enriched type systems via intuitionistic realisability.
+    \item Enriched type systems via intuitionistic realisability.
 \end{itemize}
-
-%%% HABLAR DE CIRCUIT MODEL VS ALGORITMO?
 
 %%% QUESTIONS AND OBJECTIVES
 Our objective is to study two different levels of programming language design. On one side, examine a possible approach to transform programs into an intermediate representation such as ZX-diagrams. This in turn, could allow for an optimization and refinement step before a compilation onto quantum circuits.
 
 On the flip side, we present a calculus in the quantum-control paradigm with the objective of expressing quantum algorithms in a more compositional manner. This could form the foundation of a more robust, higher-order programming language. Consequently, adding an abstraction layer between programs and circuitry.
+
+%%%% El objetivo final es proveer herramientas para 
 
 %%% OVERVIEW OF THE STRUCTURE
 This document is structured as follows:
