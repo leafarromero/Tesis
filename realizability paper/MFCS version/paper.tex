@@ -307,13 +307,14 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
 \begin{abstract}
   We present $\lambdaB$, a quantum‐control $\lambda$‐calculus that refines
   previous basis-sensitive systems by allowing abstractions to be expressed with
-  respect to arbitrary---possibly entangled---bases, combining quantum control 
-  and realisability semantics ensuring unitarity by construction.
-  Each abstraction and $\mathsf{let}$-construct is annotated with a basis,
-  and a new basis-dependent substitution governs the decomposition of value
-  combinations. These extensions preserve the expressive power of earlier calculi
-  while enabling finer reasoning about programs under basis changes. Realisability
-  semantics connects the reduction system with the type system, yielding a direct
+  respect to arbitrary---possibly entangled---bases, combining higher-order
+  quantum control and a realisability semantics ensuring unitarity by construction.
+  Each abstraction and
+  $\mathsf{let}$-construct is annotated with a basis, and a new basis-dependent
+  substitution governs the decomposition of value combinations.  These
+  extensions preserve the expressive power of earlier calculi while enabling
+  finer reasoning about programs under basis changes.  A realisability semantics
+  connects the reduction system with the type system, yielding a direct
   characterisation of unitary operators and ensuring safety by construction.
   From this semantics we derive a validated family of typing rules, forming the
   foundation of a type-safe quantum programming language.  We illustrate the
@@ -413,18 +414,13 @@ decorations. Intuitively, the reduction system treats values expressed in the
 chosen basis as classical data, while linear combinations of these values
 represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
-linear handling for unknown qubits. This technique works well for first-order
-terms, but it fails to capture the notion of basis for higher order terms. In
-case of a combination of abstractions, the system reduces linearly over it.
-{\color{red} PONER QUE TRABAJAMOS EN EL PROBLEMA PERO NO TENEMOS UNA SOLUCIÓN
-SATISFACTORIA (PERO DICHO DE MANERA POLITE).}
-
+linear handling for unknown qubits.
 
 This work pursues two goals: first, to provide a more exact program description
 via the extracted type system; and second, to express quantum algorithms compositionally,
 rather than as mere circuit translations.
 
-\paragraph{Related work.}
+%\paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
 appeared in several forms across the literature.  
 The work in~\cite{Perdrix2008} proposed an abstract model for static
@@ -451,7 +447,7 @@ From a categorical standpoint, the framework
 in~\cite{HeunenKaarsgaard2021} models measurement and decoherence through
 \emph{quantum information effects}, capturing basis change as a semantic
 effect.  
-Similarly,~\cite{CaretteHeunenKaarsgaardSabry2024} introduces
+Similarly,~\cite{CaretteJeunenKaarsgaardSabry2024} introduces
 \textsc{Quantum}$\Pi$, a language combining two interpretations of a reversible
 classical calculus—one per basis—via an effect construction.  
 In both cases, basis sensitivity arises semantically.  
@@ -509,7 +505,7 @@ All omitted proofs appear in the appendices.
 %\subsection{Syntax and congruence}
 This section presents the calculus on which our realisability model will be
 built. It is a $\lambda$-calculus extended with linear combinations of terms, 
-along the lines of the untyped language Lineal \cite{ArrighiDowekLMCS17}.
+along the lines of~\cite{ArrighiDowekLMCS17}.
 
 %\begin{table}[t]
 %  \begin{align*}
@@ -530,12 +526,12 @@ along the lines of the untyped language Lineal \cite{ArrighiDowekLMCS17}.
 \begin{table}[t]
   \centering
   \begin{tabular}{rcll}
-    $v$ & $::=$ & $x \mid \Lam{x}{X}{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1}$ & $(\Val)$ \\
-    $t$ & $::=$ & $v \mid tt \mid (t,t) \mid \LetP{x}{X}{y}{Y}{\vec{t}}{\vec{t}} \mid \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}$ & $(\Lambda)$ \\
+    $v$ & $::=$ & $x \mid \Lam{x}B{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1}$ & $(\Val)$ \\
+    $t$ & $::=$ & $v \mid tt \mid (t,t) \mid \LetP{x}{B_1}{y}{B_2}{\vec{t}}{\vec{t}} \mid \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}$ & $(\Lambda)$ \\
     $\vec{v}$ & $::=$ & $v \mid \vec{v}+\vec{v} \mid \alpha \vec{v} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\ValD)$ \\
     $\vec{t}$ & $::=$ & $t \mid \vec{t}+\vec{t} \mid \alpha \vec{t} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\vec \Lambda)$
   \end{tabular}
-  \caption{Syntax of the calculus, where $X, Y \subseteq \ValD$.}
+  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
   \label{tab:Syntax}
 \end{table}
 The syntax of the calculus is described in
@@ -547,17 +543,14 @@ lambda abstractions, and two basis values representing orthogonal vectors,
 $\ket 0$ and $\ket 1$. A pair of values is also considered a value.  Terms
 include values, applications, pair constructors and destructors, and pattern
 matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
-This $\mathsf{case}$ operator supports quantum control which enables
-computations without a definite causal structure, such as the quantum switch 
-\cite{Chiribella_2013}.
 Both term and value combinations are built $\C$-linear combinations of
 basic terms and values, respectively. We use $v,u,w$ to denote values and
 $t,s,r$ for terms, writing $\vec{\cdot}$ when they are combinations.
 
-The symbols $X$, and $Y$ appearing in the abstractions and pair
-destructors denote the basis of the vector spaces in which the terms are
+The symbols $B$, $B_1$, and $B_2$ appearing in the abstractions and pair
+destructors denote the bases of the vector spaces in which the terms are
 expressed; their precise nature is made explicit below.
-Before formally defining the notion of basis, we first establish the
+Before formally defining the notion of bases, we first establish the
 algebraic structure underlying the space of value combinations.
 This is achieved by introducing the congruence relation defined in
 Table~\ref{tab:Congruence}.
@@ -567,37 +560,76 @@ as genuine algebraic entities rather than mere syntactic constructions.
 In particular, it enforces the commutativity and associativity of addition and
 the distributivity of scalar multiplication, thereby justifying summation
 notation~$\sum$.
+%\begin{table}[t]
+%  \begin{align*}
+%    0\vec t &\equiv \vec 0 & \vec t+\vec 0 &\equiv \vec t \\
+%    1\vec{t} &\equiv \vec{t} &
+%    \alpha(\beta\vec{t}) &\equiv (\alpha\beta)\vec{t} \\
+%    \vec{t}_{1}+\vec{t}_{2} &\equiv \vec{t}_{2}+\vec{t}_{1} &
+%    (\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3} &\equiv \vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3}) \\
+%    (\alpha+\beta)\vec{t} &\equiv \alpha\vec{t}+\beta\vec{t} &
+%    \alpha(\vec{t}_{1}+\vec{t}_{2}) &\equiv \alpha\vec{t}_{1}+\alpha\vec{t}_{2} \\
+%    \vec{t}(\alpha\vec{s}) &\equiv \alpha(\vec{t}\vec{s}) &
+%    (\alpha\vec{t})\vec{s} &\equiv \alpha(\vec{t}\vec{s}) \\
+%    (\vec{t}+\vec{s})\vec{r} &\equiv \vec{t}\vec{r}+\vec{s}\vec{r} &
+%    \vec{t}(\vec{s}+\vec{r}) &\equiv \vec{t}\vec{s}+\vec{t}\vec{r} &&
+%  \end{align*}
+%  \vspace{-2\baselineskip}
+%  \begin{align*}
+%    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vec{t})}{\vec{s}}
+%    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{s}}) \\
+%    &\LetP{x_1}{X}{x_2}{Y}{\vec{t}+\vec{s}}{\vec{r}}
+%    \equiv
+%      (\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{r}})
+%      +(\LetP{x_1}{X}{x_2}{Y}{\vec{s}}{\vec{r}}) 
+%      \\
+%    &\gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}
+%    \equiv \alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}) \\
+%    &\gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{r}_{1}}{\vec{r}_{k}}
+%    \equiv\begin{aligned}[t]
+%      &\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}\\
+%      &+\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}
+%    \end{aligned}
+%  \end{align*}
+%  \caption{Term congruence}
+%  \label{tab:Congruence}
+%\end{table}
 \begin{table}[t]
-  \begin{align*}
-    0\vec t &\equiv \vec 0 & \vec t+\vec 0 &\equiv \vec t \\
-    1\vec{t} &\equiv \vec{t} &
-    \alpha(\beta\vec{t}) &\equiv (\alpha\beta)\vec{t} \\
-    \vec{t}_{1}+\vec{t}_{2} &\equiv \vec{t}_{2}+\vec{t}_{1} &
-    (\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3} &\equiv \vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3}) \\
-    (\alpha+\beta)\vec{t} &\equiv \alpha\vec{t}+\beta\vec{t} &
-    \alpha(\vec{t}_{1}+\vec{t}_{2}) &\equiv \alpha\vec{t}_{1}+\alpha\vec{t}_{2} \\
-    \vec{t}(\alpha\vec{s}) &\equiv \alpha(\vec{t}\vec{s}) &
-    (\alpha\vec{t})\vec{s} &\equiv \alpha(\vec{t}\vec{s}) \\
-    (\vec{t}+\vec{s})\vec{r} &\equiv \vec{t}\vec{r}+\vec{s}\vec{r} &
-    \vec{t}(\vec{s}+\vec{r}) &\equiv \vec{t}\vec{s}+\vec{t}\vec{r} &&
-  \end{align*}
-  \vspace{-2\baselineskip}
-  \begin{align*}
-    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vec{t})}{\vec{s}}
-    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{s}}) \\
-    &\LetP{x_1}{X}{x_2}{Y}{\vec{t}+\vec{s}}{\vec{r}}
-    \equiv
-      (\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{r}})
-      +(\LetP{x_1}{X}{x_2}{Y}{\vec{s}}{\vec{r}}) 
-      \\
-    &\gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}
-    \equiv \alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}) \\
-    &\gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{r}_{1}}{\vec{r}_{k}}
-    \equiv\begin{aligned}[t]
-      &\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}\\
-      &+\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}
-    \end{aligned}
-  \end{align*}
+  \centering
+  \begin{tabular}{r@{~}c@{~}l@{\qquad}r@{~}c@{~}l}
+    \multicolumn{6}{c}{$
+      \vec{t}_1+\vec{t}_2 \equiv \vec{t}_2+\vec{t}_1,
+      \quad
+      (\vec{t}_1+\vec{t}_2)+\vec{t}_3 \equiv \vec{t}_1+(\vec{t}_2+\vec{t}_3),
+      \quad
+      0\vec{t} \equiv \vec{0},
+      \quad
+      1\vec{t} \equiv \vec{t},
+      \quad 
+      \vec{t}+\vec{0} \equiv \vec{t},
+    $} \\
+    \multicolumn{6}{c}{$
+      \alpha(\beta\vec{t})\equiv(\alpha\beta)\vec t,
+      \quad 
+      (\alpha+\beta)\vec{t} \equiv \alpha\vec{t}+\beta\vec{t},
+      \quad
+      \alpha(\vec{t}_1+\vec{t}_2) \equiv \alpha\vec{t}_1+\alpha\vec{t}_2,
+    $} \\
+    \multicolumn{6}{c}{$
+      \vec{t}(\alpha\vec{s}) \equiv \alpha(\vec{t}\vec{s}),
+      \qquad
+      (\alpha\vec{t})\vec{s} \equiv \alpha(\vec{t}\vec{s}),
+      \qquad
+      (\vec{t}+\vec{s})\vec{r} \equiv \vec{t}\vec{r}+\vec{s}\vec{r},
+      \qquad
+      \vec{t}(\vec{s}+\vec{r}) \equiv \vec{t}\vec{s}+\vec{t}\vec{r},
+    $} \\
+    \multicolumn{3}{l}{$\mathsf{let} (x^X, y^Y) = (\alpha\vec{t}) \text{ in } \vec{s} \equiv \alpha\mathsf{let} (x^X, y^Y) = \vec{t} \text{ in } \vec{s}$} &
+    \multicolumn{3}{l}{$\text{case } \alpha \vec{t} \text{ of } \{\vec{v}_i \mapsto \vec{s}_i\} \equiv \alpha\text{case } \vec{t} \text{ of } \{\vec{v}_i \mapsto \vec{s}_i\}$} \\
+    \noalign{\smallskip}
+    \multicolumn{3}{l}{$\mathsf{let} (x^X, y^Y) = (\vec{t}+\vec{s}) \text{ in } \vec{r} \equiv \sum_{z \in \{\vec{t}, \vec{s}\}} \mathsf{let} \dots z \dots$} &
+    \multicolumn{3}{l}{$\text{case } (\vec{t}+\vec{s}) \text{ of } \dots \equiv \sum_{z \in \{\vec{t}, \vec{s}\}} \text{case } z \dots$} 
+  \end{tabular}
   \caption{Term congruence}
   \label{tab:Congruence}
 \end{table}
@@ -638,13 +670,6 @@ superposition of elements of the basis attached to each abstraction.
 The congruence ensures that these linear combinations behave algebraically as
 in a complex vector space, supporting the standard operations of addition,
 scalar multiplication, and the zero vector.
-
-The presentation of the term congruence does not lend itself easily to implementation.
-In order to do so, we would need to have a directed set of rules with normal forms
-and extra definitions for casting. This issue was first addressed by \cite{ArrighiDowekLMCS17},
-and later refined in \cite{DiazcaroDowekRinaldiBIO19} and, \cite{DiazcaroMonzonAPLAS25}.
-We choose this presentation since the previous works give a satisfactory answer for
-possible implementation, and it simplifies our system for analysis.
 
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
@@ -709,12 +734,17 @@ As expected, no non-trivial linear combination of basis elements yields the null
 otherwise, some basis vector would violate pairwise orthogonality. Consequently, each
 decomposition over a basis is unique.
 
-\begin{remark}[Unique decomposition]\label{thm:UniqueDecomposition}\label{cor:EquivalentDecomposition}
+\begin{theorem}[Unique decomposition]\label{thm:UniqueDecomposition}
   If $B$ is a $2^n$-dimensional basis, then every $n$-qubit state has a
-  unique decomposition over $B$. This means that when $\vec{v} \equiv \vec{w}$,
-  then they share the same decomposition over any basis $B$.
+  unique decomposition over $B$.
   \qed
-\end{remark}
+\end{theorem}
+
+\begin{corollary}[Preservation under congruence]\label{cor:EquivalentDecomposition}
+  If $\vec{v} \equiv \vec{w}$, then they share the same decomposition over any
+  basis $B$.
+  \qed
+\end{corollary}
 
 We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the Hadamard
 basis by $\XB=\{\ket{+},\ket{-}\}$, where
@@ -757,7 +787,7 @@ symbol $\AbsBasis$.
 %  \]
 %  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Theorem~\ref{thm:UniqueDecomposition}.
 %\end{definition}
-\begin{definition}[Basis-dependent substitution]\label{def:basisDependentSub}
+\begin{definition}[Basis-dependent substitution]
   Let $\vec t$ be a term combination, $\vec v$ a value combination, $x$ a
   variable, and $B$ an orthonormal basis or $\AbsBasis$. The substitution 
   $\vec t\ansubst{\vec v/x}{B}$ is defined as $\sum_{i\in I}\alpha_i\vec{t}[\vec{b}_i/x]$ 
@@ -837,7 +867,7 @@ equivalence class induced by the congruence $\equiv$.
 
 We remark that the result in the previous lemma uses $=$ instead of $\equiv$
 since $\vec{t}\ansubst{\vec{v}/x}{B}$ and $\vec{t}\ansubst{\vec{w}/x}{B}$
-both substitutions result in the exact same term. Note that this property
+are both substitution with the exact same outcome. Note that this property
 does not extend across different bases; that is, $\vec{t}\ansubst{\vec{v}/x}{A}
 \not\equiv\vec{t}\ansubst{\vec{v}/x}{B}$.
 For example,
@@ -1064,9 +1094,9 @@ in a Hilbert space.
 \end{definition}
 
 \begin{definition}[Unitary type]
-  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$ built from a
-  formal language with a set of unitary value combinations, denoted~$\sem{A}$,
-  called the \emph{unitary semantics} of~$A$.
+  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$
+  with a set of unitary value combinations, denoted~$\sem{A}$, called the
+  \emph{unitary semantics} of~$A$.
 \end{definition}
 
 
@@ -1098,7 +1128,7 @@ that guides the definition of realizers.
   \label{tab:UnitaryTypes}
 \end{table}
 With the notions of unitary types and their realizers in place, we can now
-define a concrete set of types for our language. We begin with the type grammar
+define a concrete approach for our language. We begin with the type grammar
 given in~Table~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
 values we aim to represent.
 
@@ -1155,7 +1185,7 @@ interpretation has norm~$1$.
 \end{theorem}
 
 Defining types as sets of values naturally induces a semantic notion of
-subtyping. The relationship is simply given by set inclusion. 
+subtyping.
 \begin{definition}[Subtyping and isomorphism]\label{def:Subtyping}
 We say that a type~$A$ is a subtype of a type~$B$
 (written~$A\leq B$) when $\sem A\subseteq\sem B$. 
@@ -1163,19 +1193,14 @@ If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
 (written~$A\cong B$).
 \end{definition}
 
-\begin{table}[t]
-  \centering
-  \begin{tabular}{c@{\quad}c@{\quad}c@{\quad}c}
-    \infer{\sharp (\basis{X})\cong\sharp(\basis{Y})}{\mathsf{size}(X) = \mathsf{size}(Y)} &
-    \infer{\basis{X\times Y} \cong \basis{X}\times\basis{Y}}{} &
-    \infer{\sharp A \leq \sharp B}{A\leq B} &
-    \infer{(\sharp A)\times(\sharp B)\leq\sharp(A\times B)}{}
-  \end{tabular}
-  \caption{Some valid subtyping rules.}
-  \label{tab:Subtyping}
-\end{table}
-
-We present some of these subtyping relations in Table~\ref{tab:Subtyping}
+\begin{example}
+  For every type~$A$, we have $A\leq\sharp A$.
+  For the base types $\basis{\B}$ and $\basis{\XB}$, 
+  neither inclusion holds:
+  $\basis{\B}\not\leq\basis{\XB}$ and
+  $\basis{\XB}\not\leq\basis{\B}$. However, if they have the same dimension,
+  $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
+\end{example}
 
 Although every type is defined by norm-1 value combinations, not every
 norm-1 combination is contained in the interpretation of a type.
@@ -1337,8 +1362,6 @@ it will simplify the forthcoming proofs.
       \sigma(x_i) = \ansubst{\vec{v}_{i}/x_i}{{X_i}}
       \text{ for some }\vec{v}_{i} \in \sem{A_i}\}.
   \end{align*}
-  Where $\ansubst{\--/\--}{\--}$ denotes the substitution defined
-  in~\ref{def:basisDependentSub}.
 \end{definition}
 
 

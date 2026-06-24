@@ -6,16 +6,19 @@ Over the last decade we have seen research into quantum computation accelerate a
 Functional programming provides a suitable paradigm to study this topic. Considering measurement operations, quantum computation can be considered as a particular case of probabilistic computation. In addition, linear type systems are well-suited to deal with the restraints posed by no-go theorems such as no-cloning or no-deletion. For this reason, throughout this thesis, we will analise different characteristics of quantum computation through the lens of $\lambda$-calculus.
 
 %%% STATE OF THE ART
-Several quantum programming languages have been developed in the last 20 years. Starting with Selinger and Valiron's QPL in 2004; the technology has been iterated and refined producing real-world implementations. In a non-exhaustive way we can mention Quipper, {\color{red} ejemplos de lenguajes con citas}. 
+Several quantum programming languages have been developed in the last 20 years. Starting with Selinger and Valiron's QPL in 2004; the technology has been iterated and refined producing real-world implementations.
 
 %%%% Básicamenetee se pueden dividir en control cuántico y control clásico
 These languages fall into two different paradigms, determined by the way they control information. Classical control calculi deal with quantum data, but the program themselves follow a classical flow. Every conditional is determined by an expression which can be the result of a measurement. This is akin to having a classical computer equipped with a quantum co-processor to perform certain operations.
 
-Quantum control calculi not only allow for quantum data, but also the superposition of programs. Control structures inside program can be determined by a \emph{superposition} of values, which yields a superposition of programs. In this sense, data and programs are considered on the same level. Continuing with the previous analogy, this languages can be thought as a single integrated machine that can perform quantum computation.
+Quantum control calculi not only allow for quantum data, but also the superposition of programs. Control structures inside program can be determined by a \emph{superposition} of values, which yield a superposition of programs. In this sense, data and programs are considered on the same level. Continuing with the previous analogy, this languages can be thought as a single integrated machine that can perform quantum computation.
 
 %%%% En general para lenguajes de control clásico se definen compuertas primitivas y se componen similarmente a los circuitos para generar unitarias más complejas
+In general, classical control languages define a set of primitive gates from which more intricate gates are built. This is a reflection of the circuit-like behaviour of the program. The only way to introduce quantum behaviour is through the use of primitives which modify the state of an argument.
+{\color{red} Ejemplos de lenguajes con citas.}
 
 %%%% En el caso de control cuántico, se toman primitivas más fundamentales y la forma de obtener operaciones más complejas es a través de la composición de programas.
+In the case of quantum control, since the state of the program itself can be superposed, there are more elementary ways to represent quantum behaviour. These primitives need not to have a gate-like equivalent, and the method to produce more elaborated unitaries is through function composition. {\color{red} Ejemplos de lenguajes con citas.}
 
 %%% FOCUS AND SCOPE
 \section{Focus and Scope}
@@ -27,24 +30,28 @@ The development of new and more capable programming languages starts with the th
 \end{itemize}
 
 %%% QUESTIONS AND OBJECTIVES
-Our objective is to study two different levels of programming language design. On one side, examine a possible approach to transform programs into an intermediate representation such as ZX-diagrams. This in turn, could allow for an optimization and refinement step before a compilation onto quantum circuits.
+Our objective is to study two different levels of programming language design. On one side, we examine a possible approach to transform programs into an intermediate representation such as families of ZX-diagrams. This in turn, could allow for an optimization and refinement step before a compilation onto quantum circuits.
 
-On the flip side, we present a calculus in the quantum-control paradigm with the objective of expressing quantum algorithms in a more compositional manner. This could form the foundation of a more robust, higher-order programming language. Consequently, adding an abstraction layer between programs and circuitry.
+On the flip side, we present a calculus in the quantum-control paradigm which allows functions to be written with respect to different bases. This could form the foundation of a more robust, higher-order programming language. Consequently, adding an abstraction layer between programs and circuitry.
 
-%%%% El objetivo final es proveer herramientas para 
+The overall objective of this work is to develop tools to move away from the circuit model of quantum computation. Taking an analogue with classical computation, every single algorithm can be encoded in terms of wires and gates, yet the complexity of this task makes it untreatable. Developping further abstraction layers should aid in the definition of new and more sophisticated quantum algorithms.
 
 %%% OVERVIEW OF THE STRUCTURE
+\subsection{Overview}
 This document is structured as follows:
 \begin{itemize}
     \item The second chapter presents a small analysis regarding probabilistic confluence. We examine the effect of small modifications in probabilistic rewriting, affine variables, and strategies on the overall confluence in a strongly normalizing probabilistic calculus.
     
     This chapter is based on the paper \cite{Romero_2022}.
 
-    \item The third chapter presents a translation between a quantum lambda calculus and $ZX_{\ground}$ diagrams.
+    \item The third chapter presents a method to define families of SZX-diagrams and a translation from programs from a quantum lambda calculus into these families. We prove certain properties of this calculus and soundness of the translation.
+    
+    This chapter is based on the paper \cite{Borgna_2023}.
     
 
-    \item The fourth chapter presents a quantum lambda calculus working with bases outside the computational and a its type system extracted via intuitionistic realisability.
+    \item The fourth chapter extends a quantum lambda calculus previously presented in \cite{DiazcaroGuillermoMiquelValiron2019}. The extension allows the implementation of terms relative to different basis, not just the computational one. We extract a type system family via intuitionistic realizability and provide a characterization of unitary operators as terms in the language.
     
+    This chapter is based on the paper \cite{Diazcaro_Malherbe_Romero_2025}.
     
     \item The last chapter holds the conclusion and some closing remarks.
 \end{itemize}
