@@ -28,6 +28,7 @@
 \newtheorem*{restatetheorem}{}
 \newtheorem*{restatecorollary}{}
 \newtheorem*{restatelemma}{}
+\newtheorem*{restateremark}{}
 \makeatother
 
 \allowdisplaybreaks
@@ -416,13 +417,16 @@ enables duplication and erasure for qubits in known bases while maintaining
 linear handling for unknown qubits. This technique works well for first-order
 terms, but it fails to capture the notion of basis for higher order terms. In
 case of a combination of abstractions, the system reduces linearly over it.
-{\color{red} PONER QUE TRABAJAMOS EN EL PROBLEMA PERO NO TENEMOS UNA SOLUCIÓN
-SATISFACTORIA (PERO DICHO DE MANERA POLITE).}
 
 
 This work pursues two goals: first, to provide a more exact program description
 via the extracted type system; and second, to express quantum algorithms compositionally,
 rather than as mere circuit translations.
+
+With these goals in mind, we take the design choice to not include measurement and
+study a pure calculus. Previous works on this line of research have proposed solutions
+to support measurement \cite{DiazcaroDowekRinaldiBIO19,DiazcaroMonzonAPLAS25}, so we
+decided to narrow the focus of this paper to the unitary setting.
 
 \paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
@@ -608,6 +612,15 @@ on this algebraic foundation. Once the vector structure is established, we can d
 which subsets $B\subseteq \ValD$ qualify as \emph{bases}, thereby justifying the
 decorations appearing in the syntax of Table~\ref{tab:Syntax}.
 
+\begin{remark}
+  The calculus syntax only allows for application between basic terms. The term congruence 
+  is the mechanism by which we are able to apply term combinations, since:
+  \[
+  (\sum_{i=0}^{n} \alpha_i t_i\ ) (\sum_{j=0}^{m} \beta_j s_j\ ) \equiv
+  \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i \beta_j (t_i\ s_j)
+  \]
+\end{remark}
+
 We will also consider the following notation for linear combinations of
 pairs. This notation does not appear in the syntax, but is rather useful to describe
 specific states.
@@ -709,7 +722,7 @@ As expected, no non-trivial linear combination of basis elements yields the null
 otherwise, some basis vector would violate pairwise orthogonality. Consequently, each
 decomposition over a basis is unique.
 
-\begin{remark}[Unique decomposition]\label{thm:UniqueDecomposition}\label{cor:EquivalentDecomposition}
+\begin{remark}[Unique decomposition]\label{rem:UniqueDecomposition}\label{cor:EquivalentDecomposition}
   If $B$ is a $2^n$-dimensional basis, then every $n$-qubit state has a
   unique decomposition over $B$. This means that when $\vec{v} \equiv \vec{w}$,
   then they share the same decomposition over any basis $B$.
@@ -721,7 +734,7 @@ basis by $\XB=\{\ket{+},\ket{-}\}$, where
 $\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.  
 
 %\subsection{Basis-dependent substitutions}
-As usual, the expression $\vec t[\vec v/x]$ denotes the
+As usual, the expression $\vec t\ [\vec v/x]$ denotes the
 capture-avoiding substitution of $\vec v$ for $x$ in $\vec t$.
 However, beta-reduction depends on the basis chosen for the abstraction, so we must
 define a substitution that takes this mechanism into account. Intuitively, this
@@ -755,7 +768,7 @@ symbol $\AbsBasis$.
 %      \text{undefined} & \text{otherwise.}
 %    \end{cases}
 %  \]
-%  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Theorem~\ref{thm:UniqueDecomposition}.
+%  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Remark~\ref{rem:UniqueDecomposition}.
 %\end{definition}
 \begin{definition}[Basis-dependent substitution]\label{def:basisDependentSub}
   Let $\vec t$ be a term combination, $\vec v$ a value combination, $x$ a
@@ -763,9 +776,9 @@ symbol $\AbsBasis$.
   $\vec t\ansubst{\vec v/x}{B}$ is defined as $\sum_{i\in I}\alpha_i\vec{t}[\vec{b}_i/x]$ 
   if $B=\{\vec{b}_i\}_{i\in I}$ and $\vec{v}\equiv\sum_{i\in I} \alpha_i\vec{b}_i$; 
   or as $\sum_{i\in I}\alpha_i\vec{t}[v_i/x]$ if $B=\AbsBasis$ and 
-  $\vec{v}=\sum_{i\in I} \alpha_i v_i$; otherwise it is undefined. The 
-  uniqueness of the decomposition over $B$ is guaranteed by 
-  Theorem~\ref{thm:UniqueDecomposition}.
+  $\vec{v}=\sum_{i\in I} \alpha_i v_i$; otherwise it is undefined.
+  As remarked in \ref{rem:UniqueDecompostion}, this decomposition is unique,
+  and the substitution is well-defined.
 \end{definition}
 
 This definition captures two substitution modes: linear decomposition of $\vec v$ over an explicit basis $B$, or over its basic values when $B=\AbsBasis$ (recovering the mechanism of~\cite{ArrighiDowekLMCS17}). The latter is the only case applicable to $\lambda$-abstractions. The operation extends to pairs: if $\vec v\equiv\sum_{i\in I}\alpha_i(\vec{v}_i, \vec{w}_i)$, then $\vec t\ansubst{\vec v/x\otimes y}{B_1\otimes B_2} = \sum_{i\in I}\alpha_i (\vec t\ansubst{\vec{v}_i/x}{B_1}\ansubst{\vec{w}_i/y}{B_2})$, where $B_1, B_2$ are the bases associated with $x, y$.
@@ -1120,23 +1133,19 @@ Intuitively, applying the operator $\sharp$ captures the
 linear combinations of values in the unitary semantics of $A$, as 
 stated in the following theorem.
 
-\begin{theorem}\label{thm:SharpCharacterization}
+\begin{remark}\label{rem:SharpCharacterization}\label{rem:IdempotentSharp}
   The interpretation of a type~$\sharp A$ contains precisely the
   norm-$1$ linear combinations of values in~$\sem{A}$:
-  \(
+  \[
     \sem{\sharp A}
     = (\sem{A}^\bot)^\bot
     = \Span(\sem{A}) \cap \Sph
-  \).
+  \] 
+  Moreover, as expected for a span, the~$\sharp$ operator is idempotent;
+  that is, $\sem{\sharp A} = \sem{\sharp(\sharp A)}$. Proof of this
+  remark can be found on the appendix.
   \qed
-\end{theorem}
-
-As expected for a span, the $\sharp$ operator is idempotent.
-\begin{theorem}\label{thm:IdempotentSharp}
-  The~$\sharp$ operator is idempotent; that is,
-  $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
-  \qed
-\end{theorem}
+\end{remark}
 
 \begin{remark}
   A basis type~$\basis{X}$ may consist of value combinations of pairs and can
@@ -1153,6 +1162,9 @@ interpretation has norm~$1$.
   For every type~$A$, $\sem{A}\subseteq\Sph$.
   \qed
 \end{theorem}
+\begin{proof}
+  The proof is simple, we merely have to show that $\Sph$ is stable under pairings. The detailed proof can be found on the appendix.
+\end{proof}
 
 Defining types as sets of values naturally induces a semantic notion of
 subtyping. The relationship is simply given by set inclusion. 
@@ -1355,8 +1367,7 @@ form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
     \sdom{\Gamma} :=
     \{x \in \dom{\Gamma} \mid
     \sem{\Gamma(x)} = \sem{\sharp(\Gamma(x))}\}
-  \).\footnote{This definition relies on the idempotence of the~$\sharp$~operator
-  (Theorem~\ref{thm:IdempotentSharp}).
+  \).\footnote{This definition relies on the idempotence of the~$\sharp$~operator (Remark~\ref{rem:IdempotentSharp}).
   }
 \end{definition}
 
@@ -1381,10 +1392,9 @@ is faithfully captured by the type.  Formally:
 \end{definition}
 
 We are also interested in \emph{orthogonal terms}, that is, terms that reduce
-to orthogonal values.  
-We therefore introduce the following notion.
+to orthogonal values. We therefore introduce the following notion.
 
-\begin{definition}
+\begin{definition}[Orthogonality judgement]
   An \emph{orthogonality judgement}
   $\ORTH{\Gamma}{\Delta_1}{\vec{t}}{\Delta_2}{\vec{s}}{A}$
   is said to be \emph{valid} when the judgements
@@ -1398,11 +1408,8 @@ We therefore introduce the following notion.
       $\vec{s}\ansubst{\tau}{}\eval\vec{w}$,
       and $\vec{v}\perp\vec{w}$.
 When both $\Delta_1$ and $\Delta_2$ are empty,
-we just write
-$\SORTH{\Gamma}{\vec{t}}{\vec{s}}{A}$.
+we just write $\SORTH{\Gamma}{\vec{t}}{\vec{s}}{A}$.
 \end{definition}
-
-
 
 With these definitions in mind, a typing rule is \emph{valid} when valid
 premises entail a valid conclusion.  
@@ -1517,6 +1524,13 @@ This is the main result of the paper, as the validity of these rules ensures all
   \qed
 \end{theorem}
 
+In the general case, determining orthogonality between two different open terms
+is potentially undecidable. This is a known problem since the first iterations
+of calculi that worked with these kind of judgements \cite{AltenkirchGrattageLICS05}.
+Intuitively, the semantical condition for orthogonality on the $\snam{Sum}$ and
+$\snam{UnitCase}$ rules can be thought as an external proof that must be provided by
+the programmer. Fortunately, the orthogonality for qubits and closed terms is easily
+verified.
 
 The usual safety properties follow straightforwardly in this framework.
 \emph{Confluence} is an immediate consequence of the reduction being
@@ -1791,6 +1805,12 @@ The benefits of this design are manifest in the realisability model. Inclusion a
 
 Finally, we illustrated the system's advantages through two canonical examples: in \emph{Deutsch's algorithm}, basis-aware typing captures the algorithm's determinism by treating the result classically; in \emph{quantum teleportation}, the $\mathsf{case}$ construct simulates gates controlled by Bell-basis measurements, internalising the deferred-measurement principle. These results show that basis-sensitivity is a powerful tool for the static analysis of quantum protocols.
 
+A current line of work is defining categorical semantics allowing for comparison with other
+established calculi, and to incorporate new features. Another, would be to extend the notion of
+basis to include higher-order values; this question was tackled during the development of this
+paper, but a satisfactory answer remained elusive. We hope in a future work, to generalize the
+notion in order to encompass all values under a unified framework for the reduction system. 
+
 %\section{Conclusion}\label{sec:conclusion}
 %
 %In this paper we have explored a quantum-control $\lambda$-calculus equipped
@@ -1839,11 +1859,11 @@ Finally, we illustrated the system's advantages through two canonical examples: 
 
 \section{Omitted proofs from Section~\ref{sec:calculus}}\label{sec:appendixA}
 
-\begin{restatetheorem}[Restatement of Theorem~\ref{thm:UniqueDecomposition}]
+\begin{restateremark}[Restatement of Remark~\ref{rem:UniqueDecomposition}]
   \itshape
   If $B$ is an $2^n$-dimensional basis, then every $n$-qubit state has
   a unique decomposition over $B$.
-\end{restatetheorem}
+\end{restateremark}
 \begin{proof}
   Let $\vec{b}_{i}$ be the basis vectors of $B$. Suppose
   $\sum_{i=1}^{2^n} \alpha_i \vec{b}_{i}$ and $\sum_{i=1}^{2^n} \beta_i \vec{b}_{i}$
@@ -1861,8 +1881,7 @@ Finally, we illustrated the system's advantages through two canonical examples: 
 \end{restatecorollary}
 \begin{proof}
   Since $\vec{v}-\vec{w}\equiv\vec{v}-\vec{v}\equiv\vec{w}-\vec{w}$, the same
-  argument as in Theorem~\ref{thm:UniqueDecomposition} shows that $\vec{v}$ and $\vec{w}$ have the
-  same decomposition over $B$.
+  argument as in Remark~\ref{rem:UniqueDecomposition} shows that $\vec{v}$ and $\vec{w}$ have the same decomposition over $B$.
 \end{proof}
 
 \begin{restatelemma}[Restatement of Lemma~\ref{lem:distributiveSubstitution}]
@@ -2126,7 +2145,7 @@ Finally, we illustrated the system's advantages through two canonical examples: 
 
 \section{Omitted proofs from Section~\ref{sec:model}}\label{sec:appendixC}
 
-\begin{restatetheorem}[Restatement of Theorem~\ref{thm:SharpCharacterization}]
+\begin{restatetheorem}[Restatement of Remark~\ref{rem:SharpCharacterization}]
   \itshape
   The interpretation of a type~$\sharp A$ contains precisely the
   norm-$1$ linear combinations of values in~$\sem{A}$:
@@ -2155,7 +2174,7 @@ Finally, we illustrated the system's advantages through two canonical examples: 
   \end{description}
 \end{proof}
 
-\begin{restatetheorem}[Restatement of Theorem~\ref{thm:IdempotentSharp}]
+\begin{restatetheorem}[Restatement of Remark~\ref{rem:IdempotentSharp}]
   \itshape
   The~$\sharp$ operator is idempotent; that is,
   $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
@@ -2244,7 +2263,7 @@ Finally, we illustrated the system's advantages through two canonical examples: 
     &= 1
   \end{align*}
 
-  Then $\sum_{i=1}^n \alpha_i \vec{w}_{i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Theorem~\ref{thm:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
+  Then $\sum_{i=1}^n \alpha_i \vec{w}_{i}\in\sem{\sharp(\sharp\basis{Y})}=\sem{\sharp\basis{Y}}$ by Remark~\ref{rem:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
 \end{proof}
 
 \begin{restatetheorem}[Restatement of Theorem~\ref{thm:characterisation}]
@@ -2648,7 +2667,7 @@ Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
         \item $\FV{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}\subseteq\dom{\Gamma,\Delta}$
     \end{itemize}
     
-    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from Theorem~\ref{thm:SharpCharacterization} we have that:
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from Remark~\ref{rem:SharpCharacterization} we have that:
     
     \[\vec t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vec{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vec{v}_{k}}{\vec{u}_{k}})\] 
     
