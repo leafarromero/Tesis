@@ -3,6 +3,13 @@
 \section{Topic and context}
 Over the last decade we have seen research into quantum computation accelerate and the time and resources devoted to its study increase dramatically. At the time of this writing, this trend seems to continue. We intend to contribute our findings to this rapidly shifting field.
 
+\subsection{Circuit model}
+%%%%% Leer el origen del modelo del picturing quantum processes
+%%%%% Históricamente el más utilizado para representar algoritmos
+%%%%% Mencionar por otro lado, el modelo de circuitos. Hablar de ZX
+
+
+\subsection{Functional programming}
 Functional programming provides a suitable paradigm to study this topic. Considering measurement operations, quantum computation can be considered as a particular case of probabilistic computation. In addition, linear type systems are well-suited to deal with the restraints posed by no-go theorems such as no-cloning or no-deletion. For this reason, throughout this thesis, we will analise different characteristics of quantum computation through the lens of $\lambda$-calculus.
 
 %%% STATE OF THE ART
@@ -15,10 +22,14 @@ Quantum control calculi not only allow for quantum data, but also the superposit
 
 %%%% En general para lenguajes de control clásico se definen compuertas primitivas y se componen similarmente a los circuitos para generar unitarias más complejas
 In general, classical control languages define a set of primitive gates from which more intricate gates are built. This is a reflection of the circuit-like behaviour of the program. The only way to introduce quantum behaviour is through the use of primitives which modify the state of an argument.
-{\color{red} Ejemplos de lenguajes con citas.}
+{\color{red} Ejemplos de lenguajes con citas.} 
+% Hacer un pequeño itemize con 3 o 4 ejemplos y comparar con nuestro  
 
 %%%% En el caso de control cuántico, se toman primitivas más fundamentales y la forma de obtener operaciones más complejas es a través de la composición de programas.
 In the case of quantum control, since the state of the program itself can be superposed, there are more elementary ways to represent quantum behaviour. These primitives need not to have a gate-like equivalent, and the method to produce more elaborated unitaries is through function composition. {\color{red} Ejemplos de lenguajes con citas.}
+
+
+
 
 %%% FOCUS AND SCOPE
 \section{Focus and Scope}
