@@ -310,7 +310,7 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
   previous basis-sensitive systems by allowing abstractions to be expressed with
   respect to arbitrary---possibly entangled---bases, combining quantum control 
   and realisability semantics ensuring unitarity by construction.
-  Each abstraction and $\mathsf{let}$-construct is annotated with a basis,
+  Each instance of variable binding is annotated with a basis,
   and a new basis-dependent substitution governs the decomposition of value
   combinations. These extensions preserve the expressive power of earlier calculi
   while enabling finer reasoning about programs under basis changes. Realisability
@@ -428,7 +428,7 @@ study a pure calculus. Previous works on this line of research have proposed sol
 to support measurement \cite{DiazcaroDowekRinaldiBIO19,DiazcaroMonzonAPLAS25}, so we
 decided to narrow the focus of this paper to the unitary setting.
 
-\paragraph{Related work.}
+\paragraph*{Related work.}
 The idea of tracking basis information within quantum programming languages has
 appeared in several forms across the literature.  
 The work in~\cite{Perdrix2008} proposed an abstract model for static
@@ -777,7 +777,7 @@ symbol $\AbsBasis$.
   if $B=\{\vec{b}_i\}_{i\in I}$ and $\vec{v}\equiv\sum_{i\in I} \alpha_i\vec{b}_i$; 
   or as $\sum_{i\in I}\alpha_i\vec{t}[v_i/x]$ if $B=\AbsBasis$ and 
   $\vec{v}=\sum_{i\in I} \alpha_i v_i$; otherwise it is undefined.
-  As remarked in \ref{rem:UniqueDecompostion}, this decomposition is unique,
+  As remarked in \ref{rem:UniqueDecomposition}, this decomposition is unique,
   and the substitution is well-defined.
 \end{definition}
 
@@ -1710,20 +1710,80 @@ The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies transm
 
 By delayining measurement, we define a term that explicitly describes the computation for each coherent branch of the superposition:
 \begin{align*}
-&\mathsf{Teleport}_{\Phi^+} :=
+\mathsf{Teleport}_{\Phi^+} :=
   \Lam{x}{\B}{
-    \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
-      \mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\; \{ \\
-         &\Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\, \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z y_2},\,
-	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X y_2},\, \Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX y_2} \}
+    &\LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{\\
+    &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\ \{\\  
+    &\Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
+    \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\\
+    &\Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
+    \Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
     }
+  }
+\end{align*}
+This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, Z, X, ZX$). 
+
+The strength of this approach lies in the type system's ability to verify the 
+consistency of the entire superposition: each branch is statically checked as a
+unitary transformation. The overall term is assigned the type $\sharp\basis{\B}
+\Arr\sharp(\basis{\Bell}\times\basis{\B})$ (relying on the subtypings 
+$\basis{\Bell}\leq\sharp(\basis{\B}\times\basis{\B})$ and
+$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$).
+
+Despite being the usual choice for describing the protocol, the choice of $\Phi^+$
+is arbitrary. Any of the four Bell basis states is a suitable input. Expressing the
+quantum teleportation in this manner, gives a structure from where we can abstract
+a more general representation. Consider the following program:
+\begin{align*}
+\mathsf{Teleport} :=
+  \Lam{b}{\Bell}{ \Lam{x}{\B}{
+  &\LetP{y_1}{\B}{y_2}{\B}{b}{\\
+  &\mathsf{let}\ (c_1^{\AbsBasis}, c_2^{\AbsBasis}, 
+  c_3^{\AbsBasis}, c_4^{\AbsBasis}) = (\mathsf{corr}\ b)\ \mathsf{in}\\
+  &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of} \{\\
+  &\Phi^{+} \mapsto \Pair{\Phi^{+}}{c_1\,y_2},\;
+  \Phi^{-} \mapsto \Pair{\Phi^{-}}{c_2\,y_2},\\
+	&\Psi^{+} \mapsto \Pair{\Psi^{+}}{c_3\,y_2},\;
+	\Psi^{-} \mapsto \Pair{\Psi^{-}}{c_4\,y_2} \}
+    }
+  }
   }.
 \end{align*}
-This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, X, Z, ZX$). 
 
-The strength of this approach lies in the type system's ability to verify the consistency of the entire superposition: each branch is statically checked as a unitary transformation. The overall term is assigned the type $\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})$ (relying on the subtypings 
-$\basis{\Bell}\leq\sharp(\basis{\B}\times\basis{\B})$ and
-$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$), which also ensures the teleported qubit will be separable.
+We use syntactic sugar for collapsing multiple $\mathsf{let}$ and $\mathsf{corr}$ is
+the classically-controlled program that outputs the appropriate correction order for
+each of the Bell-basis vectors. It encodes the following function:
+\[
+\mathsf{corr}(x) = 
+\begin{cases}
+($I, Z, X, ZX$) \text{If }x=\Phi^+\qquad
+($I, Z, X, ZX$) \text{If }x=\Phi^+\\
+($I, Z, X, ZX$) \text{If }x=\Phi^+ \qquad
+($I, Z, X, ZX$) \text{If }x=\Phi^+\\
+\end{cases}
+\]
+
+Overall, the term is assigned the type $\basis{\Bell}\Arr\sharp(\basis{\B})
+\Arr\sharp(\basis{\Bell}\times\basis{\B})$. The advantage here is that the function
+takes \emph{any} of the four Bell basis states as argument and performs the
+protocol. The resulting term is a more abstract respresentation of the protocol,
+without relying on a predetermined choice of entangled pair.
+
+In both terms, the typing system requires checking orthogonality on the branches of
+the $\mathsf{case}$ constructor. In this particular case, it is a simple thing to 
+do, since every branch returns a pair with four different pairwise orthogonal values
+alongside the corrected qubit. 
+
+Moreover, it is also easy to prove that \emph{no other combination} of the Bell 
+basis states can be used for the protocol. This is due to the fact that the 
+superposition of protocols does not preserve unitarity. A value of type 
+$\sharp\basis{\Bell}$ would yield a term superposition of type $\sharp(\sharp 
+(\basis{\B})\Arr\sharp (\basis{\Bell}\times\basis{\B}))$ which does not act as a 
+meaningful arrow type.
+
+In short, the calculus allows us to abstract both the encoding and decoding
+steps in the Bell basis, exploiting the deferred-measurement principle. The program 
+lends itself to generalisation on the Bell basis and the type system restricts the meaningful inputs.
 
 %
 %\subsection{Quantum teleportation}\label{sec:teleportation}
