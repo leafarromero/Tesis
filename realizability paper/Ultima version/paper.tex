@@ -322,7 +322,6 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
   and quantum teleportation, where basis-aware typing captures classical
   determinism and deferred-measurement behaviour within a uniform framework.
 \end{abstract}
-\newpage
 
 \section{Introduction}
 The no-cloning theorem \cite{WoottersZurek1982} and the no-deleting theorem
@@ -345,56 +344,14 @@ quantum-control paradigm—by contrast with the classical-control one, which
 cannot be superposed. Our approach is inspired by a line of work on basis-sensitive
 quantum typing. The earliest system, Lambda-S \cite{DiazcaroDowekRinaldiBIO19},
 identified qubits in the computational basis, allowing duplication and erasure
-only in that case. Later, Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022}
-refined this approach by restricting to unit-norm vectors, introducing higher-order
-abstractions, and ensuring that terms of type qubit-to-qubit denote unitary maps.
-More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25} generalised
-Lambda-S to arbitrary non-entangled single-qubit bases, to first order. The
-$\lambda_B$ calculus presented here extends these ideas to a unit-norm, higher-order
-setting over multiple-qubit bases, grounded in a realisability semantics; a comparison
-with previous systems is provided in Table~\ref{tab:related}.
-\begin{table}
-  \centering
-  \begin{tabular}{|l|c|c|c|c|c|}\hline
-    & Lambda-S \cite{DiazcaroDowekRinaldiBIO19} 
-    & Lambda-SX \cite{DiazcaroMonzonAPLAS25} 
-    & Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} 
-    & $\lambdaB$ 
-    \\\hline\hline
-    Canonical basis 
-    & \cmark 
-    & \cmark 
-    & \cmark 
-    & \cmark 
-    \\\hline
-    Unit-norm 
-    &  
-    &  
-    & \cmark 
-    & \cmark 
-    \\\hline
-    Realisability semantics 
-    &  
-    &  
-    & \cmark 
-    & \cmark 
-    \\\hline
-    Higher-order 
-    &  
-    &  
-    & \cmark (only in the model)
-    & \cmark 
-    \\\hline
-    Multi-qubit bases 
-    &  
-    & \cmark 
-    &  
-    & \cmark 
-    \\\hline
-  \end{tabular}
-  \caption{Comparison of basis-sensitive quantum $\lambda$-calculi.}
-  \label{tab:related}
-\end{table}
+only in that case. Later, Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,
+DiazCaroMalherbe2022} refined this approach by restricting to unit-norm vectors,
+introducing higher-order abstractions, and ensuring that terms of type
+qubit-to-qubit denote unitary maps. More recently, the Lambda-SX calculus 
+\cite{DiazcaroMonzonAPLAS25} generalised Lambda-S to arbitrary non-entangled 
+single-qubit bases, to first order. The $\lambda_B$ calculus presented here extends
+these ideas to a unit-norm, higher-order setting over multiple-qubit bases,
+grounded in a realisability semantics.
 
 The realisability methodology provides a constructive framework connecting
 operational semantics with type systems. In our context, it allows extracting a
@@ -418,15 +375,15 @@ linear handling for unknown qubits. This technique works well for first-order
 terms, but it fails to capture the notion of basis for higher order terms. In
 case of a combination of abstractions, the system reduces linearly over it.
 
-
 This work pursues two goals: first, to provide a more exact program description
-via the extracted type system; and second, to express quantum algorithms compositionally,
-rather than as mere circuit translations.
+via the extracted type system; and second, to express quantum algorithms 
+compositionally, rather than as mere circuit translations.
 
 With these goals in mind, we take the design choice to not include measurement and
-study a pure calculus. Previous works on this line of research have proposed solutions
-to support measurement \cite{DiazcaroDowekRinaldiBIO19,DiazcaroMonzonAPLAS25}, so we
-decided to narrow the focus of this paper to the unitary setting.
+study a pure calculus. Previous works on this line of research have proposed 
+solutions to support measurement \cite{DiazcaroDowekRinaldiBIO19,
+DiazcaroMonzonAPLAS25}, so we decided to narrow the focus of this paper to the 
+unitary setting.
 
 \paragraph*{Related work.}
 The idea of tracking basis information within quantum programming languages has
@@ -462,15 +419,7 @@ In both cases, basis sensitivity arises semantically.
 In contrast, $\lambdaB$ integrates it directly at the syntactic and typing
 levels, ensuring that basis transformations are explicit in program structure.
 
-Other languages aim to unify classical and quantum computation.
-For instance,~\cite{VoichickLiRandHicks2023} generalises classical
-control constructs and interprets duplication and discarding semantically as
-entanglement and partial trace.  
-Our calculus follows the opposite philosophy: linearity and duplicability are
-syntactically restricted by the basis-sensitive type system, guaranteeing
-coherent quantum control without relying on external semantic constraints.
-
-Finally, related efforts in semantic characterisation—such as the fully
+Related efforts in semantic characterisation—such as the fully
 abstract model of~\cite{ClairambaultdeVisme2019} or the dual calculi
 described in~\cite{ChoudhuryGay2025}—approach the logical foundations of
 quantum computation from complementary angles.  
@@ -478,7 +427,96 @@ In contrast, $\lambdaB$ focuses on the syntactic distinction of bases and
 superpositions within a unified quantum $\lambda$-calculus, providing a concrete
 basis-sensitive typing and higher-order quantum control.
 
-%\paragraph{Contributions.}
+Other languages aim to unify classical and quantum computation.
+For instance,~\cite{VoichickLiRandHicks2023} generalises classical
+control constructs and interprets duplication and discarding semantically as
+entanglement and partial trace. Our calculus follows the opposite philosophy: 
+linearity and duplicability are syntactically restricted by the basis-sensitive 
+type system, guaranteeing coherent quantum control without relying on external 
+semantic constraints.
+
+The calculi in \cite{DaveLemonnierPechouxZamdzhiev_2025, BarssePechouxPerdrix_2026} work 
+on a probabilistic setting to accommodate measurement. The operational semantics can be
+seen as the action of programs on quantum states and thus working on two different layers.
+In contrast, our work focuses on the pure quantum fragment yielding a deterministic
+calculus where state and program share the same layer.
+
+The SYM calculus \cite{SabryValironVizzotto_2018}, is based on linear combinations of
+terms in the style of \cite{ArrighiDowekLMCS17} working within the pure quantum fragment
+(as $\lambdaB$). However, each calculus focuses on different objectives. SYM implements 
+structural recursion and limited higher-order, without requiring norm-1 for the terms. While 
+$\lambdaB$ sports less constrained higher-order functions and ensures typed terms fall in the 
+unitary sphere.
+
+A comparison with a number of calculi in the quantum-data/quantum-control paradigm is
+provided in Table~\ref{tab:related}. This is by no means an exhaustive list, but
+rather an overview to compare different characteristics and foci in the field.
+
+
+\begin{table}
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|c|}\hline
+    & Qunity \cite{VoichickLiRandHicks2023}
+    & SYM \cite{SabryValironVizzotto_2018} 
+    & \cite{DaveLemonnierPechouxZamdzhiev_2025} 
+    & \cite{BarssePechouxPerdrix_2026}
+    & Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} 
+    & $\lambdaB$ 
+    \\\hline\hline
+    Unit norm 
+    &  
+    &  
+    & \cmark 
+    & 
+    & \cmark 
+    & \cmark 
+    \\\hline
+    Recursion 
+    &  
+    & \cmark 
+    &  
+    & \cmark
+    &  
+    &  
+    \\\hline
+    Termination
+    &  
+    & \cmark 
+    & \cmark 
+    & 
+    & \cmark 
+    & \cmark 
+    \\\hline
+    Measurement 
+    & \cmark 
+    &  
+    & \cmark
+    & \cmark
+    &  
+    &  
+    \\\hline
+    Arbitrary bases 
+    & \cmark\footnotemark[1] 
+    & \cmark\footnotemark[1] 
+    & \cmark\footnotemark[1]
+    & 
+    &  
+    & \cmark 
+    \\\hline
+    Function superposition 
+    &  
+    & 
+    &  
+    & \cmark
+    & \cmark 
+    & \cmark 
+    \\\hline
+  \end{tabular}
+  \caption{Comparison of quantum-control $\lambda$-calculi.}
+  \label{tab:related}
+\end{table}
+\footnotetext[1]{For coherent pattern-matching.}
+\paragraph*{Contributions.}
 The contributions of this paper can be summarised as follows.
 \begin{itemize}[nosep]
   \item We introduce $\lambdaB$, a quantum-control $\lambda$-calculus that 
@@ -1710,13 +1748,13 @@ The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies transm
 
 By delayining measurement, we define a term that explicitly describes the computation for each coherent branch of the superposition:
 \begin{align*}
-\mathsf{Teleport}_{\Phi^+} :=
+\mathsf{Teleport}_{\Phi^+} &:=
   \Lam{x}{\B}{
-    &\LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{\\
-    &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\ \{\\  
+    \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
+    \mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\ \{\\  
     &\Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
-    \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\\
-    &\Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
+    \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;
+    \Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
     \Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
     }
   }
@@ -1736,12 +1774,12 @@ quantum teleportation in this manner, gives a structure from where we can abstra
 a more general representation. Consider the following program:
 \begin{align*}
 \mathsf{Teleport} :=
-  \Lam{b}{\Bell}{ \Lam{x}{\B}{
-  &\LetP{y_1}{\B}{y_2}{\B}{b}{\\
-  &\mathsf{let}\ (c_1^{\AbsBasis}, c_2^{\AbsBasis}, 
+  &\Lam{b}{\Bell}{ \Lam{x}{\B}{
+  \LetP{y_1}{\B}{y_2}{\B}{b}{
+  \mathsf{let}\ (c_1^{\AbsBasis}, c_2^{\AbsBasis}, 
   c_3^{\AbsBasis}, c_4^{\AbsBasis}) = (\mathsf{corr}\ b)\ \mathsf{in}\\
-  &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of} \{\\
-  &\Phi^{+} \mapsto \Pair{\Phi^{+}}{c_1\,y_2},\;
+  &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of} \{\;
+  \Phi^{+} \mapsto \Pair{\Phi^{+}}{c_1\,y_2},\;
   \Phi^{-} \mapsto \Pair{\Phi^{-}}{c_2\,y_2},\\
 	&\Psi^{+} \mapsto \Pair{\Psi^{+}}{c_3\,y_2},\;
 	\Psi^{-} \mapsto \Pair{\Psi^{-}}{c_4\,y_2} \}
