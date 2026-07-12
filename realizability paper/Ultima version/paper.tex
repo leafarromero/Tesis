@@ -527,7 +527,7 @@ The contributions of this paper can be summarised as follows.
   the systematic extraction of a sound type system where the physical consistency 
   of programs (unit-norm preservation and isometries) is guaranteed by 
   construction.
-  \item We achieve a direct \emph{semantic characterisation of unitary operators} 
+  \item We achieve a direct \emph{syntactic characterisation of unitary operators} 
   of arbitrary finite dimension $2^n$ as abstractions in our type algebra. 
   This result generalises previous characterisations which were restricted 
   to the computational basis.
@@ -1795,9 +1795,9 @@ each of the Bell-basis vectors. It encodes the following function:
 \mathsf{corr}(x) = 
 \begin{cases}
 ($I, Z, X, ZX$) \text{If }x=\Phi^+\qquad
-($I, Z, X, ZX$) \text{If }x=\Phi^+\\
-($I, Z, X, ZX$) \text{If }x=\Phi^+ \qquad
-($I, Z, X, ZX$) \text{If }x=\Phi^+\\
+($Z, I, ZX, X$) \text{If }x=\Phi^-\\
+($X, ZX, I, Z$) \text{If }x=\Psi^+ \qquad
+($ZX, X, Z, I$) \text{If }x=\Psi^-\\
 \end{cases}
 \]
 
