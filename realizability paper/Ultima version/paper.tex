@@ -307,7 +307,7 @@ ICC, CONICET-Universidad de Buenos Aires, Argentina}
 \begin{abstract}
   We present $\lambdaB$, a quantum‐control $\lambda$‐calculus that refines
   previous basis-sensitive systems by allowing abstractions to be expressed with
-  respect to arbitrary--possibly entangled--bases. It combines quantum control 
+  respect to arbitrary---possibly entangled---bases. It combines quantum control 
   and realisability semantics ensuring unitarity by construction.
   Each instance of variable binding is annotated with a basis,
   and a new basis-dependent substitution governs the decomposition of value
@@ -328,8 +328,8 @@ The no-cloning theorem \cite{WoottersZurek1982} and the no-deleting theorem
 \cite{PatiBraunstein2000} are two well-known results in quantum mechanics that
 state it is impossible to copy or delete an arbitrary qubit. 
 There is, however, a subtlety: although arbitrary qubits
-cannot be copied or deleted, this is possible for known--and, in the case of
-deletion, separable--qubits. This implies that qubits with known values behave
+cannot be copied or deleted, this is possible for known---and, in the case of
+deletion, separable---qubits. This implies that qubits with known values behave
 as classical data and can be treated accordingly. Moreover, it suffices to know
 the basis to which a qubit belongs in order to copy and delete it.
 
@@ -339,7 +339,7 @@ classical bits correspond to the basis vectors, whereas qubits are unit-norm
 linear combinations of them. Classical bits can be copied and deleted freely,
 while such operations on arbitrary qubits are restricted.
 
-In this paper, we introduce a quantum with $\lambda$-calculus quantum-control.
+In this paper, we introduce a quantum $\lambda$-calculus with quantum-control.
 Our approach is inspired by a line of work in basis-sensitive
 quantum typing. The earliest system, Lambda-S \cite{DiazcaroDowekRinaldiBIO19},
 identified qubits in the computational basis, allowing duplication and erasure
@@ -370,8 +370,8 @@ chosen basis as classical data, while linear combinations of these values
 represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
 linear handling for unknown qubits. This technique works well for first-order
-terms, but cannot to capture the notion of basis for higher-order terms. We
-regain higher-order by using the now standard call-by-basis strategy from
+terms, but cannot capture the notion of basis for high-order terms. We
+regain higher-order by using the now standard call-by-basis strategy from Lineal
 \cite{ArrighiDowekLMCS17}.
 
 This work pursues two goals: first, to provide a more precise program description
@@ -379,9 +379,7 @@ via the extracted type system; and second, to express quantum algorithms
 compositionally, rather than as mere circuit translations.
 
 With these goals in mind, we make the design choice to not include measurement and
-study a pure calculus. Previous works along this line of research have proposed 
-solutions to support measurement \cite{DiazcaroDowekRinaldiBIO19,
-DiazcaroMonzonAPLAS25}, so we decided to narrow the focus of this paper to the 
+study a pure calculus, to narrow the focus of this paper to the 
 unitary setting.
 
 \paragraph*{Related work.}
@@ -395,7 +393,7 @@ $\lambda$-calculus that incorporates basis annotations into the type system,
 ensuring linear handling of quantum data while providing strong
 meta-theoretical guarantees.  
 Our system generalises these ideas by allowing abstractions to range over
-arbitrary--possibly entangled--bases, extending basis awareness beyond the
+arbitrary---possibly entangled---bases, extending basis awareness beyond the
 single-qubit setting.
 
 A number of other frameworks support reasoning about multiple bases through
@@ -416,7 +414,7 @@ Similarly,~\cite{CaretteHeunenKaarsgaardSabry2024} introduces
 classical calculus—one per basis—via an effect construction.  
 In both cases, basis sensitivity arises semantically.  
 In contrast, $\lambdaB$ integrates it directly at the syntactic and typing
-levels, ensuring that basis transformations are explicit in program structure.
+levels, ensuring that basis transformations are explicit in the program structure.
 
 Related efforts in semantic characterisation—such as the fully
 abstract model of~\cite{ClairambaultdeVisme2019} or the dual calculi
@@ -567,7 +565,7 @@ along the lines of the language Lineal \cite{ArrighiDowekLMCS17}.
   \centering
   \begin{tabular}{rcll}
     $v$ & $::=$ & $x \mid \Lam{x}{X}{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1}$ & $(\Val)$ \\
-    $t$ & $::=$ & $v \mid tt \mid (t,t) \mid \LetP{x}{X}{y}{Y}{\vec{t}}{\vec{t}} \mid \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}$ & $(\Lambda)$ \\
+    $t$ & $::=$ & $v \mid tt \mid (t,t) \mid \LetP{x}{X}{y}{Y}{t}{\vec{t}} \mid \gencase{t}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}$ & $(\Lambda)$ \\
     $\vec{v}$ & $::=$ & $v \mid \vec{v}+\vec{v} \mid \alpha \vec{v} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\ValD)$ \\
     $\vec{t}$ & $::=$ & $t \mid \vec{t}+\vec{t} \mid \alpha \vec{t} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\vec \Lambda)$
   \end{tabular}
@@ -592,12 +590,12 @@ $t,s,r$ for terms, writing $\vec{\cdot}$ when they can be combinations.
 
 The decorations $X$, and $Y$ appearing in the abstractions and pair
 destructors denote either the basis of the vector spaces in which the terms
-are expressed or a higher-order variable; their precise nature is made explicit
-later. Before formally defining the notion of basis, we first establish the
-algebraic structure underlying the space of value combinations.
+are expressed or a mark for a higher-order variable; their precise nature is
+made explicit later. Before formally defining the notion of basis, we first
+establish the algebraic structure underlying the space of value combinations.
 This is achieved by introducing the congruence relation defined in
 Table~\ref{tab:Congruence}.
-The congruence captures the intended behaviour of addition and scalar
+This relation captures the intended behaviour of addition and scalar
 multiplication, allowing us to treat linear combinations of terms and values
 as genuine algebraic entities rather than mere syntactic constructions.
 In particular, it enforces the commutativity and associativity of addition and
@@ -611,29 +609,8 @@ notation~$\sum$.
     \vec{t}_{1}+\vec{t}_{2} &\equiv \vec{t}_{2}+\vec{t}_{1} &
     (\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3} &\equiv \vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3}) \\
     (\alpha+\beta)\vec{t} &\equiv \alpha\vec{t}+\beta\vec{t} &
-    \alpha(\vec{t}_{1}+\vec{t}_{2}) &\equiv \alpha\vec{t}_{1}+\alpha\vec{t}_{2} \\
-    \vec{t}(\alpha\vec{s}) &\equiv \alpha(\vec{t}\vec{s}) &
-    (\alpha\vec{t})\vec{s} &\equiv \alpha(\vec{t}\vec{s}) \\
-    (\vec{t}+\vec{s})\vec{r} &\equiv \vec{t}\vec{r}+\vec{s}\vec{r} &
-    \vec{t}(\vec{s}+\vec{r}) &\equiv \vec{t}\vec{s}+\vec{t}\vec{r} &&
-  \end{align*}
-  \vspace{-2\baselineskip}
-  \begin{align*}
-    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vec{t})}{\vec{s}}
-    \equiv \alpha(\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{s}}) \\
-    &\LetP{x_1}{X}{x_2}{Y}{\vec{t}+\vec{s}}{\vec{r}}
-    \equiv
-      (\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{r}})
-      +(\LetP{x_1}{X}{x_2}{Y}{\vec{s}}{\vec{r}}) 
-      \\
-    &\gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}
-    \equiv \alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}) \\
-    &\gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{r}_{1}}{\vec{r}_{k}}
-    \equiv\begin{aligned}[t]
-      &\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}\\
-      &+\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}
-    \end{aligned}
-  \end{align*}
+    \alpha(\vec{t}_{1}+\vec{t}_{2}) &\equiv \alpha\vec{t}_{1}+\alpha\vec{t}_{2}\\
+    \end{align*}
   \caption{Term congruence}
   \label{tab:Congruence}
 \end{table}
@@ -644,25 +621,49 @@ on this algebraic foundation. Once the vector structure is established, we can d
 which subsets $B\subseteq \ValD$ qualify as \emph{bases}, thereby justifying the
 decorations appearing in the syntax of Table~\ref{tab:Syntax}.
 
-\begin{remark}
-  The calculus syntax only allows for application between basic terms. The term congruence 
-  is the mechanism by which we are able to apply term combinations, since:
-  \[
-  (\sum_{i=0}^{n} \alpha_i t_i\ ) (\sum_{j=0}^{m} \beta_j s_j\ ) \equiv
-  \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i \beta_j (t_i\ s_j)
-  \]
-\end{remark}
-
-We will also consider the following notation for linear combinations of
-pairs. This notation does not appear in the syntax, but is rather useful to describe
-specific states.
+We will also consider the notation in Table~\ref{tab:Macros} for linear
+combinations of terms. These expressions do not appear in the syntax,
+yet they are useful to describe specific states. A simple example is the linear
+combination of pairs where we can express the following state:
 \[
-  \Pair{\alpha  t+\vec{t}_{1}}{\vec{t}_{2}} 
-  := \alpha\Pair{t}{\vec{t}_{2}} + \Pair{\vec{t}_{1}}{\vec{t}_{2}}
-  \qquad\qquad
-  \Pair{r}{\alpha  t+\vec{t}_{1}} 
-  := \alpha\Pair{r}{t} + \Pair{r}{\vec{t}_{1}}
+\frac{1}{2}\Pair{\ket{0}+\ket{1}}{\ket{0}-\ket{1}} :=
+\frac{1}{2}(\Pair{\ket{0}}{\ket{0}}- \Pair{\ket{0}}{\ket{1}}
++\Pair{\ket{1}}{\ket{0}}-\Pair{\ket{1}}{\ket{1}})
 \]
+As the tuple grows in dimension, the number of subterms in the combination grow
+exponentially. The introduced notation allows for a more compact representation.
+
+\begin{table}[t]
+  \begin{align*}
+    \Pair{\alpha  t+\vec{t}_{1}}{\vec{t}_{2}} 
+    &:= \alpha\Pair{t}{\vec{t}_{2}} + \Pair{\vec{t}_{1}}{\vec{t}_{2}} &
+    \Pair{r}{\alpha t+\vec{t}_{1}} 
+    &:= \alpha\Pair{r}{t} + \Pair{r}{\vec{t}_{1}}\\
+    \vec{t}(\alpha\vec{s}) &:= \alpha(\vec{t}\vec{s}) &
+    (\alpha\vec{t})\vec{s} &:= \alpha(\vec{t}\vec{s}) \\
+    (\vec{t}+\vec{s})\vec{r} &:= \vec{t}\vec{r}+\vec{s}\vec{r} &
+    \vec{t}(\vec{s}+\vec{r}) &:= \vec{t}\vec{s}+\vec{t}\vec{r} &&
+  \end{align*}
+  \vspace{-2\baselineskip}
+  \begin{align*}
+    &\LetP{x_1}{X}{x_2}{Y}{(\alpha\vec{t})}{\vec{s}}
+    := \alpha(\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{s}}) \\
+    &\LetP{x_1}{X}{x_2}{Y}{\vec{t}+\vec{s}}{\vec{r}}
+    :=
+      (\LetP{x_1}{X}{x_2}{Y}{\vec{t}}{\vec{r}})
+      +(\LetP{x_1}{X}{x_2}{Y}{\vec{s}}{\vec{r}}) 
+      \\
+    &\gencase{\alpha \vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}
+    := \alpha(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{s}_{1}}{\vec{s}_{k}}) \\[7pt]
+    &\gencase{(\vec{t}+\vec{s})}{\vec{v}_{1}}{\vec{v}_{k}}{\vec{r}_{1}}{\vec{r}_{k}}
+    :=\begin{aligned}[t]
+      &\gencase{\vec{t}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}} + \\
+      &\gencase{\vec{s}}{\vec{v}}{\vec{w}}{\vec{r}_{1}}{\vec{r}_{k}}
+    \end{aligned}
+  \end{align*}
+  \caption{Syntax sugar for term combinations}
+  \label{tab:Macros}
+\end{table}
 
 Before proceeding further, let us briefly illustrate the intuition behind the
 congruence in Table~\ref{tab:Congruence}.  
@@ -684,12 +685,13 @@ The congruence ensures that these linear combinations behave algebraically as
 in a complex vector space, supporting the standard operations of addition,
 scalar multiplication, and the zero vector.
 
-The presentation of the term congruence does not lend itself easily to implementation.
-In order to do so, we would need to have a directed set of rules with normal forms
-and extra definitions for casting. This issue was first addressed by \cite{ArrighiDowekLMCS17},
-and later refined in \cite{DiazcaroDowekRinaldiBIO19,DiazcaroMonzonAPLAS25}.
-We choose this presentation since the previous works give a satisfactory answer for
-possible implementation, and it simplifies our system for analysis.
+On its original presentation, Lineal \cite{ArrighiDowekLMCS17} and following
+refinements \cite{DiazcaroDowekRinaldiBIO19,DiazcaroMonzonAPLAS25}, implemented
+these operations via a set of directed reduction rules with defined normal forms
+and additional casting rules. This approach lends itself to implementation, however
+the resulting system is cumbersome to analyze under a realisability framework.
+For this reason we choose to represent the vector space identities using a
+congruence relation.
 
 To properly characterise the sets that decorate the lambda abstractions, we
 must first specify the kind of values they contain.
@@ -782,8 +784,8 @@ for first-order terms, we need a method to deal with combinations of
 $\lambda$-abstractions. This symbol marks that the argument of a function should be
 treated linearly over its basic values as defined in the syntax. So, from now on, 
 we will use $X, Y, Z$ (as in Table \ref{tab:Syntax}) to refer to either
-$2^n$-dimensional othonormal bases, or the special symbol $\AbsBasis$ and we will
-refer to them as \emph{decorations}. When we refer exclusively to bases,
+$2^n$-dimensional othonormal bases, or the special symbol $\AbsBasis$ and
+refer them as \emph{decorations}. When we refer exclusively to orthonormal bases,
 excluding $\AbsBasis$, we will use $\BB$.
 
 %\begin{definition}[Basis-dependent substitution]
@@ -885,7 +887,7 @@ equivalence class induced by the congruence $\equiv$.
   $\ansubst{\vec{v}/x}{X}$ and $\ansubst{\vec{w}/x}{X}$ are defined:
   if $\vec{v}\equiv\vec{w}$, then
   $\vec{t}\ansubst{\vec{v}/x}{X}
-  =\vec{t}\ansubst{\vec{w}/x}{X}$.
+  \equiv\vec{t}\ansubst{\vec{w}/x}{X}$.
   \qed
 \end{lemma}
 
@@ -966,18 +968,25 @@ $\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
   \begin{tabular}{r@{~}c@{~}l}
     $(\lambda x^X.\vec{t})\vec{v}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x\rangle_X$ \hfill (if defined) \\
     $\mathsf{let} (x^X, y^Y) = \vec{v} \text{ in } \vec{t}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x \otimes y\rangle_{X \otimes Y}$ \hfill (if defined) \\
-    %$\mathsf{case} \sum \alpha_i \vec{v}_i \text{ of } \{\vec{v}_1 \mapsto \vec{t}_1 \mid \dots\}$ & $\rightsquigarrow$ & $\sum \alpha_i \vec{t}_i$ \hfill (if $\vec{v}_i \perp \vec{v}_j$) \\
     $\gencasei{\sum_{i}\alpha_i \vec{v_i}}{\vec{v_i}}{\vec{t_i}}$ & $\lraneq$ & $\sum_{i}\alpha_i \vec{t_i}$ \hfill (if $\vec{v}_i \perp \vec{v}_j$) \\
-    \multicolumn{3}{l}{
-      If $t\lraneq \vec r$, then
-      $\left\{\begin{aligned}
-	  &st \lraneq s\vec r, \qquad\qquad tv, \lraneq \vec rv, \qquad\qquad
-	  \vec v+\alpha t+\vec s \lraneq \vec v+\alpha \vec r+\vec s\quad  (\text{if }\alpha\neq 0)^*,\\
-	  &\LetP{x}{X}{y}{Y}{t}{\vec{s}} \lraneq \LetP{x}{X}{y}{Y}{\vec r}{\vec{s}},\\
-	  &\gencasei{t}{\vec{v_i}}{\vec{s_i}} \lraneq \gencasei{\vec r}{\vec{v_i}}{\vec{s_i}}
-      \end{aligned}\right.$
-    }
   \end{tabular}
+  \[
+    \begin{array}{c}
+      \infer{st\lraneq s\vv r}{t\lraneq \vv r}
+      \qquad\qquad
+      \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
+      \qquad\qquad
+      \infer{\vec v+\alpha t+\vec s \lraneq \vec v+\alpha \vec r+\vec s}{t\lraneq\vv r & \alpha\neq 0}
+      \\[5pt]
+      \infer{\LetP{x}{X}{y}{Y}{t}{\vv{s}}\lraneq
+      \LetP{x}{X}{y}{Y}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
+      \\[5pt]
+      \infer{
+        \gencasei{t}{\vec{v_i}}{\vec{s_i}} \lraneq 
+        \gencasei{\vec r}{\vec{v_i}}{\vec{s_i}}}
+      {t\lraneq \vv r}
+    \end{array}
+  \]
   \noindent\footnotesize $^*$Subterms are ordered: values first, then non-values in lexicographical order.
   \caption{Reduction system.}
   \label{tab:Reduction}
@@ -1002,7 +1011,7 @@ combinations of these vectors are handled as quantum data, reducing linearly by
 the congruence rules, so that $t(\alpha\vec s+\beta\vec r)$ is equivalent to
 $\alpha\,t\vec s+\beta\,t\vec r$. If a term cannot be expressed in the decorating
 basis, evaluation becomes stuck. For example, $(\Lam{x}{\{\ket{0},\ket{1}\}}{\vec{t}})
-\Pair{\ket{0}}{\ket{0}}$ does not reduce, since the dimension of the argument does
+\ket{00}$ does not reduce, since the dimension of the argument does
 not match the vectors in the expected basis.
 
 Reduction for higher-order terms is handled differently: since no orthogonal bases
@@ -1097,7 +1106,7 @@ equivalence is preserved by reduction modulo~$\equiv$.
 \end{remark}
 
 
-\section{realisability model}\label{sec:model}
+\section{Realisability model}\label{sec:model}
 \subsection{Unitary type semantics}
 Given the deterministic machine presented in the previous section
 (see~Remark~\ref{rmk:determinism}), the next
@@ -1161,8 +1170,8 @@ boolean type can be represented by a basis of size 2, yet we are not restricted
 to a single one, as infinitely many bases exist. 
 
 Basis types $\basis{\BB}$ will be formed when a variable is decorated with the
-corresponding $\BB$. When it is decorated with $\AbsBasis$, it will
-type with an arrow.
+corresponding $\BB$. When it is decorated with $\AbsBasis$, it will be
+typed with an arrow.
 
 Pairs are standard, and written using the notation introduced earlier.
 The arrow type~$A\Arr B$ consists of combinations of $\lambda$-abstractions
@@ -1220,12 +1229,16 @@ If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
 
 \begin{table}[t]
   \centering
-  \begin{tabular}{c@{\qquad\quad}c@{\qquad\quad}c@{\qquad\quad}c}
+  \[
+  \begin{array}{c@{\qquad\quad}c@{\qquad\quad}c}
     \infer{\sharp (\basis{\BB_1})\cong\sharp(\basis{\BB_2})}{|\BB_1| = |\BB_2|} &
     \infer{\basis{\BB_1\times \BB_2} \cong \basis{\BB_1}\times\basis{\BB_2}}{} &
-    \infer{\sharp A \leq \sharp B}{A\leq B} &
-    \infer{(\sharp A)\times(\sharp B)\leq\sharp(A\times B)}{}
-  \end{tabular}
+    \infer{\sharp A \leq \sharp B}{A\leq B} \\[15pt]
+    \infer{(\sharp A)\times(\sharp B)\leq\sharp(A\times B)}{}&
+    {\infer{A\leq \sharp A}{}} &
+    {\infer{\sharp\sharp A \cong \sharp A}{}}
+  \end{array}
+  \]
   \caption{Some valid subtyping rules.}
   \label{tab:Subtyping}
 \end{table}
@@ -1285,7 +1298,7 @@ terms on Hilbert spaces, we shall occasionally abuse notation and identify
 value combinations representing qubits with their corresponding canonical
 basis vectors in~$\C^{2^n}$. This identification applies only to those
 combinations denoting quantum data, not to general values such as
-$\lambda$-abstractions--in particular, to all elements of
+$\lambda$-abstractions---in particular, to all elements of
 $\sem{\sharp\basis{\BB}}$ for any orthonormal basis~$\BB$. This identification can
 be made precise as follows.
 
@@ -1388,14 +1401,14 @@ it will simplify the forthcoming proofs.
       \sigma(x_i) = \ansubst{\vec{v}_{i}/x_i}{{X_i}}
       \text{ for some }\vec{v}_{i} \in \sem{A_i}\}.
   \end{align*}
-  Where $\ansubst{\--/\--}{\--}$ denotes the substitution defined
-  in~\ref{def:basisDependentSub}.
+  Where $\ansubst{\--/\--}{\--}$ denotes the substitution from 
+  Definition~\ref{def:basisDependentSub}.
 \end{definition}
 
 
 To ensure a coherent treatment of quantum data, we must guarantee that qubits
 are handled linearly. The first step is to identify which variables in the
-context represent quantum data--those associated with a type of the
+context represent quantum data---those associated with a type of the
 form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
 \emph{strict domain}.
 
@@ -2017,7 +2030,7 @@ Finally, we illustrated the system's advantages through two canonical examples: 
   $\ansubst{\vec{v}/x}{X}$ and $\ansubst{\vec{w}/x}{X}$ are defined:
   if $\vec{v}\equiv\vec{w}$, then
   $\vec{t}\ansubst{\vec{v}/x}{X}
-  =\vec{t}\ansubst{\vec{w}/x}{X}$.
+  \equiv\vec{t}\ansubst{\vec{w}/x}{X}$.
 \end{restatelemma}
 \begin{proof}
   Let $X\neq\AbsBasis$. Since $\vec{v}\equiv\vec{w}$, by
