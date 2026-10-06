@@ -13,7 +13,7 @@ Over the last decade we have seen research into quantum computation accelerate a
 Functional programming provides a suitable paradigm to study this topic. Considering measurement operations, quantum computation can be considered as a particular case of probabilistic computation. In addition, linear type systems are well-suited to deal with the restraints posed by no-go theorems such as no-cloning or no-deletion. For this reason, throughout this thesis, we will analise different characteristics of quantum computation through the lens of $\lambda$-calculus.
 
 %%% STATE OF THE ART
-Several quantum programming languages have been developed in the last 20 years. Starting with Selinger and Valiron's QPL in 2004; the technology has been iterated and refined producing real-world implementations.
+Several quantum programming languages have been developed in the last 20 years. Starting with Selinger and Valiron's QPL in 2004\cite{SelingerMSCS04}; the technology has been iterated and refined producing real-world implementations.
 
 %%%% Básicamenetee se pueden dividir en control cuántico y control clásico
 These languages fall into two different paradigms, determined by the way they control information. Classical control calculi deal with quantum data, but the program themselves follow a classical flow. Every conditional is determined by an expression which can be the result of a measurement. This is akin to having a classical computer equipped with a quantum co-processor to perform certain operations.
@@ -27,8 +27,6 @@ In general, classical control languages define a set of primitive gates from whi
 
 %%%% En el caso de control cuántico, se toman primitivas más fundamentales y la forma de obtener operaciones más complejas es a través de la composición de programas.
 In the case of quantum control, since the state of the program itself can be superposed, there are more elementary ways to represent quantum behaviour. These primitives need not to have a gate-like equivalent, and the method to produce more elaborated unitaries is through function composition. {\color{red} Ejemplos de lenguajes con citas.}
-
-
 
 
 %%% FOCUS AND SCOPE
