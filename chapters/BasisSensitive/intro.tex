@@ -2,12 +2,13 @@
 
 % Motivation
 The no-cloning theorem \cite{WoottersZurek1982} and the no-deleting theorem
-\cite{PatiBraunstein2000} state it is impossible to copy or delete an arbitrary
-qubit. There is, however, a subtlety: although arbitrary qubits
+\cite{PatiBraunstein2000} are two well-known results in quantum mechanics that
+state it is impossible to copy or delete an arbitrary qubit. 
+There is, however, a subtlety: although arbitrary qubits
 cannot be copied or deleted, this is possible for known---and, in the case of
 deletion, separable---qubits. This implies that qubits with known values behave
 as classical data and can be treated accordingly. Moreover, it suffices to know
-the basis to which a qubit belongs in order to copy and, to some extent, delete it.
+the basis to which a qubit belongs in order to copy and delete it.
 
 In most quantum programming languages, qubits are defined with respect to a
 canonical basis—often referred to as the computational basis. In this setting,
@@ -16,29 +17,26 @@ linear combinations of them. Classical bits can be copied and deleted freely,
 while such operations on arbitrary qubits are restricted.
 
 % Work in this chapter
-In this chapter we will introduce a quantum $\lambda$-calculus within the
-quantum-control paradigm, by contrast with the classical-control one, where the
-control flow is classical and cannot be superposed. Our approach is inspired by
-a line of work on basis-sensitive quantum typing. The earliest system,
-Lambda-S \cite{DiazcaroDowekRinaldiBIO19}, could distinguish whether a qubit
-was in the computational basis, allowing duplication and erasure only in that
+In this chapter we introduce a quantum $\lambda$-calculus with quantum-control. 
+
+Our approach is inspired by a line of work in basis-sensitive quantum typing. The earliest system,
+Lambda-S \cite{DiazcaroDowekRinaldiBIO19}, identified qubits
+in the computational basis, allowing duplication and erasure only in that
 case. Later, Lambda-S$_1$
 \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} refined this
 approach by restricting to unit-norm vectors, introducing higher-order
 abstractions, and ensuring that terms of type qubit-to-qubit denote unitary
-maps. More recently, the Lambda-SX calculus \cite{DiazcaroMonzonAPLAS25}
-generalised Lambda-S to arbitrary non-entangled single-qubit bases, albeit
-through a purely syntactic framework restricted to first order. The calculus we
-present here extends these ideas to a unit-norm, higher-order setting over
+maps. More recently, Lambda-SX \cite{DiazcaroMonzonAPLAS25}
+generalised Lambda-S to arbitrary non-entangled single-qubit bases, in first order. 
+The $\lambdaB$ calculus presented here extends these ideas to a unit-norm, higher-order setting over
 multiple-qubit bases, grounded in a realisability semantics.
 
 % How are planning to do this (Realizability technique)
 The realisability methodology, originating with Kleene's work on Heyting
-arithmetic \cite{KleeneJSL45}, provides a constructive framework that connects
-operational semantics with type systems. In our context, it allows the
-extraction of a sound type system directly from the reduction semantics of the
-calculus, ensuring that safety properties hold by construction. The approach
-proceeds as follows:
+arithmetic \cite{KleeneJSL45}, provides a constructive framework connecting
+operational semantics with type systems. In our context, it allows extracting 
+a sound type system directly from the reduction semantics, ensuring safety
+properties by construction. The approach proceeds as follows:
 \begin{enumerate}
   \item Define a calculus with a deterministic evaluation strategy.
   \item Define types as sets of closed values in the language.
@@ -51,18 +49,30 @@ Rather than building ad hoc typing rules, the system is derived from the
 computational content of the calculus, making it possible to define whole
 families of type systems by proving the validity of new rules.
 
+While the untyped calculus allows for non-physical terms, the
+extracted type system acts as a logical filter: only unit-norm, unitary terms
+are typable, enabling static certification of unitary behaviour across basis
+changes and capturing basis-dependent invariants beyond fixed-basis systems.
+
 Following this approach, we enrich abstractions with explicit basis
 decorations. Intuitively, the reduction system treats values expressed in the
 chosen basis as classical data, while linear combinations of these values
 represent quantum data and reduce linearly within the term. This refinement
 enables duplication and erasure for qubits in known bases while maintaining
-linear handling for unknown qubits.
+linear handling for unknown qubits. This technique works well for first-order
+terms, but cannot capture the notion of basis for high-order terms. We
+regain higher-order by using the now standard call-by-basis strategy from Lineal
+\cite{ArrighiDowekLMCS17}.
 
 % What do we aim to achieve? Plus the scope of the work
 The objective of this work is twofold. First, to employ the extracted type
 system to provide a more precise description of programs. Second, to take
-advantage of the extended syntax to express quantum algorithms in a flexible
-and compositional way, rather than merely translating circuits.
+advantage of the extended syntax to express quantum algorithms compositionally ,
+ rather than as mere circuit translations.
+With these goals in mind, and the considerations from the first chapter,
+we make the design choice to not include measurement and
+study a pure calculus, to narrow the focus to the unitary setting.
+
 
 \paragraph{Related work.}
 The idea of tracking basis information within quantum programming languages has
@@ -76,17 +86,18 @@ ensuring linear handling of quantum data while providing strong
 meta-theoretical guarantees.  
 Our system generalises these ideas by allowing abstractions to range over
 arbitrary---possibly entangled---bases, extending basis awareness beyond the
-single-qubit setting and recovering higher-order computation.
+single-qubit setting.
 
 A number of other frameworks support reasoning about multiple bases through
-different paradigms. The green and red spiders in ZX-calculus correspond to
-computations along the canonical and diagonal bases respectively. The 
+different paradigms. The ZX-calculus~\cite{CoeckeRossICALP08} provides a
+graphical language where spiders correspond to computations relative to the
+computational and Hadamard bases. The 
 Many-Worlds Calculus~\cite{ChardonnetdeVismeValironVilmartLMCS25} also accommodates
 superpositions of programs but within a diagrammatic semantics.  
 By contrast, our approach operates directly within a typed term calculus,
 allowing basis transitions to be tracked syntactically.
 
-From a categorical standpoint, the framework
+From a category theory standpoint, the framework
 in~\cite{HeunenKaarsgaard2021} models measurement and decoherence through
 \emph{quantum information effects}, capturing basis change as a semantic
 effect. Similarly,~\cite{CaretteJeunenKaarsgaardSabry2024} introduces
@@ -96,13 +107,35 @@ In both cases, basis sensitivity arises semantically.
 In contrast, $\lambdaB$ integrates it directly at the syntactic and typing
 levels, ensuring that basis transformations are explicit in program structure.
 
+Related efforts in semantic characterisation—such as the fully
+abstract model of~\cite{ClairambaultdeVisme2019} or the dual calculi
+described in~\cite{ChoudhuryGay2025}—approach the logical foundations of
+quantum computation from complementary angles.  
+In contrast, $\lambdaB$ focuses on the syntactic distinction of bases and
+superpositions within a unified quantum $\lambda$-calculus, providing a concrete
+basis-sensitive type system and higher-order quantum control.
+
 Other languages aim to unify classical and quantum computation.
 For instance,~\cite{VoichickLiRandHicks2023} generalises classical
 control constructs and interprets duplication and discarding semantically as
-entanglement and partial trace.  
-Our calculus follows the opposite philosophy: linearity and duplicability are
-syntactically restricted by the basis-sensitive type system, guaranteeing
-coherent quantum control without relying on external semantic constraints.
+entanglement and partial trace. Our calculus follows the opposite philosophy:
+linearity and duplicability are syntactically restricted by the basis-sensitive
+type system, guaranteeing coherent quantum control without relying on external
+semantic constraints.
+
+The calculi in \cite{DaveLemonnierPechouxZamdzhiev_2025, BarssePechouxPerdrix_2026} work 
+on a probabilistic setting to accommodate measurement. The operational semantics can be
+seen as the action of programs on quantum states and thus working on two different layers.
+In contrast, our work focuses on the pure quantum fragment, yielding a deterministic
+calculus where state and program share the same layer.
+
+The SYM calculus \cite{SabryValironVizzotto_2018}, is based on linear combinations of
+terms in the style of \cite{ArrighiDowekLMCS17} working within the pure quantum fragment
+(as $\lambdaB$). However, each calculus focuses on different objectives. SYM implements 
+structural recursion and limited higher-order, without requiring norm-1 for the terms. While 
+$\lambdaB$ sports less constrained higher-order functions and ensures typed terms fall in the 
+unitary sphere.
+
 
 Finally, related efforts in semantic characterisation—such as the fully
 abstract model of~\cite{ClairambaultdeVisme2019} or the dual calculi
@@ -115,12 +148,33 @@ basis-sensitive typing and higher-order quantum control.
 
 % Structure of the chapter
 \paragraph{Structure.}
+\paragraph*{Objectives.}
+The objectives of this chapter can be summarised as follows.
+\begin{itemize}[nosep]
+  \item To introduce $\lambdaB$, a quantum-control $\lambda$-calculus that 
+  generalises the basis-sensitive paradigm to arbitrary, possibly entangled 
+  multi-qubit bases in a higher-order setting.
+  \item To provide a full \emph{realisability-based semantics} that 
+  logically internalises the semantic requirement of unitarity. This allows 
+  the systematic extraction of a sound type system where the physical consistency 
+  of programs (unit-norm preservation and isometries) is guaranteed by 
+  construction.
+  \item To present a direct \emph{syntactic characterisation of unitary operators} 
+  of arbitrary finite dimension $2^n$ as abstractions in our type algebra. 
+  This result generalises previous characterisations which were restricted 
+  to the computational basis.
+  \item Finally, to demonstrate the \emph{expressive benefits} of basis-awareness 
+  through a series of examples. Specifically, we show how the system captures 
+  classical determinism and the deferred-measurement principle via static 
+  typing, yielding more precise program descriptions than earlier calculi.
+\end{itemize}
+
 The chapter is organised as follows.  
-\ref{sec:calculus} introduces the core language, its syntax, congruence rules,
+Section~\ref{sec:calculus} introduces the core language, its syntax, congruence rules,
 and basis-dependent substitution.  
-\ref{sec:reduction} defines the operational semantics, and
-\ref{sec:model} presents the realisability model with unitary type semantics,
+Section~\ref{sec:reduction} defines the operational semantics, and
+Section~\ref{sec:model} presents the realisability model with unitary type semantics,
 the characterisation of unitary operators, and the typing rules.  
-\ref{sec:examples} presents some representative examples.
-All omitted proofs appear in the appendices, and
-\ref{sec:conclusion} concludes with final remarks and perspectives.
+Section~\ref{sec:examples} presents some representative examples.
+Section~\ref{sec:conclusion} concludes with final remarks and perspectives.
+All omitted proofs appear in the appendices.
