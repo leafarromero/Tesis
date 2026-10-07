@@ -22,18 +22,13 @@ The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
 then applies a Hadamard on the first qubit before measuring it.  
 The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
 
-We begin with a standard implementation of this algorithm in $\lambdaB$.
-We first encode the usual gates we will use:
-\begin{align*}
-  \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
-  \mathsf{NOT} &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}},\\
-  \mathsf{CNOT} &:= \Lam{x}{\B}{\Lam{y}{\B}{
-    \case{x}{\ket{0}}{\ket{1}}
-      {\Pair{\ket{0}}{y}}
-      {\Pair{\ket{1}}{\pauliX{y}}}}}.
-\end{align*}
+In $\lambdaB$, we first encode the standard gates in $\B$: 
+$H := \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}}$, 
+$\mathsf{NOT} := \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}}$, and 
+$\mathsf{CNOT} := \Lam{x}{\B}{\Lam{y}{\B}{\case{x}{\ket{0}}{\ket{1}}{\Pair{\ket{0}}{y}}{\Pair{\ket{1}}{\mathsf{NOT}\,y}}}}$.
 
-We model the four possible oracles $U_f$ (two constant and two balanced):
+The four possible oracles can be modeled as abstractions of type $\basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})$:
+
 \begin{align*}
   O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},
   & O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
@@ -52,7 +47,7 @@ applies~$H$ on the first qubit and returns the (classical) first component:
   }.
 \]
 
-Each oracle above can be typed as
+Each of the oracles can be typed as:
 \(
   \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
 \),
@@ -64,7 +59,8 @@ the overall judgement we can derive for the application uses~$\sharp$:
    \Arr \sharp(\basis{\B}\times\basis{\B})}.
 \]
 This type is correct but coarse: it only guarantees that the result is a
-unitary distribution of pairs of booleans.  Operationally we know more: the
+unitary distribution of pairs of booleans, failing to capture the deterministic
+nature of the outcome. Operationally, we know more, the
 first output is actually a basis bit ($\ket{0}$ or~$\ket{1}$) encoding whether
 $f$ is constant or balanced, and the second output can be ignored.
 
@@ -107,11 +103,11 @@ and the program itself can be typed as
   \TYP{}{\mathsf{Deutsch}}
   {(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}}.
 \]
-Intuitively, the oracle---when fed with $\ket{+-}$---produces a pair of
-basis states in~$\XB$ (up to a global phase).  Hence we can treat its output
-classically: a single $\mathsf{case}$ on the first component suffices to return
-a classical bit in the computational basis, with no need for a $\sharp$-type on
-the result.
+The gain is significant: the type system tracks that the oracle, when fed with basis
+states in $\XB$, produces a pair of basis states. This allows us to extract a classical
+bit ($\basis{\B}$) deterministically. Unlike the standard version, no variable in the
+derivation requires a $\sharp$-type, reflecting that the algorithm's result is classical
+and its deterministic behaviour is captured entirely at the type level.
 
 Both implementations are operationally equivalent: they compute a bit that
 decides whether $f$ is constant or balanced.  The difference lies in the
@@ -120,100 +116,85 @@ with explicit Hadamards, forces $\sharp$ on the oracle's interface and thus
 yields a result in~$\sharp(\basis{\B}\times\basis{\B})$.  The basis-aware
 version states, via types, that the oracle is used on a fixed $\XB$-input and
 therefore returns an $\XB$-basis pair; this lets us deterministically extract a
-$\B$-basis bit.  In the typing derivation, no variable carries a $\sharp$-type:
+$\B$-basis bit. In the typing derivation, no variable carries a $\sharp$-type:
 (i) we may safely ignore the second qubit, and (ii) the first qubit is
 guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
 algorithm.
 
+\subsection{Quantum teleportation}\label{sec:teleportation}
+The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies transmitting quantum data via shared entanglement. In $\lambdaB$, this protocol illustrates how the \emph{deferred-measurement principle}~\cite[\S 4.4]{NC00} is internalised within a purely unitary framework. While measurement can be integrated into basis-sensitive calculi (as in~\cite{DiazcaroMonzonAPLAS25}), we focus on demonstrating that the $\mathsf{case}$ constructor suffices to reason about classically controlled gates via branching on basis states.
 
-\subsection{Quantum teleportation}\label{subsec:teleportation}
-
-We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
-quantum information theory that exemplifies the manipulation of entangled
-states and the transmission of quantum data through classical communication.
-Within the $\lambdaB$ calculus, this protocol provides a natural setting to
-combine pattern matching, linear handling of qubits, and the
-\emph{deferred-measurement principle}.  
-Using the $\mathsf{case}$ constructor together with the expressive typing
-discipline introduced earlier, we can encode the teleportation process in a
-way that remains both syntactically compact and semantically faithful to its
-quantum-mechanical counterpart.
-
-The deferred-measurement principle states that any quantum circuit can delay
-its measurements without altering the final outcome.  
-More precisely, any gate classically controlled by the result of a measurement
-is equivalent to another circuit where the control qubit remains unmeasured,
-acting coherently on all branches of the superposition.  
-Although the $\lambdaB$ calculus has no primitive operation for measurement,
-the $\mathsf{case}$ constructor allows us to simulate such classically
-controlled gates by branching on basis states.
-
-A canonical example that exploits this principle is the
-\emph{quantum teleportation protocol}.  
-Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
-state.  
-Using this shared entanglement and two bits of classical information,
-Alice can transmit an unknown quantum state~$\ket{\psi}$ to Bob without
-physically sending the qubit itself.  
-The standard circuit implementing the protocol is shown below:
-\[
-  \Qcircuit @C=1em @R=.5em {
-    \lstick{\ket{\psi}} & \qw & \qw & \ctrl{1} & \gate{H} & \meter & \control \cw \\
-    \lstick{\ket{0}} & \qw & \targ & \targ & \meter & \control \cw \cwx[1] \\
-    \lstick{\ket{0}} & \gate{H} & \ctrl{-1} & \qw & \qw & \targ & \gate{Z} \cwx[-2] \qw & \rstick{\ket{\psi}} \qw
-  }
-\]
-The algorithm first creates the Bell state $\Phi^{+}$ between the second and
-third qubits, then performs a Bell-basis measurement on the first and second
-qubits.  
-Operationally, this measurement is implemented by applying a CNOT gate followed
-by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
-then measuring both qubits.  
-Depending on the pair of classical outcomes, a Pauli correction ($I$, $X$, $Z$,
-or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$.
-
-We can simulate the behaviour of this circuit in the $\lambdaB$ calculus by
-defining a term that, instead of performing measurements, explicitly
-describes the computation corresponding to each branch.  
-A possible encoding is:
+By delayining measurement, we define a term that explicitly describes the computation for each coherent branch of the superposition:
 \begin{align*}
-  &\mathsf{Teleport} :=
+\mathsf{Teleport}_{\Phi^+} :=
   \Lam{x}{\B}{
     \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
-      \mathsf{case}\;
-        \Pair{x}{y_1}\;
-        \mathsf{of}\\
-         &\{ \Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
-          \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;
-	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
-	\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
+    \mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\ \{  
+    &\Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;\\
+    &\Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;\\
+    &\Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;\\
+    &\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
     }
-  }.
+  }
 \end{align*}
+This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, Z, X, ZX$). 
 
-This term takes the input qubit~$\ket{\psi}$ and pairs it with one half of an
-entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
-qubits (the input and Alice's entangled qubit) against the Bell basis, and in
-each branch applies the appropriate correction to Bob's qubit to
-recover~$\ket{\psi}$.  The resulting term represents the same quantum
-transformation as the circuit above but expressed without any explicit
-measurement---instead, each branch encodes the coherent superposition of
-possible measurement outcomes.
+The strength of this approach lies in the type system's ability to verify the 
+consistency of the entire superposition: each branch is statically checked as a
+unitary transformation. The overall term is assigned the type $\sharp\basis{\B}
+\Arr\sharp(\basis{\Bell}\times\basis{\B})$.
 
-The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
-steps in the Bell basis, exploiting the deferred-measurement principle in a
-type-safe way.  
-Each branch of the $\mathsf{case}$ corresponds to a unitary transformation
-preserving linearity and orthogonality, and the overall term has type
+Despite being the usual choice for describing the protocol, the choice of $\Phi^+$
+is arbitrary. Any of the four Bell basis states is a suitable input. Expressing the
+quantum teleportation in this manner, gives a structure from where we can abstract
+a more general representation. Consider the following program:
+\begin{flalign*}
+\mathsf{Teleport} :=
+  \Lam{b}{\Bell}{\Lam{x}{\B}{
+  \LetP{y_1}{\B}{y_2}{\B}{b}{
+  &\mathsf{let}\ (c_1^{\AbsBasis}, c_2^{\AbsBasis}, 
+  c_3^{\AbsBasis}, c_4^{\AbsBasis}) = (\mathsf{corr}\ b)\ \mathsf{in}\\
+  &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of} \{\;
+  \Phi^{+} \mapsto \Pair{\Phi^{+}}{c_1\,y_2},\;\\
+  &\hspace*{2.36cm}\Phi^{-} \mapsto \Pair{\Phi^{-}}{c_2\,y_2},\\
+	&\hspace*{2.36cm}\Psi^{+} \mapsto \Pair{\Psi^{+}}{c_3\,y_2},\;\\
+	&\hspace*{2.36cm}\Psi^{-} \mapsto \Pair{\Psi^{-}}{c_4\,y_2} \}
+    }
+  }
+  }.
+\end{flalign*}
+
+We use syntactic sugar for collapsing multiple $\mathsf{let}$ and $\mathsf{corr}$ is
+the classically-controlled program that outputs the appropriate correction order for
+each of the Bell-basis vectors. It encodes the following function:
 \[
-  \TYP{}{\mathsf{Teleport}}
-  {\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}.
+\mathsf{corr}(x) = 
+\begin{cases}
+($I, Z, X, ZX$)\quad \text{If }x=\Phi^+\qquad\qquad
+($Z, I, ZX, X$)\quad \text{If }x=\Phi^-\\
+($X, ZX, I, Z$)\quad \text{If }x=\Psi^+\qquad\qquad
+($ZX, X, Z, I$)\quad \text{If }x=\Psi^-\\
+\end{cases}
 \]
-This type reflects that the protocol operates on superpositions of basis
-states, producing a Bell-basis measurement outcome together with the recovered
-qubit.  
-In this way, the $\lambdaB$ calculus captures both the logical structure of
-teleportation and its deferred-measurement semantics within a single, uniform
-term language.
 
-{\color{red} TODO: HABLAR DEL PAPER DE SIMON ACÁ EN UNA NUEVA SUBSECTION}
+Overall, the term is assigned the type $\basis{\Bell}\Arr\sharp(\basis{\B})
+\Arr\sharp(\basis{\Bell}\times\basis{\B})$. The advantage here is that the function
+takes \emph{any} of the four Bell basis states as argument and performs the
+protocol. The resulting term is a more abstract respresentation of the protocol,
+without relying on a predetermined choice of entangled pair.
+
+In both terms, the typing system requires checking orthogonality on the branches of
+the $\mathsf{case}$ constructor. In this particular case, it is a simple thing to 
+do, since every branch returns a pair with four different pairwise orthogonal values
+alongside the corrected qubit. 
+
+Moreover, it is also easy to prove that \emph{no other combination} of the Bell 
+basis states can be used for the protocol. This is due to the fact that the 
+superposition of protocols does not preserve unitarity. A value of type 
+$\sharp\basis{\Bell}$ would yield a term superposition of type $\sharp(\sharp 
+(\basis{\B})\Arr\sharp (\basis{\Bell}\times\basis{\B}))$ which does not act as a 
+meaningful arrow type.
+
+In short, the calculus allows us to abstract both the encoding and decoding
+steps in the Bell basis, exploiting the deferred-measurement principle. The program 
+lends itself to generalisation on the Bell basis and the type system restricts the meaningful inputs.
