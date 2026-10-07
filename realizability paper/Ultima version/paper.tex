@@ -886,12 +886,12 @@ Note that this property does not extend across different bases; that is,
 $\vec{t}\ansubst{\vec{v}/x}{X} \not\equiv\vec{t}\ansubst{\vec{v}/x}{Y}$.
 For example,
 \[
-  (\Lam{x}{Y}{y})\ansubst{\ket{+}/y}{\XB}
-  = \Lam{x}{C}{\ket{+}} 
+  (\Lam{x}{X}{y})\ansubst{\ket{+}/y}{\XB}
+  = \Lam{x}{X}{\ket{+}} 
   \not\equiv
   \tfrac{1}{\sqrt{2}}\big((\Lam{x}{C}{\ket{0}})
-  + (\Lam{x}{C}{\ket{1}})\big)
-  = (\Lam{x}{C}{y})\ansubst{\ket{+}/y}{\B}.
+  + (\Lam{x}{X}{\ket{1}})\big)
+  = (\Lam{x}{X}{y})\ansubst{\ket{+}/y}{\B}.
 \]
 This difference arises because the relation $\equiv$ does not commute with
 lambda abstraction, nor with the case construct (indeed, the calculus is
