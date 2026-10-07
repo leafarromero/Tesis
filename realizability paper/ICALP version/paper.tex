@@ -1,0 +1,2963 @@
+\documentclass[a4paper,UKenglish,numberwithinsect,pdfa,anonymous]{lipics-v2021}
+
+%\pdfoutput=1 %uncomment to ensure pdflatex processing (mandatatory e.g. to submit to arXiv)
+\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
+
+% Our packages
+\usepackage[inline]{enumitem}
+\usepackage[b]{esvect} % variantes: [a], [b], [c], [e]...
+\usepackage{proof}
+\usepackage[only=llparenthesis,rrparenthesis,llbracket,rrbracket]{stmaryrd}
+\SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
+\usepackage{tikz}
+\usetikzlibrary{cd,positioning,decorations.text,decorations.pathmorphing}
+\tikzcdset{scale cd/.style={every label/.append style={scale=#1},cells={nodes={scale=#1}}}}
+\usepackage{tikz-cd}
+\usepackage{anyfontsize}
+\makeatletter
+\newtheoremstyle{restatestyle}
+  {0pt} % Espacio superior (se ajusta al entorno de LIPIcs)
+  {0pt} % Espacio inferior
+  {\itshape} % Cuerpo en itálica como pediste
+  {} % Sangría
+  {\bfseries} % Fuente del título
+  {.} % Puntuación después del título
+  {.5em} % Espacio después del título
+  {#3} % <--- Esto hace que solo se use el argumento opcional (el 3er parámetro)
+\theoremstyle{restatestyle}
+\newtheorem*{restatetheorem}{}
+\newtheorem*{restatecorollary}{}
+\newtheorem*{restatelemma}{}
+\newtheorem*{restateremark}{}
+\makeatother
+
+\allowdisplaybreaks
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+\title{Basis-Sensitive Quantum Typing via Realisability}
+
+\author{Alejandro Díaz-Caro}
+{
+  Université de Lorraine, CNRS, Inria, LORIA, France
+  \and
+  Universidad de la República, CENUR Suroeste, Facultad de Ingeniería, InCo, Uruguay
+}
+{alejandro.diaz-caro@inria.fr}
+{https://orcid.org/0000-0002-5175-6882}
+{}
+%{Supported by the Plan France 2030 through the PEPR integrated project EPiQ (ANR-21-PETQ-0007)}
+
+\author{Octavio Malherbe}
+{Universidad de la República, Facultad de Ingeniería, IMERL, Uruguay}
+{malherbe@fing.edu.uy}
+{https://orcid.org/0009-0004-0624-9285}
+{}
+
+
+\author{Rafael Romero}
+{Universidad Nacional de Quilmes, Departamento de Ciencia y Tecnología, Argentina
+  \and 
+ICC, CONICET-Universidad de Buenos Aires, Argentina}
+{lromero@dc.uba.ar}
+{https://orcid.org/0000-0003-3186-1172}	
+{}
+
+\authorrunning{A. Díaz-Caro, O. Malherbe, and R. Romero}
+
+\Copyright{Alejandro Díaz-Caro, Octavio Malherbe, and Rafael Romero}
+
+\ccsdesc[500]{Theory of computation~Quantum computation theory}
+\ccsdesc[500]{Theory of computation~Lambda calculus}
+\ccsdesc[500]{Theory of computation~Program semantics}
+
+\keywords{Quantum computing, Realisability semantics, \texorpdfstring{$\lambda$}{lambda}-calculus}
+
+\relatedversion{} %optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+%\relatedversiondetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93]{Classification (e.g. Full Version, Extended Version, Previous Version}{URL to related version} %linktext and cite are optional
+
+%\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+%\supplementdetails[linktext={opt. text shown instead of the URL}, cite=DBLP:books/mk/GrayR93, subcategory={Description, Subcategory}, swhid={Software Heritage Identifier}]{General Classification (e.g. Software, Dataset, Model, ...)}{URL to related version} %linktext, cite, and subcategory are optional
+
+%\funding{Supported by the European Union through the MSCA SE project QCOMICAL (Grant Agreement ID: 101182521) and by the Uruguayan CSIC grant 22520220100073UD.}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
+
+\acknowledgements{}%optional
+
+%\nolinenumbers %uncomment to disable line numbering
+
+
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\EventEditors{Michal Koucký and Daniela Petrisan}
+%\EventNoEds{1}
+%\EventLongTitle{51st International Symposium on Mathematical Foundations of Computer Science (MFCS 2026)}
+%\EventShortTitle{MFCS 2026}
+%\EventAcronym{MFCS}
+%\EventYear{2026}
+%\EventDate{August 24--28, 2026}
+%\EventLocation{Paris, France}
+%\EventLogo{}
+%\SeriesVolume{51}
+%\ArticleNo{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\lambdaSh}{\ensuremath{\text{Lambda-}{\sharp}}}
+\newcommand{\lambdaSI}{\ensuremath{\text{Lambda-}\mathcal S_1}}
+
+\newcommand\cmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+
+\newcommand\braces[1]{\left\{#1\right\}}
+\newcommand\So{\ensuremath{{\mathcal S}_1}}
+
+\newcommand\ket[1]{\ensuremath{|#1\rangle}}
+\newcommand\parts[1]{\ensuremath{{\mathcal P}_{\!\!*}({#1})}}
+\newcommand\Span[1]{\ensuremath{{\mathsf{Span}}{#1}}}
+\newcommand\Forg[1]{\ensuremath{{U}{#1}}}
+\newcommand\Definible{\mathsf{Def}}
+\newcommand\comp[2][]{#2^{\bot^{#1}}}
+\newcommand\Rpart[1]{\mathsf{Re(#1)}}
+\newcommand\Ipart[1]{\mathsf{Im(#1)}}
+
+\newcommand\s[1]{\ensuremath{\mathsf{#1}}}
+\newcommand\Op[1]{\ensuremath{#1^{\mathsf{op}}}}
+\newcommand\SSet{\s{Set}}
+\newcommand\Var{\ensuremath{\mathsf{Var}}}
+\newcommand\Val{{\s V}}
+\DeclareRobustCommand{\ValD}{\ensuremath{\vv{\mathsf{V}}}}
+\newcommand\VecV{\s{SVec}_{\ValD}}
+\newcommand\SetV{\Set_{\ValD}}
+
+\newcommand\interp[1]{\ensuremath{\llbracket #1 \rrbracket}}
+\newcommand\Hom{\s{Hom}}
+\newcommand\HomS[1]{\Hom_{\SetV}(#1)}
+\newcommand\HomV[1]{\Hom_{\VecV}(#1)}
+\newcommand\Ob[1]{\s{Ob}(#1)}
+\newcommand\lra{\longrightarrow}
+\newcommand\xlra[1]{\xrightarrow{#1}}
+\newcommand\Hil{\mathcal H_{\ValD}}
+\newcommand\SpFun[1]{\ensuremath{{S}{#1}}}
+\newcommand\Id{\mathsf{Id}}
+
+\newcommand\lambdaQ{\ensuremath{\lambda^Q}}
+\newcommand\lambdaS{\ensuremath{\lambda_{\mathcal{S1}}}}
+\newcommand\lambdaH{\ensuremath{\lambda_{\sharp}}}
+\newcommand\inl[1]{\ensuremath{\mathsf{inl}(#1)}}
+\newcommand\inr[1]{\ensuremath{\mathsf{inr}(#1)}}
+\newcommand\qlet[3]{\ensuremath{\mathsf{let }#1 = #2\ \mathsf{ in }\ #3}}
+\newcommand\qmatch[5]{\ensuremath{\mathsf{match}\ #1\ \{\inl{#2}\mapsto #3\ |\ \inr{#4} \mapsto #5 \}}}
+\newcommand\sspan[1]{\ensuremath{\mathsf{span}(#1)}}
+\newcommand\ansubst[2]{\ensuremath{\langle #1 \rangle_{#2}}}
+\newcommand\sqsubst[1]{\ensuremath{\left[ #1 \right]}}
+\newcommand\AbsBasis{\ensuremath{\mathsf{H\!O}}}
+\newcommand\dom[1]{\mathrm{dom}(#1)}
+\newcommand\sdom[1]{\mathrm{dom}^{\sharp}(#1)}
+\newcommand\FV[1]{\mathrm{FV}(#1)}
+%%% Logic
+\def\limp{\Rightarrow}
+\def\liff{\Leftrightarrow}
+%%% Sets
+\def\N{\mathbb{N}}            % set of natural numbers
+\def\R{\mathbb{R}}            % set of real numbers
+\def\C{\mathbb{C}}            % set of complex numbers
+\def\Pow{\mathfrak{P}}        % powerset
+\def\Powfin{\Pow_{\text{fin}}}  % set of finite subsets
+\def\X{\mathcal{X}}           % set of variables
+\def\Val{\mathrm{V}}          % set of basic values
+\def\pto{\rightharpoonup}     % set of partial functions
+\def\Cone{\mathrm{cone}}      % cone of a set of vectors
+\def\Sph{\mathcal{S}_1}       % unit sphere
+%%% Scalar product
+\def\scal#1#2{\langle{#1}~|~{#2}\rangle}
+\def\bigscal#1#2{\bigl\langle{#1}~\bigm|~{#2}\bigr\rangle}
+\def\Bigscal#1#2{\Bigl\langle{#1}~\Bigm|~{#2}\Bigr\rangle}
+\def\valscal#1#2{\left\langle{#1}~\middle|~{#2}\right\rangle}
+%%% Syntax
+\def\<{\langle}
+\def\>{\rangle}
+\def\Void{*} % void object
+\def\Pair#1#2{(#1,#2)} % pairing construct
+\def\Lam#1#2#3{\lambda#1^{#2}{.}#3} % lambda abstraction
+%%% Let construct
+\def\letkeyword{\mathsf{let}}
+\def\inkeyword{\mathsf{in}}
+\def\LetV#1#2{\letkeyword~\Void=#1~\inkeyword~#2}
+\def\LetP#1#2#3#4#5#6{\letkeyword\,\Pair{#1^{#2}}{#3^{#4}}=#5~\inkeyword~#6}
+%%% Left injection
+\def\inleftkeyword{\texttt{inl}}
+\def\Inl#1{\inleftkeyword(#1)}
+\def\bigInl#1{\inleftkeyword\bigl(#1\bigr)}
+\def\BigInl#1{\inleftkeyword\Bigl(#1\Bigr)}
+%%% Right injection
+\def\inrightkeyword{\texttt{inr}}
+\def\Inr#1{\inrightkeyword(#1)}
+\def\bigInr#1{\inrightkeyword\bigl(#1\bigr)}
+\def\BigInr#1{\inrightkeyword\Bigl(#1\Bigr)}
+%%% Match construct
+\def\matchkeyword{\texttt{match}}
+\def\Match#1#2#3#4#5{\matchkeyword~#1~%
+  \{\Inl{#2}\mapsto#3~|~\Inr{#4}\mapsto#5\}}
+\def\bigMatch#1#2#3#4#5{\matchkeyword~#1~%
+  \bigl\{\Inl{#2}\mapsto#3~\bigm|~\Inr{#4}\mapsto#5\bigr\}}
+\def\BigMatch#1#2#3#4#5{\matchkeyword~#1~%
+  \Bigl\{\Inl{#2}\mapsto#3~\Bigm|~\Inr{#4}\mapsto#5\Bigr\}}
+%%% Match construct for lists
+\def\Nil{\ensuremath{\mathtt{nil}}}
+\def\MatchL#1#2#3#4#5{\matchkeyword~#1~%
+  \{\Nil\mapsto#2~|~#3::#4\mapsto#5\}}
+\def\bigMatchL#1#2#3#4#5{\matchkeyword~#1~%
+  \bigl\{\Nil\mapsto#2~\bigm|~#3::#4\mapsto#5\bigr\}}
+\def\BigMatchL#1#2#3#4#5{\matchkeyword~#1~%
+  \Bigl\{\Nil\mapsto#2~\Bigm|~#3::#4\mapsto#5\Bigr\}}
+%%% If construct
+\def\tt{\ensuremath{\mathtt{t\!t}}}
+\def\ff{\ensuremath{\mathtt{f\!f}}}
+\def\ifkeyword{\ensuremath{\mathtt{i{\mskip-1mu}f}}}
+\def\If#1#2#3{\ifkeyword~#1~\{#2\mid#3\}}
+\def\bigIf#1#2#3{\ifkeyword~#1~\bigl\{#2\bigm|#3\bigr\}}
+\def\BigIf#1#2#3{\ifkeyword~#1~\Bigl\{#2\Bigm|#3\Bigr\}}
+%%% Case construct
+\def\case#1#2#3#4#5{\ensuremath{\mathsf{case}~#1~\mathsf{of}~\{#2\mapsto #4 \mid #3\mapsto #5\}}}
+\def\gencase#1#2#3#4#5{\ensuremath{\mathsf{case}~#1~\mathsf{of}~\{#2\mapsto #4 \mid \dotsb \mid #3\mapsto #5\}}}
+\def\gencasei#1#2#3{\ensuremath{\mathsf{case}~#1~\mathsf{of}~\{#2\mapsto #3\}}}
+%%% Syntax (misc.)
+\def\supp{\mathrm{supp}}
+\def\weight{\varpi}
+\def\Kron#1#2{\ensuremath{\delta_{#1,#2}}}
+%%% Evaluation
+\def\evalat{\mathrel{\triangleright}}
+\def\nevalat{\mathrel{\not\triangleright}}
+\def\lraneq{\rightsquigarrow}
+\def\eval{\lra^*}
+\def\lave{\mathrel{\reflectbox{$\eval$}}}
+%%% Types
+\def\BB{\mathbb{B}}
+\def\arr{\rightarrow}
+\def\Arr{\Rightarrow}
+\def\Type{\mathbb{T}}
+\def\BasisType{\Type_\flat}
+%%% Semantics
+\def\sem#1{\llbracket#1\rrbracket}
+\def\semr#1{\{{\real}~#1\}}
+\def\SUB#1#2{#1\le#2}
+\def\NSUB#1#2{#1\not\le#2}
+\def\EQV#1#2{#1\simeq#2}
+\def\TYP#1#2#3{#1~{\vdash}~#2~{:}~#3}
+\def\SORTH#1#2#3#4{#1~{\vdash}~#2\perp#3~{:}~#4}
+\def\ORTH#1#2#3#4#5#6{#1~{\vdash}~(#2~{\vdash}~#3)\perp(#4~{\vdash}~#5)~{:}~#6}
+\def\rnam#1{\textsc{\small\upshape(#1)}}
+\def\snam#1{\textsc{\scriptsize\upshape(#1)}}
+\def\real{\Vdash}
+\def\ureal{\Vvdash}
+%%% Misc.
+\def\ds{\displaystyle}
+\outer\long\def\COUIC#1{}
+\def\sqrthalf{{\textstyle\frac{1}{\sqrt{2}}}}
+\def\minsqrthalf{{\textstyle\bigl(-\frac{1}{\sqrt{2}}\bigr)}}
+\def\isqrthalf{{\textstyle\frac{i}{\sqrt{2}}}}
+\def\minisqrthalf{{\textstyle\bigl(-\frac{i}{\sqrt{2}}\bigr)}}
+
+%%% Even more macros -- to be merged
+
+\newcommand\pair[1]{\langle #1 \rangle}
+\newcommand\Let[3]{\mathsf{let}\ {#1}={#2}\ \mathsf{in}\ {#3}}
+\newcommand{\ttrue}{\ensuremath{\mathtt{t\!t}}}
+\newcommand{\ffalse}{\ensuremath{\mathtt{f\!f}}}
+\newcommand{\tif}[3]{\mathsf{if}\left(#1\right)\left(#2\right)\left(#3\right)}
+\newcommand{\pif}[2]{\ensuremath{\mathtt{if}\left(#1\right)\left(#2\right)}}
+\newcommand\trad[1]{\llparenthesis{#1}\rrparenthesis}
+\newcommand\B{\mathbb Z}
+\newcommand\XB{\mathbb X}
+\newcommand\Hd{\mathsf{H}}
+\newcommand\Q{\sharp\B}
+\newcommand{\True}{\mathbb{T}}
+\newcommand{\False}{\mathbb{F}}
+\newcommand{\Cx}{\mathbb{C}}
+\newcommand{\cnot}[2]{\mathsf{CNOT}\ #1\ #2}
+\newcommand{\tcnot}{\mathsf{CNOT}}
+\newcommand{\pauliX}[1]{\mathsf{NOT}\ #1}
+\newcommand{\pauliZXB}{\mathsf{Z}_{\XB}}
+\newcommand{\cnotXB}[2]{\mathsf{CNOT}_{\XB}\ #1\ #2}
+\newcommand{\tcnotXB}{\mathsf{CNOT}_{\XB}}
+\newcommand{\pauliXXB}[1]{\mathsf{NOT}_{\XB}\ #1}
+\newcommand{\tpauliXXB}{\mathsf{NOT}_{\XB}}
+\newcommand{\Bell}{\mathsf{Bell}}
+\newcommand{\lambdaB}{\lambda_B}
+%%% If construct
+%\newcommand\basis[1]{\ensuremath{\mathsf{B}_{#1}}}
+\newcommand\basis[1]{\ensuremath{\flat_{#1}}}
+\newcommand\genbasis[3]{\ensuremath{\basis{\{#1\}_{#2}^{#3}}}}
+
+%%% Teleportation algorithm
+
+\newcommand{\bellcase}[5]{\ensuremath{\mathsf{case}~#1~\mathsf{of}~ 
+\{\Phi^+ \mapsto \Pair{\Phi^+}{#2} \mid
+\Phi^- \mapsto \Pair{\Phi^-}{#3} \mid
+\Psi^+ \mapsto \Pair{\Psi^+}{#4} \mid
+\Psi^- \mapsto \Pair{\Psi^-}{#5} \}}}
+
+
+\begin{document}
+
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{3pt}
+\setlength{\belowdisplayshortskip}{3pt}
+
+\maketitle
+\begin{abstract}
+  We present $\lambdaB$, a quantum‐control $\lambda$‐calculus that refines
+  previous basis-sensitive systems by allowing abstractions to be expressed with
+  respect to arbitrary---possibly entangled---bases. It combines quantum control 
+  and realisability semantics ensuring unitarity by construction.
+  Each instance of variable binding is annotated with a basis,
+  and a new basis-dependent substitution governs the decomposition of value
+  combinations. These extensions preserve the expressive power of earlier calculi
+  while enabling more refined reasoning about programs under basis changes.
+  The realisability semantics connects the reduction system with the type system,
+  yielding a direct characterisation of unitary operators and ensuring safety by
+  construction. From this semantics, we derive a validated family of typing rules, 
+  that form the foundation of a type-safe quantum programming language. We
+  illustrate the expressive benefits of $\lambdaB$ through examples such as 
+  Deutsch’s algorithm and quantum teleportation, where basis-aware typing captures 
+  classical determinism and deferred-measurement behaviour within a uniform 
+  framework.
+\end{abstract}
+\newpage
+\section{Introduction}
+The no-cloning theorem \cite{WoottersZurek1982} and the no-deleting theorem
+\cite{PatiBraunstein2000} are two well-known results in quantum mechanics that
+state it is impossible to copy or delete an arbitrary qubit. 
+There is, however, a subtlety: although arbitrary qubits
+cannot be copied or deleted, this is possible for known---and, in the case of
+deletion, separable---qubits. This implies that qubits with known values behave
+as classical data and can be treated accordingly. Moreover, it suffices to know
+the basis to which a qubit belongs in order to copy and delete it.
+
+In most quantum programming languages, qubits are defined with respect to a
+canonical basis—often referred to as the computational basis. In this setting,
+classical bits correspond to the basis vectors, whereas qubits are unit-norm
+linear combinations of them. Classical bits can be copied and deleted freely,
+while such operations on arbitrary qubits are restricted.
+
+In this paper, we introduce a quantum $\lambda$-calculus with quantum-control.
+Our approach is inspired by a line of work in basis-sensitive
+quantum typing. The earliest system, Lambda-S \cite{DiazcaroDowekRinaldiBIO19},
+identified qubits in the computational basis, allowing duplication and erasure
+only in that case. Later, Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,
+DiazCaroMalherbe2022} refined this approach by restricting to unit-norm vectors,
+introducing higher-order abstractions, and ensuring that terms of type
+qubit-to-qubit denote unitary maps. More recently, Lambda-SX 
+\cite{DiazcaroMonzonAPLAS25} generalised Lambda-S to arbitrary non-entangled 
+single-qubit bases, in first order. The $\lambda_B$ calculus presented here extends
+these ideas to a unit-norm, higher-order setting over multiple-qubit bases,
+grounded in a realisability semantics.
+
+A realisability based methodology provides a constructive framework connecting
+operational semantics with type systems \cite{KleeneJSL45}. In our context, 
+it allows extracting a sound type system directly from the reduction semantics,
+ensuring safety by construction. The approach is as follows: define a calculus
+with a deterministic evaluation; then, define types as sets of closed values;
+finally, define typing so that an assertion equates to the term reducing to a value of
+that type. Rather than building ad hoc rules, the system is derived from the calculus's
+computational content. While the untyped calculus allows for non-physical terms, the
+extracted type system acts as a logical filter: only unit-norm, unitary terms
+are typable, enabling static certification of unitary behaviour across basis
+changes and capturing basis-dependent invariants beyond fixed-basis systems.
+
+Following this approach, we enrich abstractions with explicit basis
+decorations. Intuitively, the reduction system treats values expressed in the
+chosen basis as classical data, while linear combinations of these values
+represent quantum data and reduce linearly within the term. This refinement
+enables duplication and erasure for qubits in known bases while maintaining
+linear handling for unknown qubits. This technique works well for first-order
+terms, but cannot capture the notion of basis for high-order terms. We
+regain higher-order by using the now standard call-by-basis strategy from Lineal
+\cite{ArrighiDowekLMCS17}.
+
+This work pursues two goals: first, to provide a more precise program description
+via the extracted type system; and second, to express quantum algorithms 
+compositionally, rather than as mere circuit translations.
+
+With these goals in mind, we make the design choice to not include measurement and
+study a pure calculus, to narrow the focus of this paper to the 
+unitary setting.
+
+\paragraph*{Related work.}
+The idea of tracking basis information within quantum programming languages has
+appeared in several forms across the literature.  
+The work in~\cite{Perdrix2008} proposed an abstract model for static
+entanglement analysis, where the basis of qubits is used to control duplication
+and track non-entanglement properties.  
+The approach in~\cite{DiazcaroMonzonAPLAS25} introduced a typed
+$\lambda$-calculus that incorporates basis annotations into the type system,
+ensuring linear handling of quantum data while providing strong
+meta-theoretical guarantees.  
+Our system generalises these ideas by allowing abstractions to range over
+arbitrary---possibly entangled---bases, extending basis awareness beyond the
+single-qubit setting.
+
+A number of other frameworks support reasoning about multiple bases through
+different paradigms. The ZX-calculus~\cite{CoeckeRossICALP08} provides a
+graphical language where spiders correspond to computations relative to the
+computational and Hadamard bases, while the Many-Worlds Calculus
+\cite{ChardonnetdeVismeValironVilmartLMCS25} also accommodates
+superpositions of programs but within a diagrammatic semantics.  
+By contrast, our approach operates directly within a typed term calculus,
+allowing basis transitions to be tracked syntactically.
+
+From a category theory standpoint, the framework
+in~\cite{HeunenKaarsgaard2021} models measurement and decoherence through
+\emph{quantum information effects}, capturing basis change as a semantic
+effect.  
+Similarly,~\cite{CaretteHeunenKaarsgaardSabry2024} introduces
+\textsc{Quantum}$\Pi$, a language combining two interpretations of a reversible
+classical calculus—one per basis—via an effect construction.  
+In both cases, basis sensitivity arises semantically.  
+In contrast, $\lambdaB$ integrates it directly at the syntactic and typing
+levels, ensuring that basis transformations are explicit in the program structure.
+
+Related efforts in semantic characterisation—such as the fully
+abstract model of~\cite{ClairambaultdeVisme2019} or the dual calculi
+described in~\cite{ChoudhuryGay2025}—approach the logical foundations of
+quantum computation from complementary angles.  
+In contrast, $\lambdaB$ focuses on the syntactic distinction of bases and
+superpositions within a unified quantum $\lambda$-calculus, providing a concrete
+basis-sensitive type system and higher-order quantum control.
+
+Other languages aim to unify classical and quantum computation.
+For instance,~\cite{VoichickLiRandHicks2023} generalises classical
+control constructs and interprets duplication and discarding semantically as
+entanglement and partial trace. Our calculus follows the opposite philosophy: 
+linearity and duplicability are syntactically restricted by the basis-sensitive 
+type system, guaranteeing coherent quantum control without relying on external 
+semantic constraints.
+
+The calculi in \cite{DaveLemonnierPechouxZamdzhiev_2025, BarssePechouxPerdrix_2026} work 
+on a probabilistic setting to accommodate measurement. The operational semantics can be
+seen as the action of programs on quantum states and thus working on two different layers.
+In contrast, our work focuses on the pure quantum fragment, yielding a deterministic
+calculus where state and program share the same layer.
+
+The SYM calculus \cite{SabryValironVizzotto_2018}, is based on linear combinations of
+terms in the style of \cite{ArrighiDowekLMCS17} working within the pure quantum fragment
+(as $\lambdaB$). However, each calculus focuses on different objectives. SYM implements 
+structural recursion and limited higher-order, without requiring norm-1 for the terms. While 
+$\lambdaB$ sports less constrained higher-order functions and ensures typed terms fall in the 
+unitary sphere.
+
+%\begin{table}
+%  \centering
+%  \begin{tabular}{|l|c|c|c|c|c|c|}\hline
+%    & Qunity \cite{VoichickLiRandHicks2023}
+%    & SYM \cite{SabryValironVizzotto_2018} 
+%    & \cite{DaveLemonnierPechouxZamdzhiev_2025} 
+%    & \cite{BarssePechouxPerdrix_2026}
+%    & Lambda-S$_1$ \cite{DiazcaroGuillermoMiquelValironLICS19,DiazCaroMalherbe2022} 
+%    & $\lambdaB$ 
+%    \\\hline\hline
+%    Unit norm 
+%    &  
+%    &  
+%    & \cmark 
+%    & 
+%    & \cmark 
+%    & \cmark 
+%    \\\hline
+%    Recursion 
+%    &  
+%    & \cmark 
+%    &  
+%    & \cmark
+%    &  
+%    &  
+%    \\\hline
+%    Termination
+%    &  
+%    & \cmark 
+%    & \cmark 
+%    & 
+%    & \cmark 
+%    & \cmark 
+%    \\\hline
+%    Measurement 
+%    & \cmark 
+%    &  
+%    & \cmark
+%    & \cmark
+%    &  
+%    &  
+%    \\\hline
+%    Arbitrary bases 
+%    & \cmark\footnotemark[1] 
+%    & \cmark\footnotemark[1] 
+%    & \cmark\footnotemark[1]
+%    & 
+%    &  
+%    & \cmark 
+%    \\\hline
+%    Function superposition 
+%    &  
+%    & 
+%    &  
+%    & \cmark
+%    & \cmark 
+%    & \cmark 
+%    \\\hline
+%  \end{tabular}
+%  \caption{Comparison of quantum-control $\lambda$-calculi.}
+%  \label{tab:related}
+%\end{table}
+%\footnotetext[1]{For coherent pattern-matching.}
+\paragraph*{Contributions.}
+The contributions of this paper can be summarised as follows.
+\begin{itemize}[nosep]
+  \item We introduce $\lambdaB$, a quantum-control $\lambda$-calculus that 
+  generalises the basis-sensitive paradigm to arbitrary, possibly entangled 
+  multi-qubit bases in a higher-order setting.
+  \item We provide a full \emph{realisability-based semantics} that 
+  logically internalises the semantic requirement of unitarity. This allows 
+  the systematic extraction of a sound type system where the physical consistency 
+  of programs (unit-norm preservation and isometries) is guaranteed by 
+  construction.
+  \item We achieve a direct \emph{syntactic characterisation of unitary operators} 
+  of arbitrary finite dimension $2^n$ as abstractions in our type algebra. 
+  This result generalises previous characterisations which were restricted 
+  to the computational basis.
+  \item We demonstrate the \emph{expressive benefits} of basis-awareness 
+  through a series of examples. Specifically, we show how the system captures 
+  classical determinism and the deferred-measurement principle via static 
+  typing, yielding more precise program descriptions than earlier calculi.
+\end{itemize}
+
+The paper is organised as follows.  
+Section~\ref{sec:calculus} introduces the untyped language, its syntax, congruence rules,
+and basis-dependent substitution.  
+Section~\ref{sec:reduction} defines the operational semantics, and
+Section~\ref{sec:model} presents the realisability model with unitary type semantics,
+the characterisation of unitary operators, and the typing rules.  
+Section~\ref{sec:examples} presents some illustrative examples.
+Section~\ref{sec:conclusion} concludes.
+All omitted proofs appear in the appendices.
+
+\section{Untyped language}\label{sec:calculus}
+%\subsection{Syntax and congruence}
+This section presents the calculus on which our realisability model will be
+built. It is the $\lambda$-calculus extended with linear combinations of terms, 
+along the lines of the language Lineal \cite{ArrighiDowekLMCS17}.
+
+%\begin{table}[t]
+%  \begin{align*}
+%    v &::= x \mid \Lam{x}B{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1} &
+%    (\Val)\\
+%    t &::= v \mid tt \mid (t,t) \mid
+%    \LetP{x}{B_1}{y}{B_2}{\vec{t}}{\vec{t}}\mid
+%    \gencase{\vec{t}}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}} &
+%    (\Lambda) \\
+%    \vec{v} &::= v \mid \vec{v}+\vec{v} \mid \alpha \vec{v} \mid \vec 0
+%    \qquad\hfill(\alpha\in\C) & (\ValD) \\
+%    \vec{t} &::= t \mid \vec{t}+\vec{t} \mid \alpha \vec{t} \mid \vec 0
+%    \qquad\hfill(\alpha\in\C) & (\vec \Lambda)
+%  \end{align*}
+%  \caption{Syntax of the calculus, where $B, B_1, B_2 \subseteq \ValD$.}
+%  \label{tab:Syntax}
+%\end{table}
+\begin{table}[t]
+  \centering
+  \begin{tabular}{rcll}
+    $v$ & $::=$ & $x \mid \Lam{x}{X}{\vec{t}} \mid (v, v) \mid \ket{0} \mid \ket{1}$ & $(\Val)$ \\
+    $t$ & $::=$ & $v \mid tt \mid (t,t) \mid \LetP{x}{X}{y}{Y}{t}{\vec{t}} \mid \gencase{t}{\vec{v}}{\vec{v}}{\vec{t}}{\vec{t}}$ & $(\Lambda)$ \\
+    $\vec{v}$ & $::=$ & $v \mid \vec{v}+\vec{v} \mid \alpha \vec{v} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\ValD)$ \\
+    $\vec{t}$ & $::=$ & $t \mid \vec{t}+\vec{t} \mid \alpha \vec{t} \mid \vec 0 \qquad (\alpha\in\C)$ & $(\vec \Lambda)$
+  \end{tabular}
+  \caption{Syntax of the calculus, where $X, Y \subseteq \ValD$.}
+  \label{tab:Syntax}
+\end{table}
+The syntax of the calculus is described in
+Table~\ref{tab:Syntax}; it is divided into four
+distinct syntactic categories: \emph{basic values} ($\Val$), \emph{basic terms}
+($\Lambda$), \emph{value combinations} ($\ValD$), and \emph{term
+combinations} ($\vec\Lambda$). Values consist of variables, decorated
+lambda abstractions, and two basis values representing orthogonal vectors,
+$\ket 0$ and $\ket 1$. A pair of values is also considered a value.  Terms
+include values, applications, pair constructors and destructors, and pattern
+matching for orthogonal vectors, represented by the $\mathsf{case}$ operator.
+This $\mathsf{case}$ operator supports quantum control, which enables
+computations without a definite causal structure, such as the quantum switch 
+\cite{Chiribella_2013}.
+Both term and value combinations are built as $\C$-linear combinations of
+basic terms and values, respectively. We use $v,u,w$ to denote values and
+$t,s,r$ for terms, writing $\vec{\cdot}$ when they can be combinations.
+
+The decorations $X$, and $Y$ appearing in the abstractions and pair
+destructors denote either the basis of the vector spaces in which the terms
+are expressed or a mark for a higher-order variable; their precise nature is
+made explicit later. Before formally defining the notion of basis, we first
+establish the algebraic structure underlying the space of value combinations.
+This is achieved by introducing the congruence relation defined in
+Table~\ref{tab:Congruence}.
+This relation captures the intended behaviour of addition and scalar
+multiplication, allowing us to treat linear combinations of terms and values
+as genuine algebraic entities rather than mere syntactic constructions.
+In particular, it enforces the commutativity and associativity of addition and
+the distributivity of scalar multiplication, thereby justifying the use of summation
+notation~$\sum$.
+\begin{table}[t]
+  \begin{align*}
+    0\vec t &\equiv \vec 0 & \vec t+\vec 0 &\equiv \vec t \\
+    1\vec{t} &\equiv \vec{t} &
+    \alpha(\beta\vec{t}) &\equiv (\alpha\beta)\vec{t} \\
+    \vec{t}_{1}+\vec{t}_{2} &\equiv \vec{t}_{2}+\vec{t}_{1} &
+    (\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3} &\equiv \vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3}) \\
+    (\alpha+\beta)\vec{t} &\equiv \alpha\vec{t}+\beta\vec{t} &
+    \alpha(\vec{t}_{1}+\vec{t}_{2}) &\equiv \alpha\vec{t}_{1}+\alpha\vec{t}_{2}\\
+    \end{align*}
+  \caption{Term congruence}
+  \label{tab:Congruence}
+\end{table}
+
+The rules in Table~\ref{tab:Congruence} ensure that the set of value combinations
+satisfies the axioms of a vector space. The notion of basis in this calculus builds
+on this algebraic foundation. Once the vector structure is established, we can define
+which subsets $B\subseteq \ValD$ qualify as \emph{bases}, thereby justifying the
+decorations appearing in the syntax of Table~\ref{tab:Syntax}.
+
+We will also consider the notation in Table~\ref{tab:Macros} for linear
+combinations of terms. These expressions do not appear in the syntax,
+yet they are useful to describe specific states. A simple example is the linear
+combination of pairs where we can express the following state:
+\[
+\frac{1}{2}\Pair{\ket{0}+\ket{1}}{\ket{0}-\ket{1}} :=
+\frac{1}{2}(\Pair{\ket{0}}{\ket{0}}- \Pair{\ket{0}}{\ket{1}}
++\Pair{\ket{1}}{\ket{0}}-\Pair{\ket{1}}{\ket{1}})
+\]
+As the tuple grows in dimension, the number of subterms in the combination grow
+exponentially. The introduced notation allows for a more compact representation.
+
+\begin{table}[t]
+  \begin{align*}
+    \Pair{\alpha  t+\vec{s}}{\vec{r}} 
+    &:= \alpha\Pair{t}{\vec{r}} + \Pair{\vec{s}}{\vec{r}} &
+    \Pair{t}{\alpha s+\vec{r}} 
+    &:= \alpha\Pair{t}{s} + \Pair{t}{\vec{r}}\\
+    (\alpha t+\vec{s})\vec{r} &:= \alpha(t \vec{r})+\vec{s}\vec{r} &
+    t(\alpha s+\vec{r}) &:= \alpha (t s)+ t \vec{r}
+  \end{align*}
+  \vspace{-2\baselineskip}
+  \begin{align*}
+    \LetP{x_1}{X}{x_2}{Y}{\alpha t+\vec{s}}{\vec{r}}
+    &:= \alpha(\LetP{x_1}{X}{x_2}{Y}{t}{\vec{r}})
+      +(\LetP{x_1}{X}{x_2}{Y}{\vec{s}}{\vec{r}}) 
+      \\
+    \gencasei{(\alpha t+\vec{s})}{\vec{v}_{i}}{\vec{r}_{i}}
+    &:= \alpha(\gencasei{t}{\vec{v}_i}{\vec{r}_i}) + 
+      \gencasei{\vec{s}}{\vec{v}_i}{\vec{r}_i}
+  \end{align*}
+  \caption{Syntax sugar for term combinations}
+  \label{tab:Macros}
+\end{table}
+
+Before proceeding further, let us briefly illustrate the intuition behind the
+congruence in Table~\ref{tab:Congruence}.  
+The key idea is that arguments are decomposed over the bases associated with
+their corresponding abstractions.  
+As in linear algebra, a vector can be rewritten as a linear combination of
+basis elements; for instance,
+\(
+  (1,0)
+  = \tfrac{1}{\sqrt{2}}\!\left(\tfrac{(1,1)}{\sqrt{2}}
+  + \tfrac{(1,-1)}{\sqrt{2}}\right)
+\)
+expresses $(1,0)$ in the basis
+$\{\tfrac{(1,1)}{\sqrt{2}}, \tfrac{(1,-1)}{\sqrt{2}}\}$.
+By identifying $(1,0)$ with $\ket{0}$ and $(0,1)$ with $\ket{1}$, we see that
+the calculus allows every vector (or value combination) to be expressed as a
+superposition of elements of the basis attached to each abstraction.
+The congruence ensures that these linear combinations behave algebraically as
+in a complex vector space, supporting the standard operations of addition,
+scalar multiplication, and the zero vector.
+
+On its original presentation, Lineal \cite{ArrighiDowekLMCS17} and following
+refinements \cite{DiazcaroDowekRinaldiBIO19,DiazcaroMonzonAPLAS25}, implemented
+these operations via a set of directed reduction rules with defined normal forms
+and additional casting rules. This approach lends itself to implementation, however
+the resulting system is cumbersome to analyze under a realisability framework.
+For this reason we choose to represent the vector space identities using a
+congruence relation.
+
+To properly characterise the sets that decorate the lambda abstractions, we
+must first specify the kind of values they contain.
+\begin{definition}[Qubits]\label{def:Qubit}
+  A \emph{1-qubit state} is a value combination of the form
+  $\alpha\ket{0} + \beta\ket{1}$, where $|\alpha|^2 + |\beta|^2 = 1$. An
+  \emph{$n$-qubit state} is a value combination of the form
+  $\alpha\Pair{\ket{0}}{\vec{w}_{1}} + \beta\Pair{\ket{1}}{\vec{w}_{2}}$, where
+  $\vec{w}_{1}$ and $\vec{w}_{2}$ are $(n-1)$-qubit states,
+  where $|\alpha|^2 + |\beta|^2 = 1$.
+\end{definition}
+We use the usual Dirac shorthand $\ket{xy}$ for $(\ket{x},\ket{y})$, and
+extend it to longer tuples by associating to the right.
+
+From now on, we call the value combinations, i.e. the elements of $\ValD$,
+\emph{vectors}. The vector space $\ValD$ is equipped with an inner
+product defined by,  
+\(
+  \scal{\vec{v}}{\vec{w}} := \sum_{i=1}^k\sum_{j=1}^k
+  \overline{\alpha_i}\,\beta_j\,\delta_{v_i,w_j},
+\)
+and an $\ell_2$-norm 
+\(
+  \|\vec{v}\| := \sqrt{\scal{\vec{v}}{\vec{v}}}
+  = \sqrt{\sum_{i=1}^k|\alpha_i|^2}
+\),
+where $\vec{v}=\sum_{i=1}^k\alpha_i v_i$ and
+$\vec{w}=\sum_{j=1}^k\beta_j w_j$, and $\delta_{v_i,w_j}$ is the Kronecker
+delta, equal to $1$ if $v_i=w_j$ and $0$ otherwise.
+
+With this notion of inner product, we can complete the description of the
+calculus syntax. As expected, two values are \emph{orthogonal} when their inner
+product is equal to zero. We can now formally define the sets that
+decorate abstractions.
+\begin{definition}[Basis]\label{def:NthDimensionalBasis}
+  A set of value combinations $\mathbb{B}$ is a \emph{$2^n$-dimensional orthonormal
+  basis} if it satisfies:
+  \begin{enumerate*}
+    \item $\mathbb{B}$ has cardinality $2^n$.
+    \item Each element of $\mathbb{B}$ is an $n$-qubit state \emph{(cf.~Definition~\ref{def:Qubit})}.
+    \item Distinct elements of $\mathbb{B}$ are pairwise orthogonal.
+  \end{enumerate*}
+\end{definition}
+
+As a first step, the decorations $X$ and $Y$ introduced in Table~\ref{tab:Syntax}
+can be restricted to sets forming $2^n$-dimensional
+orthonormal bases. These sets indicate the basis in which a term is expressed:
+qubits in the decorating basis will be treated in call-by-value manner, while
+others are decomposed as $\C$-linear combinations of basis elements, with the
+function applied linearly to each component. The basis analysis will be
+restricted to $n$-qubit states. We will examine later the handling for
+higher-order terms.
+
+
+%In other words, we will
+%not be considering bases for $\lambda$-abstractions, this is due to the fact that a syntactical
+%approach to higher-order bases is insufficient. For example, two different $\lambda$-terms
+%which encode the same function $f$, are considered orthogonal to each other. This itself is
+%an issue since the norm-$1$ linear combination of these terms does not preserve unitarity.
+%Solving this problem is not a trivial endeavor and we leave it as a possible avenue for future
+%research.
+
+As expected, no non-trivial linear combination of basis elements yields the null vector;
+otherwise, some basis vector would violate pairwise orthogonality. Consequently, each
+decomposition over a basis is unique.
+
+\begin{remark}[Unique decomposition]\label{rem:UniqueDecomposition}\label{cor:EquivalentDecomposition}
+  If $B$ is a $2^n$-dimensional basis, then every $n$-qubit state has a
+  unique decomposition over $B$. This means that when $\vec{v} \equiv \vec{w}$,
+  then they share the same decomposition over any basis $B$.
+  \qed
+\end{remark}
+
+We denote the computational basis by $\B=\{\ket{0},\ket{1}\}$ and the Hadamard
+basis by $\XB=\{\ket{+},\ket{-}\}$, where
+$\ket{\pm}=\tfrac{1}{\sqrt{2}}(\ket{0}\pm\ket{1})$.  
+
+\subsection{Basis-dependent substitutions}
+As usual, the expression $\vec t\ [\vec v/x]$ denotes the
+capture-avoiding substitution of $\vec v$ for $x$ in $\vec t$.
+However, beta-reduction depends on the basis chosen for the abstraction, so we must
+define a substitution that takes this mechanism into account. Intuitively, this
+operation substitutes variables with vectors expressed in the chosen basis; the
+accompanying coefficients are those of the value combination being
+substituted.
+
+Alongside this substitution, we extend the set of possible basis annotations to
+higher-order by including a special symbol \AbsBasis. Since we only consider bases
+for first-order terms, we need a method to deal with combinations of 
+$\lambda$-abstractions. This symbol marks that the argument of a function should be
+treated linearly over its basic values as defined in the syntax. So, from now on, 
+we will use $X, Y, Z$ (as in Table \ref{tab:Syntax}) to refer to either
+$2^n$-dimensional othonormal bases, or the special symbol $\AbsBasis$ and
+refer them as \emph{decorations}. When we refer exclusively to orthonormal bases,
+excluding $\AbsBasis$, we will use $\BB$.
+
+%\begin{definition}[Basis-dependent substitution]
+%  Let $\vec t$ be a term combination, $\vec v$ a value combination, $x$ a
+%  variable, and $B$ an orthonormal basis. We define the substitution
+%  $\vec t\ansubst{\vec v/x}{B}$ as follows:
+%  \[
+%    \vec t\ansubst{\vec v/x}{B} \;=\;
+%    \begin{cases}
+%      \ds\sum_{i\in I}\alpha_i\,\vec t\,[\vec{b}_{i}/x] &
+%        \text{if } B=\{\vec{b}_{i}\}_{i\in I}\ \text{and}\
+%        \vec v \equiv \ds\sum_{i\in I}\alpha_i\,\vec{b}_{i},\\[6pt]
+%      \ds\sum_{i\in I}\alpha_i\,\vec t\,[v_i/x] &
+%        \text{if } B=\AbsBasis\ \text{and}\
+%        \vec v = \ds\sum_{i\in I}\alpha_i\,v_i,\\[2pt]
+%      \text{undefined} & \text{otherwise.}
+%    \end{cases}
+%  \]
+%  Notice that the uniqueness of the decomposition over $B$ is guaranteed by Remark~\ref{rem:UniqueDecomposition}.
+%\end{definition}
+\begin{definition}[Basis-dependent substitution]\label{def:basisDependentSub}
+  Let $\vec t$ be a term combination, $\vec v$ a value combination, $x$ a
+  variable, and $X$ an orthonormal basis or $\AbsBasis$. The substitution 
+  $\vec t\,\ansubst{\vec v/x}{X}$ is defined as $\sum_{i\in I}\alpha_i
+  \vec{t}\;[\vec{b}_i/x]$ if $X=\{\vec{b}_i\}_{i\in I}$ and $\vec{v}\equiv
+  \sum_{i\in I} \alpha_i\vec{b}_i$; or as $\sum_{i\in I}\alpha_i\vec{t}\;[v_i/x]$
+  if $X=\AbsBasis$ and $\vec{v}=\sum_{i\in I} \alpha_i v_i$; otherwise it is
+  undefined. As remarked in \ref{rem:UniqueDecomposition}, this decomposition
+  is unique, and the substitution is well-defined.
+\end{definition}
+
+This definition captures two substitution modes: linear decomposition of $\vec v$
+over an explicit basis $X$, or over its basic values when $X=\AbsBasis$
+(recovering the mechanism of~\cite{ArrighiDowekLMCS17}). The latter is the only
+case applicable to $\lambda$-abstractions. The operation extends to pairs: if
+$\vec v\equiv\sum_{i\in I}\alpha_i(\vec{v}_i, \vec{w}_i)$, then $\vec t
+\ansubst{\vec v/x\otimes y}{X\otimes Y} = \sum_{i\in I}\alpha_i (\vec t
+\ansubst{\vec{v}_i/x}{X}\ansubst{\vec{w}_i/y}{Y})$, where $X, Y$ are
+the bases associated with $x, y$.
+
+%The definition captures two distinct substitution modes.  
+%In the first, substitution proceeds linearly using the decomposition of
+%$\vec v$ over the explicit basis $B$. In the second, when $B=\AbsBasis$,
+%substitution proceeds linearly over the basic values that form $\vec v$.  
+%This case recovers the mechanism of non base-sensitive calculi
+%--as first defined in \cite{ArrighiDowekLMCS17}. This special case is
+%also the only one applicable to $\lambda$-abstractions, since abstractions
+%do not belong to orthonormal bases.
+%
+%The definition also extends to pairs of values. If
+%$\vec v\equiv\sum_{i\in I}\alpha_i\,\Pair{\vec{v}_{i}}{\vec{w}_{i}}$,
+%then:
+%\[
+%  \vec t\ansubst{\vec v/x\otimes y}{B_1\otimes B_2}
+%    \;=\; \sum_{i\in I}\alpha_i\,
+%    \bigl(\vec t\ansubst{\vec{v}_{i}/x}{B_1}\ansubst{\vec{w}_{i}/y}{B_2}\bigr),
+%    \text{ if defined},
+%\]
+%where $B_1$ and $B_2$ are (orthonormal) bases--or $\AbsBasis$--associated
+%with $x$ and $y$, respectively; the symbol $\otimes$ in $B_1\otimes B_2$ is
+%purely notational.
+
+%\begin{example}
+%  Let
+%  $\vec v = \alpha\ket{01}
+%           + \beta\ket{10}$.
+%  Then 
+%  \[
+%    (y,x)\ansubst{\vec v/x\otimes y}{\B\otimes\B}
+%    = \alpha\,(y,x)[\ket{0}/x][\ket{1}/y]
+%    + \beta\,(y,x)[\ket{1}/x][\ket{0}/y] 
+%    = 
+%    \alpha\ket{10}
+%    + \beta\ket{01}
+%  \]
+%\end{example}
+
+With this substitution in place, we can establish certain needed properties.
+First, basis-dependent substitution distributes over linear combinations.
+
+\begin{lemma}[Distributivity over linear combinations]\label{lem:distributiveSubstitution}
+  For term combinations $\vec{t}_{i}$, a value combination $\vec{v}$, a
+  variable $x$, coefficients $\alpha_i\in\C$, and a decoration $X$ such that
+  $\ansubst{\vec v/x}{X}$ is defined:
+  \(
+    \Bigl(\sum_i \alpha_i\vec{t}_{i}\Bigr)\ansubst{\vec v/x}{X}
+    \equiv
+    \sum_i \alpha_i\vec{t}_{i} \ansubst{\vec v/x}{X}
+  \).
+  \qed
+\end{lemma}
+
+The next result states that substitution behaves consistently within each
+equivalence class induced by the congruence $\equiv$.
+
+\begin{lemma}[Compatibility with congruence]\label{lem:EquivSubstitutions}
+  For value combinations $\vec{v},\vec{w}$, a term combination $\vec{t}$, and
+  an decoration $X$ such that both
+  $\ansubst{\vec{v}/x}{X}$ and $\ansubst{\vec{w}/x}{X}$ are defined:
+  if $\vec{v}\equiv\vec{w}$, then
+  $\vec{t}\ansubst{\vec{v}/x}{X}
+  \equiv\vec{t}\ansubst{\vec{w}/x}{X}$.
+  \qed
+\end{lemma}
+
+Note that this property does not extend across different bases; that is,
+$\vec{t}\ansubst{\vec{v}/x}{X} \not\equiv\vec{t}\ansubst{\vec{v}/x}{Y}$.
+For example,
+\[
+  (\Lam{x}{X}{y})\ansubst{\ket{+}/y}{\XB}
+  = \Lam{x}{X}{\ket{+}} 
+  \not\equiv
+  \tfrac{1}{\sqrt{2}}\big((\Lam{x}{C}{\ket{0}})
+  + (\Lam{x}{X}{\ket{1}})\big)
+  = (\Lam{x}{X}{y})\ansubst{\ket{+}/y}{\B}.
+\]
+This difference arises because the relation $\equiv$ does not commute with
+lambda abstraction, nor with the case construct (indeed, the calculus is
+intensional with respect to functions, since it is issued from a realisability
+model).  Although the two terms are operationally equivalent, the calculus
+distinguishes between the superposition of results, $\Lam{x}{X}{\alpha\vec{v}_{1}
++ \beta\vec{v}_{2}}$, and the superposition of functions,
+$\alpha(\Lam{x}{X}{\vec{v}_{1}}) + \beta(\Lam{x}{X}{\vec{v}_{2}})$. 
+This distinction reflects a physical intuition: the former corresponds to a
+single experiment producing a superposition of outcomes, while the latter
+represents a superposition of distinct experiments.
+
+Finally, we introduce a convenient notation for generalised substitutions over
+a term by closed values. A substitution $\sigma$ can be seen as a finite set of
+individual substitutions applied consecutively to a term. Formally, for a term
+$\vec{t}$, closed value combinations $\vec{v}_{1},\dots,\vec{v}_{n}$, variables
+$x_1,\dots,x_n$, and decorations $X_1,\dots,X_n$:
+\(
+  \vec{t}\ansubst{\sigma}{}
+  := \vec{t}\ansubst{\vec{v}_{1}/x_1}{X_1}\dotsb\ansubst{\vec{v}_{n}/x_n}{X_n}.
+\)
+Since each $\vec{v}_{i}$ is closed, the order of substitutions is irrelevant. We
+regard $\sigma$ as a partial function from variables to pairs of closed value
+combinations and bases (or $\AbsBasis$), and write $\dom{\sigma}$ for its domain.
+The operation extends naturally: for a term $\vec{t}$, substitution $\sigma$,
+a new variable $x\notin\dom{\sigma}$, value combination $\vec{v}$, and decoration $X$,
+\(
+  \vec{t}\ansubst{\sigma}{}\ansubst{\vec{v}/x}{X}
+  = \vec{t}\ansubst{\sigma'}{}
+\),
+where $\sigma'$ extends $\sigma$ by mapping $x$ to $(\vec v,B)$. Likewise, two
+disjoint substitutions $\sigma_1$ and $\sigma_2$ can be merged:
+\(
+  \vec{t}\ansubst{\sigma_1}{}\ansubst{\sigma_2}{}
+  = \vec{t}\ansubst{\sigma'}{}
+\),
+where $\dom{\sigma_1}\cap\dom{\sigma_2}=\emptyset$ and $\sigma'$ coincides with
+$\sigma_i$ on $\dom{\sigma_i}$ for $i=1,2$.
+
+
+\section{Operational semantics}\label{sec:reduction}
+%\begin{table}[t]
+%  \begin{align*}
+%    \text{If }\vec{t}\ansubst{\vec v/x}{X}\text{ is defined}:\quad&
+%    (\Lam{x}{X}{\vec{t}})\vec{v} \lraneq \vec{t}\ansubst{\vec v/x}{X}\\
+%    \text{If }\vec{t}\ansubst{\vec v/x}{X\otimes Y}\text{ is defined}:\quad&
+%    \LetP{x}{X}{y}{Y}{\vec v}{\vec{t}} \lraneq \vec{t}\ansubst{\vec{v}/x\otimes y}{X\otimes Y}\\
+%    \text{If for all } i\neq j\ \vec{v}_{i}\perp\vec{v}_{j}:\quad&
+%    \gencase{\sum_{i=1}^{n}\alpha_i \vec{v}_{i}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}} \lraneq \sum_{i=1}^{n}\alpha_i \vec{t}_{i}
+%  \end{align*}
+%  If $t\lraneq \vec r$, then
+%  $\left\{\begin{aligned}
+%    st &\lraneq s\vec r \qquad\qquad tv \lraneq \vec rv \\
+%    \text{If }\alpha\neq 0:\quad\vec v+\alpha t+\vec s &\lraneq \vec v+\alpha \vec r+\vec s & (*)\\
+%    \LetP{x}{A}{y}{B}{t}{\vec{s}} &\lraneq \LetP{x}{A}{y}{B}{\vec r}{\vec{s}} \\
+%    \gencase{t}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}} &\lraneq \gencase{\vec r}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}}
+%\end{aligned}\right.$
+%
+%   \noindent In $(*)$ we use the convention that the subterms in the sum are ordered as follows: first we place all the values, if any, followed by the non-value terms in a lexicographical order.
+%  \caption{Reduction system.}
+%  \label{tab:Reduction}
+%\end{table}
+\begin{table}[t]
+  \centering
+  \begin{tabular}{r@{~}c@{~}l}
+    $(\lambda x^X.\vec{t})\vec{v}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x\rangle_X$ \hfill (if defined) \\
+    $\mathsf{let} (x^X, y^Y) = \vec{v} \text{ in } \vec{t}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x \otimes y\rangle_{X \otimes Y}$ \hfill (if defined) \\
+    $\gencasei{\sum_{i}\alpha_i \vec{v_i}}{\vec{v_i}}{\vec{t_i}}$ & $\lraneq$ & $\sum_{i}\alpha_i \vec{t_i}$ \hfill (if $\vec{v}_i \perp \vec{v}_j$) \\
+  \end{tabular}
+  \[
+    \begin{array}{c}
+      \infer{st\lraneq s\vv r}{t\lraneq \vv r}
+      \qquad\qquad
+      \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
+      \qquad\qquad
+      \infer{\vec v+\alpha t+\vec s \lraneq \vec v+\alpha \vec r+\vec s}{t\lraneq\vv r & \alpha\neq 0}
+      \\[5pt]
+      \infer{\LetP{x}{X}{y}{Y}{t}{\vv{s}}\lraneq
+      \LetP{x}{X}{y}{Y}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
+      \\[5pt]
+      \infer{
+        \gencasei{t}{\vec{v_i}}{\vec{s_i}} \lraneq 
+        \gencasei{\vec r}{\vec{v_i}}{\vec{s_i}}}
+      {t\lraneq \vv r}
+    \end{array}
+  \]
+  \noindent\footnotesize $^*$Subterms are ordered: values first, then non-values in lexicographical order.
+  \caption{Reduction system.}
+  \label{tab:Reduction}
+\end{table}
+The reduction system interprets every vector relative to the basis attached to
+its abstraction, allowing a step only when the argument can be decomposed on
+that basis.  
+Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
+considered modulo the congruence of Table~\ref{tab:Congruence}.  
+Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
+a step $\vec t\lra\vec r$ abbreviates $\vec t\equiv\vec t'\lraneq\vec r'\equiv\vec r$.
+The side condition~$\alpha\neq0$ avoids vacuous steps such as
+$0t\lraneq0r$, preventing spurious nondeterminism. On that note,
+the condition on the contextual rule of the sum, imposes a strategy
+preserving the determinism of~$\lraneq$.
+
+The main reduction rules are $\beta$-reduction, $\mathsf{let}$ binding, and
+$\mathsf{case}$ pattern matching.  
+Both $\lambda$ and $\mathsf{let}$ bind variables decorated with an orthonormal
+basis, indicating which vectors are treated as classical data.  Linear
+combinations of these vectors are handled as quantum data, reducing linearly by
+the congruence rules, so that $t(\alpha\vec s+\beta\vec r)$ is equivalent to
+$\alpha\,t\vec s+\beta\,t\vec r$. If a term cannot be expressed in the decorating
+basis, evaluation becomes stuck. For example, $(\Lam{x}{\{\ket{0},\ket{1}\}}{\vec{t}})
+\ket{00}$ does not reduce, since the dimension of the argument does
+not match the vectors in the expected basis.
+
+Reduction for higher-order terms is handled differently: since no orthogonal bases
+are defined for abstractions, the symbol $\AbsBasis$ allows for linear reduction
+over basis values. For instance, 
+$(\Lam{x}{\AbsBasis}{\vec t}) \sum_i
+\alpha_i(\Lam{y}{X}{\vec{s}_{i}}) \lra \sum_i\alpha_i\vec
+t[\Lam{y}{X}{\vec{s}_{i}}/x]$.
+%\[
+%  (\Lam{x}{\AbsBasis}{\vec t})
+%  \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vec{s}_{i}})
+%  \lra
+%  \sum_{i=1}^n\alpha_i\vec t[\Lam{y}{X}{\vec{s}_{i}}/x].
+%\]
+
+The $\mathsf{case}$ pattern matching controls the program flow.  
+Each operator keeps track of a set of orthogonal values and tests whether the
+argument equals each vector, selecting the matching branch.  
+If the argument is a linear combination of several vectors, the result is the
+corresponding linear combination of the branches.  For example:
+\[
+  \case{\ket{-}}{\ket{0}}{\ket{1}}{\vec{t}_{1}}{\vec{t}_{2}} \lra
+  \tfrac{1}{\sqrt{2}}\,\vec{t}_{1} - \tfrac{1}{\sqrt{2}}\,\vec{t}_{2}.
+\]
+
+The advantage over a binary conditional branching is the ability to match against
+several vectors simultaneously. This characteristic comes into play when dealing
+with vectors from entangled bases, in other words, bases which cannot be expressed
+as products of smaller ones.  This general $\mathsf{case}$ matches directly
+against those vectors.  For example, using the \emph{Bell basis}\footnote{ The four 
+Bell states are $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and $\Psi^{\pm}=
+\sqrthalf(\ket{01}\pm\ket{10})$.}:
+\[
+  \mathsf{case}\;\vec{v}\;\mathsf{of}\;\{
+  \Phi^+ \mapsto \vec{t}_{1}\ \mid
+  \Phi^- \mapsto \vec{t}_{2}\ \mid
+  \Psi^+ \mapsto \vec{t}_{3}\ \mid
+  \Psi^- \mapsto \vec{t}_{4}\ \}.
+\]
+
+The Bell basis is central in quantum communication. In
+Section~\ref{sec:teleportation}, we revisit the quantum teleportation protocol,
+which relies heavily on these states.
+
+Defining the system in this way yields a strategy within the
+\emph{call-by-value} family, namely a generalisation of the
+\emph{call-by-basis} strategy introduced in~\cite{ArrighiDowekLMCS17} and
+further analysed in~\cite{AssafDiazcaroPerdrixTassonValironLMCS14}. While
+call-by-basis fixes the canonical basis for evaluation, our variant,
+which we call \emph{call-by-arbitrary-basis}, allows each abstraction to attach
+its own orthonormal basis to its argument. Evaluation remains weak: no
+reduction takes place under $\lambda$, pairs, $\mathsf{let}$, or
+$\mathsf{case}$ constructors.
+
+The congruence relation on terms gives rise to different redexes. We write
+$\eval$ for the reflexive–transitive closure of $\lra$. We can show that the
+equivalence relation $\equiv$ commutes with $\eval$; in other words,
+equivalence is preserved by reduction modulo~$\equiv$.
+
+\begin{theorem}[Reduction preserves equivalence]\label{thm:confluence}
+  Let $\vec{t}$ and $\vec{s}$ be closed term combinations with
+  $\vec{t}\equiv\vec{s}$. If $\vec{t}\lraneq\vv{t'}$ and $\vec{s}\lraneq\vv{s'}$,
+  then there exist term combinations $\vec{r}_{1}$ and $\vec{r}_{2}$ such that
+  $\vv{t'}\eval\vec{r}_{1}$, $\vv{s'}\eval\vec{r}_{2}$, and
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
+%  Diagrammatically:
+%  \[
+%    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
+%      & \vec{t}
+%        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+%        &[-3em] \equiv
+%        &[-3em] \vec{s}
+%        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+%        &\\
+%      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
+%      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
+%      & \vec{r}_{1} & \equiv & \vec{r}_{2} & 
+%    \end{tikzcd}
+%    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
+%  \]
+  \qed
+\end{theorem}
+
+\begin{remark}\label{rmk:determinism}
+  Since the reduction relation $\eval$ is defined modulo~$\equiv$, the result
+  above is equivalent to stating that there exists a single combination
+  $\vec{r}$ such that $\vv{t'}\eval\vec{r}$ and $\vv{s'}\eval\vec{r}$.
+  Moreover, as the elementary reduction~$\lraneq$ is deterministic, the
+  reduction relation~$\lra$ is also deterministic; that is, if
+  $\vec{t}\lra\vec{r}_{1}$ and $\vec{t}\lra\vec{r}_{2}$, then
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
+\end{remark}
+
+
+\section{Realisability model}\label{sec:model}
+\subsection{Unitary type semantics}
+Given the deterministic machine presented in the previous section
+(see~Remark~\ref{rmk:determinism}), the next
+step towards extracting a typing system is to define the sets of values that
+characterise its types. To achieve this, we first need to identify the notion
+of a type.
+
+Our aim is to define types exclusively inhabited by values of norm~1. The
+vectors we wish to study belong to the \emph{unit sphere}. We denote $\Sph 
+:= \{\vec v \in \vv{\Val} \mid \|\vec v\| = 1\}$, which
+corresponds to the mathematical representation of quantum data as unit vectors
+in a Hilbert space.
+
+\begin{definition}[Unitary value combination]
+  A value combination $\vec{v}$ is said to be \emph{unitary} if its norm equals~1,
+  that is, if $\vec{v}\in\Sph$.
+\end{definition}
+
+\begin{definition}[Unitary type]
+  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$ built from
+  a given formal language with a set of unitary value combinations, denoted~$\sem{A}$,
+  called the \emph{unitary semantics} of~$A$.
+\end{definition}
+
+
+We now turn to type realisers.  
+Since the global phase of a quantum state has no physical significance, terms
+that differ only by a phase should share the same type.  
+Thus, we assign identical types to $\vec t$ and $e^{i\theta}\vec t$, a principle
+that guides the definition of realisers.
+
+\begin{definition}[Type realiser]\label{def:realiser}
+  Given a term combination~$\vec t$ and type~$A$, we say that~$\vec t$
+  \emph{realises}~$A$ (not.~$\vec t \real A$) if there exists a value
+  combination~$\vec v\in\sem A$ such that
+  $\vec{t}\eval e^{i\theta}\vec{v}$ for some $\theta\in\R$,
+\end{definition}
+
+\begin{table}[t]
+  \centering
+  $A := \basis{\BB} \mid A\Arr A \mid A\times A \mid \sharp A$, with $\BB$ an orthonormal basis.
+  \vspace{2pt}
+  \hrule
+  \vspace{4pt}
+  \begin{tabular}{l}
+    $\sem{\basis{\BB}}:= \BB \qquad \sem{A\times B}:= \{(\vec v, \vec w) \mid \vec v\in\sem{A}, \vec w\in\sem{B}\}$ \\
+    $\sem{A\Arr B}:= \{\sum_i \alpha_i(\Lam{x}{X}{\vec{t}_{i}})\in\Sph \mid \forall\vec{w}\in\sem{A}, (\sum_i \alpha_i \vec{t}_{i})\ansubst{\vec{w}/x}{X}\real B\}$ \\
+    $\sem{\sharp A}:= {(\sem{A}^\bot)}^\bot$, with $W^\bot = \{\vec{v}\in\Sph \mid \forall \vec{w}\in W, \scal{\vec{v}}{\vec{w}} = 0\}$
+  \end{tabular}
+  \caption{Type notations and semantics.}
+  \label{tab:UnitaryTypes}
+\end{table}
+With the notions of unitary types and their realisers in place, we can now
+define a concrete set of types for our language. We begin with the type grammar
+given in~Table~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
+values we aim to represent.
+
+The types $\basis{\BB}$ serve as atomic types. Each of them represents a finite
+set~$\BB$ of orthogonal vectors forming an orthonormal basis. For instance, a
+boolean type can be represented by a basis of size 2, yet we are not restricted
+to a single one, as infinitely many bases exist. 
+
+Basis types $\basis{\BB}$ will be formed when a variable is decorated with the
+corresponding $\BB$. When it is decorated with $\AbsBasis$, it will be
+typed with an arrow.
+
+Pairs are standard, and written using the notation introduced earlier.
+The arrow type~$A\Arr B$ consists of combinations of $\lambda$-abstractions
+mapping elements of~$\sem{A}$ to realisers of~$B$.  
+Finally, $\sharp A$ denotes the double orthogonal complement of~$A$ (within the unit sphere),
+representing quantum data. Since these are linear resources, they cannot be erased or
+duplicated.
+Importantly, linear combinations of abstractions are not, in general, functions:
+only those inhabiting $A \Arr B$ behave as maps, while general combinations
+inhabit $\sharp(A \Arr B)$ and are interpreted as vectors.
+Intuitively, applying the operator $\sharp$ captures the
+linear combinations of values in the unitary semantics of $A$, as 
+stated in the following theorem.
+
+\begin{remark}\label{rem:SharpCharacterization}\label{rem:IdempotentSharp}
+  The interpretation of a type~$\sharp A$ contains precisely the
+  norm-$1$ linear combinations of values in~$\sem{A}$:
+  \[
+    \sem{\sharp A}
+    = (\sem{A}^\bot)^\bot
+    = \Span(\sem{A}) \cap \Sph
+  \] 
+  Moreover, as expected for a span, the operator~$\sharp$ is idempotent;
+  that is, $\sem{\sharp A} = \sem{\sharp(\sharp A)}$. Proof of this
+  remark can be found on the appendix.
+\end{remark}
+
+\begin{remark}
+  A basis type~$\basis{\BB}$ may consist of value combinations of pairs and can
+  therefore be written as the product type of smaller bases. For example, if
+  $\BB=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\sem{\basis{\BB}}=\sem{\basis{\B}\times\basis{\B}}$.
+  However, entangled bases, such as the Bell basis, do not allow this.
+\end{remark}
+
+Our type algebra captures the intended sets of
+value combinations. The following theorem shows that every member of a type
+interpretation has norm~$1$.
+
+\begin{theorem}\label{prop:UnitaryTypes}
+  For every type~$A$, $\sem{A}\subseteq\Sph$.
+  \qed
+\end{theorem}
+\begin{proof}
+  The proof is simple, we merely have to show that $\Sph$ is stable under pairings. The detailed proof can be found on the appendix.
+\end{proof}
+
+Defining types as sets of values naturally induces a semantic notion of
+subtyping. The relationship is simply given by set inclusion. 
+\begin{definition}[Subtyping and isomorphism]\label{def:Subtyping}
+We say that a type~$A$ is a subtype of a type~$B$
+(written~$A\leq B$) when $\sem A\subseteq\sem B$. 
+If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
+(written~$A\cong B$).
+\end{definition}
+
+\begin{table}[t]
+  \centering
+  \[
+  \begin{array}{c@{\qquad\quad}c@{\qquad\quad}c}
+    \infer{\sharp (\basis{\BB_1})\cong\sharp(\basis{\BB_2})}{|\BB_1| = |\BB_2|} &
+    \infer{\basis{\BB_1\times \BB_2} \cong \basis{\BB_1}\times\basis{\BB_2}}{} &
+    \infer{\sharp A \leq \sharp B}{A\leq B} \\[15pt]
+    \infer{(\sharp A)\times(\sharp B)\leq\sharp(A\times B)}{}&
+    {\infer{A\leq \sharp A}{}} &
+    {\infer{\sharp\sharp A \cong \sharp A}{}}
+  \end{array}
+  \]
+  \caption{Some valid subtyping rules.}
+  \label{tab:Subtyping}
+\end{table}
+
+We present some of these subtyping relations in Table~\ref{tab:Subtyping}
+
+Although every type is defined by norm-1 value combinations, not every
+norm-1 combination is contained in the interpretation of a type.
+For example, consider the combination
+$\tfrac{1}{\sqrt{2}}(\ket{0} + \ket{00})$.
+Another example is a linear combination of abstractions defined over different
+bases. For instance, the term
+\(
+  \tfrac{1}{\sqrt{2}}(\Lam{x}{{\B}}{\pauliX{x}})
+  + \tfrac{1}{\sqrt{2}}(\Lam{x}{{\XB}}{x})
+\)
+is not a member of an arrow type, since the bases decorating each abstraction
+do not match. However, it is computationally equivalent to the abstraction
+$(\Lam{x}{{\B}}{\ket{+}})$, which in turn belongs to the set
+$\sem{\basis{\B}\Arr\basis{\XB}}$.
+
+\subsection{Characterisation of unitary operators}
+
+One of the main results of~\cite{DiazcaroGuillermoMiquelValironLICS19}
+is characterising $\C^2\to\C^2$ unitary operators as values in
+$\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~
+\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
+Our goal is to extend the characterisation for unitary operators
+$\C^{2^n}\to\C^{2^n}$ as abstractions of type $\sharp\basis{\BB_1}
+\Arr\sharp\basis{\BB_2}$, where both bases have size~$2^n$.
+
+Unitary operators are isomorphisms between Hilbert spaces, as they preserve the
+structure of the space. With this in mind, the first step is to show that the
+members of $\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$ map basis vectors
+from $\sem{\basis{\BB_1}}$ onto orthogonal vectors in $\sem{\sharp\basis{\BB_2}}$. In other
+words, these abstractions preserve both norm and orthogonality.
+
+\begin{lemma}\label{lem:BasesIso}
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of the same finite
+  dimension, and let $\Lam{x}{{\BB_1}}{\vec t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{\BB_1}}{\vec t}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
+  if and only if 
+  for all $\vec{v}_{i},\vec{v}_{j}\in\sem{\basis{\BB_1}}$,
+  there exist value combinations
+  $\vec{w}_{i},\vec{w}_{j}\in\sem{\sharp\basis{\BB_2}}$ such that,
+    $\vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}$
+    and
+    $\vec{t}[\vec{v}_{j}/x]\eval\vec{w}_{j}$,
+    with
+    $\vec{w}_{i}\perp\vec{w}_{j}$ whenever $i\neq j$.
+    \qed
+\end{lemma}
+
+Terms such as $\ket{0}$ and $\ket{1}$ are syntactic objects of the
+calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
+terms on Hilbert spaces, we shall occasionally abuse notation and identify
+value combinations representing qubits with their corresponding canonical
+basis vectors in~$\C^{2^n}$. This identification applies only to those
+combinations denoting quantum data, not to general values such as
+$\lambda$-abstractions---in particular, to all elements of
+$\sem{\sharp\basis{\BB}}$ for any orthonormal basis~$\BB$. This identification can
+be made precise as follows.
+
+\begin{definition}
+  Let $\BB$ be an orthonormal basis of size~$2^n$. For every $\vec{v}\in \BB$, we can
+  write
+  \(
+    \vec{v}\equiv \sum_{i=1}^{2^n}\alpha_i\ket{i}
+  \),
+  where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
+  corresponding to the binary representation of~$i$, and
+  $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
+  $\ket{0011}$. We then define $\pi_n:\BB\to\C^{2^n}$ by
+  \(
+    \pi_n(\vec{v}) = (\alpha_1,\dotsc,\alpha_{2^n})
+  \).
+\end{definition}
+
+To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vec v$
+directly. We now establish a correspondence between $\lambda$-abstractions and operators
+on~$\C^{2^n}$. Intuitively, an abstraction represents a linear operator when its
+operational behaviour coincides with the action of that operator on vectors.
+Formally:
+
+\begin{definition}
+  A $\lambda$-abstraction $\Lam{x}{{\BB}}{\vec{t}}$ is said to \emph{represent}
+  an operator $F:\C^{2^n}\to\C^{2^n}$ if
+    $(\Lam{x}{{\BB}}{\vec{t}})\vec{v} \eval \vec{w}$
+    if and only if
+    $F(\vec{v}) = \vec{w}$.
+\end{definition}
+
+This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
+characterisation of unitary operators as values in
+$\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
+
+\begin{theorem}[Characterisation of Unitary Operators]\label{thm:characterisation}
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of size~$2^n$.
+  A closed $\lambda$-abstraction
+  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
+  if and only if it represents a unitary operator
+  $F:\C^{2^n}\to\C^{2^n}$.
+  \qed
+\end{theorem}
+
+This result naturally extends to unitary combinations of
+$\lambda$-ab\-strac\-tions, since a term of the form
+$\Lam{x}{{\BB}}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}$ is syntactically different
+but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
+\Lam{x}{{\BB}}{\vec{t}_{i}}$.  Hence, the characterisation of unitary operators
+also applies to superpositions of abstractions sharing the same basis~$\BB$.
+
+\subsection{Typing rules}    
+In this section, we focus on enumerating and proving the validity of various
+typing rules. The objective is to extract a reasonable set of rules that can
+constitute a type system. We first need to lay the groundwork to properly define
+what it means for a typing rule to be valid.
+
+\begin{definition}
+  A \emph{context} (denoted by capital Greek letters $\Gamma$, $\Delta$) is a
+  finite mapping assigning a type and a decoration (an orthonormal basis or $\AbsBasis$)
+  to each variable in its domain. We write
+  \(
+    \Gamma = {x_1}^{{X_1}}:A_1,\dotsb, {x_n}^{{X_n}}:A_n
+  \)
+  to indicate that $\Gamma(x_i)=(A_i,X_i)$ for each~$i$.
+\end{definition}
+
+As with standard typing judgements, the context records the types of the free
+variables in a term. However, since substitution in our calculus depends on a basis
+decoration, we also wish to record that information. This is not strictly necessary,
+as the basis with respect to which a variable is interpreted should not affect its
+type. For instance, consider the following substitutions:
+\begin{align*}
+(\Lam{x}{\B}{\Pair{x}{y}})\ansubst{\ket{0}/y}{\B}
+  &= \Lam{x}{\B}{\Pair{x}{\ket{0}}},\\
+\text{and}\quad
+(\Lam{x}{\B}{(x, y)})\ansubst{\ket{0}/y}{\XB}
+  &= \tfrac{1}{\sqrt{2}}
+    \bigl((\Lam{x}{\B}{\Pair{x}{\ket{+}}})
+         + (\Lam{x}{\B}{\Pair{x}{\ket{-}}})\bigr).
+\end{align*}
+These terms are not syntactically identical, yet they are computationally
+equivalent. 
+Since typing via realisability captures computational behaviour,
+their types coincide. Nevertheless, we retain basis information in contexts, as
+it will simplify the forthcoming proofs.
+
+\begin{definition}
+  Given a context~$\Gamma$, its \emph{unitary semantics},
+  denoted~$\sem{\Gamma}$, is the set of substitutions defined by
+  \begin{align*}
+    \sem{\Gamma}
+    := 
+    \{&\sigma~\text{substitution} \mid 
+      \dom{\sigma} = \dom{\Gamma}
+      \text{ and } \forall {x_i} \in \dom{\Gamma},\\
+      &\Gamma(x_i) = (A_i, X_i)
+      \text{ implies }
+      \sigma(x_i) = \ansubst{\vec{v}_{i}/x_i}{{X_i}}
+      \text{ for some }\vec{v}_{i} \in \sem{A_i}\}.
+  \end{align*}
+  Where $\ansubst{\--/\--}{\--}$ denotes the substitution from 
+  Definition~\ref{def:basisDependentSub}.
+\end{definition}
+
+
+To ensure a coherent treatment of quantum data, we must guarantee that qubits
+are handled linearly. The first step is to identify which variables in the
+context represent quantum data---those associated with a type of the
+form~$\sharp A$. We call the subset of~$\Gamma$ composed of such variables its
+\emph{strict domain}.
+
+\begin{definition}
+  The \emph{strict domain} of a context~$\Gamma$, denoted~$\sdom{\Gamma}$, is
+  defined as
+  \(
+    \sdom{\Gamma} :=
+    \{x \in \dom{\Gamma} \mid
+    \sem{\Gamma(x)} = \sem{\sharp(\Gamma(x))}\}
+  \).\footnote{This definition relies on the idempotence of the~$\sharp$~operator (Remark~\ref{rem:IdempotentSharp}).
+  }
+\end{definition}
+
+A typing judgement $\Gamma\vdash \vec{t}:A$ is valid if it satisfies two
+conditions.  First, every free variable of~$\vec{t}$ must belong to the domain
+of~$\Gamma$, and every variable in the strict domain~$\sdom{\Gamma}$ must occur
+in~$\vec{t}$.  This ensures that no information is erased and that all variables
+are properly accounted for.  The linear treatment of quantum data is thus
+enforced by the substitution.
+
+Second, for every substitution in the unitary semantics of~$\Gamma$, applying
+it to~$\vec{t}$ must yield a term that reduces to a realiser of type~$A$.  This
+condition ensures that the operational behaviour of the term within the context
+is faithfully captured by the type.  Formally:
+
+\begin{definition}[Typing judgement]
+  A \emph{typing judgement} $\TYP{\Gamma}{\vec{t}}{A}$ is valid when:
+    $\sdom{\Gamma}\subseteq\FV{\vec{t}}\subseteq\dom{\Gamma}$
+    and
+    for all $\sigma\in\sem{\Gamma}$, 
+          $\vec{t}\ansubst{\sigma}{}\real A$.
+\end{definition}
+
+We are also interested in \emph{orthogonal terms}, that is, terms that reduce
+to orthogonal values. We therefore introduce the following notion.
+
+\begin{definition}[Orthogonality judgement]
+  An \emph{orthogonality judgement}
+  $\ORTH{\Gamma}{\Delta_1}{\vec{t}}{\Delta_2}{\vec{s}}{A}$
+  is said to be \emph{valid} when the judgements
+      $\TYP{\Gamma,\Delta_1}{\vec{t}}{A}$ and
+      $\TYP{\Gamma,\Delta_2}{\vec{s}}{A}$ are valid, and
+      for every
+      $\sigma\in\sem{\Gamma,\Delta_1}$ and
+      $\tau\in\sem{\Gamma,\Delta_2}$,
+      there exist value combinations $\vec{v},\vec{w}$ such that
+      $\vec{t}\ansubst{\sigma}{}\eval\vec{v}$,
+      $\vec{s}\ansubst{\tau}{}\eval\vec{w}$,
+      and $\vec{v}\perp\vec{w}$.
+When both $\Delta_1$ and $\Delta_2$ are empty,
+we just write $\SORTH{\Gamma}{\vec{t}}{\vec{s}}{A}$.
+\end{definition}
+
+With these definitions in mind, a typing rule is \emph{valid} when valid
+premises entail a valid conclusion.  
+Although there are infinitely many valid rules (each corresponding to a theorem),
+Table~\ref{tab:TypingRules} presents a representative subset forming a reasonable
+core typing system for the calculus, whose validity is stated below.
+This is the main result of the paper, as the validity of these rules ensures all the safety properties established in the realisability model.
+
+%\begin{table}[t]
+%  \[
+%    \begin{array}{c}
+%      \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{\basis{X}\leq A \text{ or }X=\AbsBasis}
+%      \qquad
+%	\infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_{i=1}^n \alpha_i (\Lam{x}{{X}}{\vec{t}_{i}})}{A\Arr B}}
+%	{\TYP{\Gamma,x^{X}:A}{\sum_{i=1}^{n}\alpha_i\vec{t}_{i}}{B}}
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vec{s}\,\vec{t}}{B}}
+%      {\TYP{\Gamma}{\vec{s}}{A\Arr B} & \TYP{\Delta}{\vec{t}}{A}}
+%      \qquad
+%      \infer[\snam{Pair}]{\TYP{\Gamma,\Delta}
+%      {\Pair{\vec{t}}{\vec{s}}}{A\times B}}{
+%	\TYP{\Gamma}{\vec{t}}{A}&\TYP{\Delta}{\vec{s}}{B}
+%      }
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta} 
+%      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{C}}{
+%	\TYP{\Gamma}{\vec{t}}{A\times B}&
+%	\TYP{\Delta,x^{{X}}:A,y^{Y}:B}{\vec{s}}{C}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}
+%      {\LetP{x}{{X}}{y}{{Y}}{\vec{t}}{\vec{s}}}{\sharp C}}{
+%	\TYP{\Gamma}{\vec{t}}{\sharp(A\times B)}&
+%	\TYP{\Delta,x^{X}:\sharp A,y^{Y}:\sharp B}{\vec{s}}{C}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{Case}]{\TYP{\Gamma,\Delta}
+%      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{A}}{
+%	\TYP{\Gamma}{\vec{t}}{\genbasis{\vec{v}_{i}}{i=1}{n}}&
+%	\forall i,\ \TYP{\Delta}{\vec{s}_{i}}{A}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{UnitCase}]{\TYP{\Gamma,\Delta}
+%      {\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}{\sharp A}}{
+%	\TYP{\Gamma}{\vec{t}}{\sharp \genbasis{\vec{v}_{i}}{i=1}{n}}&
+%	\forall i\neq j,\ \SORTH{\Delta}{\vec{s}_{i}}{\vec{s}_{j}}{A}
+%      }\\
+%      \noalign{\medskip}
+%      \infer[\snam{Sum}]
+%      {\TYP{\Gamma}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}{\sharp A}}
+%      {\forall i\neq j,\, \SORTH{\Gamma}{\vec{t}_{i}}{\vec{t}_{j}}{A} &
+%      \sum_{i=1}^{n}|\alpha_i|^2 = 1}
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{Contr}]{\TYP{\Gamma,x^{X}:{\basis{X}}}{\vec{t}\,[y:=x]}{B}}{
+%	\TYP{\Gamma,x^{X}:{\basis{X}},y^{X}:{\basis{X}}}{\vec{t}}{B}
+%      } 
+%      \qquad
+%	\infer[\snam{Weak}]{\TYP{\Gamma,x^{X}:\basis{X}}{\vec{t}}{C}}{
+%	  \TYP{\Gamma}{\vec{t}}{C}
+%	}
+%      \\
+%      \noalign{\medskip}
+%      \infer[\snam{Sub}]{\TYP{\Gamma}{\vec{t}}{B}}{\TYP{\Gamma}{\vec{t}}{A} & \SUB{A}{B}}
+%      \quad
+%      \infer[\snam{Equiv}]{\TYP{\Gamma}{\vec{s}}{A}}{
+%	\TYP{\Gamma}{\vec{t}}{A}& \vec t\equiv \vec s
+%      }
+%      \quad 
+%      \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vec{t}}{A}}
+%      {\TYP{\Gamma}{\vec{t}}{A}}
+%    \end{array}
+%  \]
+%  \caption{Some valid typing rules}
+%  \label{tab:TypingRules}
+%\end{table}
+
+\begin{table}[t]
+  \centering
+  \begin{tabular}{c@{\quad}c}
+    \infer[\snam{Axiom}]{\TYP{x^{X}:A}{x}{A}}{(X = \BB \wedge \basis{\BB}\leq A) \text{ or }X=\AbsBasis} &
+    \infer[\snam{UnitLam}]{\TYP{\Gamma}{\sum_i \alpha_i (\lambda x^X.\vec{t}_i)}{A\Arr B}}{\TYP{\Gamma,x^{X}:A}{\sum_i \alpha_i \vec{t}_i}{B}} 
+    \\ \noalign{\small\smallskip}
+    \infer[\snam{App}]{\TYP{\Gamma,\Delta}{\vec{s}\,\vec{t}}{B}}{\TYP{\Gamma}{\vec{s}}{A\Arr B} & \TYP{\Delta}{\vec{t}}{A}} &
+    \infer[\snam{Pair}]{\TYP{\Gamma,\Delta}{\Pair{\vec{t}}{\vec{s}}}{A\times B}}{\TYP{\Gamma}{\vec{t}}{A}&\TYP{\Delta}{\vec{s}}{B}} 
+    \\ \noalign{\small\smallskip}
+    \multicolumn{2}{c}{
+      \infer[\snam{LetPair}]{\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}{C}}{\TYP{\Gamma}{\vec{t}}{A\times B} & \TYP{\Delta,x^X:A,y^Y:B}{\vec{s}}{C}} \quad
+      \infer[\snam{LetTens}]{\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}{\sharp C}}{\TYP{\Gamma}{\vec{t}}{\sharp(A\times B)} & \TYP{\Delta,x^X:\sharp A,y^Y:\sharp B}{\vec{s}}{C}}
+    } \\ \noalign{\small\smallskip}
+    \multicolumn{2}{c}{
+      \infer[\snam{Case}]{\TYP{\Gamma,\Delta}{\gencasei{\vec{t}}{\vec{v}_i}{\vec{s}_i}}{A}}{\TYP{\Gamma}{\vec{t}}{\basis{\{\vec{v}_i\}}} & \forall i, \TYP{\Delta}{\vec{s}_i}{A}} \quad
+      \infer[\snam{UnitCase}]{\TYP{\Gamma,\Delta}{\gencasei{\vec{t}}{\vec{v}_i}{\vec{s}_i}}{\sharp A}}{\TYP{\Gamma}{\vec{t}}{\sharp\basis{\{\vec{v}_i\}}} & \forall i\neq j, \SORTH{\Delta}{\vec{s}_i}{\vec{s}_j}{A}}
+    } \\ \noalign{\small\smallskip}
+    \infer[\snam{Sum}]{\TYP{\Gamma}{\sum_i \alpha_i \vec{t}_i}{\sharp A}}{\forall i\neq j, \SORTH{\Gamma}{\vec{t}_i}{\vec{t}_j}{A} & \sum |\alpha_i|^2 = 1} &
+    \infer[\snam{Weak}]{\TYP{\Gamma,x^{\BB}:\basis{\BB}}{\vec{t}}{C}}{\TYP{\Gamma}{\vec{t}}{C}} 
+    \\ \noalign{\small\smallskip}
+    \infer[\snam{Contr}]{\TYP{\Gamma,x^{\BB}:\basis{\BB}}{\vec{t}[y:=x]}{B}}{\TYP{\Gamma,x^\BB:\basis{\BB},y^\BB:\basis{\BB}}{\vec{t}}{B}} &
+    \infer[\snam{Sub}]{\TYP{\Gamma}{\vec{t}}{B}}{\TYP{\Gamma}{\vec{t}}{A} & A \leq B} 
+    \\ \noalign{\small\smallskip}
+    \infer[\snam{Equiv}]{\TYP{\Gamma}{\vec{s}}{A}}{\TYP{\Gamma}{\vec{t}}{A} & \vec{t} \equiv \vec{s}} &
+    \infer[\snam{Phase}]{\TYP{\Gamma}{e^{i\theta}\vec{t}}{A}}{\TYP{\Gamma}{\vec{t}}{A}}
+  \end{tabular}
+  \caption{Some valid typing rules.}
+  \label{tab:TypingRules}
+\end{table}
+
+\begin{theorem}\label{thm:TypingRulesValidity}
+  All the typing rules in Table~\ref{tab:TypingRules} are valid.
+  \qed
+\end{theorem}
+
+In the general case, determining orthogonality between two different open terms
+is potentially undecidable. This is a known problem since the first iterations
+of calculi that worked with these kind of judgements \cite{AltenkirchGrattageLICS05}.
+Intuitively, the semantical condition for orthogonality on the $\snam{Sum}$ and
+$\snam{UnitCase}$ rules can be thought as an external proof that must be provided by
+the programmer. Fortunately, the orthogonality for qubits and closed terms is easily
+verifiable.
+
+The usual safety properties follow straightforwardly in this framework.
+\emph{Confluence} is an immediate consequence of the reduction being
+deterministic (cf.~Remark~\ref{rmk:determinism}).  
+\emph{Strong normalisation} follows directly from the definition of a
+realiser (cf.~Definition~\ref{def:realiser}).  
+\emph{Subject reduction} is also immediate: indeed, if
+$\TYP{\Gamma}{\vec{t}}{A}$ and $\vec{t}\to\vec{u}$, then
+$\TYP{\Gamma}{\vec{u}}{A}$ by definition.
+However, if we restrict ourselves to a subset of typing rules—such as those in Table~\ref{tab:TypingRules}—we must
+ensure that this restricted system still suffices to type all reducts of a
+term, once the underlying realisability semantics is abstracted away.  In our
+case, the rules proven valid in Theorem~\ref{thm:TypingRulesValidity}
+suffice to guarantee subject reduction, as
+stated below.
+
+
+\begin{theorem}[Subject reduction]\label{thm:SubjectReduction}
+  If $\TYP{\Gamma}{\vec{t}}{A}$ can be derived using the set of rules in
+  Table~\ref{tab:TypingRules} and $\vec{t}\to\vec{u}$, then
+  $\TYP{\Gamma}{\vec{u}}{A}$ can also be derived by the same set of rules.
+  \qed
+\end{theorem}
+
+\section{Examples}\label{sec:examples}
+Our aim in this section is to provide two simple use cases for $\lambdaB$.
+First we examine Deutsch's algorithm, where the introduction of relative
+bases in the typing, allow us to closely track classical data through the
+computation. Secondly, we study the quantum teleportation protocol, where
+we achieve a more general formulation which is more compact and sports
+a more desciptive typing, compared to a single basis representation.
+
+\subsection{Deutsch's algorithm}\label{subsec:deutsch}
+Deutsch's algorithm decides if an unknown Boolean function $f:\{0,1\}\to\{0,1\}$ is constant or balanced with a single query by exploiting quantum superposition. Operationally, an oracle $U_f$ acts as $U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)}$. The standard circuit prepares $\ket{+-}$, applies $U_f$, and then applying a Hadamard gate ($H$) on the first qubit yields $\ket{0}$ if $f$ is constant and $\ket{1}$ if $f$ is balanced.
+
+In $\lambdaB$, we first encode the standard gates in $\B$: 
+$H := \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}}$, 
+$\mathsf{NOT} := \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}}$, and 
+$\mathsf{CNOT} := \Lam{x}{\B}{\Lam{y}{\B}{\case{x}{\ket{0}}{\ket{1}}{\Pair{\ket{0}}{y}}{\Pair{\ket{1}}{\mathsf{NOT}\,y}}}}$.
+The four possible oracles can be modeled as abstractions of type $\basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})$; for instance, 
+$O_{\mathrm{const}\,0} := \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}}$ and 
+$O_{\mathrm{id}} := \Lam{x}{\B}{\Lam{y}{\B}{\mathsf{CNOT}\,x\,y}}$. 
+The standard Deutsch term is then:
+\[
+  \mathsf{Deutsch}_{\mathrm{std}} :=
+  \Lam{f}{\AbsBasis}{
+    \LetP{x}{\B}{y}{\B}{(f\,(H\ket{0})\,(H\ket{1}))}{\Pair{H\,x}{y}}
+  }.
+\]
+Since the oracle is applied to $\ket{+}$ and $\ket{-}$, the derived type is 
+$(\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr \sharp(\basis{\B}\times\basis{\B})) \Arr \sharp(\basis{\B}\times\basis{\B})$. 
+This type is coarse: it only ensures the result is a unitary combination of pairs, failing to capture the deterministic nature of the outcome.
+
+By contrast, a basis-aware implementation in $\XB=\{\ket{+},\ket{-}\}$ provides tighter typing. We redefine the gates and oracles in $\XB$ (details in Appendix~\ref{sec:appendixD}); for example, 
+$O_{\mathrm{const}\,0}^{\XB} := \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}}$ and 
+$O_{\mathrm{id}}^{\XB} := \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}}$. The basis-aware program is:
+\[
+\mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
+{\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}}.
+\]
+This version is typed as $(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}$. 
+The gain is significant: the type system tracks that the oracle, when fed with basis states in $\XB$, produces a pair of basis states. This allows us to extract a classical bit ($\basis{\B}$) deterministically. Unlike the standard version, no variable in the derivation requires a $\sharp$-type, reflecting that the algorithm's result is classical and its deterministic behaviour is captured entirely at the type level.
+
+%\subsection{Deutsch's algorithm}\label{subsec:deutsch}
+%We begin with \emph{Deutsch's algorithm}, a canonical example that highlights
+%how basis types in the $\lambdaB$ calculus yield more informative typings for
+%quantum programs.
+%The algorithm is as follows.
+%We are given black-box access to an \emph{oracle}~$U_f$ that implements an
+%unknown Boolean function $f:\{0,1\}\to\{0,1\}$.  
+%The oracle can only be either \emph{constant} (both inputs map to the same
+%output) or \emph{balanced} (the two outputs differ).  
+%Classically, determining which case holds requires two queries to~$f$.  
+%Deutsch's algorithm decides this with a single query by exploiting quantum
+%superposition and interference.
+%
+%Operationally, the oracle~$U_f$ acts as
+%\(
+%  U_f:\ket{xy}\mapsto \ket{x}\otimes\ket{y\oplus f(x)}
+%\),
+%where $\oplus$ is addition modulo~2.  
+%The textbook circuit prepares the state~$\ket{+-}$, applies~$U_f$, and
+%then applies a Hadamard on the first qubit before measuring it.  
+%The outcome is~$\ket{0}$ if~$f$ is constant and~$\ket{1}$ if~$f$ is balanced.
+%To implement this algorithm in $\lambdaB$, we first encode the gates 
+%we will use:
+%\begin{align*}
+%  \Hd &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{+}}{\ket{-}}},\\
+%  \mathsf{NOT} &:= \Lam{x}{\B}{\case{x}{\ket{0}}{\ket{1}}{\ket{1}}{\ket{0}}},\\
+%  \mathsf{CNOT} &:= \Lam{x}{\B}{\Lam{y}{\B}{
+%    \case{x}{\ket{0}}{\ket{1}}
+%      {\Pair{\ket{0}}{y}}
+%      {\Pair{\ket{1}}{\pauliX{y}}}}}.
+%\end{align*}
+%
+%We model the four possible oracles $U_f$ (two constant and two balanced):
+%\begin{align*}
+%  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}},
+%  & O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}},\\
+%  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}},
+%  & O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}.
+%\end{align*}
+%
+%The standard Deutsch term prepares~$\ket{+-}$, calls the oracle, then
+%applies~$H$ on the first qubit and returns the (classical) first component:
+%\[
+%  \mathsf{Deutsch}_{\mathrm{std}} :=
+%  \Lam{f}{\AbsBasis}{
+%    \LetP{x}{\B}{y}{\B}
+%      {(f\,(\Hd\,\ket{0})\,(\Hd\,\ket{1}))}
+%      {\Pair{\Hd\,x}{y}}
+%  }.
+%\]
+%
+%The oracles can be typed as 
+%\(
+%  \basis{\B}\Arr\basis{\B}\Arr(\basis{\B}\times\basis{\B})
+%\).
+%However, since we apply them to $\ket{+}$ and $\ket{-}$, 
+%the derived judgement is
+%\(
+%  (\sharp\basis{\B}\Arr\sharp\basis{\B}\Arr(\sharp\basis{\B}\times\sharp\basis{\B}))
+%   \Arr \sharp(\basis{\B}\times\basis{\B})
+%\).
+%This type is correct but coarse: it only ensures the result is a
+%unitary combination of boolean pairs. Operationally, the
+%first output is a basis state ($\ket{0}$ or~$\ket{1}$) indicating if
+%$f$ is constant or balanced, while the second may be ignored.
+%
+%Then, we can consider a basis-aware implementation with tighter typing.
+%The key observation is that the oracle is always called on the fixed state
+%$\ket{+-}$. Thus it is natural to write the program in the
+%$\XB=\{\ket{+},\ket{-}\}$ basis, letting the types track that we remain in a
+%basis state at the oracle boundary. We first define the same gates in the $\XB$ basis:
+%\begin{align*}
+%  \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}},\\
+%  \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}},\\
+%  \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
+%    \case{y}{\ket{+}}{\ket{-}}
+%      {\Pair{x}{\ket{+}}}
+%      {\Pair{\pauliZXB{x}}{\ket{-}}}
+%  }}.
+%\end{align*}
+%We then rewrite the program and the four oracles in~$\XB$:
+%\[
+%\mathsf{Deutsch} := \Lam{f}{\AbsBasis}{ \LetP{x}{\XB}{y}{\XB}{(f\,\ket{+}\,\ket{-})}
+%{\case{x}{\ket{+}}{\ket{-}}{\ket{0}}{\ket{1}}}},\\
+%\]
+%\begin{align*}
+%  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}},
+%  &O_{\mathrm{id}}^{\XB}\ \ &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}},\\
+%  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}},
+%  &O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}.
+%\end{align*}
+%
+%Now every oracle has the tight type
+%\(
+%  \basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB})
+%\),
+%and the program itself can be typed with
+%\(
+%(\basis{\XB}\Arr\basis{\XB}\Arr(\basis{\XB}\times\basis{\XB}))\Arr\basis{\B}.
+%\)
+%Intuitively, the oracle--when fed with $\ket{+-}$--produces a pair of
+%basis states in~$\XB$ (up to a global phase).  Hence we can treat its output
+%classically: a single $\mathsf{case}$ on the first component suffices to return
+%a classical bit in the computational basis, with no need for a $\sharp$-type on
+%the result.
+%
+%Both implementations are operationally equivalent: they compute a bit that
+%decides whether $f$ is constant or balanced.  The difference lies in the
+%\emph{precision} of their typings.  The standard version, expressed in~$\B$
+%with explicit Hadamards, forces $\sharp$ on the oracle's interface and thus
+%yields a result in~$\sharp(\basis{\B}\times\basis{\B})$.  The basis-aware
+%version states, via types, that the oracle is used on a fixed $\XB$-input and
+%therefore returns an $\XB$-basis pair; this lets us deterministically extract a
+%$\B$-basis bit.  In the typing derivation, no variable carries a $\sharp$-type:
+%(i) we may safely ignore the second qubit, and (ii) the first qubit is
+%guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
+%algorithm.
+
+\subsection{Quantum teleportation}\label{sec:teleportation}
+The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies transmitting quantum data via shared entanglement. In $\lambdaB$, this protocol illustrates how the \emph{deferred-measurement principle}~\cite[\S 4.4]{NC00} is internalised within a purely unitary framework. While measurement can be integrated into basis-sensitive calculi (as in~\cite{DiazcaroMonzonAPLAS25}), we focus on demonstrating that the $\mathsf{case}$ constructor suffices to reason about classically controlled gates via branching on basis states.
+
+By delayining measurement, we define a term that explicitly describes the computation for each coherent branch of the superposition:
+\begin{align*}
+\mathsf{Teleport}_{\Phi^+} :=
+  \Lam{x}{\B}{
+    \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
+    \mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of}\ \{  
+    &\Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;\\
+    &\Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;\\
+    &\Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;\\
+    &\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
+    }
+  }
+\end{align*}
+This term represents the protocol by encoding the coherent superposition of outcomes and their corresponding unitary corrections ($I, Z, X, ZX$). 
+
+The strength of this approach lies in the type system's ability to verify the 
+consistency of the entire superposition: each branch is statically checked as a
+unitary transformation. The overall term is assigned the type $\sharp\basis{\B}
+\Arr\sharp(\basis{\Bell}\times\basis{\B})$.
+
+%(relying on the subtypings 
+%$\basis{\Bell}\leq\sharp(\basis{\B}\times\basis{\B})$ and
+%$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$).
+
+Despite being the usual choice for describing the protocol, the choice of $\Phi^+$
+is arbitrary. Any of the four Bell basis states is a suitable input. Expressing the
+quantum teleportation in this manner, gives a structure from where we can abstract
+a more general representation. Consider the following program:
+\begin{flalign*}
+\mathsf{Teleport} :=
+  \Lam{b}{\Bell}{\Lam{x}{\B}{
+  \LetP{y_1}{\B}{y_2}{\B}{b}{
+  &\mathsf{let}\ (c_1^{\AbsBasis}, c_2^{\AbsBasis}, 
+  c_3^{\AbsBasis}, c_4^{\AbsBasis}) = (\mathsf{corr}\ b)\ \mathsf{in}\\
+  &\mathsf{case}\; \Pair{x}{y_1}\; \mathsf{of} \{\;
+  \Phi^{+} \mapsto \Pair{\Phi^{+}}{c_1\,y_2},\;\\
+  &\hspace*{2.36cm}\Phi^{-} \mapsto \Pair{\Phi^{-}}{c_2\,y_2},\\
+	&\hspace*{2.36cm}\Psi^{+} \mapsto \Pair{\Psi^{+}}{c_3\,y_2},\;\\
+	&\hspace*{2.36cm}\Psi^{-} \mapsto \Pair{\Psi^{-}}{c_4\,y_2} \}
+    }
+  }
+  }.
+\end{flalign*}
+
+We use syntactic sugar for collapsing multiple $\mathsf{let}$ and $\mathsf{corr}$ is
+the classically-controlled program that outputs the appropriate correction order for
+each of the Bell-basis vectors. It encodes the following function:
+\[
+\mathsf{corr}(x) = 
+\begin{cases}
+($I, Z, X, ZX$)\quad \text{If }x=\Phi^+\qquad\qquad
+($Z, I, ZX, X$)\quad \text{If }x=\Phi^-\\
+($X, ZX, I, Z$)\quad \text{If }x=\Psi^+\qquad\qquad
+($ZX, X, Z, I$)\quad \text{If }x=\Psi^-\\
+\end{cases}
+\]
+
+Overall, the term is assigned the type $\basis{\Bell}\Arr\sharp(\basis{\B})
+\Arr\sharp(\basis{\Bell}\times\basis{\B})$. The advantage here is that the function
+takes \emph{any} of the four Bell basis states as argument and performs the
+protocol. The resulting term is a more abstract respresentation of the protocol,
+without relying on a predetermined choice of entangled pair.
+
+In both terms, the typing system requires checking orthogonality on the branches of
+the $\mathsf{case}$ constructor. In this particular case, it is a simple thing to 
+do, since every branch returns a pair with four different pairwise orthogonal values
+alongside the corrected qubit. 
+
+Moreover, it is also easy to prove that \emph{no other combination} of the Bell 
+basis states can be used for the protocol. This is due to the fact that the 
+superposition of protocols does not preserve unitarity. A value of type 
+$\sharp\basis{\Bell}$ would yield a term superposition of type $\sharp(\sharp 
+(\basis{\B})\Arr\sharp (\basis{\Bell}\times\basis{\B}))$ which does not act as a 
+meaningful arrow type.
+
+In short, the calculus allows us to abstract both the encoding and decoding
+steps in the Bell basis, exploiting the deferred-measurement principle. The program 
+lends itself to generalisation on the Bell basis and the type system restricts the meaningful inputs.
+
+%
+%\subsection{Quantum teleportation}\label{sec:teleportation}
+%We now turn to the \emph{quantum teleportation protocol}, a cornerstone of
+%quantum information theory that exemplifies the manipulation of entangled
+%states and the transmission of quantum data through classical communication.
+%Within the $\lambdaB$ calculus, this protocol provides a natural setting to
+%combine pattern matching, linear handling of qubits, and the
+%\emph{deferred-measurement principle}.  
+%Using the $\mathsf{case}$ constructor together with the expressive typing
+%discipline introduced earlier, we can encode the teleportation process in a
+%way that remains both syntactically compact and semantically faithful to its
+%quantum-mechanical counterpart.
+%
+%The deferred-measurement principle (see, for example,~\cite[\S 4.4]{NC00})
+%states that any quantum circuit can delay its measurements without altering
+%the final outcome. More precisely, any gate classically controlled by the
+%result of a measurement is equivalent to another circuit where the control
+%qubit remains unmeasured, acting coherently on all branches of the superposition.  
+%Although the $\lambdaB$ calculus has no primitive operation for measurement,
+%the $\mathsf{case}$ constructor allows us to simulate such classically
+%controlled gates by branching on basis states.
+%
+%A canonical example that exploits this principle is the \emph{quantum teleportation
+%protocol}. Two agents (Alice and Bob) share an entangled pair of qubits forming a Bell
+%state. Using this shared entanglement and two bits of classical information, Alice can
+%transmit an unknown quantum state~$\ket{\psi}$ to Bob without physically sending the qubit itself.  
+%
+%The algorithm first creates the Bell state $\Phi^{+}$ between the second and third qubits,
+%then performs a Bell-basis measurement on the first and second qubits.  
+%Operationally, this measurement is implemented by applying a CNOT gate followed
+%by a Hadamard on the first qubit (the adjoint of Bell-state preparation), and
+%then measuring both qubits. Depending on the pair of classical outcomes, a Pauli correction
+%($I$, $X$, $Z$, or $ZX$) is applied to Bob's qubit to recover the original state~$\ket{\psi}$
+%(for a more thorough analysis of the algorithm, see \cite{PhysRevLett.70.1895}).
+%
+%We can simulate this protocol in $\lambdaB$ by
+%defining a term that, instead of performing measurements, explicitly
+%describes the computation corresponding to each branch:
+%\begin{align*}
+%&\mathsf{Teleport}_{\Phi^+} :=
+%  \Lam{x}{\B}{
+%    \LetP{y_1}{\B}{y_2}{\B}{\Phi^{+}}{
+%      \mathsf{case}\;
+%        \Pair{x}{y_1}\;
+%        \mathsf{of}\\
+%         &\{ \Phi^{+} \mapsto \Pair{\Phi^{+}}{y_2},\;
+%          \Phi^{-} \mapsto \Pair{\Phi^{-}}{Z\,y_2},\;
+%	  \Psi^{+} \mapsto \Pair{\Psi^{+}}{X\,y_2},\;
+%	\Psi^{-} \mapsto \Pair{\Psi^{-}}{ZX\,y_2} \}
+%    }
+%  }.
+%\end{align*}
+%
+%This term describes the quantum teleportation protocol in terms of
+%corrections on the third qubit based on the result of a Bell basis measurement.
+%It takes the input~$\ket{\psi}$ and pairs it with one half of an
+%entangled Bell pair.  The $\mathsf{case}$ construct then matches the first two
+%qubits (the input and Alice's entangled qubit) against the Bell basis, and in
+%each branch applies the appropriate correction to Bob's qubit to
+%recover~$\ket{\psi}$. The resulting term represents the same quantum
+%transformation but expressed without any explicit measurement--instead,
+%each branch encodes the coherent superposition of possible outcomes.
+%
+%The $\lambdaB$ calculus allows us to abstract both the encoding and decoding
+%steps in the Bell basis, exploiting the deferred-measurement principle in a
+%type-safe way.  
+%Each branch of the $\mathsf{case}$ corresponds to a unitary transformation
+%preserving linearity and orthogonality, and the overall term has type
+%${\sharp\basis{\B}\Arr(\sharp\basis{\Bell}\times\sharp\basis{\B})}$
+%\footnote{The type derivation relies on the subtypings 
+%$\basis{\Bell}\leq\sharp(\basis{\B}\times\sharp\basis{\B})$ and
+%$\sharp\basis{\B}\times\sharp\basis{\B}\leq\sharp\basis{\Bell}$.}.
+
+\section{Conclusion}\label{sec:conclusion}
+We have introduced a quantum-control $\lambda$-calculus where abstractions are expressed relative to arbitrary bases. The central mechanism is the decoration of $\lambda$-abstractions and $\mathsf{let}$-constructors with basis annotations, supported by a basis-dependent substitution. While this does not increase expressiveness over the original language, it offers a novel perspective for reasoning about quantum programs under basis changes. 
+
+The benefits of this design are manifest in the realisability model. The inclusion of atomic types $\basis{\BB}$ enables a direct characterisation of abstractions representing unitary operators, generalising results from~\cite{DiazcaroGuillermoMiquelValironLICS19}. Based on this interpretation, we have established the validity of the typing rules in Table~\ref{tab:TypingRules}, ensuring their soundness and providing a principled foundation for a typed language based on the calculus.
+
+Finally, we illustrated the system's advantages through two canonical examples: in \emph{Deutsch's algorithm}, basis-aware typing captures the algorithm's determinism by treating the result classically; in \emph{quantum teleportation}, the $\mathsf{case}$ construct simulates gates controlled by Bell-basis measurements, internalising the deferred-measurement principle. These results show that basis-sensitivity is a powerful tool for the static analysis of quantum protocols.
+
+%\section{Conclusion}\label{sec:conclusion}
+%
+%In this paper we have explored a quantum-control $\lambda$-calculus equipped
+%with the feature of allowing abstractions to be expressed relative
+%to arbitrary bases, beyond the canonical one.  
+%
+%The central mechanism enabling this extension is the decoration of
+%$\lambda$-ab\-strac\-tions and $\mathsf{let}$-constructors with basis annotations,
+%alongside a modified substitution operation that governs how value
+%combinations decompose onto different bases.  
+%These additions do not increase the expressivity of the original calculus
+%on which $\lambdaB$ builds, yet they offer a novel perspective for reasoning
+%about quantum programs and their behaviour under basis changes.
+%
+%The reduction system coordinates computation through these extended syntactic
+%constructs and substitutions.  
+%A key property is that evaluation commutes with the $\equiv$-relation,
+%ensuring that interpreting a value combination in a different basis does not
+%affect the computational result. Then, it is meaningful to reason about terms modulo basis
+%congruence.
+%
+%The benefit of this design becomes clear in the realisability model.
+%The inclusion of atomic types~$\basis{X}$ enables a direct characterisation of
+%abstractions representing unitary operators--our main semantic result,
+%generalising the characterisation from~\cite{DiazcaroGuillermoMiquelValironLICS19}.  
+%Here, the use of basis types yields a simpler and more transparent proof.  
+%
+%The second major result is the validity of the typing rules presented in
+%Table~\ref{tab:TypingRules}.  
+%By deriving these rules from the realisability interpretation, we ensure their
+%soundness and obtain a principled foundation for a typed programming language
+%based on the calculus.
+%
+%Finally, we have illustrated the expressive advantages of the system through two
+%canonical examples.  
+%In the case of \emph{Deutsch's algorithm}, the use of basis-aware typing allows
+%the result to be treated classically, reflecting the algorithm's determinism.  
+%In the case of \emph{quantum teleportation}, we show how the
+%$\mathsf{case}$ construct can simulate gates controlled by Bell-basis
+%measurements, effectively capturing the deferred-measurement principle within
+%the calculus.
+
+\bibliography{basisSensitive}
+
+\appendix
+
+\section{Omitted proofs from Section~\ref{sec:calculus}}\label{sec:appendixA}
+
+\begin{restateremark}[Restatement of Remark~\ref{rem:UniqueDecomposition}]
+  \itshape
+  If $\BB$ is an $2^n$-dimensional basis, then every $n$-qubit state has
+  a unique decomposition over $\BB$.
+\end{restateremark}
+\begin{proof}
+  Let $\vec{b}_{i}$ be the basis vectors of $\BB$. Suppose
+  $\sum_{i=1}^{2^n} \alpha_i \vec{b}_{i}$ and $\sum_{i=1}^{2^n} \beta_i \vec{b}_{i}$
+  are two decompositions of $\vec{v}$ over $\BB$. Then
+  \[
+    0=\vec{v}-\vec{v}=\sum_{i=1}^{2^n}(\alpha_i-\beta_i)\vec{b}_{i}.
+  \]
+  By linear independence, $\alpha_i=\beta_i$ for all $i$.
+\end{proof}
+
+\begin{restatecorollary}[Restatement of Corollary~\ref{cor:EquivalentDecomposition}]
+  \itshape
+  If $\vec{v}\equiv\vec{w}$, then they share the same decomposition over any
+  basis $\BB$.
+\end{restatecorollary}
+\begin{proof}
+  Since $\vec{v}-\vec{w}\equiv\vec{v}-\vec{v}\equiv\vec{w}-\vec{w}$, the same
+  argument as in Remark~\ref{rem:UniqueDecomposition} shows that $\vec{v}$ and $\vec{w}$ have the same decomposition over $\BB$.
+\end{proof}
+
+\begin{restatelemma}[Restatement of Lemma~\ref{lem:distributiveSubstitution}]
+  \itshape
+  For term combinations $\vec{t}_{i}$, a value combination $\vec{v}$, a
+  variable $x$, coefficients $\alpha_i\in\C$, and a decoration $X$ (an
+  orthonormal basis or $\AbsBasis$) such that $\ansubst{\vec v/x}{X}$ is defined:
+  \[
+    \Bigl(\sum_i \alpha_i\vec{t}_{i}\Bigr)\ansubst{\vec v/x}{X}
+    \equiv
+    \sum_i \alpha_i\vec{t}_{i} \ansubst{\vec v/x}{X}.
+  \]
+\end{restatelemma}
+\begin{proof}
+  Let $X\neq\AbsBasis$ and
+  $\vec{v}\equiv\sum_{j=1}^n\beta_j\vec{b}_{j}$ with each $\vec{b}_{j}\in X$.
+  Then
+  \begin{align*}
+    \Bigl(\sum_i \alpha_i\vec{t}_{i}\Bigr)\ansubst{\vec v/x}{X}
+    &= \sum_{j=1}^n \beta_j\Bigl(\sum_{i=1}^{n}\alpha_i t_i\Bigr)[\vec{b}_{j}/x]\\
+    &\equiv \sum_{i=1}^{n}\alpha_i\Bigl(\sum_{j=1}^n\beta_j t_i[\vec{b}_{j}/x]\Bigr)
+    = \sum_{i=1}^{n}\alpha_i\vec{t}_{i}\ansubst{\vec v/x}{X}.
+  \end{align*}
+  The case $X=\AbsBasis$ is analogous, taking each $\vec{b}_j$ from $\Val$.
+\end{proof}
+
+\begin{restatelemma}[Restatement of Lemma~\ref{lem:EquivSubstitutions}]
+  \itshape
+  For value combinations $\vec{v},\vec{w}$, a term combination $\vec{t}$, and
+  an decoration $X$ such that both
+  $\ansubst{\vec{v}/x}{X}$ and $\ansubst{\vec{w}/x}{X}$ are defined:
+  if $\vec{v}\equiv\vec{w}$, then
+  $\vec{t}\ansubst{\vec{v}/x}{X}
+  \equiv\vec{t}\ansubst{\vec{w}/x}{X}$.
+\end{restatelemma}
+\begin{proof}
+  Let $X\neq\AbsBasis$. Since $\vec{v}\equiv\vec{w}$, by
+  Corollary~\ref{cor:EquivalentDecomposition},
+  both can be written as
+  $\vec{v}\equiv\vec{w}\equiv\sum_{i=1}^{n}\alpha_i\vec{b}_{i}$ with
+  $\vec{b}_{i}\in X$. Hence
+  \[
+    \vec{t}\ansubst{\vec{v}/x}{X}
+    = \sum_{i=1}^{n}\alpha_i\vec{t}[\vec{b}_{i}/x]
+    = \vec{t}\ansubst{\vec{w}/x}{X}.
+    \tag*{\qedhere}
+  \]
+
+  The case $X=\AbsBasis$ is analogous, taking each $\vec{b}_j$ from $\Val$.
+\end{proof}
+
+\section{Omitted proofs from Section~\ref{sec:reduction}}\label{sec:appendixB}
+
+\begin{lemma}[Weak diamond property for $\lraneq$]\label{lem:SquigDiamond}
+  Let $\vec{t}, \vec{s}_{1}, \vec{s}_{2}$ term combinations such that $\vec{t}\lraneq{s_1}$ and $\vec{t}\lraneq\vec{s}_{2}$. 
+  Then, either there exists a term combination $\vec{r}$ such that $\vec{s}_{1}\lraneq\vec{r}$ and 
+  $\vec{s}_{2}\lraneq \vec{r}$. Or, $\vec{s}_{1}=\vec{s}_{2}$. Diagrammatically:
+  \[
+    \begin{tikzcd}
+      & \vec{t}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+      &\\
+      \vec{s}_{1}\arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
+      \vec{s}_{2}\arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
+      & \vec{r} &
+    \end{tikzcd}
+    \quad\text{ Or }\quad
+    \begin{tikzcd}
+      &[-2em] \vec{t}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+      &[-2em]\\
+      \vec{s}_{1}& = &\vec{s}_{2}\\
+    \end{tikzcd}
+  \]
+\end{lemma}
+
+\begin{proof}
+  The proof follows from the fact that the $\lraneq$ reduction is deterministic over basic values. 
+  And, in case of term combinations, we only need to match the reduction on the corresponding sub-terms. 
+  Let $\vec{t}=\sum\limits_{i=1}^n \alpha_i \vec{t}_{i}$, $\vec{s}_{1}=\sum\limits_{i=1; i\neq j}^n \alpha_i \vec{t}_{i} + \alpha_j\vec{s}_{j}$, and $\vec{s}_{2}=\sum\limits_{i=1; i\neq k}^n \alpha_i \vec{t}_{i}+\alpha_k\vec{s}_{k}$. Where $\vec{t}_{j}\lraneq\vec{s}_{j}$ and $\vec{t}_{k}\lraneq\vec{s}_{k}$. If $j=k$ we are done, so we consider the case where $j\neq k$. Diagrammatically:
+  \[
+    \begin{tikzcd}
+      &[-1em] \sum\limits_{i=1}^n \alpha_i \vec{t}_{i}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+      &[-1em]\\
+      \sum\limits_{i=1; i\neq j}^n \alpha_i \vec{t}_{i} + \alpha_j\vec{s}_{j}
+      \arrow[dr,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] & &
+      \sum\limits_{i=1; i\neq k}^n \alpha_i \vec{t}_{i} + \alpha_k\vec{s}_{k}
+      \arrow[ld,dashed,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->] \\
+      & \sum\limits_{i=1; i\neq j,k}^n \alpha_i \vec{t}_{i} + \alpha_j\vec{s}_{j}+\alpha_k\vec{s}_{k} &
+    \end{tikzcd}
+  \]
+\end{proof}
+
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:confluence}]
+  \itshape
+  Let $\vec{t}$ and $\vec{s}$ be closed term combinations with
+  $\vec{t}\equiv\vec{s}$. If $\vec{t}\lraneq\vv{t'}$ and $\vec{s}\lraneq\vv{s'}$,
+  then there exist term combinations $\vec{r}_{1}$ and $\vec{r}_{2}$ such that
+  $\vv{t'}\eval\vec{r}_{1}$, $\vv{s'}\eval\vec{r}_{2}$, and
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
+  Diagrammatically:
+  \[
+    \begin{tikzcd}
+      & \vec{t}
+        \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        &[-2.5em] \equiv
+        &[-2.5em] \vec{s}
+        \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
+        &\\
+      \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
+      \vv{s'}\arrow[ld,"*"',pos=0.9] \\
+      & \vec{r}_{1} & \equiv & \vec{r}_{2} &
+    \end{tikzcd}
+  \]
+\end{restatetheorem}
+\begin{proof}
+  We do a case-by-case analysis over the relation $\vec{t}\equiv\vec{s}$.
+  \begin{description}
+    \item[$\vec{t}_{1} + \vec0\equiv\vec{t}_{1}$:] This case follows from Lemma \ref{lem:SquigDiamond} since the reductions can only be performed in $\vec{t}_{1}$.
+    
+    \item[$0\vec{t}\equiv\vec{0}$:] The term combinations cannot reduce on either side of the equivalence.
+    
+    \item[$1\vec{t}\equiv\vec{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\alpha(\beta \vec{t})\equiv\delta\vec{t}$:] This case follows from Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\vec{t}_{1}+\vec{t}_{2}\equiv\vec{t}_{2}+\vec{t}_{1}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    
+    \item[$\vec{t}_{1}+(\vec{t}_{2}+\vec{t}_{3})\equiv(\vec{t}_{1}+\vec{t}_{2})+\vec{t}_{3}$:] This case follows from Lemma \ref{lem:SquigDiamond}. We just have to match the reductions on both sides of the equivalence.
+    
+    \item[$(\alpha+\beta)\vec{t}\equiv\alpha\vec{t} + \beta\vec{t}$:] We start analyzing the coefficients. If $\alpha+\beta = 0$, then there cannot be a reduction on the left hand-side. If $(\alpha + \beta)\neq 0$ and either $\alpha=0$ or $\beta=0$, then we are on a particular case of $\vec{t}_{1} + \vec0\equiv\vec{t}_{1}$. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.
+    
+    \item[$\alpha(\vec{t}_{1}+\vec{t}_{2})\equiv\alpha\vec{t}_{1}+\alpha\vec{t}_{2}$:] If $\alpha=0$, then the term combinations cannot reduce on either side of the equivalence. Otherwise, we match the reductions on both sides of the equivalence with Lemma \ref{lem:SquigDiamond}.    
+    \qedhere
+  \end{description}
+\end{proof}
+
+
+\section{Omitted proofs from Section~\ref{sec:model}}\label{sec:appendixC}
+
+\begin{restatetheorem}[Restatement of Remark~\ref{rem:SharpCharacterization}]
+  \itshape
+  The interpretation of a type~$\sharp A$ contains precisely the
+  norm-$1$ linear combinations of values in~$\sem{A}$:
+  \[
+    \sem{\sharp A}
+    = (\sem{A}^\bot)^\bot
+    = \Span(\sem{A}) \cap \Sph.
+  \]
+\end{restatetheorem}
+\begin{proof}
+  Proof by double inclusion.
+  \begin{description}
+    \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vec{v}\in\Span(\sem{A})\cap\Sph$. Then $\vec{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vec{v}_{i}$ with $\vec{v}_{i}\in\sem{A}$. Taking $\vec{w}\in\sem{A}^\bot$, we examine the inner product:
+    \begin{align*}
+    \scal{\vec{v}}{\vec{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vec{v}_{i}}{\vec{w}}\\
+    &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vec{v}_{i}}{\vec{w}}=0
+    \end{align*}
+
+    Then $\vec{v}\in(\sem{A}^\bot)^\bot$.
+
+    \item[$(\sem{A}^\bot)^\bot\subseteq \Span(\sem{A})\cap\Sph$:] Reasoning by contradiction, we assume that there is a $\vec{v}\in(\sem{A}^\bot)^\bot$ such that $v\not\in\Span(\sem{A})\cap\Sph$. Since $\vec{v}\not\in\Span(\sem{A})$, $\vec{v}=\vec{w}_{1} + \vec{w}_{2}$ such that $\vec{w}_{1}\in\Span{\sem{A}}$ and $\vec{w}_{2}$ is a non-null vector which cannot be written as a linear combination of elements of $\sem{A}$. In other words, $\vec{w}_{2}\in\sem{A}^\bot$. Taking the inner product:
+    \[
+    \scal{\vec{v}}{\vec{w}_{2}} = \scal{\vec{w}_{1}+\vec{w}_{2}}{\vec{w}_{2}} = \|\vec{w}_{2}\|\neq 0
+    \]
+    Then $\vec{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vec{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
+  \end{description}
+\end{proof}
+
+\begin{restatetheorem}[Restatement of Remark~\ref{rem:IdempotentSharp}]
+  \itshape
+  The~$\sharp$ operator is idempotent; that is,
+  $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
+\end{restatetheorem}
+\begin{proof}
+  We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
+
+  \begin{description}
+    \item[$A\subseteq A^{\bot^2}$:] Let $\vec{v}\in A$. Then, for all $\vec{w}\in\comp{A}$, $\scal{\vec{v}}{\vec{w}} = 0$. Then $\vec{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
+    
+    \item[$A^{\bot^3}\subseteq \comp{A}$:] Let $\vec{u}\in \comp[3]{A}$. Then, for all $\vec{v}\in\comp[2]{A}$, $\scal{\vec u}{\vec v} = 0$. Since we have shown that $A\subseteq \comp[2]{A}$, we have that for all $\vec{w}\in A$, $\scal{\vec u}{\vec w} = 0$. Then $\vec u\in\comp{A}$. With this we have $\comp[3]{A}\subseteq \comp{A}$.
+  \end{description}
+
+  With these two inclusions we have that $\comp{A}=\comp[3]{A}$. So we conclude that: $\sem{\sharp(\sharp A)} = \comp[4]{A} = \comp[2]{A} = \sem{\sharp A}$ \qedhere
+\end{proof}
+
+\begin{restatetheorem}[Restatement of Theorem~\ref{prop:UnitaryTypes}]
+  \itshape
+  For every type~$A$, $\sem{A}\subseteq\Sph$.
+\end{restatetheorem}
+
+\begin{proof}
+  Proof by induction on the shape of $A$. Since by definition, $\sem{\basis{\BB}}$, $\sem{A\Arr B}$ and $\sem{\sharp{A}}$ are built from values in $\Sph$ the only case we need to examine is $\sem{A\times B}$.
+  
+  Let $\vec v = \sum_{i=0}^{n} \alpha_i v_i \in\sem{A}$ and $\vec w = \sum_{j=0}^{m} \beta_j w_j$ where every $v_i$ are pairwise orthogonal, same for $w_j$. Then:
+     
+  \[(\vec v, \vec w) = \sum_{i=0}^{n} \sum_{j=0}^{m} \alpha_i\beta_j (v_i,w_j)\]
+  
+  So we have: 
+  \[\|\Pair{\vec v}{\vec w}\| = \sqrt{\sum_{i=1}^n\sum_{j=1}^{m} |\alpha_i\beta_j|^2} = \sqrt{\sum_{i=1}^n |\alpha_i|^2 \sum_{j=1}^{m} |\beta_j|^2}\]
+
+  Since both $\vec v\in\sem{A}$ and $\vec w\in\sem{B}$, by inductive hypothesis, we have that $\|\vec v\| = \| \vec w \| = 1$. Which is to say $\sum_{i=1}^{n} |\alpha_i|^2 = \sum_{j=1}^{m} |\beta_j| = 1$. So we conclude $\|\Pair{\vec{v}}{\vec{w}}\| = 1$.
+  \qedhere
+\end{proof}
+
+\begin{restatelemma}[Restatement of Lemma~\ref{lem:BasesIso}]
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of the same finite
+  dimension, and let $\Lam{x}{\BB_1}{\vec t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{\BB_1}}{\vec t}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
+  if and only if 
+  for all $\vec{v}_{i},\vec{v}_{j}\in\sem{\basis{\BB_1}}$,
+  there exist value combinations
+  $\vec{w}_{i},\vec{w}_{j}\in\sem{\sharp\basis{\BB_2}}$ such that,
+  \[
+    \vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}
+    \quad\text{and}\quad
+    \vec{t}[\vec{v}_{j}/x]\eval\vec{w}_{j},
+    \quad\text{with } 
+    \vec{w}_{i}\perp\vec{w}_{j}\text{ whenever }i\neq j.
+  \]
+\end{restatelemma}
+\begin{proof}
+  \textit{The condition is necessary:} Suppose that $\Lam{x}{{\BB_1}}{\vec{t}_{k}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$, thus $\forall \vec{v}_{i}\in\sem{\sharp\basis{\BB_1}},\ \vec{t}\ansubst{\vec{v}_{i}/x}{\BB_1}\eval\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$. It remains to be seen that $\vec{w}_{i} \perp \vec{w}_{j}$ if $i\neq j$. For that, we consider $\alpha_i\in\C$ such that $\sum_{i=1}^n |\alpha_i|^2 = 1$. By linear application on the basis $\BB_1$ we observe that:
+  \begin{align*}
+    (\Lam{x}{{\BB_1}}{\vec{t}})(\sum_{i=1}^n \alpha_i \vec{v}_{i}) &\lra \vec t\ansubst{\sum_{i=1}^n \alpha_i \vec{v}_{i}/x}{\BB_1}
+    = \sum_{i=1}^{n} \alpha_i \vec{t}[\vec{v}_{i}/x] 
+    \eval \sum_{i=1}^n \alpha_i \vec{w}_{i}
+  \end{align*}
+
+  But since $\sum_{i=1}^n \alpha_i \vec{v}_{i}\in\sem{\sharp A}$, then $\sum_{i=1}^n \alpha_i \vec{w}_{i}\in\sem{\sharp B}$ too. Which implies $\|\sum_{i=1}^n \alpha_i \vec{w}_{i}\|=1$. Therefore:
+  \begin{align*}
+    1 = \|\sum_{i=1}^n \alpha_i \vec{w}_{i}\| &= \scal{\sum_{i=1}^n \alpha_i \vec{w}_{i}}{\sum_{j=1}^n \alpha_j \vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec{w}_{i}}{\vec{w}_{i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec{w}_{i}}{\vec{w}_{i} } + \sum_{i,j=1; i<j}^n 2~\Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \|\vec{w}_{i}\|^2 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 + 2\sum_{i,j=1; i<j}^n\Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}\\
+    &= 1 + 2\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}}
+  \end{align*}
+
+  And thus we are left with $\sum_{i,j=1; i<j}^n \Rpart{\bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}} = 0$. Taking $\alpha_{i'} = \alpha_{j'} = \frac{1}{\sqrt{2}}$ with $0$ for the rest of coefficients, we have $\Rpart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. In the same way, taking $\alpha_{i'} = \frac{1}{\sqrt{2}}$ and $\alpha_{j'}=\frac{i}{\sqrt{2}}$ with $0$ for the rest of the coefficients, we have $\Ipart{\scal{\vv{w_{i'}}}{\vv{w_{j'}}}} = 0$ for any two arbitrary $i'$ and $j'$. Finally, we can conclude that $\scal{\vec{w}_{i}}{\vec{w}_{j}}=0$ if $i\neq j$.
+
+  \textit{The condition is sufficient:} Suppose that there are $\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$ such that for every $\vec{v}_{i}\in\sem{\basis{\BB_1}}$:
+  \[
+    \vec t[\vec{v}_{i}/x] \eval \vec{w}_{i} \perp \vec{w}_{j} \lave \vec t[\vec{v}_{j}/x]\qquad \text{If } i\neq j
+  \]
+  Given any $\vec u\in\sem{\sharp\basis{\BB_1}}$ we have that $\vec u = \sum_{i=1}^n \alpha_i \vec{v}_{i}$ with $\sum_{i=1}^n |\alpha_i|^2 = 1$ and $\vec{v}_{i}\in\sem{\basis{\BB_1}}$. Then 
+  \[
+    (\Lam{x}{{\BB_1}}{\vec t}) \vec u \lra \vec{t}_{k}\ansubst{\vec u/x}{\BB_1}=\sum_{i=1}^{n}\alpha_i \vec{t}[\vec{v}_{i}/x]\eval\sum_{i=1}^n \alpha_i\vec{w}_{i}
+  \]
+
+  We have that for each $i$, $\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$. In order to show that $(\Lam{x}{A}{\vec t})\vec u\real\sharp\basis{\BB_2}$ we still have to prove that $\|\sum_{i=1}^n \alpha_i \vec{w}_{i}\| = 1$
+  \begin{align*}
+    \|\sum_{i=1}^n \alpha_i \vec{w}_{i}\|^2 &= \scal{\sum_{i=1}^n \alpha_i \vec{w}_{i}}{\sum_{j=1}^n \alpha_j \vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 \scal{\vec{w}_{i}}{\vec{w}_{i} } + \sum_{i,j=1; i\neq j}^n \bar{\alpha_i}\alpha_j \scal{\vec{w}_{i}}{\vec{w}_{j}}\\
+    &=\sum_{i=1}^n |\alpha_i|^2 + 0\\
+    &= 1
+  \end{align*}
+
+  Then $\sum_{i=1}^n \alpha_i \vec{w}_{i}\in\sem{\sharp(\sharp\basis{\BB_2})}=\sem{\sharp\basis{\BB_2}}$ by Remark~\ref{rem:IdempotentSharp}. Since for every $\vec u\in\sem{\sharp A}$, $(\Lam{x}{A}{\vec t}) \vec u\real\sharp B$, we can conclude that $\Lam{x}{A}{\vec t}\in\sem{\sharp A\Arr\sharp B}$.\qedhere
+\end{proof}
+
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:characterisation}]
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of size~$2^n$.
+  A closed $\lambda$-abstraction
+  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
+  if and only if it represents a unitary operator
+  $F:\C^{2^n}\to\C^{2^n}$.
+\end{restatetheorem}
+
+\begin{proof}
+  \textit{Necessity.}
+  Suppose that $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
+  Then, by Lemma~\ref{lem:BasesIso}, for every
+  $\vec{v}_{i}\in\sem{\basis{\BB_1}}$ there exists
+  $\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$ such that
+  $\vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}$ and
+  $\vec{w}_{i}\perp\vec{w}_{j}$ whenever $i\neq j$.
+  Let $F:\C^{2^n}\to\C^{2^n}$ be the operator defined by
+  $F(\vec{v}_{i})=\vec{w}_{i}$.
+  By linearity over~$\BB_1$, it follows that
+  $\Lam{x}{{\BB_1}}{\vec{t}}$ represents~$F$.
+  Then, $F$ is unitary since
+  $\|\vec{w}_{i}\|_{\C^{2^n}}=\|\vec{w}_{j}\|_{\C^{2^n}}=1$ and
+  $\scal{\vec{w}_{i}}{\vec{w}_{j}}_{\C^{2^n}}=0$.
+
+  \smallskip
+  \textit{Sufficiency.}
+  Conversely, suppose that $\Lam{x}{{\BB_1}}{\vec{t}}$ represents a
+  unitary operator $F:\C^{2^n}\to\C^{2^n}$.
+  Then, for each $\vec{v}_{i}\in\sem{\basis{\BB_1}}$, there exists
+  $\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$ such that
+  $F(\vec{v}_{i}) = \vec{w}_{i}$ and
+  $(\Lam{x}{{\BB_1}}{\vec{t}})\vec{v}_{i}\eval\vec{w}_{i}$.
+  Hence,
+  \(
+    (\Lam{x}{{\BB_1}}{\vec{t}})\vec{v}_{i}
+    \lraneq
+    \vec{t}\ansubst{\vec{v}_{i}/x}{\BB_1}
+    = \vec{t}[\vec{v}_{i}/x]
+    \eval \vec{w}_{i}
+    \in \sem{\sharp\basis{\BB_2}}
+  \),
+  as $\|\vec{w}_{i}\|=\|F(\vec{v}_{i})\|_{\C^n}=1$. Since
+  \(
+    \scal{\vec{w}_{i}}{\vec{w}_{j}}
+    = \scal{F(\vec{v}_{i})}{F(\vec{v}_{j})}_{\C^n}
+    = 0
+  \),
+  from Lemma~\ref{lem:BasesIso} it follows that
+  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
+  \qedhere
+\end{proof}
+
+
+Before proving the soundness of the typing rules (Theorem~\ref{thm:TypingRulesValidity}), we need the following results.
+
+\begin{theorem}\label{prop:InnerProdPairs} For all value combinations $\vec{v}_{1}, \vec{v}_{2}, \vec{w}_{1}, \vec{w}_{2}$ we have:
+\[
+\scal{\Pair{\vec{v}_{1}}{\vec{w}_{1}}}{\Pair{\vec{v}_{2}}{\vec{w}_{2}}} = \scal{\vec{v}_{1}}{\vec{v}_{2}}\scal{\vec{w}_{1}}{\vec{w}_{2}}
+\]
+\begin{proof}
+    Let us write $\vec{v}_{1}=\sum_{i_1=1}^{n_1}\alpha_{i_1} v_{i_1}$, $\vec{v}_{2}=\sum_{i_2=1}^{n_2}\alpha'_{i_2} v_{i_2}$, $\vec{w}_{1}=\sum_{j_1=1}^{m_1}\beta_{j_1} w_{j_1}$ and $\vec{w}_{2}=\sum_{j_2=1}^{m_2}\beta'_{j_2} w_{j_2}$. Then we have:
+    \begin{align*}
+        &\scal{\Pair{\vec{v}_{1}}{\vec{w}_{1}}}{\Pair{\vec{v}_{2}}{\vec{w}_{2}}}\\
+        &=\scal{\sum_{i_1=1}^{n_1}\sum_{j_1=1}^{m_1} \alpha_{i_1}\beta'_{j_1}\Pair{v_{i_1}}{w_{j_1}}}{\sum_{i_2=1}^{n_2}\sum_{j_2=1}^{m_2} \alpha_{i_2}\beta'_{j_2}\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \scal{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{\Pair{v_{i_1}}{w_{j_1}}}{\Pair{v_{i_2}}{w_{j_2}}}\\
+        &=\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\alpha_{i_1}\beta_{j_1}} \alpha'_{i_2}\beta'_{j_2} \Kron{v_{i_1}}{v_{i_2}}\Kron{w_{j_1}}{w_{j_2}}\\
+        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Kron{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Kron{w_{j_1}}{w_{j_2}})\\
+        &=(\sum_{i_1}^{n_1}\sum_{j_1}^{m_1}\overline{\alpha_{i_1}}\alpha'_{i_2}\Pair{v_{i_1}}{v_{i_2}})(\sum_{i_2}^{n_2}\sum_{j_2}^{m_2} \overline{\beta_{j_1}} \beta'_{j_2} \Pair{w_{j_1}}{w_{j_2}})\\
+        &=\scal{\vec{v}_{1}}{\vec{v}_{2}}\scal{\vec{w}_{1}}{\vec{w}_{2}}
+	\tag*{\qedhere}
+    \end{align*}
+\end{proof}  
+
+\end{theorem}
+
+\begin{lemma}\label{lem:VecRewrite}%A5 en el paper de LICS
+Given a type $A$, two vectors $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$ and a scalar $\alpha\in\C$, there exists a vector $\vec{u}_{0}\in\sem{\sharp A}$ and a scalar $\lambda\in\C$ such that:
+\[
+\vec{u}_{1} + \alpha\vec{u}_{2} = \lambda \vec{u}_{0} 
+\]
+\end{lemma}
+\begin{proof}
+    Let $\lambda:=\|\vec{u}_{1}+\alpha\vec{u}_{2}\|$. When $\lambda\neq 0$, we take $\vec{u}_{0}=\frac{1}{\lambda}(\vec{u}_{1}+\alpha\vec{u}_{2})\in\sem{\sharp A}$, and we are done.
+
+    When $\lambda=0$, we first observe that $\alpha\neq 0$ since it would mean that $\|\vec{u}_{1}\|=0$ which is absurd since $\|\vec{u}_{1}\|=1$. Moreover, since $\lambda=\|\vec{u}_{1}+\alpha\vec{u}_{2}\|=0$, we observe that all the coefficients of the combination $\vec{u}_{1}+\alpha\vec{u}_{2}$ are zeroes when written in canonical form which implies that:
+    \[
+    \vec{u}_{1}+\alpha\vec{u}_{2} = 0(\vec{u}_{1}+\alpha\vec{u}_{2}) = 0\vec{u}_{1}+0\vec{u}_{2}
+    \]
+    Using the triangular inequality we observe that:
+    \begin{align*}
+    0 &< 2|\alpha|\\
+    &= \|2\alpha\vec{u}_{2}\|\\
+    &\leq\|\vec{u}_{1}+\alpha\vec{u}_{2}\| + \|\vv{u_1 }+ (-\alpha)\vec{u}_{2}\|\\
+    &= \|\vec{u}_{1}+(-\alpha)\vec{u}_{2}\|
+    \end{align*}
+    Hence $\lambda' := \|\vec{u}_{1}+(-\alpha)\vec{u}_{2}\|>0$. Taking $\vec{u}_{0}:= \frac{1}{\lambda'}(\vec{u}_{1}+ (-\alpha)\vec{u}_{2})\in\sem{\sharp A}$, we easily see that:
+    \[
+    \vec{u}_{1}+\alpha\vec{u}_{2} = 0\vec{u}_{1} + 0\vec{u}_{2} = 0(\frac{1}{\lambda'} (\vec{u}_{1} + (-\alpha) \vec{u}_{2})) = \lambda \vec{u}_{0}
+    \tag*{\qedhere}
+    \]
+\end{proof}
+
+\begin{theorem}[Polarization identity]\label{prop:Polarization} %A6
+For all values $\vec{v}$ and $\vec{w}$ we have:
+\[
+  \scal{\vec{v}}{\vec{w}}=
+  \frac{1}{4} (\|\vec{v}+\vec{w}\|^2 - \|\vec{v} + (-1) \vec{w}\|^2 - i\|\vec{v} + i\vec{w}\|^2 + i\|\vec{v}+ (-i)\vec{w}\|^2)
+\]
+\end{theorem}
+
+\begin{lemma}\label{lem:InnerProdSingleVar} 
+Given a valid typing judgement of the term $\TYP{\Delta,x^X:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$, there are value combinations $\vec{w}_{1}, \vec{w}_{2}\in\sem{C}$ such that:
+\[
+\begin{array}{c}
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{X}\eval\vec{w}_{1}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{X}\eval\vec{w}_{2}
+\end{array}
+\]
+
+And, $\scal{\vec{w}_{1}}{\vec{w}_{2}} = \scal{\vec{u}_{1}}{\vec{u}_{2}}$.
+\end{lemma}
+
+\begin{proof}
+    From the validity of the judgement of the form $\TYP{\Delta, x_X:\sharp A}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vec{w}_{1},\vec{w}_{2}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{X}\eval\vec{w}_{1}$ and $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{X}\eval\vec{w}_{2}$. In particular, we have that $\|\vec{w}_{1}\| = \|\vec{w}_{2}\|=1$. Applying Lemma~\ref{lem:VecRewrite}~four times, we know there are vectors $\vv{u_{01}},\vv{u_{02}},\vv{u_{03}},\vv{u_{04}}\in\sem{\sharp A}$ and scalars $\lambda_1,\lambda_2,\lambda_3,\lambda_4$ such that:
+    \begin{align*}
+        \vec{u}_{1} + \vec{u}_{2} = \lambda_1 \vv{u_{01}} & \vec{u}_{1} + i \vec{u}_{2} = \lambda_3 \vv{u_{03}} \\
+        \vec{u}_{1} + (-1) \vec{u}_{2} = \lambda_2 \vv{u_{02}} & \vec{u}_{1} + (-i) \vec{u}_{2} = \lambda_4 \vv{u_{04}} 
+    \end{align*}
+
+    From the validity of the judgement $\TYP{\Delta, x_X:\sharp A}{\vec{s}}{C}$, we also know that there are value combinations $\vv{w_{01}},\vv{w_{02}},\vv{w_{03}},\vv{w_{04}}\in\sem{C}$ such that $\vec{s}\ansubst{\sigma}{}\ansubst{\vv{u_{0j}}/x}{}\eval\vv{w_{0j}}$ for all $j\in\{1\dotsb 4\}$. Combining the linearity of evaluation on the basis $A$ (or $\Val$ if $X=\AbsBasis$) with the uniqueness of normal forms we deduce from what precedes that:
+    \begin{align*}
+        \vec{w}_{1} + \vec{w}_{2} = \lambda_1 \vv{w_{01}} & \vec{w}_{1} + i \vec{w}_{2} = \lambda_3 \vv{w_{03}} \\
+        \vec{w}_{1} + (-1) \vec{w}_{2} = \lambda_2 \vv{w_{02}} & \vec{w}_{1} + (-i) \vec{w}_{2} = \lambda_4 \vv{w_{04}} 
+    \end{align*}
+
+    Using the polarization identity (Theorem~\ref{prop:Polarization}), we conclude that:
+    \begin{align*}
+        &\scal{\vec{w}_{1}}{\vec{w}_{2}}\\
+        &= \frac{1}{4}(\|\vec{w}_{1}+\vec{w}_{2}\| - \|\vec{w}_{1} + (-1)\vec{w}_{2}\| - i \|\vec{v}_{1} + i \vec{v}_{2}\| + i \|\vec{v}_{1} + (-i) \vec{v}_{2}\|)\\
+        &= \frac{1}{4}((\lambda_1)^2\|\vv{w_{01}}\| - (\lambda_2)^2\|\vv{w_{02}}\| - i (\lambda_)^2 \|\vv{w_{03}}\| + i (\lambda_)^2\|\vv{w_{04}}\|)\\
+        &= \frac{1}{4}((\lambda_1)^2\|\vv{u_{01}}\| - (\lambda_2)^2\|\vv{u_{02}}\| - i (\lambda_)^2 \|\vv{u_{03}}\| + i (\lambda_)^2\|\vv{u_{04}}\|)\\
+        &= \frac{1}{4}(\|\vec{u}_{1}+\vec{u}_{2}\| - \|\vec{u}_{1} + (-1)\vec{u}_{2}\| - i \|\vec{u}_{1} + i \vec{u}_{2}\| + i \|\vec{u}_{1} + (-i) \vec{u}_{2}\|)\\
+        &=\scal{u_1}{u_2}
+	\tag*{\qedhere}
+    \end{align*}
+\end{proof}
+
+\begin{lemma}\label{lem:OrthogonalSubstitution} %A8
+Given a valid typing judgement of the form $\TYP{\Delta, x^{X}:\sharp A_1, y^{Y}: \sharp A_2}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$ and value combinations $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$, there are value combinations $\vec{w}_{1},\vec{w}_{2}\in\sem{C}$ such that:
+\[
+\begin{array}{c}
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{X}{\ansubst{\vec{v}_{1}/y}{Y}}\eval\vec{w}_{1}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{X}{\ansubst{\vec{v}_{2}/y}{Y}}\eval\vec{w}_{2}\\
+\end{array}
+\]
+And, $\scal{\vec{w}_{1}}{\vec{w}_{2}} = 0$.
+\end{lemma}
+
+\begin{proof}
+    From Lemma~\ref{lem:VecRewrite} we know that there are $\vec{u}_{0}\in\sem{\sharp A}, \vec{v}_{0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    \[
+    \vec{u}_{2} + (-1) \vec{u}_{1} = \lambda\vec{u}_{0}\quad\text{and}\quad\vec{v}_{2} + (-1) \vec{v}_{1} = \mu \vec{v}_{0}
+    \]
+    For all $j,k\in\{0,1,2\}$, we have $\vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{j}/x}{X}\ansubst{\vec{v}_{k}/y}{Y}\eval\vv{w_{jk}}$. In particular, we can take $\vec{w}_{1}=\vv{w_{11}}$ and $\vec{w}_{2}=\vv{w_{22}}$. Now we observe that:
+    \begin{enumerate}
+        \item\label{A8:it1} $\vec{u}_{1}+\lambda\vec{u}_{0}= \vec{u}_{1} + \vec{u}_{2} + (-1) \vec{u}_{1}= \vec{u}_{2} + 0\vec{u}_{1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \begin{array}{c c}
+            \begin{array}{c}
+                \vv{w_{1k}} + \lambda\vv{w_{0k}} = \vv{w_{2k}} + 0 \vv{w_{1k}}\\
+                \vv{w_{2k}} + (-\lambda)\vv{w_{0k}} = \vv{w_{1k}} + 0 \vv{w_{2k}}
+            \end{array}&
+            (\text{for all }k\in\{0,1,2\})
+        \end{array}
+        \]
+        
+        \item\label{A8:it2} $\vec{v}_{1}+\mu\vec{v}_{0}= \vec{v}_{1} + \vec{v}_{2} + (-1) \vec{v}_{1}= \vec{v}_{2} + 0\vec{v}_{1}$, so that from linearity of substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \begin{array}{c c}
+            \begin{array}{c}
+                \vv{w_{j1}} + \mu\vv{w_{j0}} = \vv{w_{j2}} + 0 \vv{w_{j1}}\\
+                \vv{w_{j2}} + (-\mu)\vv{w_{j0}} = \vv{w_{j1}} + 0 \vv{w_{j2}}
+            \end{array}&
+            (\text{for all }j\in\{0,1,2\})
+        \end{array}
+        \]
+        
+        \item\label{A8:it3} $\scal{\vec{u}_{1}}{\vec{u}_{2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{1k}}}{\vv{w_{2k}}}=0$ (for all $k\in\{0,1,2\}$).
+        
+        \item\label{A8:it4} $\scal{\vec{v}_{1}}{\vec{v}_{2}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar}~we get $\scal{\vv{w_{j1}}}{\vv{w_{j2}}}=0$ (for all $j\in\{0,1,2\}$).
+    \end{enumerate}
+
+    From the above, we get:
+    \begin{align*}
+        \scal{\vec{w}_{1}}{\vec{w}_{2}} &= \scal{\vv{w_{11}}}{\vv{w_{22}}} = \scal{\vv{w_{11}}}{\vv{w_{22}}+0\vv{w_{12}}} & \\
+        &=\scal{\vv{w_{11}}}{\vv{w_{12}}+ \lambda\vv{w_{02}}} & (\text{from Item~\ref{A8:it1}, } k=2)\\
+        &=\scal{\vv{w_{11}}}{\vv{w_{12}}} + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} &\\
+        &= 0 + \lambda \scal{\vv{w_{11}}}{\vv{w_{02}}} & (\text{from Item~\ref{A8:it4}, } j=1)\\
+        &= \lambda \scal{\vv{w_{11}} + 0\vv{w_{21}}}{\vv{w_{02}}} & \\
+        &= \lambda \scal{\vv{w_{21}} + (-\lambda)\vv{w_{01}}}{\vv{w_{02}}} & (\text{from Item~\ref{A8:it1}, } k=1)\\
+        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - |\lambda|^2 \scal{\vv{w_{01}}}{\vv{w_{02}}} & \\
+        &= \lambda \scal{\vv{w_{21}}}{\vv{w_{02}}} - 0 & (\text{from Item~\ref{A8:it4}, } j=0)\\
+        &=\scal{\vv{w_{21}}}{\vv{w_{22}}- \vv{w_{12}}} & \\
+        &=\scal{\vv{w_{21}}}{\vv{22}} - \scal{\vv{w_{21}}}{\vv{w_12}} & \\
+        &= 0 - \scal{\vv{w_{21}}}{\vv{w_{12}}} & (\text{from Item~\ref{A8:it4}, } j=2)
+    \end{align*}
+
+    Hence $\scal{\vec{w}_{1}}{\vec{w}_{2}} = \scal{\vv{w_{11}}}{\vv{w_{22}}} = - \scal{\vv{w_{21}}}{\vv{w_{12}}}$. Exchanging the indices in the previous reasoning, we also get 
+    \[
+    \scal{\vec{w}_{1}}{\vec{w}_{2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\scal{\vv{w_{12}}}{\vv{w_{21}}}
+    \]
+    So that we have:
+    \[
+        \scal{\vec{w}_{1}}{\vec{w}_{2}}=-\scal{\vv{w_{21}}}{\vv{w_{12}}}=-\overline{\scal{\vv{w_{21}}}{\vv{w_{12}}}}\in\R
+    \]
+    If we now replace $\vec{u}_{2}\in\sem{\sharp A}$ with $i\vec{u}_{2}\in\sem{\sharp A}$, the very same technique allows us to prove that $i\scal{\vec{w}_{1}}{\vec{w}_{2}}=\scal{\vec{w}_{1}}{i \vec{w}_{2}}\in\R$. Therefore, $\scal{\vec{w}_{1}}{\vec{w}_{2}}=0$.
+\end{proof}
+
+\begin{lemma}\label{lem:UnitPreserTens} %A9
+Given a valid typing judgement of the form $\TYP{\Delta,x^{X}:\sharp A_1, y^{Y}:\sharp A_2}{\vec{s}}{C}$, a substitution $\sigma\in\sem{\Delta}$, and value combinations $\vec{u}_{1},\vec{u}_{2}\in\sem{\sharp A}$ and $\vec{v}_{1},\vec{v}_{2}\in\sem{\sharp B}$, there are value combinations $\vec{w}_{1},\vec{w}_{2}\in\sem{C}$ such that:
+\[
+\begin{array}{c}
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{1}/x}{X}{\ansubst{\vec{v}_{1}/y}{Y}}\eval\vec{w}_{1}\\
+    \vec{s}\ansubst{\sigma}{}\ansubst{\vec{u}_{2}/x}{X}{\ansubst{\vec{v}_{2}/y}{Y}}\eval\vec{w}_{2}\\
+\end{array}
+\]
+
+And, $\scal{\vec{w}_{1}}{\vec{w}_{2}} = \scal{\vec{u}_{1}}{\vec{u}_{2}} \scal{\vec{v}_{1}}{\vec{v}_{2}}$.
+
+\begin{proof}
+    Let $\alpha=\scal{\vec{u}_{1}}{\vec{u}_{2}}$ and $\beta=\scal{\vec{v}_{1}}{\vec{v}_{2}}$. We observe that:
+    \[
+    \scal{\vec{u}_{1}}{\vec{u}_{2}+(-\alpha)\vec{u}_{1}} = \scal{\vec{u}_{1}}{\vec{u}_{2}} - \alpha \scal{\vec{u}_{1}}{\vec{u}_{1}} = \alpha - \alpha = 0
+    \]
+    And similarly that, $\scal{\vec{v}_{1}}{\vec{v}_{2}+ (-\beta) \vec{v}_{1}} = 0$. From Lemma~\ref{lem:VecRewrite}, we know that there are $\vec{u}_{0}\in\sem{\sharp A}$, $\vec{v}_{0}\in\sem{\sharp B}$ and $\lambda,\mu\in\C$ such that:
+    \begin{align*}
+        \vec{u}_{2} +(-\alpha)\vec{u}_{1} = \lambda\vec{u}_{0}& \text{ and } & \vec{v}_{2} + (-\beta)\vec{v}_{1} = \mu\vec{v}_{0} 
+    \end{align*}
+    For all $j,k\in\{0,1,2\}$, we have$\ansubst{\sigma}{}\ansubst{\vec{u}_{j}/x}{X}\ansubst{\vec{v}_{k}/y}{Y}\in\sem{\Delta,x^{X}:\sharp A_1, y^{Y}:\sharp A_2}$, hence there is $\vv{w_{jk}}\in\sem{C}$ such that:
+    \[
+    \vec{s}\ansubst{\sigma}{}\ansubst{u_j/x}{X}\ansubst{\vec{v}_{k}/y}{Y}\eval\vv{w_{jk}}
+    \]
+    In particular, we can take $\vec{w}_{1}=\vv{w_{11}}$ and $\vec{w}_{2}=\vv{w_{22}}$. Now we observe that:
+    \begin{enumerate}
+        \item\label{A9:it1} $\lambda \vec{u}_{0} + \alpha\vec{u}_{1}=\vec{u}_{2} + (-\alpha) \vec{u}_{1} + \alpha \vec{u}_{1} = \vec{u}_{2} + 0 \vec{u}_{1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \lambda\vv{w_{0k}} + \alpha \vv{w_{1k}} = \vv{w_{2k}} + 0 \vv{w_{1k}} \qquad(\text{for all }k\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it2} $\mu\vec{v}_{0} + \beta\vec{v}_{1}=\vec{v}_{2} + (-\beta) \vec{v}_{1} + \beta \vec{v}_{1} = \vec{v}_{2} + 0 \vec{v}_{1}$, so that from the linearity of the substitution, linearity of evaluation and uniqueness of normal forms, we get:
+        \[
+        \mu\vv{w_{j0}} + \beta \vv{w_{j1}} = \vv{w_{j2}} + 0 \vv{w_{j1}} \qquad(\text{for all }j\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it3} $\scal{\vec{u}_{1}}{\lambda\vec{u}_{0}}=\scal{\vec{u}_{1}}{\vec{u}_{2}+(- \alpha)\vec{u}_{1}}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
+        \[
+        \scal{\vv{w_{1k}}}{\lambda\vv{w_{0k}}}= 0 \qquad(\text{for all }k\in\{0,1,2\})
+        \]
+        
+        \item\label{A9:it4} $\scal{\vec{v}_{1}}{\mu\vec{v}_{0}}=\scal{\vec{v}_{1}}{\vec{v}_{2} + (-\beta)}\vec{v}_{1}=0$, so that from Lemma~\ref{lem:InnerProdSingleVar} we get:
+        \[
+        \scal{\vv{w_{j1}}}{\mu\vv{w_{j0}}}=0
+        \]
+                
+        \item\label{A9:it5} $\scal{\vec{u}_{1}}{\lambda\vec{u}_{0}}=\scal{\vec{v}_{1}}{\mu\vec{v}_{0}}=0$ so that from Lemma~\ref{lem:OrthogonalSubstitution} we get:
+        \[
+        \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}=0
+        \]
+        (Again the equality $\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}}$ is trivial when $\lambda=0$ or $\mu=0$. When $\lambda ,\mu\neq 0$ we deduce from the above that $\scal{\vec{u}_{1}}{\vec{u}_{0}}=\scal{\vec{v}_{1}}{\vec{v}_{0}}=0$, from which we get $\scal{\vv{w_{11}}}{\vv{w_{00}}}=0$ by Lemma~\ref{lem:OrthogonalSubstitution})
+    \end{enumerate}
+
+    From above, we get:
+    \begin{align*}
+        \vv{w_{22}} + 0\vv{w_{12}} + &0\vv{w_{01}} + 0\vv{w_{11}} \\
+        &= \lambda\vv{w_{02}} + \alpha\vv{w_{12}} + 0\vv{w_{01}} + 0\vv{w_{11}} & (\text{from Item~\ref{A9:it1}}, k =1)\\
+        &= \lambda(\vv{w_{02}}+0\vv{w_{01}}) + \alpha(\vv{w_{12}}+0\vv{w_{11}})&\\
+        &= \lambda(\mu\vv{w_{00}} + \beta\vv{w_{01}}) + \alpha(\mu\vv{w_{01}}+\beta\vv{w_{11}}) & (\text{from Item~\ref{A9:it2}}, j=0,1)\\
+        &= \lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10}} + \alpha\beta\vv{w_{11}}
+    \end{align*}
+    Therefore:
+    \begin{align*}
+        &\scal{\vec{w}_{1}}{\vec{w}_{2}} \\
+        &= \scal{\vv{w_{11}}}{\vv{w_{22}} + 0 \vv{w_{12}} + 0 \vv{w_{01}} + 0 \vv{w_{11}}}\\
+        &= \scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}} + \lambda\beta\vv{w_{01}} + \alpha\mu\vv{w_{10}} + \alpha\beta\vv{w_{11}}}\\
+        &=\scal{\vv{w_{11}}}{\lambda\mu\vv{w_{00}}} + \scal{\vv{w_{11}}}{\lambda\beta\vv{w_{01}}} + \scal{\vv{w_{11}}}{\alpha\mu\vv{w_{10}}} + \scal{\vv{w_{11}}}{\alpha\beta\vv{w_{11}}}\\
+        &=\lambda\mu\scal{\vv{w_{11}}}{\vv{w_{00}}} + \lambda\beta\scal{\vv{w_{11}}}{\vv{w_{01}}} + \alpha\mu\scal{\vv{w_{11}}}{\vv{w_{10}}} + \alpha\beta\scal{\vv{w_{11}}}{\vv{w_{11}}}\\
+        &= 0 + 0 + 0 + \alpha\beta = \scal{\vec{u}_{1}}{\vec{u}_{2}}\scal{\vec{v}_{1}}{\vec{v}_{2}}
+    \end{align*}
+  From Items~\ref{A9:it5}, \ref{A9:it3}, \ref{A9:it4} with $j=1$ and concluding with the definition of $\alpha$ and $\beta$.
+\end{proof}
+\end{lemma}
+
+Now, we can restate and prove Theorem~\ref{thm:TypingRulesValidity}.
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:TypingRulesValidity}]
+  \itshape
+  All the typing rules in Table~\ref{tab:TypingRules} are valid.
+\end{restatetheorem}
+\begin{proof}
+    For each typing rule in Table~\ref{tab:TypingRules}~we have to show the typing judgement is valid starting from the premises:
+    \begin{description}
+    \item[Axiom] It is clear that $\sdom{x^X:A}\subseteq\{x\}=\dom{x_X:A}$. Moreover, given $\sigma\in\sem{x^X:A}$, we have $\sigma=\ansubst{\vec v/x}{X}$ for some $\vec{v}\in\sem{A}$. Therefore, $x\ansubst{\sigma}{}=x\ansubst{\vec v}{X}=\vec{v}\real A$.
+    
+    \item[UnitLam] If the hypothesis is valid, $\sdom{\Gamma,x^X:A}\subseteq \FV{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}\subseteq \dom{\Gamma,x^X:A}$. It follows that $\sdom{\Gamma}\subseteq \FV{\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t}_{i}})}\subseteq \dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we want to show that $(\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t}_{i}}))\ansubst{\sigma}{}\real A\Arr B$. Let $\vec v\in\sem{A}$, then:
+    \begin{align*}
+        (\sum_{i=1}^{n} \alpha_i(\Lam{x}{X}{\vec{t}_{i}}))\ansubst{\sigma}{} \vec v&= (\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\Lam{x}{X}{\vec{t}_{i}}) [\sigma_i])) \vec{v} \\
+        &= (\sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j (\Lam{x}{X}{\vec{t}_{i}[\sigma_j]}))\vec v\\
+        &\lra \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j \vec{t}_{i}[\sigma_j]\ansubst{\vec v/x}{X}\\
+        &=\sum_{i=1}^{n}\alpha_i \vec{t}_{i}\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\\
+        &=(\sum_{i=1}^{n}\alpha_i \vec{t}_{i})\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\qquad{\text{By Lemma~\ref{lem:distributiveSubstitution}}}
+    \end{align*}
+    
+    Considering that $\ansubst{\sigma}{}\in\sem{\Gamma}$, then we have that $\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\in\sem{\Gamma,x^X:A}$. Since we assume $\TYP{\Gamma, x^X:A}{\sum_{i=1}^{n}\alpha_i\vec{t}_{i}}{B}$, then $\vec{t}_{i}\ansubst{\sigma}{}\ansubst{\vec v/x}{X}\real B$. Finally, we can conclude that the combination: $\sum_{i=1}^{n}\alpha_i (\Lam{x}{X}{\vec{t}_{i}})\in\sem{A\Arr B}$.
+
+    \item[App] If the hypotheses are valid, then:
+    \begin{itemize}
+        \item $\sdom{\Gamma}\subseteq \FV{\vec s}\subseteq \dom{\Gamma}$ and $\vec s \ansubst{\sigma_\Gamma}{}\Vdash A\Arr B\ \forall \sigma_\Gamma\in\sem{\Gamma}$.
+        \item $\sdom{\Delta}\subseteq \FV{\vec t}\subseteq \dom{\Delta}$ and $\vec t\ansubst{\sigma_\Delta}{}\Vdash A\ \forall\sigma_\Delta\in\sem{\Delta}$.
+    \end{itemize}
+    
+    From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{\vec s \vec t}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
+    \begin{align*}
+        (\vec{t}\vec{s})\ansubst{\sigma}{} &= (\vec{t}\vec{s})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=i}^{n}\alpha_i (\vec{t}\vec{s})[\sigma_{\Gamma i}])\ansubst{\sigma_\Delta}{}\\
+        &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i (\vec{t} \vec{s})[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
+        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \vec{t}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}] \vec{s}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]\\
+        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \vec{t}\,[\sigma_{\Gamma i}]\vec{s}\,[\sigma_{\Delta j}]\\
+        &\equiv (\sum_{i=1}^{n}\alpha_i\vec{t}[\sigma_{\Gamma i}])(\sum_{j=1}^{m} \beta_j \vec{s}[\sigma_{\Delta j}])\\
+        &=\vec{t}\ansubst{\sigma_\Gamma}{} \vec{s}\ansubst{\sigma_\Delta}{}\\
+        &\eval (e^{i\theta_{1}} \vec{v}) (e^{i\theta_{2}} \vec{w})\qquad\text{Where: } \vec{v}\in\sem{A\Arr B}, \vec{w}\in\sem{A}\\
+        &\equiv e^{i\theta} (\vec{v} \vec{w})\qquad\text{with: }\theta=\theta_1 + \theta_2\\
+        &\lraneq e^{i\theta}\vec r\qquad\text{where: } \vec{r}\real B
+    \end{align*}
+    
+    Then we can conclude that $(\vec{t}\vec{s})\ansubst{\sigma}{}\real B$.
+
+    \item[Pair] If the hypotheses are valid, then:
+
+    \begin{itemize}
+        \item $\sdom{\Gamma}\subseteq \FV{\vec s}\subseteq \dom{\Gamma}$ and $\vec s \ansubst{\sigma_\Gamma}{}\Vdash A\ \forall \sigma_\Gamma\in\sem{\Gamma}$.
+        \item $\sdom{\Delta}\subseteq \FV{\vec t}\subseteq \dom{\Delta}$ and $\vec t\ansubst{\sigma_\Delta}{}\Vdash B\ \forall \sigma_\Delta\in\sem{\Delta}$.
+    \end{itemize}
+    
+    From this, we can conclude that $\sdom{\Gamma,\Delta}\subseteq \FV{(\vec s, \vec t)}\subseteq \dom{\Gamma,\Delta}$. Given $\sigma\in\sem{\Gamma,\Delta}$, we can observe that $\sigma=\sigma_\Gamma,\sigma_\Delta$ for some  $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Then we have:
+    \begin{align*}
+        \Pair{\vec{t}}{\vec{s}}\ansubst{\sigma}{} &= \Pair{\vec{t}}{\vec{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=\sum_{j=1}^{m} \beta_j (\sum_{i=1}^{n} \alpha_i \Pair{\vec{t}}{\vec{s}}[\sigma_{\Gamma i}])[\sigma_{\Delta j}]\\
+        &\equiv\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vec{t}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]}{\vec{s}\,[\sigma_{\Gamma i}][\sigma_{\Delta j}]}\\
+        &=\sum_{i=1}^{n}\sum_{j=1}^{m} \alpha_i \beta_j \Pair{\vec{t}\,[\sigma_{\Gamma i}]}{\vec{s}\,[\sigma_{\Delta j}]}\\
+        &=\Pair{\sum_{i=1}^{n} \alpha_i \vec{t}\, [\sigma_{\Gamma i}]}{\sum_{j=1}^{m} \beta_j \vec{s}\, [\sigma_{\Delta j}]}\\
+        &=\Pair{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{s}\ansubst{\sigma_\Delta}{}}\\
+        &\eval \Pair{e^{i\theta_1}\vec v}{e^{i\theta_2}\vec w}\qquad\text{where: }\vec{v}\in\sem{A}, \vec{w}\in\sem{B}\\
+        &= e^{i\theta} \Pair{\vec{v}}{\vec{w}}\qquad\text{where: }\theta=\theta_1 + \theta_2
+    \end{align*}
+    
+    From this we can conclude that $\Pair{\vec t}{\vec{s}}\ansubst{\sigma}{}\real A\times B$.
+    
+    \item[LetPair] If the hypotheses are valid, then:
+    \begin{itemize}
+        \item $\sdom{\Gamma}\subseteq \FV{\vec t} \subseteq \dom{\Gamma}$ and $\vec t \ansubst{\sigma_\Gamma}{}\Vdash A\times B\ \forall \sigma_\Gamma\in\sem\Gamma$
+        \item $\sdom{\Delta, {x}^{X}:A, {y}^{Y}:B}\subseteq\FV{\vec s}$
+        \item $\FV{\vec{s}}\subseteq \dom{\Delta, {x}^{X}:A, {y}^{Y}:B}$
+        \item $\vec s \ansubst{\sigma_\Delta}{}\Vdash C\ \forall \sigma_\Delta\in\sem{\Delta, {x}^{X}:A, {y}^{Y}:B}$
+    \end{itemize}
+    From this, we can conclude that:
+    \begin{itemize}
+        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y}{\vec{s}}{\vec{t}}}$
+        \item $\FV{\LetP{x}{X}{y}{Y}{\vec{s}}{\vec{t}}}\subseteq\dom{\Gamma,\Delta}$
+    \end{itemize}
+    
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Then we have:
+    \begin{align*}
+        (&\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{} = \\
+        &(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &= (\sum_{i=1}^{n}\alpha_i(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})[\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta j}}{}\\
+        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i[\sigma_{\Gamma i}]\vec{t}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &= (\LetP{x}{X}{y}{Y}{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\eval (\LetP{x}{X}{y}{Y}{e^{i\theta} \Pair{\vec{v}}{\vec{w}}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\hspace*{4cm}{\text{Where: }}\vec{v}\in\sem{A},\vec{w}\in\sem{B}\\
+        &\lra e^{i\theta_1} (\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\Pair{\vec{v}}{\vec{w}}/x\otimes y}{X\otimes Y})\\
+        &= e^{i\theta_1} (\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{v}/x}{X}\ansubst{\vec{w}/y}{Y})\\
+        &\eval e^{i\theta_1}  (e^{i\theta_2}  \vec{u})\qquad\text{where: }\vec{u}\in\sem{C}\\
+        &\equiv e^{i\theta}  \vec{u}\qquad\text{where: }\theta=\theta_1 + \theta_2
+    \end{align*}
+    
+    Since $\ansubst{\sigma_\Delta}{}\ansubst{\vec{v}/x}{X}\ansubst{\vec{w}/y}{Y}\in\sem{\Delta,{x}^{X}:A,{y}^Y:B}$, then we can conclude that $(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{}\real C$.
+
+    \item[LetTens] If the hypotheses are valid then:
+    \begin{itemize}
+        \item $\sdom{\Gamma}\subseteq \FV{\vec t} \subseteq \dom{\Gamma}$ and $\vec t \ansubst{\sigma}{}\Vdash \sharp(A\times B)\ \forall \sigma\in\sem\Gamma$
+        \item $\sdom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}\subseteq \FV{\vec s}$
+        \item $\subseteq \dom{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
+        \item $\vec s \ansubst{\sigma}{}\Vdash \sharp C\ \forall \sigma\in\sem{\Delta, {x}^{X}:\sharp A, {y}^{Y}:\sharp B}$
+    \end{itemize}
+    
+    From this we can conclude that:
+    \begin{itemize}
+        \item $\sdom{\Gamma,\Delta}\subseteq\FV{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}$
+        \item $\FV{\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}}\subseteq\dom{\Gamma,\Delta}$
+    \end{itemize}
+    
+    Given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{},\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem\Gamma$ and $\sigma_\Delta\in\sem\Delta$. Using the first hypothesis we have that, $\vec t\ansubst{\sigma_\Gamma}{}\real \sharp(A\times B)$, from Remark~\ref{rem:SharpCharacterization} we have that:
+    
+    \[\vec t\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vec{u}=e^{i\theta_1}(\sum_{k=1}^{l} \gamma_k \Pair{\vec{v}_{k}}{\vec{u}_{k}})\] 
+    
+    With:
+    \begin{itemize}
+        \item $\sum_{k=1}^{l} |\gamma_k|^2 = 1$
+        \item $\forall k,\ \vec{v}_{k}\in\sem{A},\ \vec{u}_{k}\in\sem{B}$
+        \item $\forall k\neq l, \scal{\Pair{\vec{v}_{k}}{\vec{u}_{k}}}{\Pair{\vec{v}_{l}}{\vec{u}_{l}}}= 0$
+    \end{itemize}
+    
+    Then:
+    \begin{align*}
+        (&\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{} \\
+        &= \LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=1}^{n}\alpha_i\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}}\ [\sigma_{\Gamma i}])\ansubst{\sigma_{\Delta}}{}\\
+        &\equiv (\LetP{x}{X}{y}{Y}{\sum_{i=1}^{n}\alpha_i\vec{t}\ [\sigma_{\Gamma i}]}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &=(\LetP{x}{X}{y}{Y}{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\LetP{x}{X}{y}{Y}{e^{i\theta_1}\vec{u}}{\vec{s}})\ansubst{\sigma_\Delta}{}\\
+        &\lra e^{i\theta_1}(\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{u}/x\otimes y}{X\otimes Y})\\
+        &=e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k\vec{s}\ansubst{\sigma_\Delta}{}\ansubst{\vec{v}_{k}/x}{X}\ansubst{\vec{u}_{k}/y}{Y})\\
+        &\eval e^{i\theta_1} (\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k})\quad\text{where: }\vec{w}_{k}\in\sem{C}
+    \end{align*}
+
+    It remains to be seen that the term has norm-$1$, $\|\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k}\|=1$. For that, we observe:
+    \begin{align*}
+        \|&\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k}\| \\
+        &= \scal{\sum_{k=1}^{l}\alpha_i e^{i\rho_k} \vec{w}_{k}}{\sum_{k'=1}^{l}\gamma_{k'} e^{i\rho_{k'}} \vv{w_{k'}}}\\
+        &= \sum_{k=1}^{l}\sum_{k'}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}}\scal{\vec{w}_{k}}{\vv{w_{k'}}}\\
+        &=\sum_{k=1}^{l}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\ \gamma_{k'} e^{i\rho_{k'}} \scal{\vec{v}_{k}}{\vv{v_{k'}}}\scal{\vec{u}_{k}}{\vv{u_{k'}}}\quad(\text{from Lemma~\ref{lem:UnitPreserTens}})\\
+        &= \sum_{k=1}^{k}\sum_{k'=1}^{l}\overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{u}_{k}}{\vec{v}_{k}}}{\Pair{\vv{u_{k'}}}{\vv{v_{k'}}}}\quad(\text{from Theorem~\ref{prop:InnerProdPairs}})\\
+        &=\sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} \scal{\Pair{\vec{v}_{k}}{\vec{u}_{k}}}{\Pair{\vec{v}_{k}}{\vec{u}_{k}}} \\
+        & \quad + \sum_{k,k'=1; k\neq k'}^n \overline{\gamma_k e^{i\rho_k}}\  \gamma_{k'} e^{i\rho_{k'}} \scal{\Pair{\vec{v}_{k}}{\vec{u}_{k}}}{\Pair{\vv{v_{k'}}}{\vv{u_{k'}}}}\\
+        &= \sum_{k=1}^n \overline{\gamma_k e^{i\rho_k}}\ \gamma_k e^{i\rho_k} + 0 \\
+        &= \sum_{k=1}^{l} |\gamma_k|^2 |e^{i\rho_k}|^2 = 1
+    \end{align*}
+
+    Then $\sum_{k=1}^{l}\gamma_k e^{i\rho_k} \vec{w}_{k}\in\sem{\sharp C}$. Finally, we can conclude that: $(\LetP{x}{X}{y}{Y}{\vec{t}}{\vec{s}})\ansubst{\sigma}{}\real{\sharp C}$
+
+    \item[Case] If the hypotheses are valid then:
+    \begin{itemize}
+        \item $\sdom{\Gamma}\subseteq \FV{\vec{t}}\subseteq \dom{\Gamma}$
+        \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vec{t}\ansubst{\sigma_\Gamma}{}\real\genbasis{\vec{v}_{i}}{i=1}{n}$
+        \item For every $i\in\{0,\dotsb ,n\}, \sdom{\Delta}\subseteq \FV{\vec{s}_{i}}\subseteq \dom{\Delta}$
+        \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\real A$
+    \end{itemize}
+
+    From this we can conclude that:
+
+    \begin{itemize}
+        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}}}$
+        \item $\FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec {v_n}}{\vec{s}_{1}}{\vec{s}_{n}}}\subseteq \dom{\Gamma,\Delta}$
+    \end{itemize}
+    
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vec{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1}\vec{v}_{k}$ for some $k\in\{1,\dotsb ,n\}$. From the second hypothesis we have that $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i}\vec{u}_{i}\in\sem{A}$ for $i\in\{1,\dotsb , n\}$. Therefore:
+
+    \begin{align*}
+        (&\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\\ 
+        &= (\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &= (\sum_{i=1}^{n}\alpha_i \gencase{\vec{t}[\sigma_{\Gamma i}]}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{} \\
+        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vec{t}[\sigma_{\Gamma i}]}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &=(\gencase{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\gencase{e^{i\theta_1}\vec{v}_{k}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &\lraneq e^{i\theta_1}(\vec{s}_{k}\ansubst{\sigma_\Delta}{})\\
+        &\eval e^{i\theta_1}(e^{i\rho_k} \vec{u}_{k})\qquad\text{Where: }\vec{u}_{k}\in\sem{A}\\
+        &\equiv e^{i\theta} \vec{u}_{k}\qquad\text{With: }\theta=\theta_1 +\theta_2
+    \end{align*}
+    
+    Since we pose no restriction on $\vec{u}_k$, we can conclude that: $(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\real A$
+
+    \item[UnitCase] If the hypotheses are valid, then:
+    \begin{itemize}
+        \item $\sdom{\Gamma}\subseteq \FV{\vec{t}}\subseteq \dom{\Gamma}$
+        \item For every $\sigma_\Gamma\in\sem{\Gamma}$, $\vec{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vec{v}_{i}}{i=1}{n}$
+        \item For every $i\in\{0,\dotsb ,n\}$, $\sdom{\Delta}\subseteq \FV{\vec{s}_{i}}\subseteq \dom{\Delta}$
+        \item For every $i\in\{0,\dotsb ,n\}, \sigma_\Delta\in\sem{\Delta}$, $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\real A$
+    \end{itemize}
+    
+    From this we can conclude that:
+    
+    \begin{itemize}
+        \item $\sdom{\Gamma,\Delta}\subseteq \FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}$
+        \item $\FV{\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}}}\subseteq \dom{\Gamma,\Delta}$
+    \end{itemize}
+    
+    Then, given $\sigma\in\sem{\Gamma,\Delta}$, we have that $\ansubst{\sigma}{}=\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\sigma_\Delta\in\sem{\Delta}$. Using the first hypothesis we have that, $\vec{t}\ansubst{\sigma_\Gamma}{}\real\sharp\genbasis{\vec{v}_{i}}{i=1}{n}$, then $\vec{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta_1} \vec{u}\equiv e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vec{v}_{i})$ where $\sum_{i=1}^{n}|\beta_i|^2=1$. From the second hypothesis we have that $\vec{s}_{i}\ansubst{\sigma_\Delta}{}\eval e^{i\rho_i} \vec{u}_{i}\in\sem{A}$ for $i\in\{1,\dotsb ,n\}$ and $u_i\perp u_j$ if $i\neq j$. Therefore:
+
+    \begin{align*}
+        (&\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\\ 
+        &= (\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Gamma}{}\ansubst{\sigma_\Delta}{}\\
+        &=(\sum_{i=1}^{n}\alpha_i \gencase{\vec{t}[\sigma_{\Gamma i}]}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{} \\
+        &\equiv (\gencase{\sum_{i=1}^{n} \alpha_i \vec{t}[\sigma_{\Gamma i}]}{\vec {v_1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &=(\gencase{\vec{t}\ansubst{\sigma_\Gamma}{}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma_\Delta}{}\\
+        &\eval(\gencase{e^{i\theta_1} \vec{u}}{\vec{v}}{\vec{w}}{\vec{s}_{1}}{\vec{s}_{2}})\ansubst{\sigma_\Delta}{}\\
+        &\lra e^{i\theta_1} (\sum_{i=1}^{n}\beta_i s_i)\ansubst{\sigma_\Delta}{}\\
+        &= e^{i\theta_1} (\sum_{j=1}^{n}\delta_j (\sum_{i=1}^{n}\beta_i \vec{s}_{i})[\sigma_{\Delta j}])\\
+        &\equiv e^{i\theta_1} (\sum_{i,j=1}^{n}\beta_i\delta_j\vec{s}_{i}[\sigma_{\Delta j}])\\
+        &= e^{i\theta_1} (\sum_{i=1}^{n}\beta_i \vec{s}_{i}\ansubst{\sigma_\Delta}{})\\
+        &\eval e^{i\theta_1} (\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i})
+    \end{align*}
+    
+    It remains to be seen that: $\|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}\|=1$:
+    \begin{align*}
+        \|\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}\| &= \scal{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}}{\sum_{i=1}^{n}\beta_i e^{i\rho_i} \vec{u}_{i}}\\
+        &= \sum_{i,j=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vec{u}_{i}}{\vec{u}_{j}}\\
+        &= \sum_{i=1}^{n}\overline{\beta_i e^{i\rho_i}}\beta_i e^{i\rho_i} \scal{\vec{u}_{i}}{\vec{u}_{i}}\\
+        &\qquad + \sum_{i,j=1; i\neq j}^{n}\overline{\beta_i e^{i\rho_i}}\beta_j e^{i\rho_j} \scal{\vec{u}_{i}}{\vec{u}_{j}}\\
+        &= \sum_{i=1}^{n}|\beta_i|^2 |e^{i\rho_i}|^2  + 0\\
+        &= \sum_{i=1}^{n}|\beta_i|^2 = 1
+    \end{align*}
+
+    Then we can conclude that $\sum_{i=1}^{n}\beta_i e^{i\rho_i}\vec{u}_{i}\in\sem{\sharp A}$ and finally: $(\gencase{\vec{t}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{s}_{1}}{\vec{s}_{n}})\ansubst{\sigma}{}\real\sharp A $
+  
+    \item[Sum] If the hypothesis is valid then for every $i$, $\sdom{\Gamma}\subseteq\FV{\vec{t}_{i}}\subseteq\dom{\Gamma}$.
+    
+    From this we can conclude that $\sdom{\Gamma}\subseteq\sum_{i=1}^{n}\alpha_i \vec{t}_{i}\subseteq\dom{\Gamma}$. Given $\sigma\in\sem{\Gamma}$, we have for every $i$, $\vec{t}_{i}\ansubst{\sigma}{}\eval e^{i\rho_i} \vec{v}_{i}$ where $\vec{v}_{i}\in\sem{A}$. Moreover, for every $i\neq j$, $\vec{v}_{i}\perp\vec{v}_{j}$ and $\sum_{i=1}^{n}|\alpha_i|^2=1$. Then:
+    \begin{align*}
+    (\sum_{i=1}^{n}\alpha_i\vec{t}_{i})\ansubst{\sigma}{} 
+    &= \sum_{j=1}^{m}\beta_j(\sum_{i=1}^{n}\alpha_i \vec{t}_{i})[\sigma_j]\\
+    &\equiv \sum_{i=1}^{n} \alpha_i \sum_{j=1}^{m} \beta_j \vec{t}_{i}[\sigma_j]\\
+    &=\sum_{i=1}^{n} \alpha_i \vec{t}_{i}\ansubst{\sigma}{}\\
+    &\eval \sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}\\
+    \end{align*}
+
+    It remains to be seen that $\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}\|=1$:
+    \begin{align*}
+    &\|\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}\| \\
+    &=\scal{\sum_{i=1}^{n} \alpha_i e^{i\rho_i}\vec{v}_{i}}{\sum_{i=1}^{n} \alpha_i e^{i\rho_i} \vec{v}_{i}}\\
+    &= \sum_{i=i}^{n}\sum_{j=1}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_j e^{i\rho_j} \scal{\vec{v}_{i}}{\vec{v}_{j}}\\
+    &=\sum_{i=1}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_i e^{i\rho_i} \scal{\vec{v}_{i}}{\vec{v}_{i}} + \sum_{\substack{i,j=1\\i\neq j}}^{n} \overline{\alpha_i e^{i\rho_i}}\alpha_j e^{i\rho_j} \scal{\vec{v}_{i}}{\vec{v}_{j}}\\
+    &=\sum_{i=1}^{n}|\alpha_i|^2 |e^{i\rho_i}|^2+ 0\\
+    &=\sum_{i=1}^{n}|\alpha_i|^2 = 1\\
+    \end{align*}
+
+    Then we can conclude that $\sum_{i=1}^{n}\alpha_i e^{i\rho_i}\vec{v}_{i}\in\sem{\sharp A}$ and finally $(\sum_{i=1}^{n}\alpha_i\vec{t}_{i})\ansubst{\sigma}{}\real\sharp A$.
+
+    \item[Contr] If the hypothesis is valid, we have that $\sdom{\Gamma, x^\BB:\basis{\BB}, y^\BB:\basis{\BB}}\subseteq\FV{\vec{t}}\subseteq\dom{\Gamma,x^\BB:\basis{\BB}, y^\BB:\basis{\BB}}$ and given $\sigma\in\sem{\Gamma, x^\BB:\basis{\BB}, y^\BB:\basis{\BB}}$, then $\vec{t}\ansubst{\sigma}{}\in\sem{B}$. Then, we have that $\sdom{\Gamma, x^\BB:\basis{\BB}, y^\BB:\basis{\BB}}=\sdom{\Gamma, x^\BB:\basis{\BB}}$. Therefore:
+    
+    \[
+    \sdom{\Gamma, x^X:\basis{\BB}}\subseteq\FV{\vec{t}}[x/y]\subseteq\dom{\Gamma, x^X:\basis{\BB}}
+    \]
+
+    Given $\sigma\in\sem{\Gamma, x^\BB:\basis{\BB}}$, we observe that $\ansubst{\sigma}{}=\ansubst{\vec{v}/x}{\BB}\ansubst{\sigma_\Gamma}{}$ with $\sigma_\Gamma\in\sem{\Gamma}$ and $\vec{v}\in\sem{\basis{\BB}}$. Since $\vec{v}\in\sem{\basis{\BB}}$, we know that $\vec{t}[\vec v/z] =\vec{t}\ansubst{\vec{v}/z}{\BB}$ for any variable $z$. Then we have:
+    \begin{align*}
+        \vec{t}[x/y]\ansubst{\sigma}{} &= \vec{t}[x/y]\ansubst{\vec{v}/x}{X}\ansubst{\sigma_\Gamma}{}\\
+        &=\vec{t}[x/y][\vec{v}/x]\ansubst{\sigma_\Gamma}{}\\
+        &=\vec{t}[\vec{v}/y][\vec{v}/x]\ansubst{\sigma_\Gamma}{}\\
+        &=\vec{t}\ansubst{\vec{v}/y}{\BB}\ansubst{\vec{v}/x}{\BB}\ansubst{\sigma_\Gamma}{}    
+    \end{align*}
+    
+    Since $\ansubst{\vec{v}/y}{\BB}\ansubst{\vec{v}/x}{\BB}\ansubst{\sigma}{}\in\sem{\Gamma, x^\BB:\basis{\BB}, y^\BB:\basis{\BB}}$, we get: $\vec{t}\ansubst{\vec{v}/y}{\BB}\ansubst{\vec{v}/x}{\BB}\\\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vec{w}\in\sem{\BB}$
+    Then we can finally conclude that $\vec{t}[x/y]\ansubst{\sigma}{}\real B$.
+
+    \item[Weak] Given $\sigma\in\sem{\Gamma,x^\BB:\basis{\BB}}$, we observe that $\ansubst{\sigma}=\ansubst{\sigma_\Gamma}{}\ansubst{\vec{v}/x}{\BB}$ for some $\sigma_\Gamma\in\sem{\Gamma}$ and $\vec{v}\in\sem{\basis{\BB}}$. Using the first hypothesis, we know that $\vec{t}\ansubst{\sigma_\Gamma}{}\eval e^{i\theta}\vec{w}$ where $\vec{w}\in\sem{B}$. Then we have:
+    \[
+    \vec{t}\ansubst{\sigma}{}=\vec{t}\ansubst{\sigma_\Gamma}{}\ansubst{\vec{v}/x}{\BB}\eval e^{i\theta}\vec{w}\ansubst{\vec{v}/x}{\BB}
+    \]
+    Since $\vec{v}\in\sem{\basis{\BB}}$, $\vec{w}\ansubst{\vec{v}/x}{\BB}=\vec{w}[\vec{v}/x]=\vec{w}$ and $\vec{w}\in\sem{B}$, then we can finally conclude that $\vec{t}\ansubst{\sigma}{}\real B$.
+    
+    \item[Sub] Trivial since the set of realisers of ${A}$ is included in the set of realisers of ${B}$. 
+
+    \item[Equiv] It follows from definition and the fact that the reduction commutes with the congruence relation.
+    
+    \item[Phase] It follows from the definition of type realisers.
+      \qedhere
+    \end{description}
+\end{proof}
+
+\begin{lemma}[Substitution]\label{lem:Substitution}
+  Let $\Gamma$, $\Delta$ be contexts, $A$ and $B$ types, and $X$ a decoration.
+  If
+  \(
+    \TYP{\Gamma,\,x^{X}\!:\!A}{\vec{t}}{B}
+    \quad\text{and}\quad
+    \TYP{\Delta}{\vec{v}}{A}
+  \) can be derived using the set of rules in Table~\ref{tab:TypingRules},
+  and the substitution $\vec{t}\ansubst{\vec{v}/x}{X}$ is defined,
+  then
+  \(
+    \TYP{\Gamma,\,\Delta}{\vec{t}\ansubst{\vec{v}/x}{X}}{B}
+  \) can also be derived by the same set of rules.
+\end{lemma}
+\begin{proof}
+  By induction on $\vec{t}$.
+  \begin{description}
+    \item[$x\not\in\FV{\vec{t}}$:] Then $x\not\in\sdom{\Gamma,\,x^{X}\!:\!A}$. By a straightforward generation lemma we have that $\TYP{\Gamma}{\vec{t}}{B}$, and we can derive $\TYP{\Gamma,\Delta}{\vec{t}}{B}$ via the $\textsc{Weak}$ rule. Notice that if $x\not\in\FV{\vec{t}}$, every variable in $\Delta$ has a non-linear type and $\vec{t}\ansubst{\vec{v}/x}{X}=\vec{t}$.
+    
+    \item[$\vec{t}=x$:] Then every variable in $\Gamma$ has a non-linear type and $A\leq B$. This means we can derive $\TYP{\Gamma,\Delta}{\vec{v}}{B}$, by rules $\textsc{Weak}$ and $\textsc{Sub}$.
+    
+    \item[$\vec{t}=(\Lam{y}{Y}{\vec{s}})$:] Then $\TYP{\Gamma,\,y^{Y}\!:\!C,\,x^{X}\!:\!A}{\vec{s}}{D}$, with $C\Arr D\leq B$. By induction hypothesis, $\TYP{\Gamma,\,y^{Y}\!:\!C}{\vec{s}\ansubst{\vec{v}/x}{X}}{D}$. This means we can derive $\TYP{\Gamma,\Delta}{(\Lam{y}{Y}{\vec{s}})\ansubst{\vec{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
+    
+    \item[$\vec{t}=\vec{s}_{1}\,\vec{s}_{2}$:] Then we have that $\TYP{\Gamma_1}{\vec{s}_{1}}{C\Arr D}$, and $\TYP{\Gamma_2}{\vec{s}_{2}}{C}$ with $D\leq B$ and $\Gamma_1,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\Delta}{\vec{s}_{1}\ansubst{\vec{v}/x}{X}}{C\Arr D}$. This means we can derive $\TYP{\Gamma_1',\Gamma_2,\Delta}{(\vec{s}_{1}\,\vec{s}_{2})\ansubst{\vec{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{App}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    
+    \item[$\vec{t}=\Pair{s_1}{s_2}$:] Then we have that $\TYP{\Gamma_1}{s_1}{C}$, and $\TYP{\Gamma_2}{s_2}{D}$ with $C\times D\leq B$ and $\Gamma_1,\,\Gamma_2 = \Gamma,x^{X}\!:\!A$. We consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1',\,\Delta}{s_1}{C}$. This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\,\Delta}{\Pair{s_1}{s_2}\ansubst{\vec{v}/x}{X}}{B}$, by rules $\textsc{Sub}$ and $\textsc{Pair}$. The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+    
+    \item[$\vec{t}=\LetP{y}{Y}{z}{Z}{\vec{s}_{1}}{\vec{s}_{2}}$:] Then we have two possibilities:
+      \begin{enumerate}
+        \item\label{case:subs_letp_1} Either, $\TYP{\Gamma_1}{\vec{s}_{1}}{C\times D}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!C,\,z^{Z}\!:\!D}{\vec{s}_{2}}{E}$ with $E\leq B$.
+        \item\label{case:subs_letp_2} Or, $\TYP{\Gamma_1}{\vec{s}_{1}}{\sharp(C\times D)}$, and $\TYP{\Gamma_2,\,y^{Y}\!:\!\sharp{C},\,z^{Z}\!:\!\sharp{D}}{\vec{s}_{2}}{E}$ with $\sharp E\leq B$.
+      \end{enumerate}
+      In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vec{s}_{1}\ansubst{\vec{v}/x}{}}{C\times D}$ in case \ref{case:subs_letp_1} ($\sharp (C\times D)$ in case \ref{case:subs_letp_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\LetP{y}{Y}{z}{Z}{\vec{s}_{1}}{\vec{s}_{2}})\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{LetPair}$ (or, $\textsc{LetTens}$). The case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+
+    \item[$\vec{t}=\gencase{\vec{s}}{\vec{w}_{1}}{\vec{w}_{n}}{\vec{r}_{1}}{\vec{r}_{n}}$:] Then we have two possibilities:
+    \begin{enumerate}
+      \item\label{case:subs_case_1} Either, $\TYP{\Gamma_1}{\vec{s}_{1}}{\basis{\{\vec{v}_{i}\}_{i=1}^n}}$, and for all $i\in\{0,\dotsb,n\}$, $\TYP{\Gamma_2}{\vec{s}_{i}}{C}$ with $C\leq B$.
+      \item\label{case:subs_case_2} Or, $\TYP{\Gamma_1}{\vec{s}_{1}}{\sharp\basis{\{\vec{v}_{i}\}_{i=1}^n}}$, and for all $i,j\in\{0,\dotsb,n\}$, with $i\neq j$ $\SORTH{\Gamma_2}{\vec{s}_{i}}{\vec{s}_{j}}{C}$ with $\sharp C\leq B$.
+    \end{enumerate}
+    In either way, we consider the case where $\Gamma_1 = \Gamma_1',\,x^{X}\!:\!A$. Then, by inductive hypothesis $\TYP{\Gamma_1'\,\Delta}{\vec{s}_{1}\ansubst{\vec{v}/x}{}}{\basis{\{\vec{v}_{i}\}_{i=1}^n}}$ in case \ref{case:subs_case_1} ($\sharp \basis{\{\vec{v}_{i}\}_{i=1}^n}$ in case \ref{case:subs_case_2}). This means we can derive $\TYP{\Gamma_1',\,\Gamma_2,\Delta}{(\gencase{\vec{s}}{\vec{w}_{1}}{\vec{w}_{n}}{\vec{r}_{1}}{\vec{r}_{n}})\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Case}$ (or, $\textsc{UnitCase}$). Since orthogonality is preserved by substitutions in $\sem{\Gamma_2}$, the case where $\Gamma_2 = \Gamma_2',\,x^{X}\!:\!A$ is analogous.
+
+    \item[$\vec{t}=\sum_{i=1}^{n}\alpha_i \vec{s}_{i}$:] Then we have two posibilities:
+    \begin{enumerate}
+      \item\label{case:subs_sum_1} For all $i\in\{0,\dotsb, n\}, \vec{s}_{i}=(\Lam{y}{Y}{\vec{r}_{i}})$, and:\\
+      $\TYP{\Gamma,\,x^{X}\!:\!A}{\sum_{i=1}^{n}\alpha_i(\Lam{y}{Y}{\vec{r}_{i}})}{C\Arr D}$ with $C\Arr D\leq B$.
+      \item\label{case:subs_sum_2} For all $i\in\{0,\dotsb, n\}$, with $i\neq j$, $\SORTH{\Gamma,\,x^{X}\!:\!A}{\vec{s}_{i}}{\vec{s}_{j}}{C}$, $\sum_{i=1}^{n}|\alpha_i|^2=1$, and $\sharp C\leq B$.
+    \end{enumerate}
+    
+    In case \ref{case:subs_sum_1}, by inductive hypothesis we have that:\\
+    $\TYP{\Gamma,\,\Delta,\,y^{Y}\!:\!C}{\sum_{i=1}^{n}\alpha_i \vec{r}_{i}\ansubst{\vec{v}/x}{X}}{D}$. This means we can derive \\$\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i (\Lam{y}{Y}{\vec{r}_{i}})\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{UnitLam}$.
+
+    In case \ref{case:subs_sum_2}, by inductive hypothesis we have that for all $i\in\{0,\dotsb,n\}$, and $i\neq j$ $\SORTH{\Gamma,\Delta}{\vec{s}_{i}\ansubst{\vec{v}/x}{X}}{\vec{s}_{j}\ansubst{\vec{v}/x}{X}}{C}$. Since orthogonality is preserved by substitutions in $\sem{\Gamma,\Delta}$, this means we can derive $\TYP{\Gamma,\Delta}{\sum_{i=1}^n\alpha_i \vec{s}_{i}\ansubst{\vec{v}/x}{X}}{B}$ by rules $\textsc{Sub}$ and $\textsc{Sum}$.
+
+    \item[$\vec{t}=\alpha\vec{s}$:] Then $\alpha=e^{i\theta}$, and $\TYP{\Gamma,\,x^{X}\!:\!A}{\vec{s}}{C}$ with $C\leq B$. By induction hypothesis, $\TYP{\Gamma}{\vec{s}\ansubst{\vec{v}/x}{X}}{C}$. This means we can derive $\TYP{\Gamma,\Delta}{e^{i\theta}\vec{s}\ansubst{\vec{v}/X}{X}}{\\B}$, by rules $\textsc{Sub}$ and $\textsc{Phase}$.
+      \qedhere
+  \end{description}
+\end{proof}
+
+\begin{restatetheorem}[Restatement of Theorem~\ref{thm:SubjectReduction}]
+  If $\TYP{\Gamma}{\vec{t}}{A}$ can be derived using the set of rules in
+  Table~\ref{tab:TypingRules} and $\vec{t}\to\vec{u}$, then
+  $\TYP{\Gamma}{\vec{u}}{A}$ can also be derived by the same set of rules.
+\end{restatetheorem}
+\begin{proof}
+  We proceed by induction on the derivation of the elementary reduction
+  $\lraneq$. The congruence closure to obtain $\lra$ is handled trivially via
+  the \textsc{Equiv} rule. We only give the basis cases as the inductive cases (the contextual cases) are straightforward.
+  \begin{itemize}
+    \item Let $(\Lam{x}{X}{\vec t})\vec v \lraneq \vec t\ansubst{\vec v/x}{X}$:
+      Assume $\TYP{\Gamma,\Delta}{(\Lam{x}{X}{\vec t})\,\vec v}{B}$. By
+      \textsc{App}, we have $\TYP{\Gamma}{\Lam{x}{X}{\vec t}}{A\Arr B}$ and
+      $\TYP{\Delta}{\vec v}{A}$.  From $\TYP{\Gamma}{\Lam{x}{X}{\vec t}}{A\Arr B}$
+      and \textsc{UnitLam}, we get $\TYP{\Gamma,x^{X}:A}{\vec t}{B}$. By
+      Lemma~\ref{lem:Substitution},
+      using $\TYP{\Delta}{\vec v}{A}$ and the fact that $\vec t\ansubst{\vv
+      v/x}{X}$ is defined, we conclude $\TYP{\Gamma,\Delta}{\vec t\ansubst{\vv
+      v/x}{X}}{B}$, as required.
+
+    \item Let $\LetP{x}{X}{y}{Y}{\vec v}{\vec t} \lraneq \vec t\ansubst{\vv
+      v/x\otimes y}{X\otimes Y}$: Assume
+      $\TYP{\Gamma,\Delta}{\LetP{x}{X}{y}{Y}{\vec v}{\vec t}}{C}$.  By
+      \textsc{LetPair} we have $\TYP{\Gamma}{\vec v}{A\times B}$ and
+      $\TYP{\Delta,\,x^{X}:A,\,y^{Y}:B}{\vec t}{C}$.  Decompose $\vec v$ (in
+      $X\otimes Y$) as required by the definition of $\ansubst{\vec v/x\otimes
+      y}{X\otimes Y}$; by Lemma~\ref{lem:Substitution}
+      applied twice
+      (first for $x$, then for $y$), we conclude $\TYP{\Gamma,\Delta}{\vv
+      t\ansubst{\vec v/x\otimes y}{X\otimes Y}}{C}$.
+
+    \item Let $\gencase{\vec{v}_{k}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}
+      \lraneq \vec{t}_{k}$: Assume
+      $\TYP{\Gamma,\Delta}{\gencase{\vec{v}_{k}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}}{A}$.
+      By \textsc{Case} we have $\TYP{\Gamma}{{\vec{v}_{k}}}{\basis{\{\vv
+      v_i\}_{i=1}^n}}$ and $\TYP{\Delta}{\vec t_i}{A}$ for all $i$.  Thus, we are
+      done.
+
+    \item Let
+      $\gencase{\sum_{i=1}^n\alpha_i\vec{v}_{i}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}
+      \lraneq \sum_{i=1}^n\alpha_i\vec{t}_{i}$: \\ Assume 
+      $\TYP{\Gamma,\Delta}{\gencase{\sum_{i=1}^n\alpha_i\vec{v}_{i}}{\vec{v}_{1}}{\vec{v}_{n}}{\vec{t}_{1}}{\vec{t}_{n}}}{A}$.
+      By \textsc{UnitCase} we have $\TYP{\Gamma}{\vec t}{\sharp\basis{\{\vv
+      v_i\}}}$ and, for all $i\neq j$, $\SORTH{\Delta}{\vec t_i}{\vec t_j}{A}$.
+      Then the reduct $\sum_{i=1}^{n}\alpha_i \vec{t}_{i}$ is typed by \textsc{Sum}
+      as $\sharp A$ (using the orthogonality premises and the normalisation
+      condition ensured by the semantics of $\sharp$), hence
+      $\TYP{\Gamma,\Delta}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}{\sharp A}$.
+      \qedhere
+  \end{itemize}
+\end{proof}
+
+\section{Gates for the Deutsch's algorithm example of Section~\ref{subsec:deutsch}}\label{sec:appendixD}
+\subsection{The four possible oracles \texorpdfstring{$U_f$}{Uf} in the computational basis \texorpdfstring{$\B$}{Z}}
+\begin{align*}
+  O_{\mathrm{const}\,0} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{y}}}\\
+  O_{\mathrm{const}\,1} &:= \Lam{x}{\B}{\Lam{y}{\B}{\Pair{x}{(\pauliX{y})}}}\\
+  O_{\mathrm{id}}       &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{y}}}\\
+  O_{\mathrm{flip}}     &:= \Lam{x}{\B}{\Lam{y}{\B}{\cnot{x}{(\pauliX{y})}}}
+\end{align*}
+
+\subsection{Gates in the Hadamard basis \texorpdfstring{$\XB$}{X}}
+\begin{align*}
+  \pauliZXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{-}}{\ket{+}}}\\
+  \pauliXXB &:= \Lam{x}{\XB}{\case{x}{\ket{+}}{\ket{-}}{\ket{+}}{-1\,\ket{-}}}\\
+  \cnotXB &:= \Lam{x}{\XB}{\Lam{y}{\XB}{
+      \case{y}{\ket{+}}{\ket{-}}
+      {\Pair{x}{\ket{+}}}
+      {\Pair{\pauliZXB{x}}{\ket{-}}}
+  }}.
+\end{align*}
+
+\subsection{The four oracles rewritten in the \texorpdfstring{$\XB$}{X} basis}
+\begin{align*}
+  O_{\mathrm{const}\,0}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{y}}}\\
+  O_{\mathrm{const}\,1}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\Pair{x}{(\pauliXXB{y})}}}\\
+  O_{\mathrm{id}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{y}}}\\
+  O_{\mathrm{flip}}^{\XB} &:= \Lam{x}{\XB}{\Lam{y}{\XB}{\cnotXB{x}{(\pauliXXB{y})}}}
+\end{align*}
+
+\end{document}
