@@ -1,44 +1,39 @@
 \section{Operational semantics}\label{sec:reduction}
-
-The reduction system interprets every vector relative to the basis attached to
-its abstraction, allowing a step only when the argument can be decomposed on
-that basis.  
-\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
-considered modulo the congruence of \ref{tab:Congruence}.  
-Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
-a step $\vv t\lra\vv r$ abbreviates $\vv t\equiv\vv t'\lraneq\vv r'\equiv\vv r$.
-
 \begin{table}[t]
-  \begin{align*}
-    \text{If }\vv{t}\ansubst{\vv v/x}{X}\text{ is defined,}\quad
-    (\Lam{x}{X}{\vv{t}})\vv{v}
-    &\lraneq \vv{t}\ansubst{\vv v/x}{X}\\
-    \text{If }\vv{t}\ansubst{\vv v/x}{X\otimes Y}\text{ is defined,}\quad
-    \LetP{x}{X}{y}{Y}{\vv v}{\vv{t}}
-    &\lraneq \vv{t}\ansubst{\vv{v}/x\otimes y}{X\otimes Y}\\
-    \gencase{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{v_1}}{\vv{v_n}}{\vv{t_1}}{\vv{t_n}}
-    &\lraneq \sum_{i=1}^{n}\alpha_i \vv{t_i}
-  \end{align*}
+  \centering
+  \begin{tabular}{r@{~}c@{~}l}
+    $(\lambda x^X.\vec{t})\vec{v}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x\rangle_X$ \hfill (if defined) \\
+    $\mathsf{let} (x^X, y^Y) = \vec{v} \text{ in } \vec{t}$ & $\lraneq$ & $\vec{t}\langle\vec{v}/x \otimes y\rangle_{X \otimes Y}$ \hfill (if defined) \\
+    $\gencasei{\sum_{i}\alpha_i \vec{v_i}}{\vec{v_i}}{\vec{t_i}}$ & $\lraneq$ & $\sum_{i}\alpha_i \vec{t_i}$ \hfill (if $\vec{v}_i \perp \vec{v}_j$) \\
+  \end{tabular}
   \[
     \begin{array}{c}
       \infer{st\lraneq s\vv r}{t\lraneq \vv r}
       \qquad\qquad
       \infer{tv\lraneq \vv rv}{t\lraneq\vv r}
       \qquad\qquad
-      \infer{\alpha t\lraneq \alpha \vv r}{t\lraneq\vv r & \alpha\neq 0}
+      \infer{\vec v+\alpha t+\vec s \lraneq \vec v+\alpha \vec r+\vec s}{t\lraneq\vv r & \alpha\neq 0}
       \\[5pt]
-      \infer{(\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j t_j + (\sum\limits_{i=j+1}^{n} \alpha_i \vv t_i) \lraneq (\sum\limits_{i=1}^{j-1}\vv v_i) + \alpha_j r_j + (\sum\limits_{i=j+1}^{n} \alpha_i \vv t_i) }{t_j\lraneq\vv r_j & \text{With } \vv v_i \text{ values and } t_j < t_i \text{ in the lexicographical order}}
-      \\[12pt]
-      \infer{\LetP{x}{A}{y}{B}{t}{\vv{s}}\lraneq
-      \LetP{x}{A}{y}{B}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
+      \infer{\LetP{x}{X}{y}{Y}{t}{\vv{s}}\lraneq
+      \LetP{x}{X}{y}{Y}{\vv r}{\vv{s}}}{t\lraneq \vv r} 
       \\[5pt]
-      \infer{\gencase{\vv t}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}\lraneq
-      \gencase{\vv r}{\vv v}{\vv w}{\vv{s_1}}{\vv{s_n}}}{t\lraneq \vv r}
+      \infer{
+        \gencasei{t}{\vec{v_i}}{\vec{s_i}} \lraneq 
+        \gencasei{\vec r}{\vec{v_i}}{\vec{s_i}}}
+      {t\lraneq \vv r}
     \end{array}
   \]
-  \caption{Reduction system}
+  \noindent\footnotesize $^*$Subterms are ordered: values first, then non-values in lexicographical order.
+  \caption{Reduction system.}
   \label{tab:Reduction}
 \end{table}
+The reduction system interprets every vector relative to the basis attached to
+its abstraction, allowing a step only when the argument can be decomposed on
+that basis.  
+Table~\ref{tab:Reduction} defines the elementary relation~$\lraneq$, while terms are
+considered modulo the congruence of Table~\ref{tab:Congruence}.  
+Hence the effective reduction, written~$\lra$, is defined modulo~$\equiv$:
+a step $\vec t\lra\vec r$ abbreviates $\vec t\equiv\vec t'\lraneq\vec r'\equiv\vec r$.
 
 The side condition~$\alpha\neq0$ avoids vacuous steps such as
 $0t\lraneq0r$, preventing spurious nondeterminism. On that note,
@@ -50,20 +45,18 @@ $\mathsf{case}$ pattern matching.
 Both $\lambda$ and $\mathsf{let}$ bind variables decorated with an orthonormal
 basis, indicating which vectors are treated as classical data.  Linear
 combinations of these vectors are handled as quantum data, reducing linearly by
-the congruence rules of \ref{tab:Congruence}, so that
-$t(\alpha\vv s+\beta\vv r)$ is equivalent to
-$\alpha\,t\vv s+\beta\,t\vv r$.
+the congruence rules, so that $t(\alpha\vec s+\beta\vec r)$ is equivalent to
+$\alpha\,t\vec s+\beta\,t\vec r$. If a term cannot be expressed in the decorating
+basis, evaluation becomes stuck. For example, $(\Lam{x}{\{\ket{0},\ket{1}\}}{\vec{t}})
+\ket{00}$ does not reduce, since the dimension of the argument does
+not match the vectors in the expected basis.
 
-The only exception occurs for higher-order terms: since no orthogonal bases are
-defined for abstractions, we introduce a special modality~$\AbsBasis$ reducing
-linearly over the basis values of a distribution. For instance,
-
-\[
-  (\Lam{x}{\AbsBasis}{\vv t})
-  \sum_{i=1}^{n}\alpha_i(\Lam{y}{X}{\vv{s_i}})
-  \lra
-  \sum_{i=1}^n\alpha_i\vv t[\Lam{y}{X}{\vv{s_i}}/x].
-\]
+Reduction for higher-order terms is handled differently: since no orthogonal bases
+are defined for abstractions, the symbol $\AbsBasis$ allows for linear reduction
+over basis values. For instance, 
+$(\Lam{x}{\AbsBasis}{\vec t}) \sum_i
+\alpha_i(\Lam{y}{X}{\vec{s}_{i}}) \lra \sum_i\alpha_i\vec
+t[\Lam{y}{X}{\vec{s}_{i}}/x]$.
 
 The $\mathsf{case}$ pattern matching controls program flow.  
 Each operator keeps track of a set of orthogonal values and tests whether the
@@ -71,36 +64,34 @@ argument equals each vector, selecting the matching branch.
 If the argument is a linear combination of several vectors, the result is the
 corresponding linear combination of the branches.  For example:
 \[
-  \case{\ket{-}}{\ket{0}}{\ket{1}}{\vv{t_1}}{\vv{t_2}} \lra
-  \tfrac{1}{\sqrt{2}}\,\vv{t_1} - \tfrac{1}{\sqrt{2}}\,\vv{t_2}.
+  \case{\ket{-}}{\ket{0}}{\ket{1}}{\vec{t_1}}{\vec{t_2}} \lra
+  \tfrac{1}{\sqrt{2}}\,\vec{t_1} - \tfrac{1}{\sqrt{2}}\,\vec{t_2}.
 \]
 
-The advantage over a conditional branching is the ability to match against
-several vectors simultaneously.  For boolean tuples this makes no difference,
-as each component can be treated independently.  However, some orthogonal bases
-cannot be expressed as products of smaller ones.  This general
-$\mathsf{case}$ allows us to match directly against those vectors.  For
-example, using the \emph{Bell basis}\footnote{ The four Bell states are
-$\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
-$\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.
-}:
+The advantage over a binary conditional branching is the ability to match against
+several vectors simultaneously.  This characteristic comes into play when dealing
+with vectors from entangled bases, in other words, bases which cannot be expressed
+as products of smaller ones.  This general $\mathsf{case}$ allows us to match
+directly against those vectors.  For example, using the \emph{Bell basis}
+\footnote{ The four Bell states are $\Phi^{\pm}=\sqrthalf(\ket{00}\pm\ket{11})$ and
+$\Psi^{\pm}=\sqrthalf(\ket{01}\pm\ket{10})$.}:
 \[
-  \mathsf{case}\;\vv{v}\;\mathsf{of}\;\{
-  \Phi^+ \mapsto \vv{t_1}\ \mid
-  \Phi^- \mapsto \vv{t_2}\ \mid
-  \Psi^+ \mapsto \vv{t_3}\ \mid
-  \Psi^- \mapsto \vv{t_4}\ \}.
+  \mathsf{case}\;\vec{v}\;\mathsf{of}\;\{
+  \Phi^+ \mapsto \vec{t}_{1}\ \mid
+  \Phi^- \mapsto \vec{t}_{2}\ \mid
+  \Psi^+ \mapsto \vec{t}_{3}\ \mid
+  \Psi^- \mapsto \vec{t}_{4}\ \}.
 \]
 
-This Bell basis is central in quantum communication. In
-subsection~\ref{subsec:teleportation}, we revisit the quantum
-teleportation protocol, which relies heavily on these states.
+The Bell basis is central in quantum communication. In
+Section~\ref{sec:teleportation}, we revisit the quantum teleportation protocol,
+which relies heavily on these states.
 
 Defining the system in this way yields a strategy within the
 \emph{call-by-value} family, namely a generalisation of the
 \emph{call-by-basis} strategy introduced in~\cite{ArrighiDowekLMCS17} and
-further analysed in~\cite{AssafDiazcaroPerdrixTassonValironLMCS14}. Whereas
-call-by-basis fixes a single computational basis for evaluation, our variant,
+further analysed in~\cite{AssafDiazcaroPerdrixTassonValironLMCS14}. While
+call-by-basis fixes the canonical basis for evaluation, our variant,
 which we call \emph{call-by-arbitrary-basis}, allows each abstraction to attach
 its own orthonormal basis to its argument. Evaluation remains weak: no
 reduction takes place under $\lambda$, pairs, $\mathsf{let}$, or
@@ -112,25 +103,24 @@ equivalence relation $\equiv$ commutes with $\eval$; in other words,
 equivalence is preserved by reduction modulo~$\equiv$.
 
 \begin{theorem}[Reduction preserves equivalence]\label{thm:confluence}
-  Let $\vv{t}$ and $\vv{s}$ be closed term distributions with
-  $\vv{t}\equiv\vv{s}$. If $\vv{t}\lraneq\vv{t'}$ and $\vv{s}\lraneq\vv{s'}$,
-  then there exist term distributions $\vv{r_1}$ and $\vv{r_2}$ such that
-  $\vv{t'}\eval\vv{r_1}$, $\vv{s'}\eval\vv{r_2}$, and
-  $\vv{r_1}\equiv\vv{r_2}$.
+  Let $\vec{t}$ and $\vec{s}$ be closed term combinations with
+  $\vec{t}\equiv\vec{s}$. If $\vec{t}\lraneq\vv{t'}$ and $\vec{s}\lraneq\vv{s'}$,
+  then there exist term combinations $\vec{r}_{1}$ and $\vec{r}_{2}$ such that
+  $\vv{t'}\eval\vec{r}_{1}$, $\vv{s'}\eval\vec{r}_{2}$, and
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
   Diagrammatically:
   \[
-    \begin{tikzcd}[row sep=1pt,baseline=(current bounding box.south)]
-      & \vv{t}
+    \begin{tikzcd}
+      & \vec{t}
         \arrow[ld,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
-        &[-3em] \equiv
-        &[-3em] \vv{s}
+        &[-2.5em] \equiv
+        &[-2.5em] \vec{s}
         \arrow[rd,decorate,decoration={snake, amplitude=0.8, segment length=6pt}, ->]
         &\\
       \vv{t'}\arrow[dr,"*",pos=0.9] & & & &
       \vv{s'}\arrow[ld,"*"',pos=0.9] \\
-      & \vv{r_1} & \equiv & \vv{r_2} & 
+      & \vec{r}_{1} & \equiv & \vec{r}_{2} &
     \end{tikzcd}
-    \tag*{\smash{\raisebox{.6\baselineskip}{\qed}}}
   \]
   \qed
 \end{theorem}
@@ -138,10 +128,10 @@ equivalence is preserved by reduction modulo~$\equiv$.
 
 \begin{remark}\label{rmk:determinism}
   Since the reduction relation $\eval$ is defined modulo~$\equiv$, the result
-  above is equivalent to stating that there exists a single distribution
-  $\vv{r}$ such that $\vv{t'}\eval\vv{r}$ and $\vv{s'}\eval\vv{r}$.
+  above is equivalent to stating that there exists a single combination
+  $\vec{r}$ such that $\vv{t'}\eval\vec{r}$ and $\vv{s'}\eval\vec{r}$.
   Moreover, as the elementary reduction~$\lraneq$ is deterministic, the
   reduction relation~$\lra$ is also deterministic; that is, if
-  $\vv{t}\lra\vv{r_1}$ and $\vv{t}\lra\vv{r_2}$, then
-  $\vv{r_1}\equiv\vv{r_2}$.
+  $\vec{t}\lra\vec{r}_{1}$ and $\vec{t}\lra\vec{r}_{2}$, then
+  $\vec{r}_{1}\equiv\vec{r}_{2}$.
 \end{remark}
