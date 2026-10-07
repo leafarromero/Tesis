@@ -1,197 +1,147 @@
-\section{Realizability model}\label{sec:model}
-
+\section{Realisability model}\label{sec:model}
 \subsection{Unitary type semantics}
 Given the deterministic machine presented in the previous section
-(see~\ref{rmk:determinism}), the next
+(see~Remark~\ref{rmk:determinism}), the next
 step towards extracting a typing system is to define the sets of values that
 characterise its types. To achieve this, we first need to identify the notion
 of a type.
 
 Our aim is to define types exclusively inhabited by values of norm~1. The
-vectors we wish to study all belong to the \emph{unit sphere}. We write $\Sph$
-for the set $\Sph := \{\vv v \in \vv{\Val} \mid \|\vv v\| = 1\}$, which
+vectors we wish to study belong to the \emph{unit sphere}. We denote $\Sph 
+:= \{\vec v \in \vv{\Val} \mid \|\vec v\| = 1\}$, which
 corresponds to the mathematical representation of quantum data as unit vectors
 in a Hilbert space.
 
-\begin{definition}[Unitary value distribution]
-  A value distribution $\vv{v}$ is said to be \emph{unitary} if its norm equals~1,
-  that is, if $\vv{v}\in\Sph$.
+\begin{definition}[Unitary value combination]
+  A value combination $\vec{v}$ is said to be \emph{unitary} if its norm equals~1,
+  that is, if $\vec{v}\in\Sph$.
 \end{definition}
 
 \begin{definition}[Unitary type]
-  A \emph{unitary type} (or simply a \emph{type}) is a notation~$A$ together
-  with a set of unitary value distributions, denoted~$\sem{A}$, called the
-  \emph{unitary semantics} of~$A$.
+  A \emph{unitary type} (or simply a \emph{type}) is an expression~$A$ built from
+  a given formal language with a set of unitary value combinations, denoted~$\sem{A}$,
+  called the \emph{unitary semantics} of~$A$.
 \end{definition}
 
-
-We now turn to type realizers.  
+We now turn to type realisers.  
 Since the global phase of a quantum state has no physical significance, terms
 that differ only by a phase should share the same type.  
-Thus, we assign identical types to $\vv t$ and $e^{i\theta}\vv t$, a principle
-that guides the definition of realizers.
+Thus, we assign identical types to $\vec t$ and $e^{i\theta}\vec t$, a principle
+that guides the definition of realisers.
 
-\begin{definition}[Type realizer]\label{def:Realizer}
-  Given a type~$A$ and a term distribution~$\vv t$, we say that~$\vv t$
-  \emph{realizes}~$A$ (written~$\vv t \real A$) if there exists a value
-  distribution~$\vv v\in\sem A$ such that
-  $\vv{t}\eval e^{i\theta}\vv{v}$ for some $\theta\in\R$,
+\begin{definition}[Type realiser]\label{def:realiser}
+  Given a term combination~$\vec t$ and type~$A$, we say that~$\vec t$
+  \emph{realises}~$A$ (not.~$\vec t \real A$) if there exists a value
+  combination~$\vec v\in\sem A$ such that
+  $\vec{t}\eval e^{i\theta}\vec{v}$ for some $\theta\in\R$,
 \end{definition}
 
 \begin{table}[t]
-  \[
-    A := \basis{X} \mid A\Arr A \mid A\times A \mid \sharp A,
-    \qquad\text{where $X$ is any orthonormal basis.}
-  \]
-  \begin{align*}
-    \sem{\basis{X}}&:= X\\
-    \sem{A\times B}&:= \bigl\{\,(\vv v, \vv w)\;\bigm|\; \vv v\in\sem{A},~\vv w\in\sem{B}\,\bigr\}\\
-    \sem{A\Arr B}&:=
-    \bigl\{\,\sum_{i=1}^{n}\alpha_i(\Lam{x}{X}{\vv{t_i}})\in\Sph
-      \;\bigm|\;
-      \forall\vv{w}\in\sem{A},\,
-      (\sum_{i=1}^{n}\alpha_i \vv{t_i})\ansubst{\vv{w}/x}{X}\real B
-    \bigr\}\\
-    \sem{\sharp A}&:= {(\sem{A}^\bot)}^\bot\quad\text{Where: }A^\bot = \{\vv{v}\in\Sph\,\mid\,\scal{\vv{v}}{a} = 0, \forall a\in A\}
-  \end{align*}
-  \caption{Type notations and semantics}
+  \centering
+  $A := \basis{\BB} \mid A\Arr A \mid A\times A \mid \sharp A$, with $\BB$ an orthonormal basis.
+  \vspace{2pt}
+  \hrule
+  \vspace{4pt}
+  \begin{tabular}{l}
+    $\sem{\basis{\BB}}:= \BB \qquad \sem{A\times B}:= \{(\vec v, \vec w) \mid \vec v\in\sem{A}, \vec w\in\sem{B}\}$ \\
+    $\sem{A\Arr B}:= \{\sum_i \alpha_i(\Lam{x}{X}{\vec{t}_{i}})\in\Sph \mid \forall\vec{w}\in\sem{A}, (\sum_i \alpha_i \vec{t}_{i})\ansubst{\vec{w}/x}{X}\real B\}$ \\
+    $\sem{\sharp A}:= {(\sem{A}^\bot)}^\bot$, with $W^\bot = \{\vec{v}\in\Sph \mid \forall \vec{w}\in W, \scal{\vec{v}}{\vec{w}} = 0\}$
+  \end{tabular}
+  \caption{Type notations and semantics.}
   \label{tab:UnitaryTypes}
 \end{table}
-
-With the notions of unitary types and their realizers in place, we can now
-define a concrete approach for our language. We begin with the type grammar
-given in~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
+With the notions of unitary types and their realisers in place, we can now
+define a concrete set of types for our language. We begin with the type grammar
+given in~Table~\ref{tab:UnitaryTypes} and build a simple algebra from the sets of
 values we aim to represent.
-Before that, we introduce the notion of orthogonal complement, which will be
-used in the semantics of the~$\sharp$~type:
-\[
-  \comp{A} = \{\, \vv{v}\in \Sph \mid \scal{\vv{v}}{a} = 0 \text{ for all } a\in A\,\}.
-\]
 
-The types $\basis{X}$ serve as atomic types. Each of them represents a finite
-set~$X$ of orthogonal vectors forming an orthonormal basis. For instance, a
-boolean type can be represented by a basis of size~2, yet we are not restricted
-to a single one, since there are infinitely many bases to choose from.
+The types $\basis{\BB}$ serve as atomic types. Each of them represents a finite
+set~$\BB$ of orthogonal vectors forming an orthonormal basis. For instance, a
+boolean type can be represented by a basis of size 2, yet we are not restricted
+to a single one, as infinitely many bases exist. 
 
-The type~$A\times B$
-corresponds to the cartesian product of~$A$ and~$B$.  However, since the syntax
-admits pairs only of basic values, the semantic clause
-in~\ref{tab:UnitaryTypes} should be
-read as an abbreviation for the following expanded form:
-\[
-  \sem{A\times B}
-  := \bigl\{
-       \sum_{i=1}^{n}\sum_{j=1}^{m}\alpha_i\beta_j(v_i,w_j)
-       \;\bigm|\;
-       \sum_{i=1}^{n}\alpha_i v_i\in\sem{A},~
-       \sum_{j=1}^{m}\beta_j w_j\in\sem{B}
-     \bigr\}.
-\]
-We stress this for rigour, but for readability we shall continue using the concise notation of pairs.
-The arrow type~$A\Arr B$ consists of distributions of $\lambda$-abstractions
-that map elements of~$\sem{A}$ to realizers of~$B$.  
-Finally, the type~$\sharp A$ denotes the double orthogonal complement of~$A$
-intersected with the unit sphere.
-It represents quantum data---linear resources that cannot be erased or
-duplicated.  
-Intuitively, applying the~$\sharp$ operator to a type~$A$ yields the span of the
-original interpretation (intersected with the unit sphere).  This captures the
-possible linear combinations of values in the unitary semantics of~$A$, as
+Basis types $\basis{\BB}$ will be formed when a variable is decorated with the
+corresponding $\BB$. When it is decorated with $\AbsBasis$, it will be
+typed with an arrow.
+
+Pairs are standard, and written using the notation introduced earlier.
+The arrow type~$A\Arr B$ consists of combinations of $\lambda$-abstractions
+mapping elements of~$\sem{A}$ to realisers of~$B$.  
+Finally, $\sharp A$ denotes the double orthogonal complement of~$A$ (within the unit sphere),
+representing quantum data. Since these are linear resources, they cannot be erased or
+duplicated.
+Importantly, linear combinations of abstractions are not, in general, functions:
+only those inhabiting $A \Arr B$ behave as maps, while general combinations
+inhabit $\sharp(A \Arr B)$ and are interpreted as vectors.
+Intuitively, applying the operator $\sharp$ captures the
+linear combinations of values in the unitary semantics of $A$, as 
 stated in the following theorem.
 
-\begin{theorem}\label{thm:SharpCharacterization}
+\begin{remark}\label{rem:SharpCharacterization}\label{rem:IdempotentSharp}
   The interpretation of a type~$\sharp A$ contains precisely the
   norm-$1$ linear combinations of values in~$\sem{A}$:
-  \(
+  \[
     \sem{\sharp A}
     = (\sem{A}^\bot)^\bot
     = \Span(\sem{A}) \cap \Sph
-  \).
-  \qed
-\end{theorem}
-
-\begin{proof}
-  Proof by double inclusion.
-  \begin{description}
-    \item[$\Span(\sem{A})\cap\Sph\subseteq (\sem{A}^\bot)^\bot$:] Let $\vv{v}\in\Span(\sem{A})\cap\Sph$. Then $\vv{v}$ is of the form $\sum_{i=1}^{n}\alpha_i \vv{v_i}$ with $\vv{v_i}\in\sem{A}$. Taking $\vv{w}\in\sem{A}^\bot$, we examine the inner product:
-    
-    \begin{align*}
-    \scal{\vv{v}}{\vv{w}} &= \scal{\sum_{i=1}^{n}\alpha_i \vv{v_i}}{\vv{w}}\\
-    &= \sum_{i=1}^{n}\overline{\alpha_i}\scal{\vv{v_i}}{\vv{w}}=0
-    \end{align*}
-
-    Then $\vv{v}\in(\sem{A}^\bot)^\bot$.
-
-    \item[$(\sem{A}^\bot)^\bot\subseteq \Span(\sem{A})\cap\Sph$:] Reasoning by contradiction, we assume that there is a $\vv{v}\in(\sem{A}^\bot)^\bot$ such that $v\not\in\Span(\sem{A})\cap\Sph$. Since $\vv{v}\not\in\Span(\sem{A})$, $\vv{v}=\vv{w_1} + \vv{w_2}$ such that $\vv{w_1}\in\Span{\sem{A}}$ and $\vv{w_2}$ is a non-null vector which cannot be written as a linear combination of elements of $\sem{A}$. In other words, $\vv{w_2}\in\sem{A}^\bot$. Taking the inner product:
-    \[
-    \scal{\vv{v}}{\vv{w_2}} = \scal{\vv{w_1}+\vv{w_2}}{\vv{w_2}} = \|\vv{w_2}\|\neq 0
-    \]
-    Then $\vv{v}\not\in(\sem{A}^\bot)^\bot$. The contradiction stems from assuming $\vv{v}\not\in\Span{\sem{A}}\cap\Sph$.\qedhere
-  \end{description}
-\end{proof}
-
-The following theorem shows that, as expected for a span, multiple
-applications of the~$\sharp$ operator have no further effect beyond the first
-application.
-
-\begin{theorem}\label{thm:IdempotentSharp}
-  The~$\sharp$ operator is idempotent; that is,
-  $\sem{\sharp A} = \sem{\sharp(\sharp A)}$.
-  \qed
-\end{theorem}
-
-\begin{proof}
-  We want to prove that $(((\comp{\sem{A}})^\bot)^\bot)^\bot = (\comp{\sem{A}})^\bot$. For ease of reading, we will write $\comp[n]{A}$ for $n$ successive applications of the operation $\bot$.
-
-  \begin{description}
-    \item[$A\subseteq A^{\bot^2}$:] Let $\vv{v}\in A$. Then, for all $\vv{w}\in\comp{A}$, $\scal{\vv{v}}{\vv{w}} = 0$. Then $\vv{v}\in\comp[2]{A}$. With this we have $A\subseteq\comp[2]{A}$.
-    
-    \item[$A^{\bot^3}\subseteq \comp{A}$:] Let $\vv{u}\in \comp[3]{A}$. Then, for all $\vv{v}\in\comp[2]{A}$, $\scal{\vv u}{\vv v} = 0$. Since we have shown that $A\subseteq \comp[2]{A}$, we have that for all $\vv{w}\in A$, $\scal{\vv u}{\vv w} = 0$. Then $\vv u\in\comp{A}$. With this we have $\comp[3]{A}\subseteq \comp{A}$.
-  \end{description}
-
-  With these two inclusions we have that $\comp{A}=\comp[3]{A}$. So we conclude that: $\sem{\sharp(\sharp A)} = \comp[4]{A} = \comp[2]{A} = \sem{\sharp A}$ \qedhere
-\end{proof}
-
-\begin{remark}
-  A basis type~$\basis{X}$ may consist of value distributions of pairs and can
-  therefore be written as the product type of smaller bases. For example, if
-  $X=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\sem{\basis{X}}=\sem{\basis{\B}\times\basis{\B}}$.
-  However, this is not possible for entangled bases. A clear example is the
-  Bell basis.
+  \]
+  Moreover, as expected for a span, the operator~$\sharp$ is idempotent;
+  that is, $\sem{\sharp A} = \sem{\sharp(\sharp A)}$. Proof of this
+  remark can be found on the appendix.
 \end{remark}
 
-It remains to verify that our type algebra indeed captures the intended sets of
-value distributions. The following theorem shows that every member of a type
+\begin{remark}
+  A basis type~$\basis{\BB}$ may consist of value combinations of pairs and can
+  therefore be written as the product type of smaller bases. For example, if
+  $\BB=\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, then $\sem{\basis{\BB}}=\sem{\basis{\B}\times\basis{\B}}$.
+  However, entangled bases, such as the Bell basis, do not allow this.
+\end{remark}
+
+Our type algebra captures the intended sets of
+value combinations. The following theorem shows that every member of a type
 interpretation has norm~$1$.
 
 \begin{theorem}\label{prop:UnitaryTypes}
   For every type~$A$, $\sem{A}\subseteq\Sph$.
   \qed
 \end{theorem}
-
+\begin{proof}
+  The proof is simple, we merely have to show that $\Sph$ is stable under pairings. The detailed proof can be found on the appendix.
+\end{proof}
 
 Defining types as sets of values naturally induces a semantic notion of
-subtyping. We say that a type~$A$ is a subtype of a type~$B$
-(written~$A\leq B$) when the set of realizers of~$A$ is included in that of~$B$.
+subtyping. The relationship is simply given by set inclusion. 
+\begin{definition}[Subtyping and isomorphism]\label{def:Subtyping}
+We say that a type~$A$ is a subtype of a type~$B$
+(written~$A\leq B$) when $\sem A\subseteq\sem B$. 
 If the two sets coincide, we say that $A$ and $B$ are \emph{isomorphic}
 (written~$A\cong B$).
+\end{definition}
 
-\begin{example}
-  For every type~$A$, we have $A\leq\sharp A$.
-  For the base types $\basis{\B}$ and $\basis{\XB}$, however,
-  neither inclusion holds:
-    $\basis{\B}\not\leq\basis{\XB}$ and
-    $\basis{\XB}\not\leq\basis{\B}$.
-  Nevertheless, their linear extensions coincide,
-  since $\sharp\basis{\B}\cong\sharp\basis{\XB}$.
-\end{example}
+\begin{table}[t]
+  \centering
+  \[
+  \begin{array}{c@{\qquad\quad}c@{\qquad\quad}c}
+    \infer{\sharp (\basis{\BB_1})\cong\sharp(\basis{\BB_2})}{|\BB_1| = |\BB_2|} &
+    \infer{\basis{\BB_1\times \BB_2} \cong \basis{\BB_1}\times\basis{\BB_2}}{} &
+    \infer{\sharp A \leq \sharp B}{A\leq B} \\[15pt]
+    \infer{(\sharp A)\times(\sharp B)\leq\sharp(A\times B)}{}&
+    {\infer{A\leq \sharp A}{}} &
+    {\infer{\sharp\sharp A \cong \sharp A}{}}
+  \end{array}
+  \]
+  \caption{Some valid subtyping rules.}
+  \label{tab:Subtyping}
+\end{table}
 
-Although every type is defined by norm-1 value distributions, not every
-norm-1 distribution is contained in the interpretation of a type.
-For example, consider the distribution
+We present some of these subtyping relations in Table~\ref{tab:Subtyping}
+
+Although every type is defined by norm-1 value combinations, not every
+norm-1 combination is contained in the interpretation of a type.
+For example, consider the combination
 $\tfrac{1}{\sqrt{2}}(\ket{0} + \ket{00})$.
 Another example is a linear combination of abstractions defined over different
-bases. For instance, the term
+bases. For instance, the term:
 \[
   \tfrac{1}{\sqrt{2}}(\Lam{x}{{\B}}{\pauliX{x}})
   + \tfrac{1}{\sqrt{2}}(\Lam{x}{{\XB}}{x})
@@ -201,165 +151,166 @@ do not match. However, it is computationally equivalent to the abstraction
 $(\Lam{x}{{\B}}{\ket{+}})$, which in turn belongs to the set
 $\sem{\basis{\B}\Arr\basis{\XB}}$.
 
-
-We denote by~$\Type$ the set of all types and by~$\BasisType$ the set of all
-basis types~$\basis{X}$.
-
-\subsection{Characterization of unitary operators}
+\subsection{Characterisation of unitary operators}
 
 One of the main results of~\cite{DiazcaroGuillermoMiquelValironLICS19}
-is the characterisation of $\C^2\to\C^2$ unitary operators using values in
-$\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
-In this subsection we extend this result. Our goal is to prove that abstractions
-of type $\sharp\basis{X}\Arr\sharp\basis{Y}$, where both bases have size~$n$,
-represent unitary operators
-$\C^n\to\C^n$.
+is characterising $\C^2\to\C^2$ unitary operators as values in
+$\sem{\sharp\basis{\B}\Arr\sharp\basis{\B}}$~
+\cite[Theorem IV.12]{DiazcaroGuillermoMiquelValironLICS19}.
+Our goal is to extend the characterisation for unitary operators
+$\C^{2^n}\to\C^{2^n}$ as abstractions of type $\sharp\basis{\BB_1}
+\Arr\sharp\basis{\BB_2}$, where both bases have size~$2^n$.
 
 Unitary operators are isomorphisms between Hilbert spaces, as they preserve the
 structure of the space. With this in mind, the first step is to show that the
-members of $\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$ map basis vectors from
-$\sem{\basis{X}}$ onto orthogonal vectors in $\sem{\sharp\basis{Y}}$. In other
+members of $\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$ map basis vectors
+from $\sem{\basis{\BB_1}}$ onto orthogonal vectors in $\sem{\sharp\basis{\BB_2}}$. In other
 words, these abstractions preserve both norm and orthogonality.
 
 \begin{lemma}\label{lem:BasesIso}
-  Let $X$ and $Y$ be orthonormal bases of the same finite
-  dimension, and let $\Lam{x}{{X}}{\vv t}$ be a closed $\lambda$-abstraction.
-  Then $\Lam{x}{{X}}{\vv t}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of the same finite
+  dimension, and let $\Lam{x}{{\BB_1}}{\vec t}$ be a closed $\lambda$-abstraction.
+  Then $\Lam{x}{{\BB_1}}{\vec t}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
   if and only if 
-  for all $\vv{v_i},\vv{v_j}\in\sem{\basis{X}}$,
-  there exist value distributions
-  $\vv{w_i},\vv{w_j}\in\sem{\sharp\basis{Y}}$ such that,
-    $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$
+  for all $\vec{v}_{i},\vec{v}_{j}\in\sem{\basis{\BB_1}}$,
+  there exist value combinations
+  $\vec{w}_{i},\vec{w}_{j}\in\sem{\sharp\basis{\BB_2}}$ such that,
+    $\vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}$
     and
-    $\vv{t}[\vv{v_j}/x]\eval\vv{w_j}$,
+    $\vec{t}[\vec{v}_{j}/x]\eval\vec{w}_{j}$,
     with
-    $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
+    $\vec{w}_{i}\perp\vec{w}_{j}$ whenever $i\neq j$.
     \qed
 \end{lemma}
-
-
-Next, we need to bridge the gap between the values in the calculus with vectors in the space $\C^n$. In order to do this, we introduce a meta-language operation $\pi_n$ which translates value distributions into vectors in $\C^n$. The operation simply writes the value in the canonical basis and takes the corresponding coefficients. 
-
-\begin{definition}
-Let $\basis{X}$ be an orthonormal basis of size $n$, then for every $\vv{v}\in\sem{\basis{X}}$:
-\[
-\vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i}
-\]
-Where $\ket{i}$ is the $n$-th dimensional product of $\ket{0}$ and $\ket{1}$ with $i$ written in binary and $\sum_{i=1}^{n}|\alpha_i|^2=1$. (For example, $\ket{3}$ with $n=4$ is $\ket{0011}$). We define $\pi_n:\sem{\basis{X}}\to\C^n$ as::
-\[
-\pi_n(\vv{v}) = (\alpha_1,\dotsb ,\alpha_n)
-\]
-We will omit the subscript when it can be deduced from the context.
-\end{definition}
-
-\begin{definition}
-We say a $\lambda$-abstraction $(\Lam{x}{X}{\vv{t}})$ represents an operator $F:\C^n\to\C^n$ when:
-\[
-(\Lam{x}{X}{\vv{t}})\vv{v} \eval \vv{w} \iff F(\pi_n(\vv{v})) = \pi_n(\vv{w})
-\]
-\end{definition}
 
 Terms such as $\ket{0}$ and $\ket{1}$ are syntactic objects of the
 calculus, not vectors of~$\C^2$. Nevertheless, when discussing the behaviour of
 terms on Hilbert spaces, we shall occasionally abuse notation and identify
-value distributions representing qubits with their corresponding canonical
-basis vectors in~$\C^n$. This identification applies only to those
-distributions that denote quantum data, not to general syntactic values such as
+value combinations representing qubits with their corresponding canonical
+basis vectors in~$\C^{2^n}$. This identification applies only to those
+combinations denoting quantum data, not to general values such as
 $\lambda$-abstractions---in particular, to all elements of
-$\sem{\sharp\basis{X}}$ for any orthonormal basis~$X$. This identification can
+$\sem{\sharp\basis{\BB}}$ for any orthonormal basis~$\BB$. This identification can
 be made precise as follows.
 
 \begin{definition}
-  Let $X$ be an orthonormal basis of size~$n$. For every $\vv{v}\in X$, we can
+  Let $\BB$ be an orthonormal basis of size~$2^n$. For every $\vec{v}\in \BB$, we can
   write
   \(
-    \vv{v}\equiv \sum_{i=1}^{n}\alpha_i\ket{i}
+    \vec{v}\equiv \sum_{i=1}^{2^n}\alpha_i\ket{i}
   \),
   where $\ket{i}$ denotes the $n$-qubit tuple of $\ket{0}$ and $\ket{1}$
   corresponding to the binary representation of~$i$, and
   $\sum_{i=1}^{n}|\alpha_i|^2=1$. For example, for $n=4$, $\ket{3}$ is
-  $\ket{0011}$. We then define $\pi_n:X\to\C^n$ by
+  $\ket{0011}$. We then define $\pi_n:\BB\to\C^{2^n}$ by
   \(
-    \pi_n(\vv{v}) = (\alpha_1,\dotsc,\alpha_n)
+    \pi_n(\vec{v}) = (\alpha_1,\dotsc,\alpha_{2^n})
   \).
 \end{definition}
 
-To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vv v$
-directly.
-
-We now establish a correspondence between $\lambda$-abstractions and operators
-on~$\C^n$. Intuitively, an abstraction represents a linear operator when its
+To lighten notation, we shall henceforth omit~$\pi_n$ and use~$\vec v$
+directly. We now establish a correspondence between $\lambda$-abstractions and operators
+on~$\C^{2^n}$. Intuitively, an abstraction represents a linear operator when its
 operational behaviour coincides with the action of that operator on vectors.
 Formally:
 
 \begin{definition}
-  A $\lambda$-abstraction $\Lam{x}{{X}}{\vv{t}}$ is said to \emph{represent}
-  an operator $F:\C^n\to\C^n$ if
-    $(\Lam{x}{{X}}{\vv{t}})\vv{v} \eval \vv{w}$
+  A $\lambda$-abstraction $\Lam{x}{{\BB}}{\vec{t}}$ is said to \emph{represent}
+  an operator $F:\C^{2^n}\to\C^{2^n}$ if
+    $(\Lam{x}{{\BB}}{\vec{t}})\vec{v} \eval \vec{w}$
     if and only if
-    $F(\vv{v}) = \vv{w}$.
+    $F(\vec{v}) = \vec{w}$.
 \end{definition}
 
-This definition, together with \ref{lem:BasesIso}, allows us to build a
+This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
 characterisation of unitary operators as values in
-$\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
+$\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
 
-\begin{theorem}[Characterisation of Unitary Operators]
-  Let $X$ and $Y$ be orthonormal bases of size~$n$.
+\begin{theorem}[Characterisation of Unitary Operators]\label{thm:characterisation}
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of size~$2^n$.
   A closed $\lambda$-abstraction
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$
+  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
   if and only if it represents a unitary operator
-  $F:\C^n\to\C^n$.
+  $F:\C^{2^n}\to\C^{2^n}$.
+  \qed
 \end{theorem}
 
 \begin{proof}
-\textit{Necessity.}
-  Suppose that $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$.
-  Then, by \ref{lem:BasesIso}, for every
-  $\vv{v_i}\in\sem{\basis{X}}$ there exists
-  $\vv{w_i}\in\sem{\sharp\basis{Y}}$ such that
-  $\vv{t}[\vv{v_i}/x]\eval\vv{w_i}$ and
-  $\vv{w_i}\perp\vv{w_j}$ whenever $i\neq j$.
-  Let $F:\C^n\to\C^n$ be the operator defined by
-  $F(\vv{v_i})=\vv{w_i}$.
-  By linearity over~$X$, it follows that
-  $\Lam{x}{{X}}{\vv{t}}$ represents~$F$.
-  Moreover, $F$ is unitary since
-  $\|\vv{w_i}\|_{\C^n}=\|\vv{w_j}\|_{\C^n}=1$ and
-  $\scal{\vv{w_i}}{\vv{w_j}}_{\C^n}=0$.
+  \textit{Necessity.}
+  Suppose that $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
+  Then, by Lemma~\ref{lem:BasesIso}, for every
+  $\vec{v}_{i}\in\sem{\basis{\BB_1}}$ there exists
+  $\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$ such that
+  $\vec{t}[\vec{v}_{i}/x]\eval\vec{w}_{i}$ and
+  $\vec{w}_{i}\perp\vec{w}_{j}$ whenever $i\neq j$.
+  Let $F:\C^{2^n}\to\C^{2^n}$ be the operator defined by
+  $F(\vec{v}_{i})=\vec{w}_{i}$.
+  By linearity over~$\BB_1$, it follows that
+  $\Lam{x}{{\BB_1}}{\vec{t}}$ represents~$F$.
+  Then, $F$ is unitary since
+  $\|\vec{w}_{i}\|_{\C^{2^n}}=\|\vec{w}_{j}\|_{\C^{2^n}}=1$ and
+  $\scal{\vec{w}_{i}}{\vec{w}_{j}}_{\C^{2^n}}=0$.
 
   \smallskip
   \textit{Sufficiency.}
-  Conversely, suppose that $\Lam{x}{{X}}{\vv{t}}$ represents a
-  unitary operator $F:\C^n\to\C^n$.
-  Then, for each $\vv{v_i}\in\sem{\basis{X}}$, there exists
-  $\vv{w_i}\in\sem{\basis{Y}}$ such that
-  $F(\vv{v_i}) = \vv{w_i}$ and
-  $(\Lam{x}{{X}}{\vv{t}})\vv{v_i}\eval\vv{w_i}$.
+  Conversely, suppose that $\Lam{x}{{\BB_1}}{\vec{t}}$ represents a
+  unitary operator $F:\C^{2^n}\to\C^{2^n}$.
+  Then, for each $\vec{v}_{i}\in\sem{\basis{\BB_1}}$, there exists
+  $\vec{w}_{i}\in\sem{\sharp\basis{\BB_2}}$ such that
+  $F(\vec{v}_{i}) = \vec{w}_{i}$ and
+  $(\Lam{x}{{\BB_1}}{\vec{t}})\vec{v}_{i}\eval\vec{w}_{i}$.
   Hence,
   \(
-    (\Lam{x}{{X}}{\vv{t}})\vv{v_i}
+    (\Lam{x}{{\BB_1}}{\vec{t}})\vec{v}_{i}
     \lraneq
-    \vv{t}\ansubst{\vv{v_i}/x}{X}
-    = \vv{t}[\vv{v_i}/x]
-    \eval \vv{w_i}
-    \in \sem{\sharp\basis{Y}}
+    \vec{t}\ansubst{\vec{v}_{i}/x}{\BB_1}
+    = \vec{t}[\vec{v}_{i}/x]
+    \eval \vec{w}_{i}
+    \in \sem{\sharp\basis{\BB_2}}
   \),
-  since $\|\vv{w_i}\|=\|F(\vv{v_i})\|_{\C^n}=1$.
-  From \ref{lem:BasesIso}, it follows that
-  $\Lam{x}{{X}}{\vv{t}}\in\sem{\sharp\basis{X}\Arr\sharp\basis{Y}}$,
-  and moreover
+  as $\|\vec{w}_{i}\|=\|F(\vec{v}_{i})\|_{\C^n}=1$. Since
   \(
-    \scal{\vv{w_i}}{\vv{w_j}}
-    = \scal{F(\vv{v_i})}{F(\vv{v_j})}_{\C^n}
-    = 0.
-  \)
+    \scal{\vec{w}_{i}}{\vec{w}_{j}}
+    = \scal{F(\vec{v}_{i})}{F(\vec{v}_{j})}_{\C^n}
+    = 0
+  \),
+  from Lemma~\ref{lem:BasesIso} it follows that
+  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
   \qedhere
 \end{proof}
 
-This result naturally extends to unitary distributions of
+This result naturally extends to unitary combinations of
 $\lambda$-ab\-strac\-tions, since a term of the form
-$\Lam{x}{{X}}{\sum_{i=1}^{n}\alpha_i \vv{t_i}}$ is syntactically different
+$\Lam{x}{{\BB}}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}$ is syntactically different
 but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
-\Lam{x}{{X}}{\vv{t_i}}$.  Hence, the characterisation of unitary operators
-also applies to superpositions of abstractions sharing the same basis~$X$.
+\Lam{x}{{\BB}}{\vec{t}_{i}}$.  Hence, the characterisation of unitary operators
+also applies to superpositions of abstractions sharing the same basis~$\BB$.
+
+
+\begin{definition}
+  A $\lambda$-abstraction $\Lam{x}{{\BB}}{\vec{t}}$ is said to \emph{represent}
+  an operator $F:\C^{2^n}\to\C^{2^n}$ if
+    $(\Lam{x}{{\BB}}{\vec{t}})\vec{v} \eval \vec{w}$
+    if and only if
+    $F(\vec{v}) = \vec{w}$.
+\end{definition}
+
+This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
+characterisation of unitary operators as values in
+$\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
+
+\begin{theorem}[Characterisation of Unitary Operators]\label{thm:characterisation}
+  Let $\BB_1$ and $\BB_2$ be orthonormal bases of size~$2^n$.
+  A closed $\lambda$-abstraction
+  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
+  if and only if it represents a unitary operator
+  $F:\C^{2^n}\to\C^{2^n}$.
+  \qed
+\end{theorem}
+
+  This result naturally extends to unitary combinations of
+$\lambda$-ab\-strac\-tions, since a term of the form
+$\Lam{x}{{\BB}}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}$ is syntactically different
+but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
+\Lam{x}{{\BB}}{\vec{t}_{i}}$.  Hence, the characterisation of unitary operators
+also applies to superpositions of abstractions sharing the same basis~$\BB$.
