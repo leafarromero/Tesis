@@ -1,44 +1,28 @@
 \section{Conclusion}\label{sec:conclusion}
 
-In this chapter we have explored a quantum-control $\lambda$-calculus equipped
-with the additional feature of allowing abstractions to be expressed relative
-to arbitrary bases, beyond the canonical one.  
+We have introduced a quantum-control $\lambda$-calculus here 
+abstractions are expressed relative to arbitrary bases. The 
+central mechanism is the decoration of $\lambda$-abstractions
+and $\mathsf{let}$-constructors with basis annotations, 
+supported by a basis-dependent substitution. While this does
+not increase expressiveness over the original language, it
+offers a novel perspective for reasoning about quantum programs
+under basis changes. 
 
-The central mechanism enabling this extension is the decoration of
-$\lambda$-ab\-strac\-tions and $\mathsf{let}$-constructors with basis annotations,
-together with a modified substitution operation that governs how value
-distributions decompose across different bases.  
-These additions do not increase the expressive power of the original calculus
-on which $\lambdaB$ builds, yet they offer a novel perspective for reasoning
-about quantum programs and their behaviour under basis changes.
+The benefits of this design are manifest in the realisability
+model. The inclusion of atomic types $\basis{\BB}$ enables a
+direct characterisation of abstractions representing unitary
+operators, generalising results from~\cite{DiazcaroGuillermoMiquelValironLICS19}.
+Based on this interpretation, we have established the validity
+of the typing rules in Table~\ref{tab:TypingRules}, ensuring
+their soundness and providing a principled foundation for a
+typed language based on the calculus.
 
-The reduction system coordinates computation through these extended syntactic
-constructs and substitutions.  
-A key property is that evaluation commutes with the congruence relation,
-ensuring that interpreting a value distribution in a different basis does not
-affect the computational result.  
-Consequently, it is meaningful to reason about terms modulo basis
-congruence.
-
-The benefit of this design becomes clear in the realisability model.
-The inclusion of atomic types~$\basis{X}$ enables a direct characterisation of
-abstractions representing unitary operators---our main semantic result,
-generalising the characterisation from~\cite{DiazcaroGuillermoMiquelValironLICS19}.  
-Here, the use of basis types yields a simpler and more transparent proof.  
-
-The second major result is the validity of the typing rules presented in
-\ref{tab:TypingRules}.  
-By deriving these rules from the realisability interpretation, we ensure their
-soundness and obtain a principled foundation for a typed programming language
-based on the calculus.
-
-Finally, we have illustrated the expressive advantages of the system through two
-canonical examples.  
-In the case of \emph{Deutsch's algorithm}, the use of basis-aware typing allows
-the result to be treated classically, reflecting the algorithm's determinism.  
-In the case of \emph{quantum teleportation}, we demonstrated how the
-$\mathsf{case}$ construct can simulate gates controlled by Bell-basis
-measurements, effectively capturing the deferred-measurement principle within
-the calculus.
-
-% En la parte de conclusiones/trabajo futuro, me gustaría meter otra noción de producto interno que juegue bien con las funciones. Con esta definición una función es ortogonal a su eta expansión. O (\x. t_1 + t_2) _|_ (\x. t_2 + t_1)
+Finally, we illustrated the system's advantages through two
+canonical examples: in \emph{Deutsch's algorithm}, basis-aware
+typing captures the algorithm's determinism by treating the
+result classically; in \emph{quantum teleportation}, the
+$\mathsf{case}$ construct simulates gates controlled by
+Bell-basis measurements, internalising the deferred-measurement
+principle. These results show that basis-sensitivity is a
+powerful tool for the static analysis of quantum protocols.
