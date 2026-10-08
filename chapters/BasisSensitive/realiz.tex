@@ -285,32 +285,3 @@ $\Lam{x}{{\BB}}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}$ is syntactically different
 but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
 \Lam{x}{{\BB}}{\vec{t}_{i}}$.  Hence, the characterisation of unitary operators
 also applies to superpositions of abstractions sharing the same basis~$\BB$.
-
-
-\begin{definition}
-  A $\lambda$-abstraction $\Lam{x}{{\BB}}{\vec{t}}$ is said to \emph{represent}
-  an operator $F:\C^{2^n}\to\C^{2^n}$ if
-    $(\Lam{x}{{\BB}}{\vec{t}})\vec{v} \eval \vec{w}$
-    if and only if
-    $F(\vec{v}) = \vec{w}$.
-\end{definition}
-
-This definition, together with Lemma~\ref{lem:BasesIso}, allows us to build a
-characterisation of unitary operators as values in
-$\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$.
-
-\begin{theorem}[Characterisation of Unitary Operators]\label{thm:characterisation}
-  Let $\BB_1$ and $\BB_2$ be orthonormal bases of size~$2^n$.
-  A closed $\lambda$-abstraction
-  $\Lam{x}{{\BB_1}}{\vec{t}}\in\sem{\sharp\basis{\BB_1}\Arr\sharp\basis{\BB_2}}$
-  if and only if it represents a unitary operator
-  $F:\C^{2^n}\to\C^{2^n}$.
-  \qed
-\end{theorem}
-
-  This result naturally extends to unitary combinations of
-$\lambda$-ab\-strac\-tions, since a term of the form
-$\Lam{x}{{\BB}}{\sum_{i=1}^{n}\alpha_i \vec{t}_{i}}$ is syntactically different
-but computationally equivalent to $\sum_{i=1}^{n}\alpha_i
-\Lam{x}{{\BB}}{\vec{t}_{i}}$.  Hence, the characterisation of unitary operators
-also applies to superpositions of abstractions sharing the same basis~$\BB$.
