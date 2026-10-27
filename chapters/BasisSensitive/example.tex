@@ -122,9 +122,16 @@ guaranteed to be classical in~$\B$, reflecting the determinism of Deutsch's
 algorithm.
 
 \subsection{Quantum teleportation}\label{sec:teleportation}
-The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies transmitting quantum data via shared entanglement. In $\lambdaB$, this protocol illustrates how the \emph{deferred-measurement principle}~\cite[\S 4.4]{NC00} is internalised within a purely unitary framework. While measurement can be integrated into basis-sensitive calculi (as in~\cite{DiazcaroMonzonAPLAS25}), we focus on demonstrating that the $\mathsf{case}$ constructor suffices to reason about classically controlled gates via branching on basis states.
+The quantum teleportation protocol~\cite{PhysRevLett.70.1895} exemplifies
+transmitting quantum data via shared entanglement. In $\lambdaB$, this protocol 
+illustrates how the \emph{deferred-measurement principle}~\cite[\S 4.4]{NC00} is
+internalised within a purely unitary framework. While measurement can be integrated
+into basis-sensitive calculi (as in~\cite{DiazcaroMonzonAPLAS25}), we focus on
+demonstrating that the $\mathsf{case}$ constructor suffices to reason about
+classically controlled gates via branching on basis states.
 
-By delayining measurement, we define a term that explicitly describes the computation for each coherent branch of the superposition:
+By delaying measurement, we define a term that explicitly describes the computation
+for each coherent branch of the superposition:
 \begin{align*}
 \mathsf{Teleport}_{\Phi^+} :=
   \Lam{x}{\B}{

@@ -2,11 +2,13 @@
 \label{sec:introduction}
 
 % Motivation
-The ZX calculus~\cite{vdw_working_cs_zx} has been used as intermediary representation language for quantum programs in optimization methods~\cite{DKPW2019qcircSimpl,borgna_hybrid_2021,Backens_2021} and in the design of error correcting schemes~\cite{de_beaudrap_zx_2020}.
+The ZX calculus~\cite{vdw_working_cs_zx} is a formal graphical language which represent linear maps. It has been used as intermediary representation language for quantum programs in optimization methods~\cite{DKPW2019qcircSimpl,borgna_hybrid_2021,Backens_2021} and in the design of error correcting schemes~\cite{de_beaudrap_zx_2020}.
 
-The highly flexible representation of linear maps as open graphs with a complete formal rewriting system and the multiple extensions adapted to represent different sets of quantum primitives have proven useful in reasoning about the properties of quantum circuits.
+The highly flexible representation of linear maps as open graphs with a complete formal rewriting system, and the multiple extensions adapted to represent different sets of quantum primitives have proven useful in reasoning about the properties of quantum circuits.
 
-Quantum operations are usually represented as quantum circuits composed by primitive gates operating over a fixed number of qubits.The ZX calculus has a close correspondence to this model and is similarly limited to representing operations at a single-qubit level.
+{\color{red} SEGUIR CON LAS APLICACIONES DE ZX (LATTICE SURGERY, MBQC, ETC)}
+
+Quantum operations are usually represented as quantum circuits composed by primitive gates operating over a fixed number of qubits. The ZX calculus has a close correspondence to this model and is similarly limited to representing operations at a single-qubit level.
 
 % Work in this chapter
 In this chapter we will focus on the Scalable ZX extension~\cite{carette_szx-calculus_2019}, which generalizes the ZX diagrams to work with arbitrary qubit registers using a compact representation. Previous work~\cite{carette_quantum_2021} has shown that the SZX calculus is capable of encoding nontrivial algorithms via the presentation of multiple hand-written examples. For an efficient usage as an intermediate representation language, we require an automated compilation method from quantum programming languages to SZX diagrams. While ZX diagrams can be directly obtained from a program compiled to a quantum circuit, our focus here is to leverage the parametricity of the SZX calculus.
@@ -17,8 +19,7 @@ There are several quantum programming languages capable of encoding high-level p
 In order to make use of the parametricity of the SZX calculus, we first introduce a \textit{list initialization} notation to represent multiple elements of a SZX diagram family composed in parallel. We then formally define a fragment of Proto-Quipper-D programs that can be described as families of diagrams. Finally, we present a novel compilation method that encodes quantum programs as families of SZX diagrams and demonstrate the codification and translation of a nontrivial algorithm using this procedure.
 
 % What do we aim to achieve? Plus the scope of the work
-
-
+Our aim is to bridge quantum programs with families of SZX diagrams directly via an efficient translation, without going through regular ZX diagrams. This would allow to write programs in more user-friendly languages which could later benefit from optimization techniques for the diagramatic intermediate representation. This, naturally, restrict us to strongly normalizing languages, since the diagrams represent terminating operations.
 
 % Structure of the chapter
 The structure of the chapter is as follows: In Section~\ref{sec:background} we outline both languages and introduce the list initialization notation. In Section~\ref{sec:fragment} we define the restricted Proto-Quipper-D fragment containing the relevant operations for the work presented in this chapter. In Section~\ref{sec:translation} we introduce the translation into SZX diagrams. Finally, in Section~\ref{sec:qft-example} we demonstrate an encoding of the Quantum Fourier Transform algorithm using our method.
