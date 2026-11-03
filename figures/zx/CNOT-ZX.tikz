@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=gray dot] (56) at (0.25, -0.5) {};
+		\node [style=white dot] (57) at (-0.25, 0.5) {};
+		\node [style=none] (58) at (-1, -0.5) {};
+		\node [style=none] (59) at (1.5, -0.5) {};
+		\node [style=none] (60) at (-1.5, 0.5) {};
+		\node [style=none] (61) at (1, 0.5) {};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw (56) to (57);
+		\draw (58.center) to (59.center);
+		\draw (60.center) to (61.center);
+	\end{pgfonlayer}
+\end{tikzpicture}
