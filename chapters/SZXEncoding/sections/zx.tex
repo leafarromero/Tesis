@@ -1,13 +1,22 @@
 \subsection{The ZX-calculus}
 %%%% QUICK OVERVIEW
-The diagrams of  ZX calculus are
-composed of nodes and wires connecting them. Diagramatically, they are
-represented as vertices on an undirected graph, alongside a \emph{phase}
-in the interval $[0,2\pi)$. Using only these simple building blocks,
-it is possible to construct a semantic meaning to encode linear maps
-between quantum states.
+The diagrams of  ZX calculus are represented as vertices on an undirected
+open graph, alongside a \emph{phase} in the interval $[0,2\pi)$. Using only
+these simple generators, it is possible to construct a semantic meaning to
+encode linear maps between quantum states.
 
-{\color{red} The building block of diagrams is the noble wire, the identity.}
+The simplest ZX diagram consists of a single wire and it represents the identity
+linear map. Is the mean by which every other generator is connected, and it
+characterizes the flow of a qubit in space-time similarly to quantum circuits.
+However, we will later see that it enjoys a greater flexibility than its circuit
+counterparts. While wires on circuits adhere to a strict structure, representing
+time from left to right; ZX diagrams wires are able to be bent and deformed without
+changing the meaning of the diagram.
+
+%%%%%%[Agregar diagrama de un cable?]
+\begin{equation*}
+\tikzfig{zx/wire}\ \ := \ketbra{0}{0} + \ketbra{1}{1}
+\end{equation*}
 
 In its simplest form, every diagram can be written with two kinds of nodes,
 usually called \emph{spiders}. They are differentiated between \emph{Z-spiders}
@@ -46,12 +55,12 @@ the CNOT operator:
 
 {\color{red} [Tensoring is putting two diagrams together]}
 \begin{equation*}
-    \tikzfig{Zsp-3-id}\ \ = \ \ \begin{pmatrix}1&0\\0&0\\0&0\\0&1\end{pmatrix}\ \otimes\ \begin{pmatrix}1&0\\0&1\end{pmatrix} \ \ 
+    \tikzfig{zx/Zsp-3-id}\ \ = \ \ \begin{pmatrix}1&0\\0&0\\0&0\\0&1\end{pmatrix}\ \otimes\ \begin{pmatrix}1&0\\0&1\end{pmatrix} \ \ 
     = \ \ \begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&0&0\\0&0&0&0\\0&0&0&0\\0&0&0&0\\0&0&1&0\\0&0&0&1\end{pmatrix}
 \end{equation*}
 
 \begin{equation*}
-    \tikzfig{Xsp-3-id}\ \ = \ \ \frac{1}{\sqrt{2}}\begin{pmatrix}1&0&0&1&0&0&0&0\\0&1&1&0&0&0&0&0\\0&0&0&0&1&0&0&1\\0&0&0&0&0&1&1&0\end{pmatrix}
+    \tikzfig{zx/Xsp-3-id}\ \ = \ \ \frac{1}{\sqrt{2}}\begin{pmatrix}1&0&0&1&0&0&0&0\\0&1&1&0&0&0&0&0\\0&0&0&0&1&0&0&1\\0&0&0&0&0&1&1&0\end{pmatrix}
 \end{equation*}
 
 {\color{red} [Composition corresponds to matrix multiplication]}
@@ -61,7 +70,7 @@ the CNOT operator:
 
 {\color{red} [We ignore scalars]}
 
-{\color{red} [Swaps, cups, caps and yanking equations mean onlyy topology matters]}
+{\color{red} [Swaps, cups, caps and yanking equations mean only topology matters]}
 % cups, caps and swaps
 
 The core idea behind these diagrams is that \emph{only the connectivity matters}, and
