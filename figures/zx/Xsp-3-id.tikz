@@ -1,6 +1,6 @@
 \begin{tikzpicture}
 	\begin{pgfonlayer}{nodelayer}
-		\node [style=gray dot] (0) at (0, -0.75) {};
+		\node [style=X dot] (0) at (0, -0.75) {};
 		\node [style=none] (4) at (-1.25, 0) {};
 		\node [style=none] (5) at (-1.25, -1.5) {};
 		\node [style=none] (6) at (1.25, -0.75) {};

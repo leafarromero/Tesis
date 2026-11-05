@@ -13,7 +13,6 @@ counterparts. While wires on circuits adhere to a strict structure, representing
 time from left to right; ZX diagrams wires are able to be bent and deformed without
 changing the meaning of the diagram.
 
-%%%%%%[Agregar diagrama de un cable?]
 \begin{equation*}
 \tikzfig{zx/wire}\ \ := \ketbra{0}{0} + \ketbra{1}{1}
 \end{equation*}
@@ -48,12 +47,12 @@ A ZX-diagram is an open graph, with wires acting as inputs on the left and outpu
 the right. The wires act as edges connecting the spiders, which are the nodes of the
 graph. The spiders can be composed either sequentially ($\circ$) or in parallel
 ($\otimes$) which correspond to matrix and tensor products respectively. This yields
-the global interpretation for the diagram. Take for example the representation for
-the CNOT operator:
+the global interpretation for the diagram. 
+
+Taking the tensor product of two linear maps is represented by placing the
+corresponding diagrams side-by-side. Take for example:
 
 %%%%%%% Ejemplos simples de diagramas y composición
-
-{\color{red} [Tensoring is putting two diagrams together]}
 \begin{equation*}
     \tikzfig{zx/Zsp-3-id}\ \ = \ \ \begin{pmatrix}1&0\\0&0\\0&0\\0&1\end{pmatrix}\ \otimes\ \begin{pmatrix}1&0\\0&1\end{pmatrix} \ \ 
     = \ \ \begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&0&0\\0&0&0&0\\0&0&0&0\\0&0&0&0\\0&0&1&0\\0&0&0&1\end{pmatrix}
@@ -63,12 +62,19 @@ the CNOT operator:
     \tikzfig{zx/Xsp-3-id}\ \ = \ \ \frac{1}{\sqrt{2}}\begin{pmatrix}1&0&0&1&0&0&0&0\\0&1&1&0&0&0&0&0\\0&0&0&0&1&0&0&1\\0&0&0&0&0&1&1&0\end{pmatrix}
 \end{equation*}
 
-{\color{red} [Composition corresponds to matrix multiplication]}
+Conversely, connecting the wires of two diagrams, yields to the sequential
+composition which itself corresponds to the matrix multiplication. If we connect
+the wires of the previous two examples, we get the representation for the CNOT
+operator.
+
 \begin{equation*}
     \tikzfig{zx/CNOT-ZX}\ \ = \frac{1}{\sqrt{2}}\begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0 \end{pmatrix}
 \end{equation*}
 
-{\color{red} [We ignore scalars]}
+We can observe that the diagram corresponds to the matrix of the CNOT gate up to a
+scalar of $\sqrt{2}$. Much like we ignore global phases in quantum circuits, we
+will ignore non-zero scalars. This is done to simplify the calculations, with the
+knowledge that it is simple to retrieve the factors in case they are needed.
 
 {\color{red} [Swaps, cups, caps and yanking equations mean only topology matters]}
 % cups, caps and swaps
