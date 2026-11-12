@@ -1,0 +1,19 @@
+First, we thank the reviewers for their feedback. We address the comments below:
+
+Reviewer #1
+We thank the reviewer for finding this counterexample. We are working on a fix.
+
+The reason for using an equivalence instead of directed rules is precisely to allow introducing terms that might not be present before. In particular, we use it to say that |0> is equal to 1/sqrt(2)(|+>+|->). A possible easy fix would be to extend the concept of weak vector space from [14] with these needed equivalences.
+
+Reviewer #2
+- This work presents a foundational core calculus whose compositional rules ensure scalability, rather than an end-user language. "Syntactic" refers to the tracking of bases directly. While using complex numbers provides full theoretical expressivity, scalars could be restricted to computable subfields like Q(i) if one is interested in a classical machine simulation or a classical type inference algorithm, rather than fundamentally describing what is happening in the quantum machine.
+
+- We appreciate the suggestions for alternative examples and take them into consideration for developing them with our language.
+
+- Additionally, we are grateful for the thorough reading of the document. While we cannot answer every minor remark, we will consider them for the next version.
+
+Reviewer #3
+
+- The calculus closely follows the Hilbert space model, but this is a deliberate choice. We are interested in studying the emerging type system from the realisability semantics. In addition, stating algorithms as lambda-terms allows us to write them into more elemental operations and closely examine their structure.  
+
+- Regarding the higher-order decompositions, it was not entirely clear how to apply them to arbitrary lambda-abstractions. We explored some avenues, but ultimately decided to narrow the scope and leave it for future work.
